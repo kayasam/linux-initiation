@@ -76,8 +76,7 @@ for (const chapter of chapters) {
   }
   let page = fs.readFileSync(path.join(root, "site-content", "quiz-template.html"), "utf8")
   page = page
-    .replaceAll("01-introduction-itil", chapter.slug)
-    .replaceAll("Découverte ITIL", "Linux — Initiation")
+    .replaceAll("__CHAPTER__", chapter.slug)
     .replaceAll("20 questions", count + " questions")
     .replaceAll("sur 20", "sur " + count)
     .replaceAll("16/20", Math.ceil(count * 0.8) + "/" + count)
