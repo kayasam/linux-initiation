@@ -113,7 +113,7 @@ cd /home/stagiaire/Documents   # chemin absolu → même résultat
 
 
 <!-- illustration-04 -->
-![Deux chemins différents peuvent mener au même dossier.](https://kayasam.github.io/linux-initiation/Ressources/images/04-chemins-absolus-et-relatifs.svg)
+![Deux chemins différents peuvent mener au même dossier.](https://kayasam.github.io/linux-initiation/ressources/images/04-chemins-absolus-et-relatifs.svg)
 
 *Deux chemins différents peuvent mener au même dossier.*
 

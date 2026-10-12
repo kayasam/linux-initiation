@@ -25,7 +25,7 @@ Cette organisation suit le standard **FHS** (*Filesystem Hierarchy Standard*), a
 
 
 <!-- illustration-06 -->
-![Quelques repères pour retrouver les dossiers essentiels.](https://kayasam.github.io/linux-initiation/Ressources/images/06-reperes-arborescence.svg)
+![Quelques repères pour retrouver les dossiers essentiels.](https://kayasam.github.io/linux-initiation/ressources/images/06-reperes-arborescence.svg)
 
 *Quelques repères pour retrouver les dossiers essentiels.*
 

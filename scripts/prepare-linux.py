@@ -47,7 +47,7 @@ def prepare(source):
     vault = stage / 'telechargements' / 'Linux-initiation'
     images = source / 'Ressources' / 'images'
     if images.is_dir():
-        for destination in (stage / 'Ressources/images', vault / 'Ressources/images'):
+        for destination in (stage / 'ressources/images', vault / 'Ressources/images'):
             shutil.copytree(images, destination, dirs_exist_ok=True)
     for i, course in enumerate(courses):
         slug = course.stem
@@ -61,8 +61,9 @@ def prepare(source):
         tp = tps[0] if tps else None
         body = normalize(course.read_text(encoding='utf-8'))
         write(vault / 'cours' / course.name, body)
-        write(stage / 'telechargements' / 'cours' / course.name, body.replace('../Ressources/images/', BASE + '/Ressources/images/'))
+        write(stage / 'telechargements' / 'cours' / course.name, body.replace('../Ressources/images/', BASE + '/ressources/images/'))
         interactive = themed_html((source / 'cours' / f'{slug}.html').read_text(encoding='utf-8'), slug)
+        interactive = interactive.replace('../Ressources/images/', '../ressources/images/')
         nav = f'<div class="course-site-nav"><a href="../{slug}/">← Chapitre {number}</a><a href="quiz/{slug}.html">Quiz du chapitre →</a></div>'
         interactive = interactive.replace('<body>', '<body>\n' + nav, 1)
         interactive = interactive.replace('</style>', '.course-site-nav { display:flex; justify-content:space-between; gap:1rem; padding:.8rem 1rem; background:#1a1d27; flex-wrap:wrap; } .course-site-nav a {color:#93c5fd; font-weight:600;}\n</style>', 1)
@@ -80,7 +81,7 @@ def prepare(source):
         body = re.sub(r'^(# .+)$', lambda m: m[0] + links, body, count=1, flags=re.M)
         previous = f'[← {chapters[-1]["title"]}]({BASE}/{chapters[-1]["slug"]}/)' if chapters else '[← Accueil](' + BASE + '/)'
         following = f'[Chapitre suivant →]({BASE}/{courses[i+1].stem}/)' if i+1 < len(courses) else f'[Revenir à l’accueil →]({BASE}/)'
-        body = body.replace('../Ressources/images/', BASE + '/Ressources/images/')
+        body = body.replace('../Ressources/images/', BASE + '/ressources/images/')
         write(stage / slug / 'index.md', metadata(f'{number}. {title}', body + '\n---\n\n' + previous + ' · ' + following + '\n'))
         chapters.append(dict(slug=slug, title=title, tp=tp.name if tp else None))
     for tp in (source / 'sessions' / '2026-05').glob('tp-*.md'):

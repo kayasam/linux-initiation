@@ -148,7 +148,7 @@ chmod 700 secret.txt     # rwx------ (uniquement pour le propriétaire)
 
 
 <!-- illustration-07 -->
-![Lire les trois blocs de permissions et leur valeur numérique.](https://kayasam.github.io/linux-initiation/Ressources/images/07-permissions-utilisateur-groupe-autres.svg)
+![Lire les trois blocs de permissions et leur valeur numérique.](https://kayasam.github.io/linux-initiation/ressources/images/07-permissions-utilisateur-groupe-autres.svg)
 
 *Lire les trois blocs de permissions et leur valeur numérique.*
 
