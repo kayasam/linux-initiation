@@ -8,8 +8,8 @@
   <rect width="1200" height="630" rx="36" fill="url(#bg)"/>
   <circle cx="1050" cy="90" r="230" fill="#52d2dd" opacity=".09"/>
   <rect x="78" y="78" width="132" height="64" rx="14" fill="#52d2dd"/>
-  <text x="144" y="121" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#07151d">ITIL</text>
-  <text x="78" y="284" font-family="Arial, sans-serif" font-size="82" font-weight="700" fill="#effaff">Découverte ITIL</text>
+  <text x="144" y="121" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#07151d">Linux</text>
+  <text x="78" y="284" font-family="Arial, sans-serif" font-size="82" font-weight="700" fill="#effaff">Linux — Initiation</text>
   <text x="82" y="354" font-family="Arial, sans-serif" font-size="34" fill="#b7ced8">Comprendre les services. Organiser le support.</text>
   <text x="82" y="510" font-family="Arial, sans-serif" font-size="26" fill="#52d2dd">8 chapitres · Cours · TP · Quiz</text>
 </svg>
