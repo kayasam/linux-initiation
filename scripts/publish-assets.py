@@ -3,10 +3,13 @@ from pathlib import Path
 import shutil
 import re
 import zipfile
+import json
 from urllib.parse import urlsplit, unquote
 from html.parser import HTMLParser
 
 ROOT = Path(__file__).resolve().parents[1]
+policy = ROOT / 'publication-policy.json'
+allowed_corrections = set(json.loads(policy.read_text(encoding='utf-8'))['corrections']) if policy.exists() else set()
 public = ROOT / 'public'
 for source in (ROOT / 'content').rglob('*'):
     if source.is_file() and (source.suffix != '.md' or 'telechargements' in source.parts):
@@ -42,6 +45,6 @@ assert not errors, '\n'.join(errors[:60])
 with zipfile.ZipFile(public/'linux-initiation-obsidian.zip') as z:
     names=z.namelist()
     assert len([n for n in names if re.search(r'/cours/\d\d-.*\.md$',n)])==10
-    assert len([n for n in names if re.search(r'/tp/tp-.*\.md$',n)])==7
-    assert not any(re.search(r'correction|corrig',n,re.I) for n in names)
-print(f'Liens locaux vérifiés : {checked}. Archive : 10 cours et 7 TP, sans corrections.')
+    assert len([n for n in names if re.search(r'/tp/tp-.*\.md$',n) and not re.search(r'correction|corrig', n, re.I)])==7
+    assert not any(re.search(r'correction|corrig', n, re.I) and Path(n).name not in allowed_corrections for n in names)
+print(f'Liens locaux vérifiés : {checked}. Archive : 10 cours et 7 TP ; {len(allowed_corrections)} correction(s) autorisée(s).')

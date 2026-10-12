@@ -1,6 +1,8 @@
 # Publier Linux — Initiation
 
-Les modifications des cours se font dans `Formations/linux-initiation` du coffre Obsidian. Les dix chapitres sont conservés dans leur ordre d’origine. Les sept énoncés de TP sont repris depuis `sessions/2026-05`, sans leurs corrections.
+Les modifications des cours se font dans `Formations/linux-initiation` du coffre Obsidian. Les dix chapitres sont conservés dans leur ordre d’origine, chacun dans `cours/NN-sujet/`, avec le Markdown, le HTML, le quiz et son sous-dossier `tp/`. Les notes de session restent dans `sessions/`.
+
+Les six corrections existantes possèdent la propriété `publier: false` (case décochée). Elles sont exclues du site et du ZIP. Pour en diffuser une plus tard, cocher cette propriété (`publier: true`) puis lancer la publication. Le contrôle de l’archive utilise la liste des corrections explicitement autorisées dans `publication-policy.json`, régénérée depuis le coffre à chaque préparation. Une propriété absente n’autorise pas la publication d’une correction.
 
 Double-cliquer sur **Publier les cours.cmd**, puis saisir un message et confirmer la publication. Le script prépare les cours, les quiz, les téléchargements et l’archive, construit Quartz, vérifie les liens et propose l’envoi vers GitHub.
 

@@ -34,13 +34,23 @@ with zipfile.ZipFile(archive) as old, zipfile.ZipFile(temp, 'w', zipfile.ZIP_DEF
 temp.replace(archive)
 if args.sync_source:
     source = args.sync_source.resolve()
-    assert (source / 'cours/01-comprendre-linux.html').is_file()
+    nested = (source / 'cours/01-comprendre-linux/01-comprendre-linux.html').is_file()
+    assert nested or (source / 'cours/01-comprendre-linux.html').is_file()
     themed_html = runpy.run_path(str(ROOT / 'scripts/prepare-linux.py'))['themed_html']
     for slug in banks:
-        file = source / 'cours' / (slug + '.html')
+        file = source / 'cours' / slug / (slug + '.html') if nested else source / 'cours' / (slug + '.html')
         body = file.read_text(encoding='utf-8')
         file.write_text(themed_html(body, slug), encoding='utf-8')
     for relative, data in files.items():
+        if nested:
+            if relative.startswith('cours/assets/'): continue
+            if relative.startswith('cours/quiz/'):
+                slug = Path(relative).stem
+                relative = f'cours/{slug}/{slug}-quiz.html'
+                data = data.decode('utf-8').replace('../' + slug + '.html', slug + '.html').encode('utf-8')
+            elif relative == 'assets/quiz/quiz-banks.js':
+                nested_banks = {slug: {**bank, 'chapterLink': slug + '.html'} for slug, bank in banks.items()}
+                data = ('window.linuxQuizBanks = ' + json.dumps(nested_banks, ensure_ascii=False, indent=2) + '\n').encode('utf-8')
         file = source / relative
         file.parent.mkdir(parents=True, exist_ok=True)
         file.write_bytes(data)

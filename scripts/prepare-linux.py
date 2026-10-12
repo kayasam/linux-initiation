@@ -1,4 +1,4 @@
-"""Prepare student content from the Obsidian course, without publishing corrections."""
+"""Prepare student content; corrections require an explicit publier: true."""
 from pathlib import Path
 import argparse
 import html
@@ -34,10 +34,26 @@ def themed_html(body, slug):
         body = body.replace('</head>', '<link rel="stylesheet" href="assets/themes/theme.css">\n<script src="assets/themes/theme.js"></script>\n</head>', 1)
     return body
 
+def flat_html(body, slug):
+    """Keep existing public/offline URLs while the source uses chapter folders."""
+    body = themed_html(body, slug)
+    body = body.replace('../../Ressources/images/', '../Ressources/images/')
+    body = body.replace('../../assets/themes/', 'assets/themes/')
+    return re.sub(r'\s+data-quiz-href="[^"]*"', '', body)
+
+def is_published(file):
+    body = file.read_text(encoding='utf-8-sig')
+    frontmatter = re.match(r'^---\s*\n(.*?)\n---(?:\n|$)', body, re.S)
+    return bool(frontmatter and re.search(r'^publier:\s*true\s*$', frontmatter[1], re.M | re.I))
+
+def without_frontmatter(body):
+    return re.sub(r'^---\s*\n.*?\n---\s*\n', '', body, count=1, flags=re.S)
+
 def prepare(source):
-    courses = sorted((source / 'cours').glob('[0-9][0-9]-*.md'))
+    courses = sorted(p for p in (source / 'cours').rglob('[0-9][0-9]-*.md') if p.parent == source / 'cours' or p.parent.name == p.stem)
     assert len(courses) == 10, '10 chapitres attendus'
     chapters = []
+    published_corrections = set()
     stage = ROOT / '.publication-stage'
     # Resolve the target before removing only our generated staging directory.
     assert stage.resolve().parent == ROOT.resolve()
@@ -54,27 +70,37 @@ def prepare(source):
         title = re.search(r'^#\s+(.*)', course.read_text(encoding='utf-8'), re.M)[1]
         title = re.sub(r'^Chapitre \d+\s*[—–-]\s*', '', title)
         number = slug[:2]
-        tp = next(iter(sorted((source / 'sessions' / '2026-05').glob(f'tp-{number}-*.md'))), None)
-        # Corrections can never be selected even if filenames sort differently.
-        tps = [p for p in (source / 'sessions' / '2026-05').glob(f'tp-{number}-*.md') if not re.search(r'correction|corrig', p.name, re.I)]
+        tp_folder = course.parent / 'tp' if course.parent.name == slug else source / 'sessions/2026-05'
+        tps = [p for p in tp_folder.glob(f'tp-{number}-*.md') if not re.search(r'correction|corrig', p.name, re.I)]
         assert len(tps) <= 1
         tp = tps[0] if tps else None
         body = normalize(course.read_text(encoding='utf-8'))
+        body = re.sub(r'\n\n<!-- ressources-locales -->\n(?:>[^\n]*\n)+', '', body)
+        body = body.replace('../../Ressources/images/', '../Ressources/images/')
         write(vault / 'cours' / course.name, body)
         write(stage / 'telechargements' / 'cours' / course.name, body.replace('../Ressources/images/', BASE + '/ressources/images/'))
-        interactive = themed_html((source / 'cours' / f'{slug}.html').read_text(encoding='utf-8'), slug)
+        interactive = flat_html(course.with_suffix('.html').read_text(encoding='utf-8'), slug)
         interactive = interactive.replace('../Ressources/images/', '../ressources/images/')
         nav = f'<div class="course-site-nav"><a href="../{slug}/">← Chapitre {number}</a><a href="quiz/{slug}.html">Quiz du chapitre →</a></div>'
         interactive = interactive.replace('<body>', '<body>\n' + nav, 1)
         interactive = interactive.replace('</style>', '.course-site-nav { display:flex; justify-content:space-between; gap:1rem; padding:.8rem 1rem; background:#1a1d27; flex-wrap:wrap; } .course-site-nav a {color:#93c5fd; font-weight:600;}\n</style>', 1)
         write(stage / 'cours' / f'{slug}-interactif.html', interactive)
         # Offline interactive pages keep a working return link and their own quiz.
-        offline = themed_html((source / 'cours' / f'{slug}.html').read_text(encoding='utf-8'), slug)
+        offline = flat_html(course.with_suffix('.html').read_text(encoding='utf-8'), slug)
         write(vault / 'cours' / f'{slug}.html', offline)
         links = f'\n\n> [!TIP] Ressources du chapitre\n> - [Ouvrir le chapitre interactif]({BASE}/cours/{slug}-interactif.html)\n> - [Faire le quiz]({BASE}/cours/quiz/{slug}.html)\n> - <a href="{BASE}/telechargements/cours/{course.name}" download>Télécharger ce cours en Markdown</a>\n'
         if tp:
             links += f'> - [Passer au TP]({BASE}/{slug}/tp)\n'
             tpbody = normalize(tp.read_text(encoding='utf-8'))
+            for correction in sorted(tp_folder.glob(f'tp-{number}-*correction.md')):
+                if not is_published(correction): continue
+                published_corrections.add(correction.name)
+                correction_body = normalize(without_frontmatter(correction.read_text(encoding='utf-8')))
+                correction_body += f'\n[← Énoncé du TP]({BASE}/{slug}/tp)\n'
+                write(stage / slug / correction.name, metadata(f'Correction TP {number} — {title}', correction_body))
+                write(stage / 'telechargements/tp' / correction.name, correction_body)
+                write(vault / 'tp' / correction.name, normalize(correction.read_text(encoding='utf-8')))
+                tpbody += f'\n[Correction du TP]({BASE}/{slug}/{correction.stem})\n'
             write(vault / 'tp' / tp.name, tpbody)
             write(stage / 'telechargements' / 'tp' / tp.name, tpbody)
             write(stage / slug / 'tp.md', metadata(f'TP {number} — {title}', tpbody + f'\n[← Revenir au cours]({BASE}/{slug}/)\n\n<a href="{BASE}/telechargements/tp/{tp.name}" download>Télécharger ce TP en Markdown</a>\n'))
@@ -84,8 +110,8 @@ def prepare(source):
         body = body.replace('../Ressources/images/', BASE + '/ressources/images/')
         write(stage / slug / 'index.md', metadata(f'{number}. {title}', body + '\n---\n\n' + previous + ' · ' + following + '\n'))
         chapters.append(dict(slug=slug, title=title, tp=tp.name if tp else None))
-    for tp in (source / 'sessions' / '2026-05').glob('tp-*.md'):
-        if 'correction' in tp.name: continue
+    for tp in source.rglob('tp-*.md'):
+        if 'correction' in tp.name and tp.name not in published_corrections: continue
         body = tp.read_text(encoding='utf-8')
         for image in re.findall(r'!\[\[([^]|]+)', body):
             media = tp.parent / image
@@ -108,7 +134,7 @@ def prepare(source):
         for file in sorted(vault.rglob('*')):
             if file.is_file(): z.write(file, file.relative_to(vault.parent))
     shutil.rmtree(vault)
-    forbidden = [p for p in stage.rglob('*') if p.is_file() and re.search(r'correction|corrig[eé]', p.name, re.I)]
+    forbidden = [p for p in stage.rglob('*') if p.is_file() and re.search(r'correction|corrig[eé]', p.name, re.I) and p.name not in published_corrections]
     assert not forbidden, forbidden
     assert not any(':::' in p.read_text(encoding='utf-8') for p in stage.rglob('*.md'))
     content = ROOT / 'content'
@@ -116,7 +142,8 @@ def prepare(source):
     if content.exists(): shutil.rmtree(content)
     stage.rename(content)
     write(ROOT / 'chapters.json', json.dumps(chapters, ensure_ascii=False, indent=2) + '\n')
-    print('Préparation : 10 cours, 10 versions interactives, 7 TP, archive Obsidian. Aucune correction publiée.')
+    write(ROOT / 'publication-policy.json', json.dumps({'corrections': sorted(published_corrections)}, ensure_ascii=False, indent=2) + '\n')
+    print(f'Préparation : 10 cours, 10 versions interactives, 7 TP, archive Obsidian. {len(published_corrections)} correction(s) explicitement publiée(s).')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

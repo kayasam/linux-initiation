@@ -44,7 +44,7 @@
     const slug = root.dataset.chapter
     if (quiz && slug) {
       const link = document.createElement("a")
-      link.href = "quiz/" + slug + ".html"
+      link.href = root.dataset.quizHref || "quiz/" + slug + ".html"
       link.textContent = "Ouvrir le quiz de 20 questions en pleine page →"
       const frame = document.createElement("iframe")
       frame.className = "course-quiz-frame"

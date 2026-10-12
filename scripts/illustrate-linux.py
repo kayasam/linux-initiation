@@ -159,14 +159,15 @@ def integrate(source):
     md_sections={'01':"## 1. Qu'est-ce qu'un système d'exploitation ?",'02':"## 1. Qu'est-ce qu'une machine virtuelle ?",'03':'## 6. Ouvrir un terminal','04':'## 5. Chemins absolus et relatifs','05':'## 3. Copier, déplacer, renommer','06':'## 1. Tout part de la racine','07':'## 6. Modifier les permissions','08':'## 3. APT','09':'## 3. Les tubes','10':'## 2. Se connecter à distance'}
     html_sections={'01':"Qu'est-ce qu'un système d'exploitation ?",'02':"Qu'est-ce qu'une machine virtuelle ?",'03':'Le terminal — outil central de Linux','04':'Chemin absolu vs relatif','05':'Récapitulatif cp vs mv','06':'Tout part de /','07':'Lire et comprendre les permissions','08':'apt — le gestionnaire de paquets','09':'Tubes et pipes — enchaîner les commandes','10':'SSH — connexion distante sécurisée'}
     captions={'01':'Le système Linux fait le lien entre les applications et le matériel.','02':'Le PC hôte exécute VirtualBox, qui fait fonctionner le système invité Debian.','03':'Le bureau et le terminal manipulent les mêmes fichiers.','04':'Deux chemins différents peuvent mener au même dossier.','05':'Comparer le résultat de cp, mv et rm.','06':'Quelques repères pour retrouver les dossiers essentiels.','07':'Lire les trois blocs de permissions et leur valeur numérique.','08':'apt update actualise les listes ; install et upgrade agissent sur les logiciels.','09':'Observer les lignes qui passent d’une commande à la suivante.','10':'Les commandes SSH s’exécutent sur la machine distante.'}
-    for file in sorted((source/'cours').glob('[0-9][0-9]-*.md')):
+    for file in sorted(p for p in (source/'cours').rglob('[0-9][0-9]-*.md') if p.parent == source/'cours' or p.parent.name == p.stem):
         number=file.name[:2]; name=names[number]; caption=captions[number]
         marker=f'<!-- illustration-{number} -->'
         body=file.read_text(encoding='utf-8')
         if marker not in body:
             start=body.index(md_sections[number]); end=body.find('\n---',start)
             assert end>=0, file
-            block=f'\n\n{marker}\n![{caption}](../Ressources/images/{name}.svg)\n\n*{caption}*\n'
+            prefix='../../' if file.parent.name == file.stem else '../'
+            block=f'\n\n{marker}\n![{caption}]({prefix}Ressources/images/{name}.svg)\n\n*{caption}*\n'
             body=body[:end]+block+body[end:]
             file.write_text(body,encoding='utf-8')
         html_file=file.with_suffix('.html');body=html_file.read_text(encoding='utf-8')
@@ -174,6 +175,7 @@ def integrate(source):
             anchor='<h2>'+html_sections[number]+'</h2>'
             assert anchor in body,html_file
             figure=f'''\n{marker}\n<figure class="course-diagram" style="margin:1.25rem 0"><a href="../Ressources/images/{name}.svg" target="_blank" rel="noopener"><img src="../Ressources/images/{name}.svg" alt="{escape(caption,quote=True)}" width="1000" height="600" loading="lazy" style="width:100%;height:auto;border-radius:12px"></a><figcaption style="font-size:.9rem;margin-top:.5rem">{escape(caption)} Cliquez sur le schéma pour l’agrandir.</figcaption></figure>'''
+            if file.parent.name == file.stem: figure=figure.replace('../Ressources/', '../../Ressources/')
             body=body.replace(anchor,anchor+figure,1)
             html_file.write_text(body,encoding='utf-8')
     print('10 SVG originaux intégrés dans les 10 cours Markdown et les 10 versions HTML du coffre.')
