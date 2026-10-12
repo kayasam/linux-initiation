@@ -149,3 +149,24 @@ article a[href*="/telechargements/"][href$=".md"]:hover {
   flex-wrap: wrap;
   gap: 1rem;
 }
+
+/* Controls must keep readable text when the dark palette uses a light accent. */
+:root[saved-theme="dark"] article a[href$="-interactif.html"],
+:root[saved-theme="dark"] article a[href*="/cours/quiz/"],
+:root[saved-theme="dark"] .home-track__start,
+:root[saved-theme="dark"] .obsidian-download__button {
+  color: #102331;
+}
+
+:root[saved-theme="dark"] .home-track__start:hover,
+:root[saved-theme="dark"] .obsidian-download__button:hover,
+:root[saved-theme="dark"] article a[href$="-interactif.html"]:hover {
+  color: #102331;
+}
+
+:root[saved-theme="dark"] input,
+:root[saved-theme="dark"] select,
+:root[saved-theme="dark"] textarea {
+  color: var(--dark);
+  background-color: var(--lightgray);
+}

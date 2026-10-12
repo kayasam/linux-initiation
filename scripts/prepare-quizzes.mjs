@@ -1,62 +1,52 @@
 import fs from "node:fs"
 import path from "node:path"
-import vm from "node:vm"
 import { fileURLToPath } from "node:url"
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
-const source =
-  process.argv[2] || "C:/Users/kayaw/Nextcloud/Obsidian/CoffreSam/Formations/linux-initiation"
-const clean = (s) =>
-  s
-    .replace(/<[^>]*>/g, "")
-    .replaceAll("&gt;", ">")
-    .replaceAll("&lt;", "<")
-    .replaceAll("&amp;", "&")
-    .replaceAll("&quot;", '"')
-    .replaceAll("&#39;", "'")
 const chapters = JSON.parse(fs.readFileSync(path.join(root, "chapters.json"), "utf8"))
+const baseQuestions = JSON.parse(
+  fs.readFileSync(path.join(root, "site-content/assets/quiz/quiz-questions.json"), "utf8"),
+)
+const supplements = {}
+let section
+for (const line of fs
+  .readFileSync(path.join(root, "site-content/assets/quiz/questions-complementaires.txt"), "utf8")
+  .split(/\r?\n/)) {
+  if (!line.trim()) continue
+  if (/^\[\d{2}\]$/.test(line)) {
+    section = line.slice(1, -1)
+    supplements[section] = []
+    continue
+  }
+  const parts = line.split("§")
+  if (!section || parts.length !== 6) throw Error("Question complémentaire invalide : " + line)
+  supplements[section].push(parts)
+}
 const banks = {}
 for (const chapter of chapters) {
-  const html = fs.readFileSync(path.join(source, "cours", chapter.slug + ".html"), "utf8")
-  let questions
-  const array = html.match(/const (?:quizData|questions) = (\[[\s\S]*?\n\]);/)
-  if (array) {
-    const items = vm.runInNewContext(array[1], Object.create(null), { timeout: 1000 })
-    questions = items.map((q) => ({
+  let questions = structuredClone(baseQuestions[chapter.slug])
+  const extra = supplements[chapter.slug.slice(0, 2)] || []
+  questions.push(
+    ...extra.map(([question, ...parts]) => ({
       theme: chapter.title,
-      question: clean(q.q),
-      choices: q.opts.map(clean),
-      answer: q.correct,
-      explanation: clean(q.feedback || q.fb),
-    }))
-  } else {
-    const answers = vm.runInNewContext("(" + html.match(/const answers = (\{.*?\});/)[1] + ")")
-    const feedbacks = vm.runInNewContext(
-      "(" + html.match(/const feedbacks = (\{[\s\S]*?\n\});/)[1] + ")",
-    )
-    questions = [
-      ...html.matchAll(
-        /<div class="quiz-question" id="q(\d+)">([\s\S]*?)<div class="quiz-feedback"/g,
-      ),
-    ].map((m) => {
-      const answer = answers[m[1]]
-      const options = [...m[2].matchAll(/<button class="quiz-option"[^>]*>([\s\S]*?)<\/button>/g)]
-      return {
-        theme: chapter.title,
-        question: clean(m[2].match(/<h4>(.*?)<\/h4>/)[1]).replace(/^Question \d+ — /, ""),
-        choices: options.map((x) => clean(x[1]).replace(/^[a-d]\) /, "")),
-        answer: "abcd".indexOf(answer),
-        explanation: clean(feedbacks[m[1]][answer]),
-      }
-    })
-  }
-  // Avoid two equivalent correct choices in the original APT question.
-  if (chapter.slug.startsWith("08-"))
-    questions.find((q) => q.question.includes("curl et git")).choices[0] =
-      "sudo apt update curl git"
+      question,
+      choices: parts.slice(0, 4),
+      answer: 0,
+      explanation: parts[4],
+    })),
+  )
+  // Balance the authored bank too. Runtime shuffles questions and answer slots independently.
+  questions = questions.map((q, index) => {
+    const answer = index % 4
+    const correct = q.choices[q.answer]
+    const choices = q.choices.filter((_, i) => i !== q.answer)
+    choices.splice(answer, 0, correct)
+    return { ...q, choices, answer }
+  })
   for (const q of questions) {
     if (
       q.choices.length !== 4 ||
+      new Set(q.choices).size !== 4 ||
       !Number.isInteger(q.answer) ||
       q.answer < 0 ||
       q.answer > 3 ||
@@ -65,7 +55,11 @@ for (const chapter of chapters) {
       throw Error("Question invalide : " + q.question)
   }
   const count = questions.length
-  if (count < 5) throw Error("Quiz incomplet : " + chapter.slug)
+  if (count !== 20) throw Error("Quiz incomplet : " + chapter.slug)
+  if (new Set(questions.map((q) => q.question)).size !== 20)
+    throw Error("Questions dupliquées : " + chapter.slug)
+  if ([0, 1, 2, 3].some((i) => questions.filter((q) => q.answer === i).length !== 5))
+    throw Error("Répartition invalide : " + chapter.slug)
   banks[chapter.slug] = {
     ...chapter,
     id: chapter.slug,

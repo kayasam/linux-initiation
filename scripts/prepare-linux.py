@@ -27,6 +27,13 @@ def normalize(body):
 def metadata(title, body):
     return '---\ntitle: ' + json.dumps(title, ensure_ascii=False) + '\n---\n\n' + body
 
+def themed_html(body, slug):
+    if 'data-chapter=' not in body:
+        body = body.replace('<html lang="fr">', f'<html lang="fr" data-chapter="{slug}">', 1)
+    if 'assets/themes/theme.css' not in body:
+        body = body.replace('</head>', '<link rel="stylesheet" href="assets/themes/theme.css">\n<script src="assets/themes/theme.js"></script>\n</head>', 1)
+    return body
+
 def prepare(source):
     courses = sorted((source / 'cours').glob('[0-9][0-9]-*.md'))
     assert len(courses) == 10, '10 chapitres attendus'
@@ -36,6 +43,7 @@ def prepare(source):
     assert stage.resolve().parent == ROOT.resolve()
     if stage.exists(): shutil.rmtree(stage)
     shutil.copytree(ROOT / 'site-content', stage)
+    shutil.copytree(ROOT / 'site-content/assets/themes', stage / 'cours/assets/themes', dirs_exist_ok=True)
     vault = stage / 'telechargements' / 'Linux-initiation'
     for i, course in enumerate(courses):
         slug = course.stem
@@ -50,13 +58,13 @@ def prepare(source):
         body = normalize(course.read_text(encoding='utf-8'))
         write(vault / 'cours' / course.name, body)
         write(stage / 'telechargements' / 'cours' / course.name, body)
-        interactive = (source / 'cours' / f'{slug}.html').read_text(encoding='utf-8')
+        interactive = themed_html((source / 'cours' / f'{slug}.html').read_text(encoding='utf-8'), slug)
         nav = f'<div class="course-site-nav"><a href="../{slug}/">← Chapitre {number}</a><a href="quiz/{slug}.html">Quiz du chapitre →</a></div>'
         interactive = interactive.replace('<body>', '<body>\n' + nav, 1)
         interactive = interactive.replace('</style>', '.course-site-nav { display:flex; justify-content:space-between; gap:1rem; padding:.8rem 1rem; background:#1a1d27; flex-wrap:wrap; } .course-site-nav a {color:#93c5fd; font-weight:600;}\n</style>', 1)
         write(stage / 'cours' / f'{slug}-interactif.html', interactive)
         # Offline interactive pages keep a working return link and their own quiz.
-        offline = (source / 'cours' / f'{slug}.html').read_text(encoding='utf-8')
+        offline = themed_html((source / 'cours' / f'{slug}.html').read_text(encoding='utf-8'), slug)
         write(vault / 'cours' / f'{slug}.html', offline)
         links = f'\n\n> [!TIP] Ressources du chapitre\n> - [Ouvrir le chapitre interactif]({BASE}/cours/{slug}-interactif.html)\n> - [Faire le quiz]({BASE}/cours/quiz/{slug}.html)\n> - <a href="{BASE}/telechargements/cours/{course.name}" download>Télécharger ce cours en Markdown</a>\n'
         if tp:

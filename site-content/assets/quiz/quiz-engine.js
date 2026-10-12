@@ -7,7 +7,7 @@
 
   const quizId = root.dataset.quiz
   const data = window.linuxQuizBanks && window.linuxQuizBanks[quizId]
-  if (!data || !Array.isArray(data.questions) || data.questions.length < 1) {
+  if (!data || !Array.isArray(data.questions) || data.questions.length !== 20) {
     root.innerHTML = '<p class="quiz-error">Le quiz demandé ne peut pas être chargé.</p>'
     return
   }

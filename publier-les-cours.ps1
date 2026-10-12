@@ -6,6 +6,10 @@ try {
   if ($LASTEXITCODE) { throw 'Échec de préparation des cours.' }
   & node scripts/prepare-quizzes.mjs
   if ($LASTEXITCODE) { throw 'Échec de préparation des quiz.' }
+  & python scripts/finalize-html-supports.py
+  if ($LASTEXITCODE) { throw 'Échec de préparation des supports HTML hors ligne.' }
+  & node scripts/check-learning-ui.mjs
+  if ($LASTEXITCODE) { throw 'Échec de vérification des quiz ou des contrastes.' }
   & node scripts/fix-quartz-graph.mjs
   if ($LASTEXITCODE) { throw 'Échec de correction du graphe.' }
   & node quartz/bootstrap-cli.mjs build

@@ -27,6 +27,8 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Verify quiz balance, random order and theme contrast
+        run: node scripts/check-learning-ui.mjs
       - run: node scripts/fix-quartz-graph.mjs
       - run: node quartz/bootstrap-cli.mjs build
       - name: Copy downloads and verify local links
