@@ -12,6 +12,8 @@ Le générateur équilibre la banque (5 A, 5 B, 5 C, 5 D). Le moteur remélange 
 
 Les thèmes HTML sont dans `site-content/assets/themes`. Le bouton clair/sombre mémorise le choix avec la même préférence que Quartz. Les quiz intégrés et les supports Obsidian utilisent ces mêmes thèmes et banques de questions.
 
+Les dix schémas SVG sont dans `Formations/linux-initiation/Ressources/images` du coffre. Les liens restent locaux dans le coffre et dans le ZIP ; la publication copie automatiquement les images pour le site et les HTML. Pour régénérer les dessins et intégrer les illustrations manquantes : `python scripts/illustrate-linux.py`. Leur source graphique est dans ce script ; il conserve les blocs déjà présents dans les cours.
+
 Pour mettre également à jour les versions HTML originales du coffre après préparation :
 
 ```powershell

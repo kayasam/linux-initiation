@@ -67,6 +67,11 @@ exit
 
 > [!TIP]
 > SSH est l'outil principal pour administrer des serveurs Linux à distance. La quasi-totalité de l'administration système professionnelle se fait via SSH.
+<!-- illustration-10 -->
+![Les commandes SSH s’exécutent sur la machine distante.](https://kayasam.github.io/linux-initiation/Ressources/images/10-connexion-ssh.svg)
+
+*Les commandes SSH s’exécutent sur la machine distante.*
+
 ---
 
 ## 3. Résoudre des noms — DNS

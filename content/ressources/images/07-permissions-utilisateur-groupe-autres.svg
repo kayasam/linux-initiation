@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" viewBox="0 0 1000 600" role="img" aria-labelledby="title description">
+<title id="title">Lire les permissions d’un fichier</title><desc id="description">Trois catégories distinctes : propriétaire, groupe et autres utilisateurs.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L8 4 L0 8" fill="#006575" class="arrow-fill"/></marker></defs>
+<style>
+text { font-family:'Segoe UI',Arial,sans-serif; fill:#182d3e; }
+.title {font-size:28px;font-weight:750} .subtitle {font-size:18px;fill:#455d70}
+.label {font-size:22px;font-weight:700} .body {font-size:20px} .small {font-size:17px;fill:#455d70}
+.mono {font-family:Consolas,'DejaVu Sans Mono',monospace;font-size:20px} .accent {fill:#006575}
+.box {fill:#fff;stroke:#8196a6;stroke-width:1.5} .soft {fill:#e5f2f4;stroke:#006575;stroke-width:1.5}
+.line {fill:none;stroke:#006575;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+@media (prefers-color-scheme:dark) {
+.background {fill:#101923} .badge {fill:#243b4c} text {fill:#edf5fb}
+.subtitle,.small {fill:#b7c9d8} .accent,.arrow-fill {fill:#72dfeb}
+.box {fill:#192936;stroke:#587488} .soft {fill:#243b4c;stroke:#72dfeb} .line {stroke:#72dfeb}
+}
+</style>
+<rect width="1000" height="600" rx="20" fill="#f4f7fa" class="background"/>
+<rect x="28" y="26" width="48" height="42" rx="10" fill="#e5f2f4" class="badge"/>
+<text x="52" y="54" text-anchor="middle" class="label accent">07</text>
+<text x="92" y="52" class="title">Lire les permissions d’un fichier</text>
+<text x="92" y="82" class="subtitle">Trois catégories distinctes : propriétaire, groupe et autres utilisateurs.</text>
+<text x="500" y="142" class="mono" text-anchor="middle">- rw- r-- r--</text>
+<rect x="55" y="196" width="250" height="210" rx="14" class="soft"/>
+<text x="75" y="230" class="label" text-anchor="start">Propriétaire — u</text>
+<text x="180" y="280" class="title" text-anchor="middle">rw-</text>
+<text x="180" y="324" class="body" text-anchor="middle">Lire et modifier</text>
+<text x="180" y="354" class="body" text-anchor="middle">4 + 2 = 6</text>
+<text x="180" y="452" class="title accent" text-anchor="middle">6</text>
+<rect x="375" y="196" width="250" height="210" rx="14" class="soft"/>
+<text x="395" y="230" class="label" text-anchor="start">Groupe — g</text>
+<text x="500" y="280" class="title" text-anchor="middle">r--</text>
+<text x="500" y="324" class="body" text-anchor="middle">Lire seulement</text>
+<text x="500" y="354" class="body" text-anchor="middle">4 = lecture</text>
+<text x="500" y="452" class="title accent" text-anchor="middle">4</text>
+<rect x="695" y="196" width="250" height="210" rx="14" class="soft"/>
+<text x="715" y="230" class="label" text-anchor="start">Autres — o</text>
+<text x="820" y="280" class="title" text-anchor="middle">r--</text>
+<text x="820" y="324" class="body" text-anchor="middle">Lire seulement</text>
+<text x="820" y="354" class="body" text-anchor="middle">4 = lecture</text>
+<text x="820" y="452" class="title accent" text-anchor="middle">4</text>
+<text x="500" y="504" class="mono" text-anchor="middle">chmod 644 notes.txt</text>
+<text x="40" y="568" class="small" text-anchor="start">r = 4, w = 2, x = 1. Pour un fichier lisible et modifiable uniquement par son propriétaire : chmod 600.</text>
+</svg>

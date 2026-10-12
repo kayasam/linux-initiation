@@ -24,6 +24,12 @@ Une **machine virtuelle** (VM) est un ordinateur simulé à l'intérieur de ton 
 - Pas besoin d'un second ordinateur pour pratiquer Linux
 - Isolée du système principal (Windows, macOS)
 
+
+<!-- illustration-02 -->
+![Le PC hôte exécute VirtualBox, qui fait fonctionner le système invité Debian.](https://kayasam.github.io/linux-initiation/Ressources/images/02-hote-et-machine-virtuelle.svg)
+
+*Le PC hôte exécute VirtualBox, qui fait fonctionner le système invité Debian.*
+
 ---
 
 ## 2. VirtualBox — l'outil de virtualisation

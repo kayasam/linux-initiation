@@ -93,6 +93,12 @@ cat /etc/passwd | grep stagiaire
 ls /etc | sort | uniq | wc -l
 ```
 
+
+<!-- illustration-09 -->
+![Observer les lignes qui passent d’une commande à la suivante.](https://kayasam.github.io/linux-initiation/Ressources/images/09-tubes-et-circulation-des-donnees.svg)
+
+*Observer les lignes qui passent d’une commande à la suivante.*
+
 ---
 
 ## 4. Rechercher du texte — `grep`

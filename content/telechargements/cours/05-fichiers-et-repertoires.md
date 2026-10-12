@@ -60,6 +60,11 @@ mv projets/ /home/stagiaire/work/ # déplace un dossier entier
 
 > [!TIP]
 > `mv` fait à la fois **déplacer** et **renommer** — c'est la même commande. Si la destination est dans le même dossier avec un nouveau nom, c'est un renommage.
+<!-- illustration-05 -->
+![Comparer le résultat de cp, mv et rm.](https://kayasam.github.io/linux-initiation/Ressources/images/05-copier-deplacer-supprimer.svg)
+
+*Comparer le résultat de cp, mv et rm.*
+
 ---
 
 ## 4. Supprimer

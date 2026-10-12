@@ -34,6 +34,12 @@ Sous Linux, il n'y a **pas de lettre de lecteur** (pas de `C:\`, `D:\` comme Win
 > **Analogie** : l'arborescence Linux, c'est comme un immeuble avec des étages bien organisés. La racine `/` est le rez-de-chaussée, et chaque dossier est un étage avec un rôle précis.
 Cette organisation suit le standard **FHS** (*Filesystem Hierarchy Standard*), adopté par toutes les distributions Linux.
 
+
+<!-- illustration-06 -->
+![Quelques repères pour retrouver les dossiers essentiels.](https://kayasam.github.io/linux-initiation/Ressources/images/06-reperes-arborescence.svg)
+
+*Quelques repères pour retrouver les dossiers essentiels.*
+
 ---
 
 ## 2. Les dossiers essentiels à connaître

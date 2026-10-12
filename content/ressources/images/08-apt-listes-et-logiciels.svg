@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" viewBox="0 0 1000 600" role="img" aria-labelledby="title description">
+<title id="title">APT : listes et logiciels sont différents</title><desc id="description">Actualiser les informations ne met pas encore les logiciels à jour.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L8 4 L0 8" fill="#006575" class="arrow-fill"/></marker></defs>
+<style>
+text { font-family:'Segoe UI',Arial,sans-serif; fill:#182d3e; }
+.title {font-size:28px;font-weight:750} .subtitle {font-size:18px;fill:#455d70}
+.label {font-size:22px;font-weight:700} .body {font-size:20px} .small {font-size:17px;fill:#455d70}
+.mono {font-family:Consolas,'DejaVu Sans Mono',monospace;font-size:20px} .accent {fill:#006575}
+.box {fill:#fff;stroke:#8196a6;stroke-width:1.5} .soft {fill:#e5f2f4;stroke:#006575;stroke-width:1.5}
+.line {fill:none;stroke:#006575;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+@media (prefers-color-scheme:dark) {
+.background {fill:#101923} .badge {fill:#243b4c} text {fill:#edf5fb}
+.subtitle,.small {fill:#b7c9d8} .accent,.arrow-fill {fill:#72dfeb}
+.box {fill:#192936;stroke:#587488} .soft {fill:#243b4c;stroke:#72dfeb} .line {stroke:#72dfeb}
+}
+</style>
+<rect width="1000" height="600" rx="20" fill="#f4f7fa" class="background"/>
+<rect x="28" y="26" width="48" height="42" rx="10" fill="#e5f2f4" class="badge"/>
+<text x="52" y="54" text-anchor="middle" class="label accent">08</text>
+<text x="92" y="52" class="title">APT : listes et logiciels sont différents</text>
+<text x="92" y="82" class="subtitle">Actualiser les informations ne met pas encore les logiciels à jour.</text>
+<rect x="40" y="135" width="230" height="350" rx="14" class="box"/>
+<text x="60" y="169" class="label" text-anchor="start">Dépôts de paquets</text>
+<text x="60" y="200" class="body" text-anchor="start">Informations</text>
+<text x="60" y="227" class="body" text-anchor="start">sur les versions</text>
+<text x="60" y="254" class="body" text-anchor="start"></text>
+<text x="60" y="281" class="body" text-anchor="start">Fichiers .deb</text>
+<text x="60" y="308" class="body" text-anchor="start">et dépendances</text>
+<rect x="395" y="135" width="565" height="350" rx="14" class="soft"/>
+<text x="415" y="169" class="label" text-anchor="start">Votre machine Debian</text>
+<rect x="440" y="212" width="475" height="85" rx="14" class="box"/>
+<text x="460" y="246" class="label" text-anchor="start">Liste locale des paquets</text>
+<text x="460" y="277" class="body" text-anchor="start">apt update actualise cette liste.</text>
+<rect x="440" y="361" width="475" height="85" rx="14" class="box"/>
+<text x="460" y="395" class="label" text-anchor="start">Logiciels installés</text>
+<text x="460" y="426" class="body" text-anchor="start">apt install ajoute ; apt upgrade met à jour.</text>
+<path d="M277 252 L430 252" class="line" marker-end="url(#arrow)"/>
+<text x="352" y="226" class="mono" text-anchor="middle">update</text>
+<path d="M277 402 L430 402" class="line" marker-end="url(#arrow)"/>
+<text x="352" y="374" class="mono" text-anchor="middle">install</text>
+<text x="352" y="433" class="mono" text-anchor="middle">upgrade</text>
+<text x="40" y="568" class="small" text-anchor="start">Les fichiers des logiciels sont téléchargés depuis les dépôts, pas depuis la liste locale.</text>
+</svg>

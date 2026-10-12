@@ -90,6 +90,11 @@ Le terminal est l'outil central de l'administration Linux. Depuis GNOME, plusieu
 
 > [!TIP]
 > À partir du module suivant, on travaille exclusivement dans le terminal. L'interface graphique est utile au quotidien, mais le terminal est indispensable pour l'administration.
+<!-- illustration-03 -->
+![Le bureau et le terminal manipulent les mêmes fichiers.](https://kayasam.github.io/linux-initiation/Ressources/images/03-bureau-et-terminal.svg)
+
+*Le bureau et le terminal manipulent les mêmes fichiers.*
+
 ---
 
 ## Récapitulatif

@@ -28,6 +28,12 @@ Les systèmes d'exploitation les plus connus :
 - **macOS** — Apple
 - **Linux** — communauté open source (dont Android et ChromeOS sont dérivés)
 
+
+<!-- illustration-01 -->
+![Le système Linux fait le lien entre les applications et le matériel.](https://kayasam.github.io/linux-initiation/Ressources/images/01-systeme-linux.svg)
+
+*Le système Linux fait le lien entre les applications et le matériel.*
+
 ---
 
 ## 2. Qu'est-ce que Linux ?

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" viewBox="0 0 1000 600" role="img" aria-labelledby="title description">
+<title id="title">SSH : travailler sur une machine distante</title><desc id="description">Exemple entre deux machines joignables sur le réseau.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L8 4 L0 8" fill="#006575" class="arrow-fill"/></marker></defs>
+<style>
+text { font-family:'Segoe UI',Arial,sans-serif; fill:#182d3e; }
+.title {font-size:28px;font-weight:750} .subtitle {font-size:18px;fill:#455d70}
+.label {font-size:22px;font-weight:700} .body {font-size:20px} .small {font-size:17px;fill:#455d70}
+.mono {font-family:Consolas,'DejaVu Sans Mono',monospace;font-size:20px} .accent {fill:#006575}
+.box {fill:#fff;stroke:#8196a6;stroke-width:1.5} .soft {fill:#e5f2f4;stroke:#006575;stroke-width:1.5}
+.line {fill:none;stroke:#006575;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+@media (prefers-color-scheme:dark) {
+.background {fill:#101923} .badge {fill:#243b4c} text {fill:#edf5fb}
+.subtitle,.small {fill:#b7c9d8} .accent,.arrow-fill {fill:#72dfeb}
+.box {fill:#192936;stroke:#587488} .soft {fill:#243b4c;stroke:#72dfeb} .line {stroke:#72dfeb}
+}
+</style>
+<rect width="1000" height="600" rx="20" fill="#f4f7fa" class="background"/>
+<rect x="28" y="26" width="48" height="42" rx="10" fill="#e5f2f4" class="badge"/>
+<text x="52" y="54" text-anchor="middle" class="label accent">10</text>
+<text x="92" y="52" class="title">SSH : travailler sur une machine distante</text>
+<text x="92" y="82" class="subtitle">Exemple entre deux machines joignables sur le réseau.</text>
+<rect x="45" y="145" width="340" height="180" rx="14" class="soft"/>
+<text x="65" y="179" class="label" text-anchor="start">Poste du stagiaire</text>
+<text x="65" y="210" class="body" text-anchor="start">Client SSH</text>
+<text x="65" y="237" class="body" text-anchor="start">Vous saisissez les commandes.</text>
+<rect x="615" y="145" width="340" height="180" rx="14" class="soft"/>
+<text x="635" y="179" class="label" text-anchor="start">Machine Debian distante</text>
+<text x="635" y="210" class="body" text-anchor="start">Serveur SSH — port 22</text>
+<text x="635" y="237" class="body" text-anchor="start">Les commandes s’exécutent ici.</text>
+<path d="M395 211 L605 211" class="line" marker-end="url(#arrow)"/>
+<text x="500" y="186" class="small" text-anchor="middle">Connexion chiffrée</text>
+<path d="M605 280 L395 280" class="line" marker-end="url(#arrow)"/>
+<text x="500" y="310" class="small" text-anchor="middle">Résultats affichés</text>
+<rect x="125" y="385" width="750" height="105" rx="14" class="box"/>
+<text x="145" y="419" class="label" text-anchor="start">Depuis le terminal du poste stagiaire</text>
+<text x="145" y="450" class="body" text-anchor="start">ssh stagiaire@192.168.1.10</text>
+<text x="40" y="568" class="small" text-anchor="start">L’adresse est un exemple. Avec une VM en NAT, l’accès depuis l’hôte peut nécessiter une redirection de port.</text>
+</svg>

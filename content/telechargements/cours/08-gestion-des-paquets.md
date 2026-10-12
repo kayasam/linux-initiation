@@ -69,6 +69,12 @@ apt list --installed          # tous les paquets installés
 apt list --installed | grep vim  # filtrer par nom
 ```
 
+
+<!-- illustration-08 -->
+![apt update actualise les listes ; install et upgrade agissent sur les logiciels.](https://kayasam.github.io/linux-initiation/Ressources/images/08-apt-listes-et-logiciels.svg)
+
+*apt update actualise les listes ; install et upgrade agissent sur les logiciels.*
+
 ---
 
 ## 4. La séquence type
