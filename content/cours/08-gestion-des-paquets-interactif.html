@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>08 — Gestion des paquets</title>
+<style>
+:root {
+  --bg: #0f1117; --surface: #1a1d27; --surface2: #232635; --border: #2e3148;
+  --accent: #818cf8; --accent2: #a5b4fc;
+  --warn: #f0a500; --danger: #e05c5c; --success: #4caf82;
+  --text: #d4d8f0; --text-dim: #7880a0; --code-bg: #12141f; --radius: 10px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.7; }
+
+header {
+  background: linear-gradient(135deg, #080a1a 0%, #0a0d1e 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 2.5rem 2rem 1.5rem;
+  text-align: center;
+}
+.badge { display: inline-block; background: var(--accent); color: #fff; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: .25rem .7rem; border-radius: 20px; margin-bottom: .8rem; }
+header h1 { font-size: 2rem; font-weight: 800; background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+header p { color: var(--text-dim); margin-top: .3rem; font-size: .95rem; }
+
+nav { position: sticky; top: 0; z-index: 100; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; justify-content: center; flex-wrap: wrap; gap: .25rem; padding: .5rem 1rem; }
+nav button { background: none; border: none; color: var(--text-dim); padding: .5rem 1rem; border-radius: 6px; cursor: pointer; font-size: .88rem; white-space: nowrap; transition: all .2s; }
+nav button:hover { background: var(--surface2); color: var(--text); }
+nav button.active { background: var(--accent); color: #fff; font-weight: 600; }
+
+main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+.tab { display: none; }
+.tab.active { display: block; }
+h2 { font-size: 1.4rem; color: var(--accent2); margin-bottom: 1rem; }
+h3 { font-size: 1.05rem; color: var(--text); margin: 1.5rem 0 .6rem; }
+
+.callout { border-radius: var(--radius); padding: 1rem 1.2rem; margin: 1rem 0; border-left: 4px solid; }
+.callout.note { background: rgba(130,150,255,.08); border-color: #818cf8; }
+.callout.warn { background: rgba(240,165,0,.08); border-color: var(--warn); }
+.callout.tip { background: rgba(76,175,130,.08); border-color: var(--success); }
+.callout strong { display: block; margin-bottom: .3rem; font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; opacity: .8; }
+
+.code-block { position: relative; background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius); margin: .8rem 0; }
+.code-block pre { padding: 1rem 3rem 1rem 1rem; overflow-x: auto; font-family: 'Cascadia Code', 'Consolas', monospace; font-size: .88rem; white-space: pre; }
+.copy-btn { position: absolute; top: .6rem; right: .6rem; background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim); padding: .25rem .6rem; border-radius: 5px; cursor: pointer; font-size: .75rem; transition: all .2s; }
+.copy-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+.copy-btn.copied { background: var(--success); color: #fff; border-color: var(--success); }
+.cmd { color: #818cf8; } .flag { color: #facc15; } .arg { color: #4ade80; } .path { color: #22d3ee; } .comment { color: var(--text-dim); font-style: italic; }
+
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; }
+th { background: var(--surface2); color: var(--accent2); padding: .6rem .9rem; text-align: left; border-bottom: 2px solid var(--border); }
+td { padding: .55rem .9rem; border-bottom: 1px solid var(--border); }
+tr:hover td { background: var(--surface2); }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: .8rem; margin: 1rem 0; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; cursor: pointer; transition: all .25s; }
+.card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.card h4 { color: var(--accent); font-size: .9rem; margin-bottom: .3rem; }
+.card p { color: var(--text-dim); font-size: .85rem; }
+.card .code-inline { font-family: monospace; background: var(--code-bg); padding: .15rem .4rem; border-radius: 4px; color: var(--accent2); font-size: .82rem; display: block; margin-top: .4rem; }
+.card-detail { display: none; margin-top: .6rem; padding-top: .6rem; border-top: 1px solid var(--border); color: var(--text); font-size: .85rem; }
+.card.open .card-detail { display: block; }
+
+/* APT FLOW */
+.apt-flow { display: flex; gap: 0; align-items: stretch; margin: 1.2rem 0; flex-wrap: wrap; }
+.flow-step { flex: 1; min-width: 180px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem; cursor: pointer; transition: all .25s; text-align: center; position: relative; }
+.flow-step:not(:last-child)::after { content: '→'; position: absolute; right: -14px; top: 50%; transform: translateY(-50%); color: var(--accent); font-size: 1.2rem; z-index: 1; }
+.flow-step:hover, .flow-step.active { border-color: var(--accent); background: rgba(129,140,248,.08); }
+.flow-step .step-num { font-size: .72rem; color: var(--accent); text-transform: uppercase; letter-spacing: .08em; margin-bottom: .3rem; }
+.flow-step .step-cmd { font-family: monospace; font-size: .95rem; color: var(--accent2); font-weight: 700; }
+.flow-step .step-label { font-size: .8rem; color: var(--text-dim); margin-top: .3rem; }
+.flow-detail { background: var(--surface2); border-radius: var(--radius); padding: 1rem; margin-top: .8rem; border: 1px solid var(--border); font-size: .9rem; min-height: 50px; }
+
+/* QUIZ */
+.quiz-q { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem; margin-bottom: 1rem; }
+.quiz-q p { font-weight: 600; margin-bottom: .8rem; }
+.quiz-options { display: flex; flex-direction: column; gap: .4rem; }
+.quiz-option { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: .6rem 1rem; cursor: pointer; transition: all .2s; font-size: .9rem; }
+.quiz-option:hover:not(.locked) { border-color: var(--accent); background: rgba(129,140,248,.1); }
+.quiz-option.correct { background: rgba(76,175,130,.15); border-color: var(--success); color: var(--success); }
+.quiz-option.wrong { background: rgba(224,92,92,.12); border-color: var(--danger); color: var(--danger); }
+.quiz-option.locked { cursor: default; }
+.quiz-feedback { margin-top: .7rem; padding: .6rem .9rem; border-radius: 6px; font-size: .87rem; display: none; }
+.quiz-feedback.show { display: block; }
+.quiz-feedback.ok { background: rgba(76,175,130,.12); color: var(--success); border: 1px solid var(--success); }
+.quiz-feedback.nok { background: rgba(224,92,92,.1); color: #f87171; border: 1px solid var(--danger); }
+.quiz-score { background: var(--surface2); border-radius: var(--radius); padding: 1.5rem; text-align: center; display: none; }
+.quiz-score h3 { font-size: 1.5rem; color: var(--accent); }
+.quiz-score p { color: var(--text-dim); margin: .5rem 0 1rem; }
+.btn-restart { background: var(--accent); color: #fff; border: none; padding: .7rem 1.5rem; border-radius: 8px; cursor: pointer; font-size: .95rem; font-weight: 600; transition: opacity .2s; }
+.btn-restart:hover { opacity: .85; }
+
+.recap-filters { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.filter-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim); padding: .35rem .9rem; border-radius: 20px; cursor: pointer; font-size: .82rem; transition: all .2s; }
+.filter-btn:hover, .filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.recap-table tr.hidden { display: none; }
+.tag { display: inline-block; padding: .15rem .55rem; border-radius: 12px; font-size: .72rem; font-weight: 600; }
+.tag-update { background: rgba(129,140,248,.15); color: var(--accent); }
+.tag-install { background: rgba(76,175,130,.12); color: var(--success); }
+.tag-remove { background: rgba(224,92,92,.1); color: #f87171; }
+.tag-search { background: rgba(250,204,21,.1); color: #facc21; }
+.course-site-nav { display:flex; justify-content:space-between; gap:1rem; padding:.8rem 1rem; background:#1a1d27; flex-wrap:wrap; } .course-site-nav a {color:#93c5fd; font-weight:600;}
+</style>
+</head>
+<body>
+<div class="course-site-nav"><a href="../08-gestion-des-paquets/">← Chapitre 08</a><a href="quiz/08-gestion-des-paquets.html">Quiz du chapitre →</a></div>
+
+<header>
+  <div class="badge">Linux Initiation</div>
+  <h1>08 — Gestion des paquets</h1>
+  <p>apt, dpkg, dépôts — installer et maintenir des logiciels sur Debian/Ubuntu</p>
+</header>
+
+<nav>
+  <button class="active" onclick="showTab('depots',this)">Paquets &amp; dépôts</button>
+  <button onclick="showTab('apt',this)">apt</button>
+  <button onclick="showTab('dpkg',this)">dpkg</button>
+  <button onclick="showTab('sequence',this)">Séquence type</button>
+  <button onclick="showTab('recap',this)">Récapitulatif</button>
+  <button onclick="showTab('quiz',this)">Quiz</button>
+</nav>
+
+<main>
+
+<!-- TAB 1 : PAQUETS & DÉPÔTS -->
+<div class="tab active" id="tab-depots">
+  <h2>Paquets et dépôts</h2>
+
+  <p>Un <strong>paquet</strong> est une archive contenant un programme, ses dépendances, ses fichiers de configuration et des scripts d'installation. Le gestionnaire de paquets s'occupe de tout installer au bon endroit.</p>
+
+  <div class="callout note">
+    <strong>Analogie</strong>
+    Imaginez un <strong>meuble IKEA</strong> : le paquet contient toutes les pièces + la notice. Le <strong>gestionnaire de paquets</strong> (apt) est le livreur qui va chercher la boîte à l'<strong>entrepôt</strong> (le dépôt), puis assemble tout pour vous.
+  </div>
+
+  <h3>Le dépôt</h3>
+  <p>Un dépôt est un serveur officiel qui héberge des milliers de paquets. La liste des dépôts est configurée dans <code>/etc/apt/</code>.</p>
+
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">cat</span> <span class="path">/etc/apt/sources.list</span>          <span class="comment"># dépôts principaux</span>
+<span class="cmd">ls</span> <span class="path">/etc/apt/sources.list.d/</span>         <span class="comment"># dépôts supplémentaires</span></pre>
+  </div>
+
+  <h3>La chaîne d'installation</h3>
+  <table>
+    <tr><th>Étape</th><th>Outil</th><th>Rôle</th></tr>
+    <tr><td>1</td><td><strong>dépôt</strong></td><td>Serveur distant stockant les paquets</td></tr>
+    <tr><td>2</td><td><strong>apt</strong></td><td>Télécharge, résout les dépendances, installe</td></tr>
+    <tr><td>3</td><td><strong>dpkg</strong></td><td>Outil bas niveau qui décompresse et installe réellement</td></tr>
+    <tr><td>4</td><td><strong>/etc/apt/</strong></td><td>Configuration des dépôts (sources.list)</td></tr>
+  </table>
+</div>
+
+<!-- TAB 2 : APT -->
+<div class="tab" id="tab-apt">
+  <h2>apt — le gestionnaire de paquets</h2>
+
+  <h3>Les 3 étapes fondamentales — cliquez pour détailler</h3>
+  <div class="apt-flow">
+    <div class="flow-step" onclick="showFlowDetail(0)">
+      <div class="step-num">Étape 1</div>
+      <div class="step-cmd">sudo apt update</div>
+      <div class="step-label">Mettre à jour la liste</div>
+    </div>
+    <div class="flow-step" onclick="showFlowDetail(1)">
+      <div class="step-num">Étape 2</div>
+      <div class="step-cmd">sudo apt install nom</div>
+      <div class="step-label">Installer un logiciel</div>
+    </div>
+    <div class="flow-step" onclick="showFlowDetail(2)">
+      <div class="step-num">Étape 3</div>
+      <div class="step-cmd">sudo apt upgrade</div>
+      <div class="step-label">Mettre à jour les logiciels</div>
+    </div>
+  </div>
+  <div class="flow-detail" id="flow-detail">Cliquez sur une étape pour voir les détails.</div>
+
+  <div class="callout warn">
+    <strong>Important</strong>
+    <code>apt update</code> NE met PAS à jour les logiciels installés — il met à jour uniquement la <strong>liste des versions disponibles</strong> dans les dépôts. C'est comme actualiser le catalogue avant de commander.
+  </div>
+
+  <h3>Toutes les commandes apt — cliquez pour détailler</h3>
+  <div class="cards">
+    <div class="card" onclick="toggleCard(this)">
+      <h4>update</h4>
+      <span class="code-inline">sudo apt update</span>
+      <div class="card-detail">Met à jour la liste des paquets disponibles depuis les dépôts. À faire avant tout install ou upgrade.</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <h4>upgrade</h4>
+      <span class="code-inline">sudo apt upgrade</span>
+      <div class="card-detail">Met à jour tous les logiciels installés vers leur dernière version. Nécessite un <code>apt update</code> préalable.</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <h4>install</h4>
+      <span class="code-inline">sudo apt install vim curl git</span>
+      <div class="card-detail">Installe un ou plusieurs paquets et leurs dépendances. On peut lister plusieurs paquets séparés par des espaces.</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <h4>remove</h4>
+      <span class="code-inline">sudo apt remove vim</span>
+      <div class="card-detail">Supprime le programme mais <strong>conserve les fichiers de configuration</strong>. Utile si vous voulez réinstaller plus tard avec la même config.</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <h4>purge</h4>
+      <span class="code-inline">sudo apt purge vim</span>
+      <div class="card-detail">Supprime le programme ET les fichiers de configuration. Nettoyage complet.</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <h4>autoremove</h4>
+      <span class="code-inline">sudo apt autoremove</span>
+      <div class="card-detail">Supprime les paquets installés automatiquement (dépendances) qui ne sont plus utiles. À lancer après un remove/purge.</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <h4>search</h4>
+      <span class="code-inline">apt search editeur-texte</span>
+      <div class="card-detail">Cherche un paquet par mot-clé dans les noms et descriptions. Pas besoin de sudo pour chercher.</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <h4>show</h4>
+      <span class="code-inline">apt show vim</span>
+      <div class="card-detail">Affiche les informations détaillées d'un paquet : version, description, dépendances, taille.</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <h4>list --installed</h4>
+      <span class="code-inline">apt list --installed</span>
+      <div class="card-detail">Liste tous les paquets actuellement installés sur le système. Souvent combiné avec <code>| grep nom</code> pour filtrer.</div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 3 : DPKG -->
+<div class="tab" id="tab-dpkg">
+  <h2>dpkg — installation de fichiers .deb</h2>
+
+  <p>Parfois, un logiciel n'est pas dans les dépôts officiels. Son éditeur met à disposition un fichier <code>.deb</code> à télécharger directement depuis son site.</p>
+
+  <div class="callout note">
+    <strong>apt vs dpkg</strong>
+    <strong>dpkg</strong> est l'outil de <em>bas niveau</em> qui installe réellement les fichiers. <strong>apt</strong> est une <em>surcouche</em> de dpkg qui ajoute la gestion des dépôts, la résolution automatique des dépendances et une interface plus conviviale.
+  </div>
+
+  <h3>Installer un fichier .deb</h3>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="comment"># Télécharger le fichier depuis le site de l'éditeur</span>
+<span class="cmd">wget</span> <span class="arg">https://example.com/logiciel.deb</span>
+
+<span class="comment"># Installer le fichier .deb</span>
+<span class="cmd">sudo</span> <span class="cmd">dpkg</span> <span class="flag">-i</span> <span class="arg">logiciel.deb</span>
+
+<span class="comment"># Si des dépendances manquent, les résoudre avec apt :</span>
+<span class="cmd">sudo</span> <span class="cmd">apt</span> <span class="flag">-f</span> <span class="arg">install</span></pre>
+  </div>
+
+  <h3>Vérifier si un paquet est installé</h3>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">sudo</span> <span class="cmd">dpkg</span> <span class="flag">-l</span> <span class="arg">| grep vim</span>     <span class="comment"># cherche vim dans la liste</span>
+<span class="cmd">dpkg</span> <span class="flag">-l</span> <span class="arg">nom-paquet</span>          <span class="comment"># statut d'un paquet précis</span></pre>
+  </div>
+
+  <h3>Commandes dpkg utiles</h3>
+  <table>
+    <tr><th>Commande</th><th>Description</th></tr>
+    <tr><td><code>sudo dpkg -i fichier.deb</code></td><td>Installe un paquet .deb local</td></tr>
+    <tr><td><code>sudo dpkg -r nom</code></td><td>Supprime un paquet (conserve la config)</td></tr>
+    <tr><td><code>sudo dpkg -P nom</code></td><td>Supprime le paquet + configuration (purge)</td></tr>
+    <tr><td><code>dpkg -l</code></td><td>Liste tous les paquets installés</td></tr>
+    <tr><td><code>dpkg -L nom</code></td><td>Liste les fichiers installés par un paquet</td></tr>
+    <tr><td><code>dpkg -S /chemin/fichier</code></td><td>Trouve quel paquet a installé un fichier</td></tr>
+  </table>
+</div>
+
+<!-- TAB 4 : SÉQUENCE TYPE -->
+<div class="tab" id="tab-sequence">
+  <h2>Séquences type à connaître</h2>
+
+  <h3>Installer un logiciel</h3>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">sudo</span> <span class="cmd">apt</span> <span class="arg">update</span>
+<span class="cmd">sudo</span> <span class="cmd">apt</span> <span class="arg">install</span> <span class="arg">nom-du-logiciel</span></pre>
+  </div>
+
+  <h3>Maintenance régulière du système</h3>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">sudo</span> <span class="cmd">apt</span> <span class="arg">update</span> <span class="flag">&&</span> <span class="cmd">sudo</span> <span class="cmd">apt</span> <span class="arg">upgrade</span>
+<span class="cmd">sudo</span> <span class="cmd">apt</span> <span class="arg">autoremove</span></pre>
+  </div>
+
+  <div class="callout tip">
+    <strong>Astuce</strong>
+    Le <code>&amp;&amp;</code> enchaîne deux commandes : la seconde ne s'exécute que si la première a réussi. C'est une bonne pratique pour update + upgrade.
+  </div>
+
+  <h3>Logiciels utiles à installer en formation</h3>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">sudo</span> <span class="cmd">apt</span> <span class="arg">install</span> <span class="arg">curl git htop tree net-tools vim</span>
+
+<span class="comment"># curl      : télécharger des fichiers/URLs</span>
+<span class="comment"># git       : gestion de versions</span>
+<span class="comment"># htop      : moniteur système interactif</span>
+<span class="comment"># tree      : afficher l'arborescence en arbre</span>
+<span class="comment"># net-tools : commandes réseau (ifconfig, netstat…)</span>
+<span class="comment"># vim       : éditeur de texte avancé</span></pre>
+  </div>
+
+  <h3>Rechercher avant d'installer</h3>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">apt</span> <span class="arg">search</span> <span class="arg">editeur-texte</span>   <span class="comment"># cherche par mot-clé</span>
+<span class="cmd">apt</span> <span class="arg">show</span> <span class="arg">vim</span>               <span class="comment"># infos détaillées sur un paquet</span>
+<span class="cmd">apt</span> <span class="arg">list --installed</span>       <span class="comment"># voir ce qui est déjà installé</span></pre>
+  </div>
+</div>
+
+<!-- TAB 5 : RECAP -->
+<div class="tab" id="tab-recap">
+  <h2>Récapitulatif des commandes</h2>
+  <div class="recap-filters">
+    <button class="filter-btn active" onclick="filterRecap('all',this)">Tout</button>
+    <button class="filter-btn" onclick="filterRecap('update',this)">Update</button>
+    <button class="filter-btn" onclick="filterRecap('install',this)">Install</button>
+    <button class="filter-btn" onclick="filterRecap('remove',this)">Remove</button>
+    <button class="filter-btn" onclick="filterRecap('search',this)">Search</button>
+  </div>
+  <table>
+    <thead><tr><th>Commande</th><th>Description</th><th>Catégorie</th></tr></thead>
+    <tbody id="recap-body">
+      <tr data-cat="update"><td><code>sudo apt update</code></td><td>Met à jour la liste des paquets disponibles</td><td><span class="tag tag-update">update</span></td></tr>
+      <tr data-cat="update"><td><code>sudo apt upgrade</code></td><td>Met à jour les logiciels installés</td><td><span class="tag tag-update">update</span></td></tr>
+      <tr data-cat="install"><td><code>sudo apt install vim</code></td><td>Installe le paquet vim</td><td><span class="tag tag-install">install</span></td></tr>
+      <tr data-cat="install"><td><code>sudo apt install a b c</code></td><td>Installe plusieurs paquets en une commande</td><td><span class="tag tag-install">install</span></td></tr>
+      <tr data-cat="install"><td><code>sudo dpkg -i fichier.deb</code></td><td>Installe un fichier .deb local</td><td><span class="tag tag-install">install</span></td></tr>
+      <tr data-cat="remove"><td><code>sudo apt remove vim</code></td><td>Supprime le paquet (conserve la config)</td><td><span class="tag tag-remove">remove</span></td></tr>
+      <tr data-cat="remove"><td><code>sudo apt purge vim</code></td><td>Supprime le paquet et sa configuration</td><td><span class="tag tag-remove">remove</span></td></tr>
+      <tr data-cat="remove"><td><code>sudo apt autoremove</code></td><td>Supprime les dépendances inutilisées</td><td><span class="tag tag-remove">remove</span></td></tr>
+      <tr data-cat="search"><td><code>apt search mot-clé</code></td><td>Cherche un paquet par nom/description</td><td><span class="tag tag-search">search</span></td></tr>
+      <tr data-cat="search"><td><code>apt show vim</code></td><td>Affiche les détails d'un paquet</td><td><span class="tag tag-search">search</span></td></tr>
+      <tr data-cat="search"><td><code>apt list --installed</code></td><td>Liste les paquets installés</td><td><span class="tag tag-search">search</span></td></tr>
+      <tr data-cat="search"><td><code>dpkg -l | grep nom</code></td><td>Vérifie si un paquet est installé</td><td><span class="tag tag-search">search</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- TAB 6 : QUIZ -->
+<div class="tab" id="tab-quiz">
+  <h2>Quiz — Gestion des paquets</h2>
+  <div id="quiz-container"></div>
+  <div class="quiz-score" id="quiz-score">
+    <h3 id="score-text"></h3>
+    <p id="score-sub"></p>
+    <button class="btn-restart" onclick="initQuiz()">Recommencer</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function copyCode(btn) {
+  const pre = btn.nextElementSibling;
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.textContent = 'Copié !';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 1800);
+  });
+}
+
+function toggleCard(card) { card.classList.toggle('open'); }
+
+const flowDetails = [
+  '<strong>sudo apt update</strong> — Contacte les serveurs des dépôts et télécharge la liste des paquets disponibles avec leurs numéros de version. Ne modifie rien sur votre système. C\'est obligatoire avant tout install.',
+  '<strong>sudo apt install nom</strong> — Télécharge le paquet et ses dépendances depuis les dépôts, puis les installe. Exemple : <code>sudo apt install curl git htop</code>',
+  '<strong>sudo apt upgrade</strong> — Compare les versions installées avec la liste mise à jour, puis télécharge et installe les nouvelles versions de tous les paquets. Équivalent de "Windows Update".'
+];
+let activeStep = -1;
+function showFlowDetail(i) {
+  const steps = document.querySelectorAll('.flow-step');
+  steps.forEach(s => s.classList.remove('active'));
+  if (activeStep === i) { activeStep = -1; document.getElementById('flow-detail').textContent = 'Cliquez sur une étape pour voir les détails.'; return; }
+  activeStep = i;
+  steps[i].classList.add('active');
+  document.getElementById('flow-detail').innerHTML = flowDetails[i];
+}
+
+function filterRecap(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#recap-body tr').forEach(tr => {
+    tr.classList.toggle('hidden', cat !== 'all' && tr.dataset.cat !== cat);
+  });
+}
+
+const questions = [
+  { q: "Que fait <code>sudo apt update</code> ?",
+    opts: ["Met à jour tous les logiciels installés", "Met à jour la LISTE des paquets disponibles (pas les logiciels)", "Installe les mises à jour critiques uniquement", "Télécharge les nouveaux dépôts"],
+    correct: 1, fb: "apt update ne touche à aucun logiciel : il actualise seulement la liste des versions disponibles dans les dépôts." },
+  { q: "Quelle commande installe curl et git en une seule fois ?",
+    opts: ["sudo apt install curl && sudo apt install git", "sudo apt install curl git", "sudo apt get curl git", "apt -i curl git"],
+    correct: 1, fb: "On peut lister plusieurs paquets à la suite : <code>sudo apt install curl git</code>." },
+  { q: "Différence entre <code>apt remove</code> et <code>apt purge</code> ?",
+    opts: ["remove est plus rapide que purge", "remove garde la configuration, purge supprime tout", "purge est pour les paquets système seulement", "Il n'y a aucune différence"],
+    correct: 1, fb: "remove supprime le programme mais laisse les fichiers de config. purge nettoie complètement, y compris la configuration." },
+  { q: "Pourquoi faut-il faire <code>apt update</code> avant <code>apt install</code> ?",
+    opts: ["C'est obligatoire sinon apt plante", "Pour avoir les informations sur les dernières versions disponibles", "Pour vider le cache apt", "Pour vérifier les dépendances"],
+    correct: 1, fb: "Sans apt update, apt peut proposer des versions anciennes ou ne pas trouver de nouveaux paquets ajoutés récemment aux dépôts." },
+  { q: "Comment installer un fichier .deb téléchargé directement ?",
+    opts: ["sudo apt install fichier.deb", "sudo dpkg -i fichier.deb", "sudo install fichier.deb", "dpkg --add fichier.deb"],
+    correct: 1, fb: "dpkg -i (install) permet d'installer un fichier .deb local. Si des dépendances manquent : sudo apt -f install" },
+  { q: "Que fait <code>sudo apt autoremove</code> ?",
+    opts: ["Supprime automatiquement tous les paquets non utilisés depuis 30 jours", "Supprime les paquets installés automatiquement qui ne sont plus nécessaires", "Désinstalle apt lui-même", "Supprime les anciens noyaux Linux"],
+    correct: 1, fb: "autoremove nettoie les dépendances qui ont été installées automatiquement pour d'autres paquets, mais qui ne sont plus utiles." }
+];
+
+let quizAnswers = [];
+function initQuiz() {
+  quizAnswers = new Array(questions.length).fill(null);
+  document.getElementById('quiz-score').style.display = 'none';
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  questions.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-q';
+    div.id = 'qq-' + i;
+    div.innerHTML = `<p>Question ${i+1}. ${q.q}</p>
+      <div class="quiz-options">
+        ${q.opts.map((o,j) => `<div class="quiz-option" onclick="answerQuiz(${i},${j})">${o}</div>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="fb-${i}"></div>`;
+    container.appendChild(div);
+  });
+}
+
+function answerQuiz(qi, oi) {
+  if (quizAnswers[qi] !== null) return;
+  quizAnswers[qi] = oi;
+  const q = questions[qi];
+  const opts = document.querySelectorAll(`#qq-${qi} .quiz-option`);
+  opts.forEach((opt, j) => {
+    opt.classList.add('locked');
+    if (j === q.correct) opt.classList.add('correct');
+    else if (j === oi) opt.classList.add('wrong');
+  });
+  const fb = document.getElementById('fb-' + qi);
+  fb.classList.add('show');
+  const ok = oi === q.correct;
+  fb.classList.add(ok ? 'ok' : 'nok');
+  fb.innerHTML = (ok ? '✓ Correct ! ' : '✗ Incorrect. ') + q.fb;
+  if (quizAnswers.every(a => a !== null)) showScore();
+}
+
+function showScore() {
+  const score = quizAnswers.filter((a, i) => a === questions[i].correct).length;
+  const sc = document.getElementById('quiz-score');
+  sc.style.display = 'block';
+  document.getElementById('score-text').textContent = score + ' / ' + questions.length;
+  const msgs = ['Réessaie encore !', 'Pas mal, continue !', 'Bien joué !', 'Excellent !'];
+  document.getElementById('score-sub').textContent = msgs[Math.min(Math.floor(score/2), 3)];
+}
+
+initQuiz();
+</script>
+</body>
+</html>

@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>07 — Utilisateurs et permissions</title>
+<style>
+:root {
+  --bg: #0f1117; --surface: #1a1d27; --surface2: #232635; --border: #2e3148;
+  --accent: #f87171; --accent2: #fca5a5;
+  --warn: #f0a500; --danger: #e05c5c; --success: #4caf82;
+  --text: #d4d8f0; --text-dim: #7880a0; --code-bg: #12141f; --radius: 10px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.7; }
+
+/* HEADER */
+header {
+  background: linear-gradient(135deg, #1a0808 0%, #1a0c0c 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 2.5rem 2rem 1.5rem;
+  text-align: center;
+}
+.badge { display: inline-block; background: var(--accent); color: #fff; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: .25rem .7rem; border-radius: 20px; margin-bottom: .8rem; }
+header h1 { font-size: 2rem; font-weight: 800; background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+header p { color: var(--text-dim); margin-top: .3rem; font-size: .95rem; }
+
+/* NAV */
+nav { position: sticky; top: 0; z-index: 100; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; justify-content: center; flex-wrap: wrap; gap: .25rem; padding: .5rem 1rem; }
+nav button { background: none; border: none; color: var(--text-dim); padding: .5rem 1rem; border-radius: 6px; cursor: pointer; font-size: .88rem; white-space: nowrap; transition: all .2s; }
+nav button:hover { background: var(--surface2); color: var(--text); }
+nav button.active { background: var(--accent); color: #fff; font-weight: 600; }
+
+/* MAIN */
+main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+.tab { display: none; }
+.tab.active { display: block; }
+h2 { font-size: 1.4rem; color: var(--accent2); margin-bottom: 1rem; }
+h3 { font-size: 1.05rem; color: var(--text); margin: 1.5rem 0 .6rem; }
+
+/* CALLOUTS */
+.callout { border-radius: var(--radius); padding: 1rem 1.2rem; margin: 1rem 0; border-left: 4px solid; }
+.callout.note { background: rgba(130,150,255,.08); border-color: #818cf8; }
+.callout.warn { background: rgba(240,165,0,.08); border-color: var(--warn); }
+.callout.danger { background: rgba(224,92,92,.1); border-color: var(--danger); }
+.callout.tip { background: rgba(76,175,130,.08); border-color: var(--success); }
+.callout strong { display: block; margin-bottom: .3rem; font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; opacity: .8; }
+
+/* CODE */
+.code-block { position: relative; background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius); margin: .8rem 0; }
+.code-block pre { padding: 1rem 3rem 1rem 1rem; overflow-x: auto; font-family: 'Cascadia Code', 'Consolas', monospace; font-size: .88rem; white-space: pre; }
+.copy-btn { position: absolute; top: .6rem; right: .6rem; background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim); padding: .25rem .6rem; border-radius: 5px; cursor: pointer; font-size: .75rem; transition: all .2s; }
+.copy-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+.copy-btn.copied { background: var(--success); color: #fff; border-color: var(--success); }
+.cmd { color: #f87171; } .flag { color: #facc15; } .arg { color: #4ade80; } .path { color: #22d3ee; } .comment { color: var(--text-dim); font-style: italic; }
+
+/* TABLES */
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; }
+th { background: var(--surface2); color: var(--accent2); padding: .6rem .9rem; text-align: left; border-bottom: 2px solid var(--border); }
+td { padding: .55rem .9rem; border-bottom: 1px solid var(--border); }
+tr:hover td { background: var(--surface2); }
+
+/* CARDS */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: .8rem; margin: 1rem 0; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; cursor: pointer; transition: all .25s; }
+.card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.card h4 { color: var(--accent); font-size: .9rem; margin-bottom: .3rem; }
+.card p { color: var(--text-dim); font-size: .85rem; }
+.card .code-inline { font-family: monospace; background: var(--code-bg); padding: .15rem .4rem; border-radius: 4px; color: var(--accent2); font-size: .82rem; display: block; margin-top: .4rem; }
+.card-detail { display: none; margin-top: .6rem; padding-top: .6rem; border-top: 1px solid var(--border); color: var(--text); font-size: .85rem; }
+.card.open .card-detail { display: block; }
+
+/* PERMISSION VISUALIZER */
+.perm-display { display: flex; gap: .3rem; margin: 1.2rem 0; flex-wrap: wrap; align-items: center; }
+.perm-block { display: flex; gap: 2px; }
+.perm-char { width: 36px; height: 42px; display: flex; align-items: center; justify-content: center; font-family: monospace; font-size: 1.1rem; font-weight: 700; border-radius: 5px; cursor: pointer; transition: all .2s; user-select: none; border: 2px solid transparent; }
+.perm-char:hover, .perm-char.selected { border-color: var(--accent); background: rgba(248,113,113,.15); color: var(--accent); }
+.perm-char.r { color: var(--success); }
+.perm-char.w { color: var(--warn); }
+.perm-char.x { color: #a78bfa; }
+.perm-char.type { color: #818cf8; }
+.perm-char.dash { color: var(--text-dim); }
+.perm-sep { color: var(--text-dim); font-size: .75rem; padding: 0 .4rem; display: flex; align-items: center; }
+.perm-label { font-size: .7rem; color: var(--text-dim); text-align: center; margin-top: .2rem; }
+.perm-info { background: var(--surface2); border-radius: var(--radius); padding: 1rem; margin-top: .8rem; border: 1px solid var(--border); min-height: 60px; font-size: .9rem; }
+.perm-group { display: flex; flex-direction: column; align-items: center; }
+.perm-group-label { font-size: .68rem; color: var(--accent2); text-transform: uppercase; letter-spacing: .06em; margin-top: .3rem; }
+
+/* CHMOD CALCULATOR */
+.chmod-calc { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem; margin: 1rem 0; }
+.chmod-cols { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.chmod-col { flex: 1; min-width: 120px; background: var(--code-bg); border-radius: 8px; padding: .8rem; }
+.chmod-col h4 { color: var(--accent2); font-size: .85rem; text-align: center; margin-bottom: .6rem; }
+.chmod-check { display: flex; align-items: center; gap: .5rem; padding: .25rem 0; cursor: pointer; }
+.chmod-check input { accent-color: var(--accent); width: 16px; height: 16px; cursor: pointer; }
+.chmod-check label { cursor: pointer; font-size: .9rem; }
+.chmod-result { text-align: center; }
+.chmod-number { font-family: monospace; font-size: 2.5rem; font-weight: 800; color: var(--accent); }
+.chmod-symbolic { font-family: monospace; font-size: 1.1rem; color: var(--accent2); margin-top: .3rem; }
+.chmod-example { color: var(--text-dim); font-size: .85rem; margin-top: .4rem; }
+
+/* QUIZ */
+.quiz-q { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem; margin-bottom: 1rem; }
+.quiz-q p { font-weight: 600; margin-bottom: .8rem; }
+.quiz-options { display: flex; flex-direction: column; gap: .4rem; }
+.quiz-option { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: .6rem 1rem; cursor: pointer; transition: all .2s; font-size: .9rem; }
+.quiz-option:hover:not(.locked) { border-color: var(--accent); background: rgba(248,113,113,.1); }
+.quiz-option.correct { background: rgba(76,175,130,.15); border-color: var(--success); color: var(--success); }
+.quiz-option.wrong { background: rgba(224,92,92,.12); border-color: var(--danger); color: var(--danger); }
+.quiz-option.locked { cursor: default; }
+.quiz-feedback { margin-top: .7rem; padding: .6rem .9rem; border-radius: 6px; font-size: .87rem; display: none; }
+.quiz-feedback.show { display: block; }
+.quiz-feedback.ok { background: rgba(76,175,130,.12); color: var(--success); border: 1px solid var(--success); }
+.quiz-feedback.nok { background: rgba(224,92,92,.1); color: #f87171; border: 1px solid var(--danger); }
+.quiz-score { background: var(--surface2); border-radius: var(--radius); padding: 1.5rem; text-align: center; display: none; }
+.quiz-score h3 { font-size: 1.5rem; color: var(--accent); }
+.quiz-score p { color: var(--text-dim); margin: .5rem 0 1rem; }
+.btn-restart { background: var(--accent); color: #fff; border: none; padding: .7rem 1.5rem; border-radius: 8px; cursor: pointer; font-size: .95rem; font-weight: 600; transition: opacity .2s; }
+.btn-restart:hover { opacity: .85; }
+
+/* RECAP */
+.recap-filters { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.filter-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim); padding: .35rem .9rem; border-radius: 20px; cursor: pointer; font-size: .82rem; transition: all .2s; }
+.filter-btn:hover, .filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.recap-table tr.hidden { display: none; }
+.tag { display: inline-block; padding: .15rem .55rem; border-radius: 12px; font-size: .72rem; font-weight: 600; }
+.tag-users { background: rgba(248,113,113,.15); color: var(--accent); }
+.tag-groupes { background: rgba(250,204,21,.12); color: #facc21; }
+.tag-permissions { background: rgba(76,175,130,.12); color: var(--success); }
+.course-site-nav { display:flex; justify-content:space-between; gap:1rem; padding:.8rem 1rem; background:#1a1d27; flex-wrap:wrap; } .course-site-nav a {color:#93c5fd; font-weight:600;}
+</style>
+</head>
+<body>
+<div class="course-site-nav"><a href="../07-utilisateurs-et-permissions/">← Chapitre 07</a><a href="quiz/07-utilisateurs-et-permissions.html">Quiz du chapitre →</a></div>
+
+<header>
+  <div class="badge">Linux Initiation</div>
+  <h1>07 — Utilisateurs et permissions</h1>
+  <p>Comptes, droits, chmod — comprendre et gérer qui peut faire quoi</p>
+</header>
+
+<nav>
+  <button class="active" onclick="showTab('users',this)">Utilisateurs</button>
+  <button onclick="showTab('comptes',this)">Gérer les comptes</button>
+  <button onclick="showTab('perms',this)">Permissions</button>
+  <button onclick="showTab('chmod',this)">chmod</button>
+  <button onclick="showTab('recap',this)">Récapitulatif</button>
+  <button onclick="showTab('quiz',this)">Quiz</button>
+</nav>
+
+<main>
+
+<!-- TAB 1 : UTILISATEURS -->
+<div class="tab active" id="tab-users">
+  <h2>Le système multi-utilisateurs</h2>
+
+  <div class="callout note">
+    <strong>Analogie</strong>
+    Un système Linux est comme un immeuble : chaque personne a sa <strong>clé</strong> (son compte), son <strong>appartement</strong> (/home/alice), et le <strong>gardien avec le passe-partout</strong>, c'est <strong>root</strong>.
+  </div>
+
+  <h3>L'utilisateur root</h3>
+  <p>Root est le superutilisateur : il a tous les droits sur le système, sans aucune restriction.</p>
+  <div class="callout danger">
+    <strong>Danger</strong>
+    Ne jamais travailler au quotidien en tant que root. Une seule erreur (ex: <code>rm -rf /</code>) peut détruire tout le système sans confirmation.
+  </div>
+
+  <h3>Commandes d'identité</h3>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">whoami</span>      <span class="comment"># utilisateur courant</span>
+<span class="cmd">id</span>          <span class="comment"># UID, GID et groupes</span>
+<span class="cmd">who</span>         <span class="comment"># utilisateurs connectés</span>
+<span class="cmd">groups</span>      <span class="comment"># groupes de l'utilisateur courant</span></pre>
+  </div>
+
+  <h3>sudo — élévation ponctuelle</h3>
+  <p><strong>sudo</strong> permet d'exécuter <em>une seule commande</em> avec les droits root, sans se connecter en root. C'est la méthode recommandée.</p>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">sudo</span> <span class="arg">apt update</span>
+<span class="cmd">sudo</span> <span class="cmd">nano</span> <span class="path">/etc/hosts</span></pre>
+  </div>
+
+  <h3>Les groupes</h3>
+  <p>Chaque utilisateur appartient à un ou plusieurs groupes. Les permissions peuvent être attribuées à un groupe entier.</p>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">cat</span> <span class="path">/etc/group</span>    <span class="comment"># liste de tous les groupes</span></pre>
+  </div>
+</div>
+
+<!-- TAB 2 : GÉRER LES COMPTES -->
+<div class="tab" id="tab-comptes">
+  <h2>Gérer les comptes utilisateurs</h2>
+  <p style="color:var(--text-dim); margin-bottom:1rem;">Ces commandes nécessitent <strong>sudo</strong>.</p>
+
+  <div class="callout warn">
+    <strong>Attention</strong>
+    Sur Debian, toujours utiliser <code>adduser</code> (et non <code>useradd</code>) pour créer un compte interactivement. <code>adduser</code> crée automatiquement le dossier /home, demande le mot de passe, etc.
+  </div>
+
+  <h3>Commandes de gestion — cliquez pour détailler</h3>
+  <div class="cards">
+    <div class="card" onclick="toggleCard(this)">
+      <h4>Créer un utilisateur</h4>
+      <span class="code-inline">sudo adduser alice</span>
+      <div class="card-detail">Crée l'utilisateur <em>alice</em>, son dossier <code>/home/alice</code>, et demande interactivement un mot de passe et des informations.</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <h4>Changer le mot de passe</h4>
+      <span class="code-inline">sudo passwd alice</span>
+      <div class="card-detail">Change le mot de passe de l'utilisateur alice. Sans argument (<code>passwd</code>), change le mot de passe de l'utilisateur courant.</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <h4>Ajouter au groupe sudo</h4>
+      <span class="code-inline">sudo usermod -aG sudo alice</span>
+      <div class="card-detail"><code>-a</code> = append (ajouter sans retirer les autres groupes), <code>-G</code> = groupe. Donne à alice le droit d'utiliser sudo.</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <h4>Supprimer un utilisateur</h4>
+      <span class="code-inline">sudo deluser alice</span>
+      <div class="card-detail">Supprime le compte alice, mais conserve le dossier <code>/home/alice</code> et ses fichiers.</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <h4>Supprimer avec le /home</h4>
+      <span class="code-inline">sudo deluser --remove-home alice</span>
+      <div class="card-detail">Supprime le compte ET le dossier personnel <code>/home/alice</code>. Irréversible — vérifier avant.</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <h4>Modifier un groupe</h4>
+      <span class="code-inline">sudo groupadd stagiaires</span>
+      <div class="card-detail">Crée un nouveau groupe <em>stagiaires</em>. On peut ensuite y ajouter des utilisateurs avec <code>usermod -aG stagiaires alice</code>.</div>
+    </div>
+  </div>
+
+  <h3>Récapitulatif rapide</h3>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">sudo</span> <span class="arg">adduser alice</span>                    <span class="comment"># crée un utilisateur (interactif)</span>
+<span class="cmd">sudo</span> <span class="cmd">passwd</span> <span class="arg">alice</span>                    <span class="comment"># change le mot de passe</span>
+<span class="cmd">sudo</span> <span class="cmd">usermod</span> <span class="flag">-aG</span> <span class="arg">sudo alice</span>          <span class="comment"># ajoute alice au groupe sudo</span>
+<span class="cmd">sudo</span> <span class="cmd">deluser</span> <span class="arg">alice</span>                    <span class="comment"># supprime l'utilisateur</span>
+<span class="cmd">sudo</span> <span class="cmd">deluser</span> <span class="flag">--remove-home</span> <span class="arg">alice</span>    <span class="comment"># supprime aussi /home/alice</span></pre>
+  </div>
+</div>
+
+<!-- TAB 3 : PERMISSIONS -->
+<div class="tab" id="tab-perms">
+  <h2>Lire et comprendre les permissions</h2>
+
+  <h3>Afficher les permissions</h3>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">ls</span> <span class="flag">-l</span>    <span class="comment"># liste détaillée avec permissions</span></pre>
+  </div>
+  <p>Exemple de sortie :</p>
+  <div class="code-block">
+    <pre><span class="arg">-rw-r--r--</span>  1  stagiaire  stagiaire  1234  notes.txt</pre>
+  </div>
+
+  <h3>Visualiseur de permissions — cliquez sur un bloc</h3>
+  <div id="perm-visualizer">
+    <div class="perm-display">
+      <div class="perm-group">
+        <div class="perm-block">
+          <div class="perm-char type" data-info="type" onclick="showPermInfo(this, 'type', '-')">-</div>
+        </div>
+        <div class="perm-group-label">type</div>
+      </div>
+      <div class="perm-sep">|</div>
+      <div class="perm-group">
+        <div class="perm-block">
+          <div class="perm-char r" data-info="ur" onclick="showPermInfo(this,'ur','r')">r</div>
+          <div class="perm-char w" data-info="uw" onclick="showPermInfo(this,'uw','w')">w</div>
+          <div class="perm-char dash" data-info="ux" onclick="showPermInfo(this,'ux','-')">-</div>
+        </div>
+        <div class="perm-group-label">u (propriétaire)</div>
+      </div>
+      <div class="perm-sep">|</div>
+      <div class="perm-group">
+        <div class="perm-block">
+          <div class="perm-char r" data-info="gr" onclick="showPermInfo(this,'gr','r')">r</div>
+          <div class="perm-char dash" data-info="gw" onclick="showPermInfo(this,'gw','-')">-</div>
+          <div class="perm-char dash" data-info="gx" onclick="showPermInfo(this,'gx','-')">-</div>
+        </div>
+        <div class="perm-group-label">g (groupe)</div>
+      </div>
+      <div class="perm-sep">|</div>
+      <div class="perm-group">
+        <div class="perm-block">
+          <div class="perm-char r" data-info="or" onclick="showPermInfo(this,'or','r')">r</div>
+          <div class="perm-char dash" data-info="ow" onclick="showPermInfo(this,'ow','-')">-</div>
+          <div class="perm-char dash" data-info="ox" onclick="showPermInfo(this,'ox','-')">-</div>
+        </div>
+        <div class="perm-group-label">o (autres)</div>
+      </div>
+    </div>
+    <div class="perm-info" id="perm-info-box">Cliquez sur un caractère pour voir son explication.</div>
+  </div>
+
+  <h3>Les 3 droits</h3>
+  <table>
+    <tr><th>Lettre</th><th>Nom</th><th>Sur un fichier</th><th>Sur un dossier</th></tr>
+    <tr><td><strong style="color:var(--success)">r</strong></td><td>read (lecture)</td><td>Lire le contenu du fichier</td><td>Lister les fichiers du dossier</td></tr>
+    <tr><td><strong style="color:var(--warn)">w</strong></td><td>write (écriture)</td><td>Modifier le fichier</td><td>Créer/supprimer des fichiers dans le dossier</td></tr>
+    <tr><td><strong style="color:#a78bfa">x</strong></td><td>execute (exécution)</td><td>Lancer le fichier comme programme</td><td>Entrer dans le dossier (cd)</td></tr>
+  </table>
+
+  <h3>Les 3 catégories</h3>
+  <table>
+    <tr><th>Lettre</th><th>Nom</th><th>Description</th></tr>
+    <tr><td><strong style="color:var(--accent)">u</strong></td><td>user</td><td>Le propriétaire du fichier</td></tr>
+    <tr><td><strong style="color:var(--accent)">g</strong></td><td>group</td><td>Le groupe associé au fichier</td></tr>
+    <tr><td><strong style="color:var(--accent)">o</strong></td><td>others</td><td>Tous les autres utilisateurs</td></tr>
+  </table>
+</div>
+
+<!-- TAB 4 : CHMOD -->
+<div class="tab" id="tab-chmod">
+  <h2>Modifier les permissions avec chmod</h2>
+
+  <h3>Mode symbolique</h3>
+  <p>On désigne <em>qui</em> (u/g/o/a), l'<em>opération</em> (+/-/=) et le <em>droit</em> (r/w/x).</p>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">chmod</span> <span class="arg">u+x script.sh</span>     <span class="comment"># ajoute exécution au propriétaire</span>
+<span class="cmd">chmod</span> <span class="arg">g-w fichier.txt</span>   <span class="comment"># retire écriture au groupe</span>
+<span class="cmd">chmod</span> <span class="arg">o+r rapport.txt</span>   <span class="comment"># donne lecture aux autres</span>
+<span class="cmd">chmod</span> <span class="arg">a+x script.sh</span>     <span class="comment"># donne exécution à tous (all)</span></pre>
+  </div>
+
+  <h3>Mode numérique (r=4, w=2, x=1)</h3>
+  <p>On additionne les valeurs pour chaque catégorie (u/g/o) :</p>
+  <table>
+    <tr><th>Valeur</th><th>Droits</th><th>Explication</th></tr>
+    <tr><td><strong>7</strong></td><td>rwx</td><td>4+2+1 = tout</td></tr>
+    <tr><td><strong>6</strong></td><td>rw-</td><td>4+2 = lecture + écriture</td></tr>
+    <tr><td><strong>5</strong></td><td>r-x</td><td>4+1 = lecture + exécution</td></tr>
+    <tr><td><strong>4</strong></td><td>r--</td><td>4 = lecture seule</td></tr>
+    <tr><td><strong>0</strong></td><td>---</td><td>aucun droit</td></tr>
+  </table>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">chmod</span> <span class="arg">644 fichier.txt</span>   <span class="comment"># rw-r--r-- (fichier standard)</span>
+<span class="cmd">chmod</span> <span class="arg">755 script.sh</span>     <span class="comment"># rwxr-xr-x (script exécutable)</span>
+<span class="cmd">chmod</span> <span class="arg">700 secret.txt</span>    <span class="comment"># rwx------ (privé, personne d'autre)</span></pre>
+  </div>
+
+  <h3>Calculatrice chmod interactive</h3>
+  <div class="chmod-calc">
+    <div class="chmod-cols">
+      <div class="chmod-col">
+        <h4>u — Propriétaire</h4>
+        <label class="chmod-check"><input type="checkbox" id="ur" onchange="calcChmod()"><label for="ur">r (lecture)</label></label>
+        <label class="chmod-check"><input type="checkbox" id="uw" onchange="calcChmod()"><label for="uw">w (écriture)</label></label>
+        <label class="chmod-check"><input type="checkbox" id="ux" onchange="calcChmod()"><label for="ux">x (exécution)</label></label>
+      </div>
+      <div class="chmod-col">
+        <h4>g — Groupe</h4>
+        <label class="chmod-check"><input type="checkbox" id="gr" onchange="calcChmod()"><label for="gr">r (lecture)</label></label>
+        <label class="chmod-check"><input type="checkbox" id="gw" onchange="calcChmod()"><label for="gw">w (écriture)</label></label>
+        <label class="chmod-check"><input type="checkbox" id="gx" onchange="calcChmod()"><label for="gx">x (exécution)</label></label>
+      </div>
+      <div class="chmod-col">
+        <h4>o — Autres</h4>
+        <label class="chmod-check"><input type="checkbox" id="or2" onchange="calcChmod()"><label for="or2">r (lecture)</label></label>
+        <label class="chmod-check"><input type="checkbox" id="ow2" onchange="calcChmod()"><label for="ow2">w (écriture)</label></label>
+        <label class="chmod-check"><input type="checkbox" id="ox2" onchange="calcChmod()"><label for="ox2">x (exécution)</label></label>
+      </div>
+    </div>
+    <div class="chmod-result">
+      <div class="chmod-number" id="chmod-num">000</div>
+      <div class="chmod-symbolic" id="chmod-sym">---------</div>
+      <div class="chmod-example" id="chmod-ex">chmod 000 fichier</div>
+    </div>
+  </div>
+
+  <h3>chown — changer le propriétaire</h3>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">sudo</span> <span class="cmd">chown</span> <span class="arg">alice fichier.txt</span>
+<span class="cmd">sudo</span> <span class="cmd">chown</span> <span class="arg">alice:stagiaires fichier.txt</span>  <span class="comment"># propriétaire:groupe</span>
+<span class="cmd">sudo</span> <span class="cmd">chown</span> <span class="flag">-R</span> <span class="arg">alice /home/alice/</span>         <span class="comment"># récursif sur tout le dossier</span></pre>
+  </div>
+</div>
+
+<!-- TAB 5 : RÉCAP -->
+<div class="tab" id="tab-recap">
+  <h2>Récapitulatif des commandes</h2>
+  <div class="recap-filters">
+    <button class="filter-btn active" onclick="filterRecap('all',this)">Tout</button>
+    <button class="filter-btn" onclick="filterRecap('users',this)">Utilisateurs</button>
+    <button class="filter-btn" onclick="filterRecap('groupes',this)">Groupes</button>
+    <button class="filter-btn" onclick="filterRecap('permissions',this)">Permissions</button>
+  </div>
+  <table>
+    <thead><tr><th>Commande</th><th>Description</th><th>Catégorie</th></tr></thead>
+    <tbody id="recap-body">
+      <tr data-cat="users"><td><code>whoami</code></td><td>Affiche l'utilisateur courant</td><td><span class="tag tag-users">users</span></td></tr>
+      <tr data-cat="users"><td><code>id</code></td><td>Affiche UID, GID et groupes</td><td><span class="tag tag-users">users</span></td></tr>
+      <tr data-cat="users"><td><code>who</code></td><td>Affiche les utilisateurs connectés</td><td><span class="tag tag-users">users</span></td></tr>
+      <tr data-cat="users"><td><code>sudo adduser alice</code></td><td>Crée un nouvel utilisateur (interactif)</td><td><span class="tag tag-users">users</span></td></tr>
+      <tr data-cat="users"><td><code>sudo passwd alice</code></td><td>Change le mot de passe d'alice</td><td><span class="tag tag-users">users</span></td></tr>
+      <tr data-cat="users"><td><code>sudo deluser alice</code></td><td>Supprime le compte alice</td><td><span class="tag tag-users">users</span></td></tr>
+      <tr data-cat="users"><td><code>sudo deluser --remove-home alice</code></td><td>Supprime le compte et le /home</td><td><span class="tag tag-users">users</span></td></tr>
+      <tr data-cat="groupes"><td><code>groups</code></td><td>Affiche les groupes de l'utilisateur courant</td><td><span class="tag tag-groupes">groupes</span></td></tr>
+      <tr data-cat="groupes"><td><code>cat /etc/group</code></td><td>Liste tous les groupes du système</td><td><span class="tag tag-groupes">groupes</span></td></tr>
+      <tr data-cat="groupes"><td><code>sudo usermod -aG sudo alice</code></td><td>Ajoute alice au groupe sudo</td><td><span class="tag tag-groupes">groupes</span></td></tr>
+      <tr data-cat="groupes"><td><code>sudo groupadd stagiaires</code></td><td>Crée un nouveau groupe</td><td><span class="tag tag-groupes">groupes</span></td></tr>
+      <tr data-cat="permissions"><td><code>ls -l</code></td><td>Affiche les permissions des fichiers</td><td><span class="tag tag-permissions">permissions</span></td></tr>
+      <tr data-cat="permissions"><td><code>chmod 644 fichier</code></td><td>Droits rw-r--r-- (fichier standard)</td><td><span class="tag tag-permissions">permissions</span></td></tr>
+      <tr data-cat="permissions"><td><code>chmod 755 script.sh</code></td><td>Droits rwxr-xr-x (script exécutable)</td><td><span class="tag tag-permissions">permissions</span></td></tr>
+      <tr data-cat="permissions"><td><code>chmod u+x script.sh</code></td><td>Ajoute l'exécution au propriétaire</td><td><span class="tag tag-permissions">permissions</span></td></tr>
+      <tr data-cat="permissions"><td><code>chmod a+r fichier</code></td><td>Donne la lecture à tous</td><td><span class="tag tag-permissions">permissions</span></td></tr>
+      <tr data-cat="permissions"><td><code>sudo chown alice fichier</code></td><td>Change le propriétaire du fichier</td><td><span class="tag tag-permissions">permissions</span></td></tr>
+      <tr data-cat="permissions"><td><code>sudo chown -R alice /dossier/</code></td><td>Chown récursif sur un dossier</td><td><span class="tag tag-permissions">permissions</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- TAB 6 : QUIZ -->
+<div class="tab" id="tab-quiz">
+  <h2>Quiz — Utilisateurs et permissions</h2>
+  <div id="quiz-container"></div>
+  <div class="quiz-score" id="quiz-score">
+    <h3 id="score-text"></h3>
+    <p id="score-sub"></p>
+    <button class="btn-restart" onclick="initQuiz()">Recommencer</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ========== TABS ==========
+function showTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ========== COPY ==========
+function copyCode(btn) {
+  const pre = btn.nextElementSibling;
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.textContent = 'Copié !';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 1800);
+  });
+}
+
+// ========== CARDS ==========
+function toggleCard(card) {
+  card.classList.toggle('open');
+}
+
+// ========== PERM VISUALIZER ==========
+const permInfos = {
+  type: { '-': 'Type <strong>-</strong> : fichier ordinaire.<br>Autres possibilités : <code>d</code> = dossier, <code>l</code> = lien symbolique.' },
+  ur: { r: '<strong>Propriétaire (u)</strong> — <span style="color:var(--success)">r</span> : peut lire le fichier.' },
+  uw: { w: '<strong>Propriétaire (u)</strong> — <span style="color:var(--warn)">w</span> : peut modifier le fichier.' },
+  ux: { '-': '<strong>Propriétaire (u)</strong> — <span style="color:var(--text-dim)">-</span> : ne peut PAS exécuter ce fichier.' },
+  gr: { r: '<strong>Groupe (g)</strong> — <span style="color:var(--success)">r</span> : les membres du groupe peuvent lire le fichier.' },
+  gw: { '-': '<strong>Groupe (g)</strong> — <span style="color:var(--text-dim)">-</span> : les membres du groupe ne peuvent PAS modifier.' },
+  gx: { '-': '<strong>Groupe (g)</strong> — <span style="color:var(--text-dim)">-</span> : les membres du groupe ne peuvent PAS exécuter.' },
+  or: { r: '<strong>Autres (o)</strong> — <span style="color:var(--success)">r</span> : tout le monde peut lire ce fichier.' },
+  ow: { '-': '<strong>Autres (o)</strong> — <span style="color:var(--text-dim)">-</span> : les autres ne peuvent PAS modifier.' },
+  ox: { '-': '<strong>Autres (o)</strong> — <span style="color:var(--text-dim)">-</span> : les autres ne peuvent PAS exécuter.' }
+};
+let selectedPerm = null;
+function showPermInfo(el, key, char) {
+  if (selectedPerm) selectedPerm.classList.remove('selected');
+  el.classList.add('selected');
+  selectedPerm = el;
+  const info = permInfos[key] && permInfos[key][char];
+  document.getElementById('perm-info-box').innerHTML = info || 'Pas d\'info pour ce caractère.';
+}
+
+// ========== CHMOD CALCULATOR ==========
+function calcChmod() {
+  const u = (document.getElementById('ur').checked ? 4:0) + (document.getElementById('uw').checked ? 2:0) + (document.getElementById('ux').checked ? 1:0);
+  const g = (document.getElementById('gr').checked ? 4:0) + (document.getElementById('gw').checked ? 2:0) + (document.getElementById('gx').checked ? 1:0);
+  const o = (document.getElementById('or2').checked ? 4:0) + (document.getElementById('ow2').checked ? 2:0) + (document.getElementById('ox2').checked ? 1:0);
+  const num = '' + u + g + o;
+  const toSym = v => (v&4?'r':'-') + (v&2?'w':'-') + (v&1?'x':'-');
+  document.getElementById('chmod-num').textContent = num;
+  document.getElementById('chmod-sym').textContent = toSym(u) + toSym(g) + toSym(o);
+  document.getElementById('chmod-ex').textContent = 'chmod ' + num + ' fichier';
+}
+
+// ========== RECAP FILTER ==========
+function filterRecap(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#recap-body tr').forEach(tr => {
+    tr.classList.toggle('hidden', cat !== 'all' && tr.dataset.cat !== cat);
+  });
+}
+
+// ========== QUIZ ==========
+const questions = [
+  { q: "Que fait la commande <code>whoami</code> ?",
+    opts: ["Affiche la liste des utilisateurs du système", "Affiche le nom de l'utilisateur courant", "Montre qui est connecté en ce moment", "Affiche l'UID de root"],
+    correct: 1, fb: "<code>whoami</code> affiche simplement le nom d'utilisateur sous lequel on est connecté." },
+  { q: "Pourquoi utilise-t-on <code>sudo</code> au lieu de se connecter en root ?",
+    opts: ["Pour aller plus vite", "Pour limiter le risque : une erreur en root peut détruire le système", "Parce que root n'a pas accès à Internet", "Pour chiffrer les commandes"],
+    correct: 1, fb: "sudo limite les risques en n'accordant les droits root que pour une seule commande à la fois." },
+  { q: "Dans <code>-rw-r--r--</code>, que signifient les 3 derniers caractères <code>r--</code> ?",
+    opts: ["Les droits du propriétaire", "Les droits du groupe", "Les droits des autres utilisateurs : lecture seule", "Le type du fichier"],
+    correct: 2, fb: "Les 10 caractères se lisent : type + 3 pour u + 3 pour g + 3 pour o. Les 3 derniers (r--) = autres = lecture seule." },
+  { q: "Quelle valeur numérique correspond aux droits <code>rwx</code> ?",
+    opts: ["6", "5", "7", "3"],
+    correct: 2, fb: "r=4, w=2, x=1. Donc rwx = 4+2+1 = 7." },
+  { q: "<code>chmod 644 fichier.txt</code> donne quels droits ?",
+    opts: ["rwxrwxrwx", "rwxr--r--", "rw-r--r--", "r--r--r--"],
+    correct: 2, fb: "644 : 6=rw- (propriétaire), 4=r-- (groupe), 4=r-- (autres). Fichier standard lisible par tous, modifiable par le propriétaire." },
+  { q: "Quelle option de <code>chmod</code> modifie récursivement tout un dossier ?",
+    opts: ["-a", "-R", "--all", "-f"],
+    correct: 1, fb: "<code>chmod -R 755 dossier/</code> applique les permissions à tous les fichiers et sous-dossiers récursivement." }
+];
+
+let quizAnswers = [];
+function initQuiz() {
+  quizAnswers = new Array(questions.length).fill(null);
+  document.getElementById('quiz-score').style.display = 'none';
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  questions.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-q';
+    div.id = 'qq-' + i;
+    div.innerHTML = `<p>Question ${i+1}. ${q.q}</p>
+      <div class="quiz-options">
+        ${q.opts.map((o,j) => `<div class="quiz-option" onclick="answerQuiz(${i},${j})">${o}</div>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="fb-${i}"></div>`;
+    container.appendChild(div);
+  });
+}
+
+function answerQuiz(qi, oi) {
+  if (quizAnswers[qi] !== null) return;
+  quizAnswers[qi] = oi;
+  const q = questions[qi];
+  const opts = document.querySelectorAll(`#qq-${qi} .quiz-option`);
+  opts.forEach((opt, j) => {
+    opt.classList.add('locked');
+    if (j === q.correct) opt.classList.add('correct');
+    else if (j === oi) opt.classList.add('wrong');
+  });
+  const fb = document.getElementById('fb-' + qi);
+  fb.classList.add('show');
+  const ok = oi === q.correct;
+  fb.classList.add(ok ? 'ok' : 'nok');
+  fb.innerHTML = (ok ? '✓ Correct ! ' : '✗ Incorrect. ') + q.fb;
+  if (quizAnswers.every(a => a !== null)) showScore();
+}
+
+function showScore() {
+  const score = quizAnswers.filter((a, i) => a === questions[i].correct).length;
+  const sc = document.getElementById('quiz-score');
+  sc.style.display = 'block';
+  document.getElementById('score-text').textContent = score + ' / ' + questions.length;
+  const msgs = ['Réessaie encore !', 'Pas mal, continue !', 'Bien joué !', 'Excellent !'];
+  document.getElementById('score-sub').textContent = msgs[Math.min(Math.floor(score/2), 3)];
+}
+
+initQuiz();
+</script>
+</body>
+</html>

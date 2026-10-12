@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>01 — Comprendre Linux</title>
+<style>
+:root {
+  --bg: #0f1117; --surface: #1a1d27; --surface2: #232635; --border: #2e3148;
+  --accent: #60a5fa; --accent2: #93c5fd;
+  --warn: #f0a500; --danger: #e05c5c; --success: #4caf82;
+  --text: #d4d8f0; --text-dim: #7880a0; --code-bg: #12141f; --radius: 10px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.7; }
+
+/* HEADER */
+header {
+  background: linear-gradient(135deg, #080e1a 0%, #0d1220 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 2.5rem 2rem 1.5rem;
+  text-align: center;
+}
+.badge {
+  display: inline-block; background: var(--accent); color: #0a0e1a;
+  font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 20px; margin-bottom: .7rem;
+}
+header h1 { font-size: 1.8rem; font-weight: 700; color: #fff; line-height: 1.2; }
+header p { color: var(--text-dim); margin-top: .4rem; font-size: .95rem; }
+
+/* NAV TABS */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  display: flex; justify-content: center; flex-wrap: wrap; gap: .25rem; padding: .5rem 1rem;
+}
+nav button {
+  background: none; border: none; color: var(--text-dim);
+  padding: .85rem 1.1rem; font-size: .88rem; font-weight: 500; cursor: pointer;
+  border-bottom: 2px solid transparent; white-space: nowrap; transition: all .2s;
+}
+nav button:hover { color: var(--text); }
+nav button.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* CONTENT */
+.tab-content { display: none; padding: 2rem; max-width: 900px; margin: 0 auto; }
+.tab-content.active { display: block; }
+
+/* SECTIONS */
+h2 { font-size: 1.25rem; color: var(--accent2); margin: 1.8rem 0 .8rem; border-left: 3px solid var(--accent); padding-left: .75rem; }
+h3 { font-size: 1.05rem; color: var(--text); margin: 1.4rem 0 .6rem; }
+p { margin-bottom: .9rem; }
+ul, ol { padding-left: 1.4rem; margin-bottom: .9rem; }
+li { margin-bottom: .35rem; }
+
+/* CALLOUTS */
+.callout { border-radius: var(--radius); padding: .9rem 1.1rem; margin: 1.2rem 0; border-left: 4px solid; }
+.callout.note  { background: #1a2035; border-color: var(--accent);  }
+.callout.tip   { background: #0e2018; border-color: var(--success); }
+.callout.warn  { background: #1e1800; border-color: var(--warn);    }
+.callout.danger{ background: #1e1010; border-color: var(--danger);  }
+.callout-title { font-weight: 700; font-size: .82rem; text-transform: uppercase; letter-spacing: .07em; margin-bottom: .4rem; }
+.callout.note   .callout-title { color: var(--accent); }
+.callout.tip    .callout-title { color: var(--success); }
+.callout.warn   .callout-title { color: var(--warn); }
+.callout.danger .callout-title { color: var(--danger); }
+
+/* TABLES */
+.table-wrap { overflow-x: auto; margin: 1rem 0; }
+table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+th { background: var(--surface2); color: var(--accent2); text-align: left; padding: .6rem .9rem; font-weight: 600; border: 1px solid var(--border); }
+td { padding: .55rem .9rem; border: 1px solid var(--border); vertical-align: top; }
+tr:nth-child(even) td { background: #16192200; }
+tr:hover td { background: var(--surface2); }
+
+/* CODE */
+.code-block { position: relative; margin: 1rem 0; }
+pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1rem 1rem 1.2rem; overflow-x: auto; }
+code { font-family: 'Consolas', 'Cascadia Code', monospace; font-size: .88rem; color: #a8d8ff; }
+.copy-btn {
+  position: absolute; top: .5rem; right: .5rem;
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim);
+  padding: .25rem .6rem; font-size: .75rem; border-radius: 5px; cursor: pointer; transition: all .2s;
+}
+.copy-btn:hover { background: var(--accent); color: #000; }
+.copy-btn.copied { background: var(--success); color: #000; }
+
+/* DISTRO CARDS */
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin: 1.2rem 0; }
+.distro-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.1rem; cursor: pointer; transition: all .25s;
+}
+.distro-card:hover, .distro-card.selected { border-color: var(--accent); background: var(--surface2); }
+.distro-card h4 { color: var(--accent); margin-bottom: .4rem; font-size: 1rem; }
+.distro-card .tag { font-size: .75rem; color: var(--text-dim); }
+.distro-detail {
+  display: none; background: var(--surface2); border: 1px solid var(--accent);
+  border-radius: var(--radius); padding: 1rem; margin-top: .8rem;
+}
+.distro-detail.visible { display: block; }
+
+/* MODE BOXES */
+.mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin: 1.2rem 0; }
+.mode-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem; }
+.mode-box h4 { color: var(--accent2); margin-bottom: .6rem; }
+.mode-box .prompt { font-family: 'Consolas', 'Cascadia Code', monospace; font-size: .95rem; color: var(--success); background: var(--code-bg); padding: .5rem .8rem; border-radius: 6px; margin-top: .6rem; }
+.mode-box .window-mock { background: #1c2030; border: 1px solid var(--border); border-radius: 6px; padding: .4rem .7rem; margin-top: .6rem; font-size: .82rem; color: var(--text-dim); }
+
+/* RECAP FILTER */
+.filter-bar { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.filter-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text-dim); padding: .35rem .85rem; border-radius: 20px; font-size: .82rem; cursor: pointer; transition: all .2s; }
+.filter-btn:hover, .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 600; }
+.recap-row.hidden { display: none; }
+
+/* QUIZ */
+.quiz-question { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem; margin-bottom: 1.2rem; }
+.quiz-question h4 { color: var(--accent2); margin-bottom: .9rem; font-size: .98rem; }
+.quiz-options { display: flex; flex-direction: column; gap: .5rem; }
+.quiz-option {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: .6rem .9rem; cursor: pointer;
+  font-size: .9rem; transition: all .2s; text-align: left; color: var(--text);
+}
+.quiz-option:hover:not(:disabled) { border-color: var(--accent); }
+.quiz-option.correct { background: #0d2e1e; border-color: var(--success); color: var(--success); }
+.quiz-option.wrong   { background: #2e0d0d; border-color: var(--danger);  color: var(--danger);  }
+.quiz-option:disabled { cursor: default; }
+.quiz-feedback { margin-top: .6rem; font-size: .87rem; color: var(--text-dim); font-style: italic; }
+.quiz-score {
+  background: var(--surface2); border: 1px solid var(--accent);
+  border-radius: var(--radius); padding: 1.5rem; text-align: center; margin-top: 1.5rem; display: none;
+}
+.quiz-score .score-num { font-size: 2.5rem; font-weight: 700; color: var(--accent); }
+.quiz-score p { color: var(--text-dim); margin-top: .4rem; }
+.btn-restart { background: var(--accent); color: #000; border: none; padding: .6rem 1.4rem; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 1rem; font-size: .9rem; }
+.btn-restart:hover { background: var(--accent2); }
+
+@media (max-width: 600px) { .mode-grid { grid-template-columns: 1fr; } }
+.course-site-nav { display:flex; justify-content:space-between; gap:1rem; padding:.8rem 1rem; background:#1a1d27; flex-wrap:wrap; } .course-site-nav a {color:#93c5fd; font-weight:600;}
+</style>
+</head>
+<body>
+<div class="course-site-nav"><a href="../01-comprendre-linux/">← Chapitre 01</a><a href="quiz/01-comprendre-linux.html">Quiz du chapitre →</a></div>
+
+<header>
+  <div class="badge">Linux Initiation</div>
+  <h1>01 — Comprendre Linux</h1>
+  <p>Qu'est-ce qu'un système d'exploitation ? D'où vient Linux ? Qu'est-ce qu'une distribution ?</p>
+</header>
+
+<nav id="main-nav">
+  <button class="active" onclick="showTab('os')">Système d'exploitation</button>
+  <button onclick="showTab('linux')">Linux &amp; Open Source</button>
+  <button onclick="showTab('distrib')">Distributions</button>
+  <button onclick="showTab('modes')">Modes</button>
+  <button onclick="showTab('recap')">Récapitulatif</button>
+  <button onclick="showTab('quiz')">Quiz</button>
+</nav>
+
+<!-- TAB 1 : Système d'exploitation -->
+<div id="tab-os" class="tab-content active">
+  <h2>Qu'est-ce qu'un système d'exploitation ?</h2>
+  <p>Un <strong>système d'exploitation</strong> (ou OS, de l'anglais <em>Operating System</em>) est le logiciel de base qui fait fonctionner un ordinateur. Il joue le rôle d'intermédiaire entre le matériel (processeur, mémoire, disque dur) et les applications que vous utilisez (navigateur, traitement de texte…).</p>
+
+  <div class="callout note">
+    <div class="callout-title">Note — Analogie</div>
+    Pensez à l'OS comme à un <strong>chef d'orchestre</strong> : il ne joue pas d'instrument lui-même, mais coordonne tous les musiciens (matériel et logiciels) pour que la musique soit harmonieuse. Sans lui, chaque instrument jouerait dans son coin.
+  </div>
+
+  <h2>Les 3 systèmes d'exploitation principaux</h2>
+  <p>Sur les ordinateurs personnels et les serveurs, trois OS dominent le marché :</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Système d'exploitation</th><th>Entreprise</th><th>Licence</th><th>Utilisé sur les serveurs ?</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Windows</strong></td><td>Microsoft</td><td>Propriétaire (payant)</td><td>Oui (Windows Server)</td></tr>
+        <tr><td><strong>macOS</strong></td><td>Apple</td><td>Propriétaire (fourni avec Mac)</td><td>Rarement</td></tr>
+        <tr><td><strong>Linux</strong></td><td>Communauté / entreprises</td><td>Open Source (libre)</td><td><strong>Majoritairement</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">Bon à savoir</div>
+    Plus de <strong>90 % des serveurs web dans le monde</strong> tournent sous Linux. Si vous avez visité un site web aujourd'hui, il y a de fortes chances qu'il soit hébergé sur un serveur Linux.
+  </div>
+</div>
+
+<!-- TAB 2 : Linux & Open Source -->
+<div id="tab-linux" class="tab-content">
+  <h2>L'histoire de Linux</h2>
+  <p>En <strong>1991</strong>, un étudiant finlandais de 21 ans nommé <strong>Linus Torvalds</strong> publie sur Internet le code source d'un nouveau noyau de système d'exploitation qu'il a écrit pour s'amuser. Il l'appelle Linux (contraction de son prénom et d'Unix, l'OS qu'il s'inspire).</p>
+  <p>Des développeurs du monde entier commencent à contribuer au projet. Trente ans plus tard, Linux est devenu le système d'exploitation le plus répandu au monde sur les serveurs, les supercalculateurs et les appareils mobiles.</p>
+
+  <h2>Linux est partout</h2>
+  <div class="callout tip">
+    <div class="callout-title">Tip — Linux est partout</div>
+    Linux fait tourner : les <strong>serveurs Internet</strong> (Google, Facebook, Amazon…), les <strong>500 supercalculateurs les plus puissants du monde</strong> (100 % sous Linux), les <strong>smartphones Android</strong> (Android est basé sur Linux), les <strong>objets connectés</strong> (box Internet, télévisions, routeurs…) et même la <strong>Station spatiale internationale</strong>.
+  </div>
+
+  <h2>Qu'est-ce que l'Open Source ?</h2>
+  <p>Un logiciel est dit <strong>Open Source</strong> (ou "libre") lorsque son code source — les instructions écrites par les programmeurs — est librement accessible, modifiable et redistribuable par n'importe qui.</p>
+
+  <div class="callout note">
+    <div class="callout-title">Note — Analogie</div>
+    Imaginez une recette de cuisine. Un logiciel propriétaire (Windows, Photoshop), c'est comme un restaurant qui vous sert un plat délicieux <em>mais refuse de vous donner la recette</em>. Un logiciel Open Source, c'est comme un <strong>livre de cuisine partagé</strong> : vous avez la recette, vous pouvez la modifier, l'améliorer, et la partager avec d'autres.
+  </div>
+
+  <h3>Les avantages de l'Open Source</h3>
+  <ul>
+    <li><strong>Gratuit</strong> — pas de licence à payer (le logiciel est libre, même si le support peut être payant)</li>
+    <li><strong>Transparent</strong> — n'importe qui peut lire le code et vérifier ce qu'il fait vraiment</li>
+    <li><strong>Sécurisé</strong> — des milliers de développeurs scrutent le code et corrigent les failles rapidement</li>
+    <li><strong>Pérenne</strong> — le projet ne peut pas "mourir" comme une entreprise fermée ; le code est pour toujours public</li>
+  </ul>
+</div>
+
+<!-- TAB 3 : Distributions -->
+<div id="tab-distrib" class="tab-content">
+  <h2>Linux : le noyau et les distributions</h2>
+  <p>Linux au sens strict désigne uniquement le <strong>noyau</strong> (le <em>kernel</em>) : le cœur du système qui gère le matériel. Pour obtenir un système utilisable, on ajoute autour de ce noyau :</p>
+  <ul>
+    <li>Des <strong>outils système</strong> (commandes de base, scripts…)</li>
+    <li>Une <strong>interface graphique</strong> (optionnelle)</li>
+    <li>Un <strong>gestionnaire de paquets</strong> pour installer des logiciels</li>
+    <li>Des <strong>applications</strong> pré-installées</li>
+  </ul>
+  <p>L'ensemble forme une <strong>distribution Linux</strong> (ou "distro"). Il en existe des centaines !</p>
+
+  <h2>Les grandes familles de distributions</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Famille</th><th>Exemples</th><th>Points forts</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Debian / Ubuntu</strong></td><td>Debian, Ubuntu, Linux Mint</td><td>Stable, simple, idéale pour débuter</td></tr>
+        <tr><td><strong>Red Hat</strong></td><td>RHEL, Rocky Linux, AlmaLinux</td><td>Orientée entreprise et serveurs</td></tr>
+        <tr><td><strong>SUSE</strong></td><td>openSUSE, SUSE Enterprise</td><td>Administration puissante (YaST)</td></tr>
+        <tr><td><strong>Autres</strong></td><td>Kali Linux, Arch, Raspberry Pi OS</td><td>Usages spécialisés</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">Tip — Formation</div>
+    Dans cette formation, nous utilisons <strong>Debian</strong> : une distribution reconnue pour sa stabilité, utilisée massivement sur les serveurs professionnels. C'est une excellente base pour apprendre Linux.
+  </div>
+
+  <h2>Focus sur quelques distributions — cliquez pour en savoir plus</h2>
+  <div class="cards-grid">
+    <div class="distro-card" onclick="toggleDistro('debian')">
+      <h4>Debian</h4>
+      <span class="tag">Famille : Debian</span>
+    </div>
+    <div class="distro-card" onclick="toggleDistro('ubuntu')">
+      <h4>Ubuntu</h4>
+      <span class="tag">Famille : Debian</span>
+    </div>
+    <div class="distro-card" onclick="toggleDistro('kali')">
+      <h4>Kali Linux</h4>
+      <span class="tag">Usage spécialisé</span>
+    </div>
+    <div class="distro-card" onclick="toggleDistro('rocky')">
+      <h4>Rocky Linux</h4>
+      <span class="tag">Famille : Red Hat</span>
+    </div>
+  </div>
+  <div id="detail-debian" class="distro-detail">
+    <strong>Debian</strong> — Créée en 1993, Debian est l'une des plus anciennes distributions. Elle est célèbre pour sa stabilité extrême et sa rigueur. Debian sert de base à de nombreuses autres distros (Ubuntu, Raspberry Pi OS…). <em>Gestionnaire de paquets : apt.</em>
+  </div>
+  <div id="detail-ubuntu" class="distro-detail">
+    <strong>Ubuntu</strong> — Basée sur Debian, Ubuntu est la distro la plus populaire pour les débutants et les postes de travail. Elle sort une nouvelle version tous les 6 mois (LTS tous les 2 ans). Très bien documentée. <em>Gestionnaire de paquets : apt.</em>
+  </div>
+  <div id="detail-kali" class="distro-detail">
+    <strong>Kali Linux</strong> — Distro spécialisée dans la <em>cybersécurité et les tests d'intrusion</em>. Pré-installée avec des centaines d'outils de sécurité. Non recommandée comme OS quotidien. <em>Gestionnaire de paquets : apt.</em>
+  </div>
+  <div id="detail-rocky" class="distro-detail">
+    <strong>Rocky Linux</strong> — Alternative libre et gratuite à Red Hat Enterprise Linux (RHEL). Créée en 2021 après le changement de politique de CentOS. Très utilisée dans les entreprises pour les serveurs. <em>Gestionnaire de paquets : dnf.</em>
+  </div>
+</div>
+
+<!-- TAB 4 : Modes -->
+<div id="tab-modes" class="tab-content">
+  <h2>Mode graphique vs Mode texte</h2>
+  <p>Sous Linux, il est possible d'interagir avec le système de deux façons radicalement différentes :</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th></th><th>Mode graphique (GUI)</th><th>Mode texte (Terminal)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Interaction</strong></td><td>Souris + clavier, fenêtres, icônes</td><td>Clavier uniquement, lignes de commandes</td></tr>
+        <tr><td><strong>Ressources</strong></td><td>Gourmand (RAM, CPU)</td><td>Très léger</td></tr>
+        <tr><td><strong>Puissance</strong></td><td>Limitée aux menus disponibles</td><td>Accès à toutes les fonctions du système</td></tr>
+        <tr><td><strong>Utilisé par</strong></td><td>Postes de travail, débutants</td><td>Administrateurs, serveurs</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout note">
+    <div class="callout-title">Note</div>
+    Les serveurs Linux fonctionnent presque toujours <strong>sans interface graphique</strong>. Cela permet d'économiser des ressources (RAM, CPU) et de réduire la surface d'attaque. Un serveur web n'a pas besoin de fenêtres ni de curseur de souris pour servir des pages web !
+  </div>
+
+  <h2>Visualisation des deux modes</h2>
+  <div class="mode-grid">
+    <div class="mode-box">
+      <h4>Mode graphique</h4>
+      <p style="font-size:.88rem; color: var(--text-dim);">Fenêtres, icônes, souris…</p>
+      <div class="window-mock">
+        [Fenêtre — Gestionnaire de fichiers]<br>
+        📁 Documents &nbsp; 📁 Images &nbsp; 📁 Musique<br>
+        📄 rapport.pdf &nbsp; 🖼 photo.jpg
+      </div>
+      <p style="margin-top:.8rem; font-size:.85rem; color:var(--text-dim);">Accessible, intuitif pour les débutants</p>
+    </div>
+    <div class="mode-box">
+      <h4>Mode texte (Terminal)</h4>
+      <p style="font-size:.88rem; color: var(--text-dim);">Lignes de commandes uniquement</p>
+      <div class="prompt">
+        samuel@debian:~$ ls<br>
+        Documents  Images  Musique<br>
+        samuel@debian:~$ <span style="animation: blink 1s infinite;">_</span>
+      </div>
+      <p style="margin-top:.8rem; font-size:.85rem; color:var(--text-dim);">Puissant, utilisé par les professionnels</p>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 5 : Récapitulatif -->
+<div id="tab-recap" class="tab-content">
+  <h2>Récapitulatif — Comprendre Linux</h2>
+  <p>Filtrez par catégorie pour retrouver rapidement une notion.</p>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterRecap('all', this)">Tout</button>
+    <button class="filter-btn" onclick="filterRecap('os', this)">Système d'exploitation</button>
+    <button class="filter-btn" onclick="filterRecap('linux', this)">Linux</button>
+    <button class="filter-btn" onclick="filterRecap('opensource', this)">Open Source</button>
+    <button class="filter-btn" onclick="filterRecap('distrib', this)">Distributions</button>
+  </div>
+
+  <div class="table-wrap">
+    <table id="recap-table">
+      <thead>
+        <tr><th>Notion</th><th>Définition</th><th>Catégorie</th></tr>
+      </thead>
+      <tbody>
+        <tr class="recap-row" data-cat="os"><td><strong>Système d'exploitation</strong></td><td>Logiciel de base qui fait fonctionner l'ordinateur ; intermédiaire entre matériel et applications</td><td>Système d'exploitation</td></tr>
+        <tr class="recap-row" data-cat="os"><td><strong>Kernel (noyau)</strong></td><td>Cœur du système d'exploitation, gère directement le matériel</td><td>Système d'exploitation</td></tr>
+        <tr class="recap-row" data-cat="os"><td><strong>GUI</strong></td><td>Interface graphique (Graphical User Interface) — fenêtres, icônes, souris</td><td>Système d'exploitation</td></tr>
+        <tr class="recap-row" data-cat="linux"><td><strong>Linux</strong></td><td>Noyau de système d'exploitation libre créé en 1991 par Linus Torvalds</td><td>Linux</td></tr>
+        <tr class="recap-row" data-cat="linux"><td><strong>Linus Torvalds</strong></td><td>Étudiant finlandais de 21 ans, créateur de Linux en 1991</td><td>Linux</td></tr>
+        <tr class="recap-row" data-cat="linux"><td><strong>Terminal</strong></td><td>Interface en mode texte permettant d'envoyer des commandes au système</td><td>Linux</td></tr>
+        <tr class="recap-row" data-cat="opensource"><td><strong>Open Source</strong></td><td>Code source librement accessible, modifiable et redistribuable</td><td>Open Source</td></tr>
+        <tr class="recap-row" data-cat="opensource"><td><strong>Licence libre</strong></td><td>Autorisation légale de copier, modifier et distribuer un logiciel</td><td>Open Source</td></tr>
+        <tr class="recap-row" data-cat="distrib"><td><strong>Distribution</strong></td><td>Linux (noyau) + outils + interface + gestionnaire de paquets = un système complet utilisable</td><td>Distributions</td></tr>
+        <tr class="recap-row" data-cat="distrib"><td><strong>Debian</strong></td><td>Distribution stable, base de nombreuses autres distros (Ubuntu…) — utilisée dans cette formation</td><td>Distributions</td></tr>
+        <tr class="recap-row" data-cat="distrib"><td><strong>Ubuntu</strong></td><td>Distribution populaire basée sur Debian, idéale pour débuter</td><td>Distributions</td></tr>
+        <tr class="recap-row" data-cat="distrib"><td><strong>apt</strong></td><td>Gestionnaire de paquets des distributions Debian/Ubuntu</td><td>Distributions</td></tr>
+        <tr class="recap-row" data-cat="distrib"><td><strong>Red Hat / Rocky</strong></td><td>Famille de distributions orientée entreprise, gestionnaire dnf</td><td>Distributions</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- TAB 6 : Quiz -->
+<div id="tab-quiz" class="tab-content">
+  <h2>Quiz — Comprendre Linux</h2>
+  <p style="color:var(--text-dim); margin-bottom:1.5rem;">5 questions pour valider vos acquis. Les réponses se bloquent après votre choix.</p>
+
+  <div id="quiz-container">
+
+    <div class="quiz-question" id="q1">
+      <h4>Question 1 — En quelle année Linux a-t-il été créé ?</h4>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="answer(1,'a')">a) 1969</button>
+        <button class="quiz-option" onclick="answer(1,'b')">b) 1991</button>
+        <button class="quiz-option" onclick="answer(1,'c')">c) 2001</button>
+        <button class="quiz-option" onclick="answer(1,'d')">d) 2005</button>
+      </div>
+      <div class="quiz-feedback" id="fb1"></div>
+    </div>
+
+    <div class="quiz-question" id="q2">
+      <h4>Question 2 — Qu'est-ce qu'"Open Source" signifie principalement ?</h4>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="answer(2,'a')">a) Que le logiciel est gratuit uniquement</button>
+        <button class="quiz-option" onclick="answer(2,'b')">b) Que le code source est librement accessible et modifiable</button>
+        <button class="quiz-option" onclick="answer(2,'c')">c) Que le logiciel est garanti sans bug</button>
+        <button class="quiz-option" onclick="answer(2,'d')">d) Que le logiciel est fabriqué par Apple</button>
+      </div>
+      <div class="quiz-feedback" id="fb2"></div>
+    </div>
+
+    <div class="quiz-question" id="q3">
+      <h4>Question 3 — Une "distribution" Linux, c'est :</h4>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="answer(3,'a')">a) Uniquement le noyau Linux (kernel)</button>
+        <button class="quiz-option" onclick="answer(3,'b')">b) Un logiciel pour installer Windows</button>
+        <button class="quiz-option" onclick="answer(3,'c')">c) Le noyau + outils + interface + gestionnaire de paquets</button>
+        <button class="quiz-option" onclick="answer(3,'d')">d) Un antivirus pour Linux</button>
+      </div>
+      <div class="quiz-feedback" id="fb3"></div>
+    </div>
+
+    <div class="quiz-question" id="q4">
+      <h4>Question 4 — Quelle distribution Linux utilise-t-on dans cette formation ?</h4>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="answer(4,'a')">a) Ubuntu</button>
+        <button class="quiz-option" onclick="answer(4,'b')">b) Kali Linux</button>
+        <button class="quiz-option" onclick="answer(4,'c')">c) Rocky Linux</button>
+        <button class="quiz-option" onclick="answer(4,'d')">d) Debian</button>
+      </div>
+      <div class="quiz-feedback" id="fb4"></div>
+    </div>
+
+    <div class="quiz-question" id="q5">
+      <h4>Question 5 — Pourquoi les serveurs fonctionnent-ils généralement sans interface graphique ?</h4>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="answer(5,'a')">a) Parce que Linux ne sait pas afficher d'interface graphique</button>
+        <button class="quiz-option" onclick="answer(5,'b')">b) Pour économiser des ressources (RAM, CPU)</button>
+        <button class="quiz-option" onclick="answer(5,'c')">c) Parce que les écrans sont trop chers</button>
+        <button class="quiz-option" onclick="answer(5,'d')">d) C'est obligatoire par la loi</button>
+      </div>
+      <div class="quiz-feedback" id="fb5"></div>
+    </div>
+
+  </div>
+
+  <div class="quiz-score" id="quiz-score">
+    <div class="score-num" id="score-display">0 / 5</div>
+    <p id="score-msg"></p>
+    <button class="btn-restart" onclick="restartQuiz()">Recommencer</button>
+  </div>
+</div>
+
+<script>
+// ─── TABS ───────────────────────────────────────────────────────────────────
+function showTab(id) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ─── COPY CODE ──────────────────────────────────────────────────────────────
+function copyCode(btn) {
+  const pre = btn.previousElementSibling;
+  navigator.clipboard.writeText(pre.textContent).then(() => {
+    btn.textContent = 'Copié !'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// ─── DISTRO CARDS ───────────────────────────────────────────────────────────
+function toggleDistro(id) {
+  const detail = document.getElementById('detail-' + id);
+  const isVisible = detail.classList.contains('visible');
+  document.querySelectorAll('.distro-detail').forEach(d => d.classList.remove('visible'));
+  document.querySelectorAll('.distro-card').forEach(c => c.classList.remove('selected'));
+  if (!isVisible) {
+    detail.classList.add('visible');
+    event.currentTarget.classList.add('selected');
+  }
+}
+
+// ─── RECAP FILTER ───────────────────────────────────────────────────────────
+function filterRecap(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.recap-row').forEach(row => {
+    if (cat === 'all' || row.dataset.cat === cat) {
+      row.classList.remove('hidden');
+    } else {
+      row.classList.add('hidden');
+    }
+  });
+}
+
+// ─── QUIZ ────────────────────────────────────────────────────────────────────
+const answers = { 1:'b', 2:'b', 3:'c', 4:'d', 5:'b' };
+const feedbacks = {
+  1: { b: "Exact ! Linus Torvalds a publié le premier noyau Linux en 1991, à 21 ans.", wrong: "Non. Linux a été créé en 1991 par Linus Torvalds, un étudiant finlandais de 21 ans." },
+  2: { b: "Correct ! Open Source signifie que le code source est librement accessible, modifiable et redistribuable.", wrong: "Non. Open Source ne signifie pas seulement 'gratuit' : cela implique l'accès, la modification et la redistribution du code source." },
+  3: { c: "Exact ! Une distribution = noyau Linux + outils système + interface + gestionnaire de paquets.", wrong: "Non. Une distribution Linux est un système complet : noyau + outils + interface + gestionnaire de paquets (ex. apt)." },
+  4: { d: "Correct ! Dans cette formation, nous utilisons Debian, reconnue pour sa stabilité.", wrong: "Non. Nous utilisons Debian, une distribution reconnue pour sa stabilité et très répandue sur les serveurs." },
+  5: { b: "Exact ! Sans interface graphique, le serveur économise de la RAM et du CPU pour se consacrer uniquement à ses tâches.", wrong: "Non. Les serveurs fonctionnent sans interface graphique pour économiser des ressources (RAM, CPU) et réduire la surface d'attaque." }
+};
+let score = 0;
+let answered = {};
+
+function answer(qNum, choice) {
+  if (answered[qNum]) return;
+  answered[qNum] = true;
+  score += (choice === answers[qNum]) ? 1 : 0;
+  const qEl = document.getElementById('q' + qNum);
+  const btns = qEl.querySelectorAll('.quiz-option');
+  btns.forEach(btn => {
+    btn.disabled = true;
+    const ltr = btn.textContent.trim()[0].toLowerCase();
+    if (ltr === answers[qNum]) btn.classList.add('correct');
+    else if (ltr === choice) btn.classList.add('wrong');
+  });
+  const fb = feedbacks[qNum];
+  const msg = fb[choice] || fb.wrong;
+  document.getElementById('fb' + qNum).textContent = msg;
+  if (Object.keys(answered).length === 5) showScore();
+}
+
+function showScore() {
+  const el = document.getElementById('quiz-score');
+  el.style.display = 'block';
+  document.getElementById('score-display').textContent = score + ' / 5';
+  const msgs = ['Revoyez le cours avant de continuer.','Quelques notions à revoir.','Pas mal ! Relisez les points manqués.','Très bien ! Vous maîtrisez l\'essentiel.','Parfait ! Toutes les réponses sont correctes.'];
+  document.getElementById('score-msg').textContent = msgs[score] || '';
+}
+
+function restartQuiz() {
+  score = 0; answered = {};
+  document.getElementById('quiz-score').style.display = 'none';
+  document.querySelectorAll('.quiz-option').forEach(btn => {
+    btn.disabled = false;
+    btn.classList.remove('correct','wrong');
+  });
+  document.querySelectorAll('.quiz-feedback').forEach(fb => fb.textContent = '');
+}
+</script>
+</body>
+</html>

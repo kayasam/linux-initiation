@@ -1,0 +1,52 @@
+[
+  {
+    "slug": "01-comprendre-linux",
+    "title": "Comprendre Linux",
+    "tp": null
+  },
+  {
+    "slug": "02-installer-la-vm",
+    "title": "Installer la machine virtuelle",
+    "tp": "tp-02-installer-la-vm.md"
+  },
+  {
+    "slug": "03-interface-graphique",
+    "title": "L'interface graphique",
+    "tp": null
+  },
+  {
+    "slug": "04-le-terminal",
+    "title": "Le terminal",
+    "tp": "tp-04-terminal.md"
+  },
+  {
+    "slug": "05-fichiers-et-repertoires",
+    "title": "Fichiers et répertoires",
+    "tp": "tp-05-fichiers.md"
+  },
+  {
+    "slug": "06-arborescence-linux",
+    "title": "L'arborescence Linux",
+    "tp": "tp-06-arborescence.md"
+  },
+  {
+    "slug": "07-utilisateurs-et-permissions",
+    "title": "Utilisateurs et permissions",
+    "tp": "tp-07-permissions.md"
+  },
+  {
+    "slug": "08-gestion-des-paquets",
+    "title": "Gestion des paquets",
+    "tp": "tp-08-paquets.md"
+  },
+  {
+    "slug": "09-redirections-et-tubes",
+    "title": "Redirections et tubes",
+    "tp": "tp-09-redirections.md"
+  },
+  {
+    "slug": "10-reseau-et-services",
+    "title": "Réseau et services",
+    "tp": null
+  }
+]

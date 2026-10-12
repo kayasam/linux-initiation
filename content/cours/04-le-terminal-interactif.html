@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>04 — Le Terminal</title>
+<style>
+:root {
+  --bg: #0f1117; --surface: #1a1d27; --surface2: #232635; --border: #2e3148;
+  --accent: #fb923c; --accent2: #fdba74;
+  --warn: #f0a500; --danger: #e05c5c; --success: #4caf82;
+  --text: #d4d8f0; --text-dim: #7880a0; --code-bg: #12141f; --radius: 10px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+
+/* HEADER */
+.header {
+  background: linear-gradient(135deg, #1a0c04 0%, #1a1004 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 2.5rem 2rem 1.5rem;
+  text-align: center;
+}
+.badge {
+  display: inline-block; background: var(--accent); color: #0f1117;
+  font-size: .72rem; font-weight: 700; letter-spacing: .08em;
+  padding: .25rem .7rem; border-radius: 20px; text-transform: uppercase; margin-bottom: .8rem;
+}
+.header h1 {
+  font-size: 2rem; font-weight: 800; line-height: 1.1;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  margin-bottom: .4rem;
+}
+.header p { color: var(--text-dim); font-size: 1rem; }
+
+/* NAV */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  display: flex; justify-content: center; flex-wrap: wrap; gap: .25rem; padding: .5rem 1rem;
+}
+.nav button {
+  background: none; border: none; color: var(--text-dim); cursor: pointer;
+  padding: .9rem 1.1rem; font-size: .85rem; font-weight: 500; white-space: nowrap;
+  border-bottom: 2px solid transparent; transition: all .2s;
+}
+.nav button:hover { color: var(--text); }
+.nav button.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* MAIN */
+main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* SECTIONS */
+h2 { font-size: 1.3rem; font-weight: 700; color: var(--accent2); margin-bottom: 1rem; margin-top: 1.5rem; }
+h2:first-child { margin-top: 0; }
+h3 { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: .5rem; margin-top: 1.2rem; }
+p { color: var(--text); line-height: 1.7; margin-bottom: .8rem; }
+
+/* CALLOUTS */
+.callout {
+  border-radius: var(--radius); padding: .9rem 1.1rem; margin: 1rem 0;
+  border-left: 3px solid;
+}
+.callout-note { background: rgba(251,146,60,.08); border-color: var(--accent); }
+.callout-tip { background: rgba(76,175,130,.1); border-color: var(--success); }
+.callout-warn { background: rgba(240,165,0,.1); border-color: var(--warn); }
+.callout-danger { background: rgba(224,92,92,.1); border-color: var(--danger); }
+.callout-label {
+  font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  margin-bottom: .35rem;
+}
+.callout-note .callout-label { color: var(--accent); }
+.callout-tip .callout-label { color: var(--success); }
+.callout-warn .callout-label { color: var(--warn); }
+.callout-danger .callout-label { color: var(--danger); }
+.callout p { margin: 0; font-size: .93rem; }
+
+/* CODE BLOCKS */
+.code-wrap { position: relative; margin: .8rem 0; }
+pre {
+  background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1rem 1rem 1rem 1.1rem; overflow-x: auto;
+  font-family: 'Consolas', 'Cascadia Code', monospace; font-size: .88rem; line-height: 1.7;
+  color: #b8c0e0;
+}
+code { font-family: 'Consolas', 'Cascadia Code', monospace; font-size: .88rem; }
+.inline-code {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-radius: 4px; padding: .1rem .4rem; color: var(--accent2); font-size: .87rem;
+}
+.copy-btn {
+  position: absolute; top: .5rem; right: .5rem;
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim);
+  border-radius: 5px; padding: .25rem .6rem; font-size: .75rem; cursor: pointer;
+  transition: all .2s;
+}
+.copy-btn:hover { background: var(--accent); color: #0f1117; }
+.copy-btn.copied { background: var(--success); color: #0f1117; }
+
+/* TABLES */
+table { width: 100%; border-collapse: collapse; margin: .8rem 0; font-size: .9rem; }
+th { background: var(--surface2); color: var(--accent2); padding: .6rem .9rem; text-align: left; font-weight: 600; }
+td { padding: .55rem .9rem; border-bottom: 1px solid var(--border); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(251,146,60,.04); }
+
+/* PROMPT INTERACTIVE */
+.prompt-display {
+  background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.5rem; text-align: center; margin: 1.2rem 0;
+  font-family: 'Consolas', 'Cascadia Code', monospace; font-size: 1.4rem;
+}
+.prompt-part {
+  cursor: pointer; padding: .1rem .2rem; border-radius: 4px;
+  transition: background .15s, color .15s;
+  display: inline-block;
+}
+.prompt-part:hover { background: rgba(251,146,60,.2); }
+.prompt-part.active { background: var(--accent); color: #0f1117; }
+.prompt-explanation {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: .9rem 1.1rem; margin-top: .5rem; min-height: 3rem;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--accent2); font-size: 1rem; font-weight: 500;
+  transition: all .3s;
+}
+.prompt-hint { color: var(--text-dim); font-size: .85rem; text-align: center; margin-top: .4rem; }
+
+/* RACCOURCIS GRID */
+.shortcuts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: .7rem; margin: 1rem 0; }
+.shortcut-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: .9rem 1rem; cursor: pointer; transition: all .2s;
+}
+.shortcut-card:hover { border-color: var(--accent); background: var(--surface2); transform: translateY(-2px); }
+.shortcut-card.flipped { background: var(--surface2); border-color: var(--accent); }
+.shortcut-key {
+  font-family: 'Consolas', 'Cascadia Code', monospace;
+  color: var(--accent); font-size: 1rem; font-weight: 700; margin-bottom: .3rem;
+}
+.shortcut-desc { color: var(--text); font-size: .88rem; }
+.shortcut-detail { color: var(--text-dim); font-size: .8rem; margin-top: .3rem; display: none; }
+.shortcut-card.flipped .shortcut-detail { display: block; }
+
+/* QUIZ */
+.quiz-question {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.2rem; margin-bottom: 1rem;
+}
+.quiz-question h3 { color: var(--text); margin-bottom: .8rem; font-size: .95rem; }
+.quiz-options { display: flex; flex-direction: column; gap: .4rem; }
+.quiz-option {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 7px;
+  padding: .6rem 1rem; cursor: pointer; transition: all .15s; text-align: left;
+  color: var(--text); font-size: .9rem;
+}
+.quiz-option:hover:not(:disabled) { border-color: var(--accent); background: rgba(251,146,60,.1); }
+.quiz-option.correct { background: rgba(76,175,130,.15); border-color: var(--success); color: var(--success); }
+.quiz-option.wrong { background: rgba(224,92,92,.12); border-color: var(--danger); color: var(--danger); }
+.quiz-option:disabled { cursor: default; }
+.quiz-feedback { margin-top: .6rem; font-size: .88rem; padding: .5rem .8rem; border-radius: 6px; }
+.quiz-feedback.ok { background: rgba(76,175,130,.1); color: var(--success); }
+.quiz-feedback.ko { background: rgba(224,92,92,.1); color: var(--danger); }
+.quiz-score {
+  background: var(--surface2); border: 1px solid var(--accent); border-radius: var(--radius);
+  padding: 1.5rem; text-align: center; margin-top: 1rem; display: none;
+}
+.quiz-score h3 { color: var(--accent); font-size: 1.4rem; margin-bottom: .5rem; }
+.quiz-score p { color: var(--text-dim); }
+.btn-quiz {
+  background: var(--accent); color: #0f1117; border: none; border-radius: 7px;
+  padding: .65rem 1.4rem; font-size: .9rem; font-weight: 700; cursor: pointer;
+  margin-top: 1rem; transition: opacity .2s;
+}
+.btn-quiz:hover { opacity: .85; }
+.course-site-nav { display:flex; justify-content:space-between; gap:1rem; padding:.8rem 1rem; background:#1a1d27; flex-wrap:wrap; } .course-site-nav a {color:#93c5fd; font-weight:600;}
+</style>
+</head>
+<body>
+<div class="course-site-nav"><a href="../04-le-terminal/">← Chapitre 04</a><a href="quiz/04-le-terminal.html">Quiz du chapitre →</a></div>
+
+<header class="header">
+  <div class="badge">Module 04</div>
+  <h1>Le Terminal</h1>
+  <p>Prendre le contrôle de Linux en ligne de commande</p>
+</header>
+
+<nav class="nav">
+  <button class="active" onclick="showTab('prompt')">Prompt &amp; Commandes</button>
+  <button onclick="showTab('navigation')">Navigation</button>
+  <button onclick="showTab('chemins')">Chemins</button>
+  <button onclick="showTab('lire')">Lire &amp; Éditer</button>
+  <button onclick="showTab('raccourcis')">Raccourcis</button>
+  <button onclick="showTab('quiz')">Quiz</button>
+</nav>
+
+<main>
+
+<!-- TAB 1 : Prompt & Commandes -->
+<section id="tab-prompt" class="tab-content active">
+  <h2>Pourquoi utiliser le terminal ?</h2>
+  <p>Le terminal permet de :</p>
+  <ul style="padding-left:1.5rem; line-height:2; color:var(--text);">
+    <li><strong>Automatiser</strong> des tâches répétitives (scripts)</li>
+    <li><strong>Administrer un serveur distant</strong> sans interface graphique</li>
+    <li><strong>Opérer sur des centaines de fichiers</strong> en une seule commande</li>
+    <li><strong>Diagnostiquer</strong> des problèmes système en profondeur</li>
+  </ul>
+  <div class="callout callout-note">
+    <div class="callout-label">Note — Analogie</div>
+    <p>L'interface graphique, c'est comme acheter des <strong>plats préparés</strong> : pratique mais limité. Le terminal, c'est <strong>cuisiner soi-même</strong> : plus de travail au départ, mais un contrôle total sur le résultat.</p>
+  </div>
+
+  <h2>Anatomie du prompt — clique sur chaque partie</h2>
+  <div class="prompt-display">
+    <span class="prompt-part" onclick="explainPrompt(this, 'Ton nom d\'utilisateur — identifie qui est connecté')">stagiaire</span><span class="prompt-part" onclick="explainPrompt(this, 'Séparateur « at » — signifie « chez »')">@</span><span class="prompt-part" onclick="explainPrompt(this, 'Nom de la machine (hostname) — utile pour savoir sur quel serveur tu te trouves')">debian</span><span style="color:var(--text-dim)">:</span><span class="prompt-part" onclick="explainPrompt(this, 'Répertoire courant — ~ est un raccourci pour ton dossier personnel (/home/stagiaire)')">~</span><span class="prompt-part" onclick="explainPrompt(this, 'Type d\'utilisateur — $ = utilisateur normal &nbsp;|&nbsp; # = root (danger !)')">$</span><span style="color:var(--text-dim);"> ▌</span>
+  </div>
+  <div class="prompt-explanation" id="promptExpl">
+    <span style="color:var(--text-dim)">Clique sur une partie du prompt pour en voir la signification</span>
+  </div>
+  <p class="prompt-hint">← Clique sur chaque élément coloré</p>
+
+  <h2>Structure d'une commande</h2>
+  <div class="code-wrap">
+    <pre>commande [options] [arguments]
+
+ls   -l   /home
+ ↑    ↑      ↑
+cmd  opt   arg</pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+  </div>
+  <table>
+    <thead><tr><th>Élément</th><th>Exemple</th><th>Rôle</th></tr></thead>
+    <tbody>
+      <tr><td><code>commande</code></td><td><span class="inline-code">ls</span></td><td>L'action à effectuer</td></tr>
+      <tr><td><code>option(s)</code></td><td><span class="inline-code">-l</span>, <span class="inline-code">-a</span></td><td>Modifie le comportement</td></tr>
+      <tr><td><code>argument(s)</code></td><td><span class="inline-code">/home</span></td><td>Sur quoi appliquer l'action</td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-warn">
+    <div class="callout-label">Attention</div>
+    <p>Linux est <strong>sensible à la casse</strong> : <span class="inline-code">ls</span> ≠ <span class="inline-code">LS</span> ≠ <span class="inline-code">Ls</span>. Utilise toujours les <strong>minuscules</strong> pour les commandes.</p>
+  </div>
+</section>
+
+<!-- TAB 2 : Navigation -->
+<section id="tab-navigation" class="tab-content">
+  <h2>Se repérer et se déplacer</h2>
+
+  <h3>pwd — Print Working Directory</h3>
+  <p>Affiche le chemin absolu du dossier où tu te trouves actuellement.</p>
+  <div class="code-wrap">
+    <pre>$ pwd
+/home/stagiaire</pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+  </div>
+
+  <h3>ls — Lister le contenu</h3>
+  <div class="code-wrap">
+    <pre>ls            # liste simple
+ls -l         # liste détaillée (permissions, taille, date)
+ls -a         # affiche aussi les fichiers cachés (commençant par .)
+ls -lh        # liste détaillée avec tailles lisibles (Ko, Mo)
+ls /etc       # liste le contenu du dossier /etc</pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+  </div>
+
+  <h3>cd — Changer de répertoire</h3>
+  <div class="code-wrap">
+    <pre>cd /etc           # aller directement dans /etc (chemin absolu)
+cd ..             # remonter d'un niveau dans l'arborescence
+cd                # retourner dans son dossier personnel (~)
+cd ~/Documents    # aller dans Documents dans le dossier personnel
+cd -              # retourner dans le dossier précédent</pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+  </div>
+
+  <div class="callout callout-tip">
+    <div class="callout-label">Astuce</div>
+    <p>La touche <strong>Tab</strong> complète automatiquement les noms de fichiers et de dossiers. Tape les premières lettres puis appuie sur Tab — Linux fait le reste !</p>
+  </div>
+</section>
+
+<!-- TAB 3 : Chemins -->
+<section id="tab-chemins" class="tab-content">
+  <h2>Chemin absolu vs relatif</h2>
+
+  <h3>Chemin absolu</h3>
+  <p>Commence <strong>toujours par <span class="inline-code">/</span></strong>. Il décrit le chemin complet depuis la racine du système, quel que soit le répertoire courant.</p>
+  <div class="code-wrap">
+    <pre>/home/stagiaire/Documents/rapport.txt
+/etc/apt/sources.list
+/var/log/syslog</pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+  </div>
+
+  <h3>Chemin relatif</h3>
+  <p>Part du <strong>répertoire courant</strong>. Il n'y a pas de <span class="inline-code">/</span> au début. Son sens change selon où tu te trouves.</p>
+  <div class="code-wrap">
+    <pre>Documents/rapport.txt     # si tu es dans /home/stagiaire
+../autre-dossier          # remonter puis entrer dans autre-dossier
+./script.sh               # le fichier script.sh dans le dossier courant</pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+  </div>
+
+  <table>
+    <thead><tr><th>Type</th><th>Commence par</th><th>Exemple</th><th>Signification</th></tr></thead>
+    <tbody>
+      <tr><td>Absolu</td><td><span class="inline-code">/</span></td><td><span class="inline-code">/home/stagiaire</span></td><td>Depuis la racine, toujours valide</td></tr>
+      <tr><td>Relatif</td><td>nom ou <span class="inline-code">../</span></td><td><span class="inline-code">Documents</span></td><td>Depuis le dossier courant</td></tr>
+      <tr><td>Personnel</td><td><span class="inline-code">~/</span></td><td><span class="inline-code">~/Documents</span></td><td>Raccourci pour /home/utilisateur</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-note">
+    <div class="callout-label">Bonne pratique</div>
+    <p>Dans les scripts, préfère toujours les <strong>chemins absolus</strong> pour éviter les surprises selon le dossier courant.</p>
+  </div>
+</section>
+
+<!-- TAB 4 : Lire & Éditer -->
+<section id="tab-lire" class="tab-content">
+  <h2>Lire le contenu des fichiers</h2>
+
+  <table>
+    <thead><tr><th>Commande</th><th>Usage</th></tr></thead>
+    <tbody>
+      <tr><td><span class="inline-code">cat fichier</span></td><td>Affiche tout le fichier d'un coup</td></tr>
+      <tr><td><span class="inline-code">less fichier</span></td><td>Affichage page par page (<kbd>q</kbd> pour quitter, <kbd>↑↓</kbd> pour naviguer)</td></tr>
+      <tr><td><span class="inline-code">head fichier</span></td><td>Affiche les 10 premières lignes</td></tr>
+      <tr><td><span class="inline-code">head -n 20 fichier</span></td><td>Affiche les 20 premières lignes</td></tr>
+      <tr><td><span class="inline-code">tail fichier</span></td><td>Affiche les 10 dernières lignes</td></tr>
+      <tr><td><span class="inline-code">tail -f fichier</span></td><td>Suit le fichier en temps réel (journaux)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="code-wrap">
+    <pre>cat /etc/hosts             # affiche le fichier hosts
+less /var/log/syslog       # parcourir les journaux (q pour quitter)
+tail -f /var/log/syslog    # surveiller les logs en direct</pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+  </div>
+
+  <h2>Obtenir de l'aide</h2>
+  <div class="code-wrap">
+    <pre>man ls         # manuel complet de la commande ls
+ls --help      # aide rapide intégrée</pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+  </div>
+
+  <div class="callout callout-note">
+    <div class="callout-label">Note</div>
+    <p><span class="inline-code">man</span> ouvre le manuel officiel intégré au système. Pour naviguer : <kbd>Espace</kbd> = page suivante, <kbd>q</kbd> = quitter. C'est la référence la plus complète et toujours disponible hors ligne.</p>
+  </div>
+</section>
+
+<!-- TAB 5 : Raccourcis -->
+<section id="tab-raccourcis" class="tab-content">
+  <h2>Raccourcis clavier essentiels</h2>
+  <p style="color:var(--text-dim); margin-bottom:1rem;">Clique sur une carte pour voir plus de détails.</p>
+  <div class="shortcuts-grid" id="shortcutsGrid">
+    <div class="shortcut-card" onclick="flipCard(this)">
+      <div class="shortcut-key">Tab</div>
+      <div class="shortcut-desc">Complétion automatique</div>
+      <div class="shortcut-detail">Complète noms de fichiers, dossiers et commandes. Double-Tab affiche toutes les possibilités.</div>
+    </div>
+    <div class="shortcut-card" onclick="flipCard(this)">
+      <div class="shortcut-key">↑ / ↓</div>
+      <div class="shortcut-desc">Historique des commandes</div>
+      <div class="shortcut-detail">Navigue dans les commandes précédentes. Évite de tout retaper.</div>
+    </div>
+    <div class="shortcut-card" onclick="flipCard(this)">
+      <div class="shortcut-key">Ctrl + C</div>
+      <div class="shortcut-desc">Interrompre une commande</div>
+      <div class="shortcut-detail">Arrête immédiatement le programme en cours d'exécution. Indispensable si quelque chose se bloque.</div>
+    </div>
+    <div class="shortcut-card" onclick="flipCard(this)">
+      <div class="shortcut-key">Ctrl + L</div>
+      <div class="shortcut-desc">Effacer l'écran</div>
+      <div class="shortcut-detail">Nettoie le terminal (équivalent de la commande clear). L'historique reste intact.</div>
+    </div>
+    <div class="shortcut-card" onclick="flipCard(this)">
+      <div class="shortcut-key">Ctrl + A</div>
+      <div class="shortcut-desc">Début de ligne</div>
+      <div class="shortcut-detail">Déplace le curseur au début de la ligne en cours de saisie.</div>
+    </div>
+    <div class="shortcut-card" onclick="flipCard(this)">
+      <div class="shortcut-key">Ctrl + E</div>
+      <div class="shortcut-desc">Fin de ligne</div>
+      <div class="shortcut-detail">Déplace le curseur à la fin de la ligne en cours de saisie.</div>
+    </div>
+    <div class="shortcut-card" onclick="flipCard(this)">
+      <div class="shortcut-key">history</div>
+      <div class="shortcut-desc">Liste les commandes passées</div>
+      <div class="shortcut-detail">Affiche les dernières commandes avec leur numéro. Tape !42 pour relancer la commande numéro 42.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 6 : Quiz -->
+<section id="tab-quiz" class="tab-content">
+  <h2>Quiz — Le Terminal</h2>
+  <div id="quizContainer"></div>
+  <div class="quiz-score" id="quizScore">
+    <h3 id="scoreTitle"></h3>
+    <p id="scoreDetail"></p>
+    <button class="btn-quiz" onclick="resetQuiz()">Recommencer</button>
+  </div>
+</section>
+
+</main>
+
+<script>
+// TABS
+function showTab(name) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// COPY CODE
+function copyCode(btn) {
+  const pre = btn.previousElementSibling;
+  navigator.clipboard.writeText(pre.textContent).then(() => {
+    btn.textContent = 'Copié !';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 1800);
+  });
+}
+
+// PROMPT INTERACTIF
+function explainPrompt(el, text) {
+  document.querySelectorAll('.prompt-part').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('promptExpl').innerHTML = text;
+}
+
+// SHORTCUT CARDS
+function flipCard(card) {
+  card.classList.toggle('flipped');
+}
+
+// QUIZ DATA
+const quizData = [
+  {
+    q: "Que signifie le <code>~</code> dans le prompt <code>stagiaire@debian:~$</code> ?",
+    opts: ["La racine du système (/)", "Le dossier personnel de l'utilisateur", "Un dossier vide", "Le dossier courant quel qu'il soit"],
+    correct: 1,
+    feedback: "~ est un raccourci pour /home/stagiaire (ou le dossier personnel de l'utilisateur connecté)."
+  },
+  {
+    q: "Quelle commande affiche le répertoire courant ?",
+    opts: ["ls", "cd", "pwd", "dir"],
+    correct: 2,
+    feedback: "pwd (Print Working Directory) affiche le chemin complet du dossier où vous vous trouvez."
+  },
+  {
+    q: "Comment afficher aussi les fichiers cachés avec ls ?",
+    opts: ["ls -l", "ls -a", "ls -h", "ls --all-files"],
+    correct: 1,
+    feedback: "ls -a (all) affiche tous les fichiers, y compris ceux dont le nom commence par un point (.)."
+  },
+  {
+    q: "Quelle commande remonte d'un niveau dans l'arborescence ?",
+    opts: ["cd /", "cd ~", "cd ..", "cd back"],
+    correct: 2,
+    feedback: "cd .. remonte d'un niveau. Les deux points (..) désignent toujours le dossier parent."
+  },
+  {
+    q: "Quelle est la différence entre un chemin absolu et un chemin relatif ?",
+    opts: [
+      "Un chemin absolu est plus court",
+      "Un chemin absolu commence par / et est toujours valide ; un relatif dépend du dossier courant",
+      "Un chemin relatif commence par ~",
+      "Il n'y a aucune différence"
+    ],
+    correct: 1,
+    feedback: "Le chemin absolu commence par / (racine) et est valide depuis n'importe où. Le relatif dépend du dossier où vous êtes."
+  },
+  {
+    q: "Quel raccourci clavier complète automatiquement un nom de fichier ou de commande ?",
+    opts: ["Ctrl+C", "Ctrl+L", "Tab", "↑"],
+    correct: 2,
+    feedback: "La touche Tab déclenche la complétion automatique. Double-Tab affiche toutes les propositions possibles."
+  }
+];
+
+let answered = [];
+
+function buildQuiz() {
+  answered = new Array(quizData.length).fill(false);
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = '';
+  document.getElementById('quizScore').style.display = 'none';
+
+  quizData.forEach((q, qi) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question';
+    div.innerHTML = `<h3>${qi + 1}. ${q.q}</h3>
+      <div class="quiz-options">
+        ${q.opts.map((o, oi) => `<button class="quiz-option" onclick="answerQuiz(${qi},${oi})">${o}</button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="fb-${qi}" style="display:none"></div>`;
+    container.appendChild(div);
+  });
+}
+
+function answerQuiz(qi, oi) {
+  if (answered[qi]) return;
+  answered[qi] = true;
+  const q = quizData[qi];
+  const opts = document.querySelectorAll(`.quiz-question:nth-child(${qi+1}) .quiz-option`);
+  opts.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.correct) btn.classList.add('correct');
+    else if (i === oi) btn.classList.add('wrong');
+  });
+  const fb = document.getElementById('fb-' + qi);
+  fb.style.display = 'block';
+  if (oi === q.correct) {
+    fb.className = 'quiz-feedback ok';
+    fb.textContent = '✓ Bonne réponse ! ' + q.feedback;
+  } else {
+    fb.className = 'quiz-feedback ko';
+    fb.textContent = '✗ ' + q.feedback;
+  }
+  if (answered.every(Boolean)) showScore();
+}
+
+function showScore() {
+  let score = 0;
+  quizData.forEach((q, qi) => {
+    const opts = document.querySelectorAll(`.quiz-question:nth-child(${qi+1}) .quiz-option`);
+    if (opts[q.correct].classList.contains('correct') && answered[qi]) {
+      const fb = document.getElementById('fb-' + qi);
+      if (fb.classList.contains('ok')) score++;
+    }
+  });
+  // Recalculate correctly
+  score = 0;
+  quizData.forEach((q, qi) => {
+    const fb = document.getElementById('fb-' + qi);
+    if (fb && fb.classList.contains('ok')) score++;
+  });
+
+  const scoreEl = document.getElementById('quizScore');
+  scoreEl.style.display = 'block';
+  const pct = Math.round(score / quizData.length * 100);
+  document.getElementById('scoreTitle').textContent = `${score} / ${quizData.length} — ${pct}%`;
+  let msg = pct === 100 ? 'Parfait ! Maîtrise complète du terminal.' :
+            pct >= 66 ? 'Bien ! Quelques points à revoir.' :
+            'Continue à pratiquer dans le terminal.';
+  document.getElementById('scoreDetail').textContent = msg;
+}
+
+function resetQuiz() { buildQuiz(); }
+
+buildQuiz();
+</script>
+</body>
+</html>

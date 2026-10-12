@@ -1,0 +1,151 @@
+@use "./variables.scss" as *;
+@use "./pc.scss";
+@use "./explorer-pc.scss";
+
+body[data-slug="00-contexte/index"] .page-listing {
+  display: none;
+}
+
+body[data-slug="00-contexte/index"] article a.context-next,
+body[data-slug="00-contexte/index"] article a.context-next.internal {
+  display: inline-flex;
+  margin-top: 0.4rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: 0.55rem;
+  color: #fff;
+  background: var(--secondary);
+  font-weight: 750;
+  text-decoration: none;
+}
+
+@media all and ($desktop) {
+  .page > #quartz-body > .sidebar {
+    padding-top: 1rem;
+  }
+}
+
+body[data-slug="index"] .article-title,
+body[data-slug="index"] .content-meta,
+body[data-slug="index"] .note-properties,
+body[data-slug="index"] article .markdown-preview-view > h1:first-child,
+body[data-slug$="/index"] .note-properties,
+body[data-slug$="/index"] .content-meta,
+body[data-slug$="/index"] article .markdown-preview-view > h1:first-child {
+  display: none;
+}
+
+article a[href$="-interactif.html"],
+article a[href*="/telechargements/"][href$=".md"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 0.45rem;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+article a[href$="-interactif.html"] {
+  border: 1px solid color-mix(in srgb, var(--secondary) 55%, transparent);
+  background-color: var(--secondary);
+}
+
+article a[href*="/telechargements/"][href$=".md"] {
+  border: 1px solid color-mix(in srgb, #0d9668 55%, transparent);
+  background-color: #0d9668;
+}
+
+article a[href$="-interactif.html"]:hover,
+article a[href*="/telechargements/"][href$=".md"]:hover {
+  color: #fff;
+  filter: brightness(1.13);
+}
+
+.obsidian-download {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0;
+  padding: 1rem 1.1rem;
+  border: 1px solid color-mix(in srgb, var(--secondary) 45%, var(--lightgray));
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--secondary) 10%, var(--light));
+  box-shadow: 0 0.2rem 0.8rem rgb(0 0 0 / 8%);
+}
+
+.obsidian-download__icon {
+  display: grid;
+  width: 2.8rem;
+  height: 2.8rem;
+  place-items: center;
+  border-radius: 0.7rem;
+  color: #fff;
+  background: var(--secondary);
+  font-family: var(--codeFont);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.obsidian-download__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.obsidian-download__content strong {
+  color: var(--dark);
+  font-size: 1.05rem;
+}
+.obsidian-download__content span {
+  color: var(--darkgray);
+  font-size: 0.92rem;
+}
+
+.obsidian-download a.obsidian-download__button {
+  padding: 0.7rem 1rem;
+  border-radius: 0.55rem;
+  color: #fff;
+  background: var(--secondary);
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.obsidian-download a.obsidian-download__button:hover {
+  color: #fff;
+  filter: brightness(1.13);
+}
+
+.home-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 1.25rem;
+  margin: 1rem 0 2rem;
+}
+.home-links a {
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+@media all and ($mobile) {
+  .obsidian-download {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .obsidian-download a.obsidian-download__button {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+}
+
+.home-track {
+  --home-accent: #007a87;
+}
+.chapter-pagination {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}

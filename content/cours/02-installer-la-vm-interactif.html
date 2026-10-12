@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>02 — Installer la VM</title>
+<style>
+:root {
+  --bg: #0f1117; --surface: #1a1d27; --surface2: #232635; --border: #2e3148;
+  --accent: #34d399; --accent2: #6ee7b7;
+  --warn: #f0a500; --danger: #e05c5c; --success: #4caf82;
+  --text: #d4d8f0; --text-dim: #7880a0; --code-bg: #12141f; --radius: 10px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.7; }
+
+header {
+  background: linear-gradient(135deg, #071a10 0%, #0a1a0f 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 2.5rem 2rem 1.5rem;
+  text-align: center;
+}
+.badge {
+  display: inline-block; background: var(--accent); color: #051a0c;
+  font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 20px; margin-bottom: .7rem;
+}
+header h1 { font-size: 1.8rem; font-weight: 700; color: #fff; line-height: 1.2; }
+header p { color: var(--text-dim); margin-top: .4rem; font-size: .95rem; }
+
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  display: flex; justify-content: center; flex-wrap: wrap; gap: .25rem; padding: .5rem 1rem;
+}
+nav button {
+  background: none; border: none; color: var(--text-dim);
+  padding: .85rem 1.1rem; font-size: .88rem; font-weight: 500; cursor: pointer;
+  border-bottom: 2px solid transparent; white-space: nowrap; transition: all .2s;
+}
+nav button:hover { color: var(--text); }
+nav button.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+.tab-content { display: none; padding: 2rem; max-width: 900px; margin: 0 auto; }
+.tab-content.active { display: block; }
+
+h2 { font-size: 1.25rem; color: var(--accent2); margin: 1.8rem 0 .8rem; border-left: 3px solid var(--accent); padding-left: .75rem; }
+h3 { font-size: 1.05rem; color: var(--text); margin: 1.4rem 0 .6rem; }
+p { margin-bottom: .9rem; }
+ul, ol { padding-left: 1.4rem; margin-bottom: .9rem; }
+li { margin-bottom: .35rem; }
+
+.callout { border-radius: var(--radius); padding: .9rem 1.1rem; margin: 1.2rem 0; border-left: 4px solid; }
+.callout.note  { background: #0e1f17; border-color: var(--accent);  }
+.callout.tip   { background: #0e2018; border-color: var(--success); }
+.callout.warn  { background: #1e1800; border-color: var(--warn);    }
+.callout.danger{ background: #1e1010; border-color: var(--danger);  }
+.callout-title { font-weight: 700; font-size: .82rem; text-transform: uppercase; letter-spacing: .07em; margin-bottom: .4rem; }
+.callout.note   .callout-title { color: var(--accent); }
+.callout.tip    .callout-title { color: var(--success); }
+.callout.warn   .callout-title { color: var(--warn); }
+.callout.danger .callout-title { color: var(--danger); }
+
+.table-wrap { overflow-x: auto; margin: 1rem 0; }
+table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+th { background: var(--surface2); color: var(--accent2); text-align: left; padding: .6rem .9rem; font-weight: 600; border: 1px solid var(--border); }
+td { padding: .55rem .9rem; border: 1px solid var(--border); vertical-align: top; }
+tr:hover td { background: var(--surface2); }
+
+.code-block { position: relative; margin: 1rem 0; }
+pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1rem 1rem 1.2rem; overflow-x: auto; }
+code { font-family: 'Consolas', 'Cascadia Code', monospace; font-size: .88rem; color: #a8ffe0; }
+.copy-btn {
+  position: absolute; top: .5rem; right: .5rem;
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim);
+  padding: .25rem .6rem; font-size: .75rem; border-radius: 5px; cursor: pointer; transition: all .2s;
+}
+.copy-btn:hover { background: var(--accent); color: #000; }
+.copy-btn.copied { background: var(--success); color: #000; }
+
+/* STEP CARDS */
+.steps-container { margin: 1.2rem 0; }
+.step-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); margin-bottom: .8rem; overflow: hidden; cursor: pointer;
+  transition: border-color .2s;
+}
+.step-card:hover, .step-card.open { border-color: var(--accent); }
+.step-header {
+  display: flex; align-items: center; gap: 1rem;
+  padding: .9rem 1.1rem;
+}
+.step-num {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--accent); color: #051a0c;
+  font-weight: 700; font-size: .9rem;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.step-card.done .step-num { background: var(--success); }
+.step-title { font-weight: 600; color: var(--text); flex: 1; }
+.step-arrow { color: var(--text-dim); transition: transform .2s; font-size: .8rem; }
+.step-card.open .step-arrow { transform: rotate(90deg); }
+.step-body { display: none; padding: 0 1.1rem 1.1rem 1.1rem; border-top: 1px solid var(--border); background: var(--surface2); }
+.step-card.open .step-body { display: block; padding-top: .8rem; }
+.step-body p { font-size: .91rem; margin-bottom: .5rem; }
+.param-row { display: flex; gap: .5rem; align-items: baseline; font-size: .9rem; margin-bottom: .3rem; }
+.param-key { color: var(--text-dim); min-width: 160px; }
+.param-val { color: var(--accent2); font-family: 'Consolas', 'Cascadia Code', monospace; font-weight: 600; }
+
+/* INSTALL TABLE highlight */
+td.val { font-family: 'Consolas', 'Cascadia Code', monospace; color: var(--accent2); font-size: .88rem; }
+
+/* VIRTUALBOX ACTIONS TABLE */
+td.action { font-weight: 600; color: var(--accent); }
+
+/* RECAP FILTER */
+.filter-bar { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.filter-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text-dim); padding: .35rem .85rem; border-radius: 20px; font-size: .82rem; cursor: pointer; transition: all .2s; }
+.filter-btn:hover, .filter-btn.active { background: var(--accent); color: #051a0c; border-color: var(--accent); font-weight: 600; }
+.recap-row.hidden { display: none; }
+
+/* QUIZ */
+.quiz-question { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem; margin-bottom: 1.2rem; }
+.quiz-question h4 { color: var(--accent2); margin-bottom: .9rem; font-size: .98rem; }
+.quiz-options { display: flex; flex-direction: column; gap: .5rem; }
+.quiz-option {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: .6rem .9rem; cursor: pointer;
+  font-size: .9rem; transition: all .2s; text-align: left; color: var(--text);
+}
+.quiz-option:hover:not(:disabled) { border-color: var(--accent); }
+.quiz-option.correct { background: #0d2e1e; border-color: var(--success); color: var(--success); }
+.quiz-option.wrong   { background: #2e0d0d; border-color: var(--danger);  color: var(--danger);  }
+.quiz-option:disabled { cursor: default; }
+.quiz-feedback { margin-top: .6rem; font-size: .87rem; color: var(--text-dim); font-style: italic; }
+.quiz-score {
+  background: var(--surface2); border: 1px solid var(--accent);
+  border-radius: var(--radius); padding: 1.5rem; text-align: center; margin-top: 1.5rem; display: none;
+}
+.quiz-score .score-num { font-size: 2.5rem; font-weight: 700; color: var(--accent); }
+.quiz-score p { color: var(--text-dim); margin-top: .4rem; }
+.btn-restart { background: var(--accent); color: #051a0c; border: none; padding: .6rem 1.4rem; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 1rem; font-size: .9rem; }
+.btn-restart:hover { background: var(--accent2); }
+
+/* VB logo badge */
+.vb-badge { display: inline-block; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: .4rem .9rem; font-size: .88rem; margin: .5rem 0; color: var(--accent2); }
+.course-site-nav { display:flex; justify-content:space-between; gap:1rem; padding:.8rem 1rem; background:#1a1d27; flex-wrap:wrap; } .course-site-nav a {color:#93c5fd; font-weight:600;}
+</style>
+</head>
+<body>
+<div class="course-site-nav"><a href="../02-installer-la-vm/">← Chapitre 02</a><a href="quiz/02-installer-la-vm.html">Quiz du chapitre →</a></div>
+
+<header>
+  <div class="badge">Linux Initiation</div>
+  <h1>02 — Installer la VM Debian</h1>
+  <p>Créer une machine virtuelle avec VirtualBox et installer Debian pas à pas.</p>
+</header>
+
+<nav id="main-nav">
+  <button class="active" onclick="showTab('vm')">Machine virtuelle</button>
+  <button onclick="showTab('creer')">Créer la VM</button>
+  <button onclick="showTab('install')">Installer Debian</button>
+  <button onclick="showTab('demarrage')">Premier démarrage</button>
+  <button onclick="showTab('recap')">Récapitulatif</button>
+  <button onclick="showTab('quiz')">Quiz</button>
+</nav>
+
+<!-- TAB 1 : Machine virtuelle -->
+<div id="tab-vm" class="tab-content active">
+  <h2>Qu'est-ce qu'une machine virtuelle ?</h2>
+  <p>Une <strong>machine virtuelle</strong> (VM) est un ordinateur simulé à l'intérieur d'un ordinateur réel. Elle s'exécute dans une fenêtre, comme n'importe quel autre logiciel, mais dispose de son propre système d'exploitation, son propre disque dur (virtuel), sa propre carte réseau…</p>
+
+  <div class="callout note">
+    <div class="callout-title">Note — Analogie</div>
+    Imaginez un <strong>appartement indépendant</strong> à l'intérieur d'une maison. L'appartement a sa propre porte, sa propre cuisine, sa propre électricité — mais il reste à l'intérieur de la maison principale. Si l'occupant de l'appartement casse quelque chose, cela n'abîme pas la maison principale.
+  </div>
+
+  <h2>Pourquoi utiliser une VM ?</h2>
+  <ul>
+    <li><strong>Tout casser sans risque</strong> — si vous faites une fausse manipulation dans la VM, votre vrai ordinateur n'est pas affecté</li>
+    <li><strong>Pas besoin d'un 2e ordinateur</strong> — une VM s'exécute sur votre machine actuelle</li>
+    <li><strong>Isolation totale</strong> — la VM est séparée de votre système principal ; ce qui se passe dans la VM reste dans la VM</li>
+    <li><strong>Instantanés</strong> — vous pouvez sauvegarder l'état de la VM à tout moment et revenir en arrière si besoin</li>
+  </ul>
+
+  <h2>VirtualBox</h2>
+  <p><strong>VirtualBox</strong> est le logiciel de virtualisation que nous utilisons dans cette formation. Il est :</p>
+  <ul>
+    <li><strong>Gratuit et open source</strong> (développé par Oracle)</li>
+    <li><strong>Multiplateforme</strong> : fonctionne sur Windows, macOS et Linux</li>
+    <li><strong>Facile à prendre en main</strong> avec une interface graphique claire</li>
+  </ul>
+  <span class="vb-badge">VirtualBox — virtualbox.org — Gratuit</span>
+
+  <div class="callout tip">
+    <div class="callout-title">Tip — Version Debian</div>
+    Pour cette formation, nous installons <strong>Debian 12 (Bookworm)</strong> ou <strong>Debian 13 (Trixie)</strong> selon votre formateur. L'installation est identique dans les deux cas.
+  </div>
+</div>
+
+<!-- TAB 2 : Créer la VM -->
+<div id="tab-creer" class="tab-content">
+  <h2>Créer la VM dans VirtualBox — Étapes interactives</h2>
+  <p>Cliquez sur chaque étape pour voir les détails et les paramètres à saisir.</p>
+
+  <div class="steps-container">
+
+    <div class="step-card" id="step1" onclick="toggleStep('step1')">
+      <div class="step-header">
+        <div class="step-num">1</div>
+        <span class="step-title">Nouveau — Nommer la VM</span>
+        <span class="step-arrow">▶</span>
+      </div>
+      <div class="step-body">
+        <p>Dans VirtualBox, cliquez sur <strong>Nouveau</strong> (bouton bleu en haut). Renseignez :</p>
+        <div class="param-row"><span class="param-key">Nom :</span><span class="param-val">Debian-Formation</span></div>
+        <div class="param-row"><span class="param-key">Dossier :</span><span class="param-val">(laisser par défaut)</span></div>
+        <div class="param-row"><span class="param-key">Type :</span><span class="param-val">Linux</span></div>
+        <div class="param-row"><span class="param-key">Version :</span><span class="param-val">Debian (64-bit)</span></div>
+        <p style="margin-top:.6rem; color:var(--text-dim);">Si vous tapez "Debian" dans le nom, VirtualBox détecte automatiquement le type et la version.</p>
+      </div>
+    </div>
+
+    <div class="step-card" id="step2" onclick="toggleStep('step2')">
+      <div class="step-header">
+        <div class="step-num">2</div>
+        <span class="step-title">Mémoire vive (RAM)</span>
+        <span class="step-arrow">▶</span>
+      </div>
+      <div class="step-body">
+        <p>Définissez la quantité de RAM allouée à la VM :</p>
+        <div class="param-row"><span class="param-key">Minimum :</span><span class="param-val">2 048 Mo (2 Go)</span></div>
+        <div class="param-row"><span class="param-key">Recommandé :</span><span class="param-val">4 096 Mo (4 Go)</span></div>
+        <div class="callout warn" style="margin-top:.8rem;">
+          <div class="callout-title">Attention</div>
+          N'allouez jamais plus de la <strong>moitié de la RAM de votre machine physique</strong>. Si votre PC a 8 Go de RAM, ne dépassez pas 4 Go pour la VM. Sinon, votre PC hôte risque de manquer de mémoire.
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card" id="step3" onclick="toggleStep('step3')">
+      <div class="step-header">
+        <div class="step-num">3</div>
+        <span class="step-title">Disque dur virtuel</span>
+        <span class="step-arrow">▶</span>
+      </div>
+      <div class="step-body">
+        <p>Créez un nouveau disque dur virtuel pour la VM :</p>
+        <div class="param-row"><span class="param-key">Action :</span><span class="param-val">Créer un disque dur virtuel maintenant</span></div>
+        <div class="param-row"><span class="param-key">Type de fichier :</span><span class="param-val">VDI (VirtualBox Disk Image)</span></div>
+        <div class="param-row"><span class="param-key">Allocation :</span><span class="param-val">Dynamique (grandit au besoin)</span></div>
+        <div class="param-row"><span class="param-key">Taille :</span><span class="param-val">20 Go minimum</span></div>
+        <p style="margin-top:.6rem; color:var(--text-dim);">Un disque dynamique n'occupe sur votre vrai disque que l'espace réellement utilisé. Pratique !</p>
+      </div>
+    </div>
+
+    <div class="step-card" id="step4" onclick="toggleStep('step4')">
+      <div class="step-header">
+        <div class="step-num">4</div>
+        <span class="step-title">Configuration réseau</span>
+        <span class="step-arrow">▶</span>
+      </div>
+      <div class="step-body">
+        <p>Après la création de la VM, allez dans <strong>Configuration → Réseau</strong> :</p>
+        <div class="param-row"><span class="param-key">Carte 1 :</span><span class="param-val">Activée — Mode NAT</span></div>
+        <p style="margin-top:.6rem; color:var(--text-dim);">Le mode <strong>NAT</strong> (Network Address Translation) permet à la VM d'accéder à Internet via la connexion de votre PC hôte, sans configuration complexe. C'est le mode par défaut et il convient parfaitement pour cette formation.</p>
+        <div class="callout tip" style="margin-top:.6rem;">
+          <div class="callout-title">Tip</div>
+          Si vous avez besoin d'accéder à la VM depuis votre PC hôte (SSH), ajoutez une <strong>Carte 2 en mode Host-Only</strong>.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TAB 3 : Installer Debian -->
+<div id="tab-install" class="tab-content">
+  <h2>Démarrer l'installation</h2>
+  <p>Au premier démarrage de la VM, VirtualBox vous demandera un fichier ISO à utiliser comme "CD d'installation". Sélectionnez le fichier <code>debian-xx.x.x-amd64-netinst.iso</code> que vous avez téléchargé depuis debian.org.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">Tip</div>
+    Choisissez l'option <strong>"Install"</strong> (pas "Graphical Install") pour vous familiariser avec l'installeur texte de Debian. C'est plus rapide et très guidé.
+  </div>
+
+  <h2>Paramètres d'installation</h2>
+  <p>L'installeur Debian pose une série de questions. Voici les valeurs à saisir :</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Étape</th><th>Valeur recommandée</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Langue</td><td class="val">Français</td></tr>
+        <tr><td>Pays</td><td class="val">France</td></tr>
+        <tr><td>Clavier</td><td class="val">Français (azerty)</td></tr>
+        <tr><td>Nom de la machine (hostname)</td><td class="val">debian</td></tr>
+        <tr><td>Domaine</td><td class="val">(laisser vide)</td></tr>
+        <tr><td>Mot de passe root</td><td class="val">À choisir et noter précieusement</td></tr>
+        <tr><td>Nom d'utilisateur</td><td class="val">stagiaire (ou votre prénom)</td></tr>
+        <tr><td>Partitionnement</td><td class="val">Assisté — utiliser un disque entier</td></tr>
+        <tr><td>Schéma de partitionnement</td><td class="val">Tout dans une seule partition</td></tr>
+        <tr><td>Logiciels à installer</td><td class="val">Environnement de bureau GNOME + Utilitaires standard</td></tr>
+        <tr><td>Installer GRUB</td><td class="val">Oui — sur /dev/sda</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">Tip — Durée</div>
+    L'installation complète dure entre <strong>10 et 20 minutes</strong> selon la vitesse de votre connexion Internet (Debian télécharge des paquets pendant l'installation). Soyez patient !
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-title">Attention — Mot de passe root</div>
+    Le mot de passe root est le mot de passe du compte administrateur du système. <strong>Notez-le sur papier maintenant</strong>. Si vous l'oubliez, récupérer l'accès est complexe.
+  </div>
+</div>
+
+<!-- TAB 4 : Premier démarrage -->
+<div id="tab-demarrage" class="tab-content">
+  <h2>Premier démarrage après installation</h2>
+  <p>Une fois l'installation terminée, Debian redémarre automatiquement. L'écran de connexion GNOME apparaît.</p>
+
+  <h3>Se connecter</h3>
+  <ul>
+    <li>Cliquez sur votre <strong>nom d'utilisateur</strong> (pas root !)</li>
+    <li>Saisissez votre <strong>mot de passe utilisateur</strong></li>
+    <li>Le bureau GNOME s'affiche</li>
+  </ul>
+
+  <div class="callout danger">
+    <div class="callout-title">Danger — Ne jamais travailler en root au quotidien</div>
+    Le compte <strong>root</strong> a tous les pouvoirs sur le système, sans aucune restriction. Une seule commande mal tapée peut supprimer des fichiers système critiques ou rendre le système inutilisable. Travaillez toujours avec votre <strong>compte utilisateur normal</strong> et utilisez <code>sudo</code> uniquement quand c'est nécessaire.
+  </div>
+
+  <h2>Actions VirtualBox utiles</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Action</th><th>Comment faire</th><th>Utilité</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="action">Démarrer</td><td>Double-clic sur la VM dans la liste</td><td>Lance la VM</td></tr>
+        <tr><td class="action">Mettre en pause</td><td>Machine → Pause</td><td>Fige la VM sans l'éteindre</td></tr>
+        <tr><td class="action">Éteindre proprement</td><td>Depuis Debian : Éteindre dans le menu GNOME</td><td>Arrêt propre (recommandé)</td></tr>
+        <tr><td class="action">Éteindre en urgence</td><td>Machine → ACPI Shutdown ou fermer la fenêtre</td><td>Si la VM est bloquée</td></tr>
+        <tr><td class="action">Instantané (snapshot)</td><td>Machine → Prendre un instantané</td><td>Sauvegarde l'état — retour en arrière possible</td></tr>
+        <tr><td class="action">Redimensionner l'écran</td><td>Affichage → Facteur de zoom</td><td>Agrandir la fenêtre VM</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">Tip — Instantanés (snapshots)</div>
+    Avant chaque TP important, prenez un <strong>instantané</strong> de votre VM. Si quelque chose tourne mal, vous pourrez revenir à cet état propre en quelques secondes. C'est l'un des grands avantages des machines virtuelles !
+  </div>
+
+  <h3>Vérifier la connexion Internet</h3>
+  <p>Ouvrez un terminal dans Debian (Activités → Terminal) et tapez :</p>
+  <div class="code-block">
+    <pre><code>ping -c 3 8.8.8.8</code></pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+  </div>
+  <p>Si vous obtenez des réponses, votre VM est connectée à Internet. Bravo !</p>
+</div>
+
+<!-- TAB 5 : Récapitulatif -->
+<div id="tab-recap" class="tab-content">
+  <h2>Récapitulatif — Installer la VM</h2>
+  <p>Filtrez par catégorie pour retrouver rapidement une notion.</p>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterRecap('all', this)">Tout</button>
+    <button class="filter-btn" onclick="filterRecap('vm', this)">Machine virtuelle</button>
+    <button class="filter-btn" onclick="filterRecap('vbox', this)">VirtualBox</button>
+    <button class="filter-btn" onclick="filterRecap('install', this)">Installation</button>
+    <button class="filter-btn" onclick="filterRecap('reseau', this)">Réseau</button>
+  </div>
+
+  <div class="table-wrap">
+    <table id="recap-table">
+      <thead>
+        <tr><th>Notion</th><th>Définition</th><th>Catégorie</th></tr>
+      </thead>
+      <tbody>
+        <tr class="recap-row" data-cat="vm"><td><strong>Machine virtuelle (VM)</strong></td><td>Ordinateur simulé à l'intérieur d'un ordinateur réel, exécuté dans une fenêtre</td><td>Machine virtuelle</td></tr>
+        <tr class="recap-row" data-cat="vm"><td><strong>Hyperviseur</strong></td><td>Logiciel qui crée et gère les machines virtuelles (ex: VirtualBox)</td><td>Machine virtuelle</td></tr>
+        <tr class="recap-row" data-cat="vm"><td><strong>Instantané (snapshot)</strong></td><td>Sauvegarde de l'état d'une VM à un instant donné — permet de revenir en arrière</td><td>Machine virtuelle</td></tr>
+        <tr class="recap-row" data-cat="vm"><td><strong>ISO</strong></td><td>Fichier image d'un CD/DVD d'installation — utilisé pour démarrer l'installation dans la VM</td><td>Machine virtuelle</td></tr>
+        <tr class="recap-row" data-cat="vbox"><td><strong>VirtualBox</strong></td><td>Logiciel de virtualisation gratuit et open source développé par Oracle</td><td>VirtualBox</td></tr>
+        <tr class="recap-row" data-cat="vbox"><td><strong>VDI</strong></td><td>Format de disque virtuel de VirtualBox (VirtualBox Disk Image)</td><td>VirtualBox</td></tr>
+        <tr class="recap-row" data-cat="vbox"><td><strong>Disque dynamique</strong></td><td>Disque virtuel qui n'occupe sur le disque physique que l'espace réellement utilisé</td><td>VirtualBox</td></tr>
+        <tr class="recap-row" data-cat="install"><td><strong>root</strong></td><td>Compte administrateur Linux avec tous les pouvoirs — à utiliser avec précaution</td><td>Installation</td></tr>
+        <tr class="recap-row" data-cat="install"><td><strong>hostname</strong></td><td>Nom de la machine sur le réseau (ex: "debian")</td><td>Installation</td></tr>
+        <tr class="recap-row" data-cat="install"><td><strong>GRUB</strong></td><td>Chargeur de démarrage Linux — permet de lancer le système au démarrage</td><td>Installation</td></tr>
+        <tr class="recap-row" data-cat="install"><td><strong>sudo</strong></td><td>Commande permettant à un utilisateur normal d'exécuter une commande avec les droits root</td><td>Installation</td></tr>
+        <tr class="recap-row" data-cat="reseau"><td><strong>NAT</strong></td><td>Mode réseau VirtualBox : la VM accède à Internet via la connexion du PC hôte</td><td>Réseau</td></tr>
+        <tr class="recap-row" data-cat="reseau"><td><strong>Host-Only</strong></td><td>Mode réseau VirtualBox : réseau privé entre la VM et le PC hôte uniquement</td><td>Réseau</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- TAB 6 : Quiz -->
+<div id="tab-quiz" class="tab-content">
+  <h2>Quiz — Installer la VM</h2>
+  <p style="color:var(--text-dim); margin-bottom:1.5rem;">5 questions pour valider vos acquis.</p>
+
+  <div id="quiz-container">
+
+    <div class="quiz-question" id="q1">
+      <h4>Question 1 — Qu'est-ce qu'une machine virtuelle ?</h4>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="answer(1,'a')">a) Un deuxième ordinateur physique acheté en supplément</button>
+        <button class="quiz-option" onclick="answer(1,'b')">b) Un ordinateur simulé à l'intérieur de votre ordinateur réel</button>
+        <button class="quiz-option" onclick="answer(1,'c')">c) Un logiciel de traitement de texte</button>
+        <button class="quiz-option" onclick="answer(1,'d')">d) Une version allégée de Windows</button>
+      </div>
+      <div class="quiz-feedback" id="fb1"></div>
+    </div>
+
+    <div class="quiz-question" id="q2">
+      <h4>Question 2 — Quelle quantité de RAM minimum faut-il allouer à la VM Debian ?</h4>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="answer(2,'a')">a) 512 Mo</button>
+        <button class="quiz-option" onclick="answer(2,'b')">b) 1 Go</button>
+        <button class="quiz-option" onclick="answer(2,'c')">c) 2 Go</button>
+        <button class="quiz-option" onclick="answer(2,'d')">d) 8 Go</button>
+      </div>
+      <div class="quiz-feedback" id="fb2"></div>
+    </div>
+
+    <div class="quiz-question" id="q3">
+      <h4>Question 3 — Quel type de disque virtuel doit-on choisir ?</h4>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="answer(3,'a')">a) VMDK fixe</button>
+        <button class="quiz-option" onclick="answer(3,'b')">b) VDI dynamique</button>
+        <button class="quiz-option" onclick="answer(3,'c')">c) NTFS compressé</button>
+        <button class="quiz-option" onclick="answer(3,'d')">d) FAT32</button>
+      </div>
+      <div class="quiz-feedback" id="fb3"></div>
+    </div>
+
+    <div class="quiz-question" id="q4">
+      <h4>Question 4 — Quel mode réseau permet à la VM d'accéder à Internet ?</h4>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="answer(4,'a')">a) Host-Only</button>
+        <button class="quiz-option" onclick="answer(4,'b')">b) Internal Network</button>
+        <button class="quiz-option" onclick="answer(4,'c')">c) NAT</button>
+        <button class="quiz-option" onclick="answer(4,'d')">d) Déconnecté</button>
+      </div>
+      <div class="quiz-feedback" id="fb4"></div>
+    </div>
+
+    <div class="quiz-question" id="q5">
+      <h4>Question 5 — Pourquoi ne faut-il pas travailler au quotidien avec le compte root ?</h4>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="answer(5,'a')">a) Parce que root ne peut pas ouvrir de navigateur web</button>
+        <button class="quiz-option" onclick="answer(5,'b')">b) Parce que root ne peut pas se connecter en SSH</button>
+        <button class="quiz-option" onclick="answer(5,'c')">c) Parce qu'une erreur peut détruire le système entier sans avertissement</button>
+        <button class="quiz-option" onclick="answer(5,'d')">d) Parce que root est réservé aux développeurs</button>
+      </div>
+      <div class="quiz-feedback" id="fb5"></div>
+    </div>
+
+  </div>
+
+  <div class="quiz-score" id="quiz-score">
+    <div class="score-num" id="score-display">0 / 5</div>
+    <p id="score-msg"></p>
+    <button class="btn-restart" onclick="restartQuiz()">Recommencer</button>
+  </div>
+</div>
+
+<script>
+// ─── TABS ────────────────────────────────────────────────────────────────────
+function showTab(id) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ─── COPY CODE ───────────────────────────────────────────────────────────────
+function copyCode(btn) {
+  const pre = btn.previousElementSibling;
+  navigator.clipboard.writeText(pre.textContent).then(() => {
+    btn.textContent = 'Copié !'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// ─── STEP CARDS ──────────────────────────────────────────────────────────────
+function toggleStep(id) {
+  const card = document.getElementById(id);
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.step-card').forEach(c => c.classList.remove('open'));
+  if (!isOpen) card.classList.add('open');
+}
+
+// ─── RECAP FILTER ────────────────────────────────────────────────────────────
+function filterRecap(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.recap-row').forEach(row => {
+    if (cat === 'all' || row.dataset.cat === cat) row.classList.remove('hidden');
+    else row.classList.add('hidden');
+  });
+}
+
+// ─── QUIZ ─────────────────────────────────────────────────────────────────────
+const answers = { 1:'b', 2:'c', 3:'b', 4:'c', 5:'c' };
+const feedbacks = {
+  1: { b: "Exact ! Une VM est un ordinateur simulé dans votre ordinateur réel — avec son propre OS, son propre disque…", wrong: "Non. Une machine virtuelle est un ordinateur simulé à l'intérieur de votre ordinateur physique." },
+  2: { c: "Correct ! 2 Go est le minimum pour faire tourner Debian avec GNOME confortablement. 4 Go est recommandé.", wrong: "Non. Il faut au minimum 2 Go (2 048 Mo) de RAM pour Debian avec interface graphique." },
+  3: { b: "Exact ! VDI dynamique est le format natif VirtualBox : il grandit au besoin et n'occupe que l'espace réellement utilisé.", wrong: "Non. On choisit un disque VDI dynamique : format VirtualBox, allocation à la demande." },
+  4: { c: "Correct ! Le mode NAT permet à la VM d'accéder à Internet via la connexion de votre PC hôte.", wrong: "Non. C'est le mode NAT qui permet l'accès Internet. Host-Only isole la VM dans un réseau privé." },
+  5: { c: "Exact ! Root a tous les pouvoirs sans aucune confirmation. Une typo et vous pouvez supprimer des fichiers système critiques.", wrong: "Non. La raison est simple : root n'a aucune restriction, et une erreur (même une typo) peut détruire le système entier." }
+};
+let score = 0;
+let answered = {};
+
+function answer(qNum, choice) {
+  if (answered[qNum]) return;
+  answered[qNum] = true;
+  score += (choice === answers[qNum]) ? 1 : 0;
+  const qEl = document.getElementById('q' + qNum);
+  qEl.querySelectorAll('.quiz-option').forEach(btn => {
+    btn.disabled = true;
+    const ltr = btn.textContent.trim()[0].toLowerCase();
+    if (ltr === answers[qNum]) btn.classList.add('correct');
+    else if (ltr === choice) btn.classList.add('wrong');
+  });
+  const fb = feedbacks[qNum];
+  document.getElementById('fb' + qNum).textContent = fb[choice] || fb.wrong;
+  if (Object.keys(answered).length === 5) showScore();
+}
+
+function showScore() {
+  const el = document.getElementById('quiz-score');
+  el.style.display = 'block';
+  document.getElementById('score-display').textContent = score + ' / 5';
+  const msgs = ['Revoyez le cours avant de continuer.','Quelques notions à revoir.','Pas mal ! Relisez les points manqués.','Très bien ! Vous maîtrisez l\'essentiel.','Parfait ! Toutes les réponses sont correctes.'];
+  document.getElementById('score-msg').textContent = msgs[score] || '';
+}
+
+function restartQuiz() {
+  score = 0; answered = {};
+  document.getElementById('quiz-score').style.display = 'none';
+  document.querySelectorAll('.quiz-option').forEach(btn => {
+    btn.disabled = false; btn.classList.remove('correct','wrong');
+  });
+  document.querySelectorAll('.quiz-feedback').forEach(fb => fb.textContent = '');
+}
+</script>
+</body>
+</html>

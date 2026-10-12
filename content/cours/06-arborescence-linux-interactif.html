@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>06 — Arborescence Linux</title>
+<style>
+:root {
+  --bg: #0f1117; --surface: #1a1d27; --surface2: #232635; --border: #2e3148;
+  --accent: #4ade80; --accent2: #86efac;
+  --warn: #f0a500; --danger: #e05c5c; --success: #4caf82;
+  --text: #d4d8f0; --text-dim: #7880a0; --code-bg: #12141f; --radius: 10px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+
+.header {
+  background: linear-gradient(135deg, #071a08 0%, #091a09 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 2.5rem 2rem 1.5rem;
+  text-align: center;
+}
+.badge {
+  display: inline-block; background: var(--accent); color: #071a08;
+  font-size: .72rem; font-weight: 700; letter-spacing: .08em;
+  padding: .25rem .7rem; border-radius: 20px; text-transform: uppercase; margin-bottom: .8rem;
+}
+.header h1 {
+  font-size: 2rem; font-weight: 800; line-height: 1.1;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  margin-bottom: .4rem;
+}
+.header p { color: var(--text-dim); font-size: 1rem; }
+
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  display: flex; justify-content: center; flex-wrap: wrap; gap: .25rem; padding: .5rem 1rem;
+}
+.nav button {
+  background: none; border: none; color: var(--text-dim); cursor: pointer;
+  padding: .9rem 1.1rem; font-size: .85rem; font-weight: 500; white-space: nowrap;
+  border-bottom: 2px solid transparent; transition: all .2s;
+}
+.nav button:hover { color: var(--text); }
+.nav button.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+main { max-width: 920px; margin: 0 auto; padding: 2rem 1.5rem; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+h2 { font-size: 1.3rem; font-weight: 700; color: var(--accent2); margin-bottom: 1rem; margin-top: 1.5rem; }
+h2:first-child { margin-top: 0; }
+h3 { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: .5rem; margin-top: 1.2rem; }
+p { color: var(--text); line-height: 1.7; margin-bottom: .8rem; }
+ul { padding-left: 1.5rem; line-height: 2; color: var(--text); margin-bottom: .8rem; }
+
+.callout { border-radius: var(--radius); padding: .9rem 1.1rem; margin: 1rem 0; border-left: 3px solid; }
+.callout-note { background: rgba(74,222,128,.07); border-color: var(--accent); }
+.callout-tip { background: rgba(76,175,130,.1); border-color: var(--success); }
+.callout-warn { background: rgba(240,165,0,.1); border-color: var(--warn); }
+.callout-danger { background: rgba(224,92,92,.1); border-color: var(--danger); }
+.callout-label { font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: .35rem; }
+.callout-note .callout-label { color: var(--accent); }
+.callout-tip .callout-label { color: var(--success); }
+.callout-warn .callout-label { color: var(--warn); }
+.callout-danger .callout-label { color: var(--danger); }
+.callout p { margin: 0; font-size: .93rem; }
+
+.code-wrap { position: relative; margin: .8rem 0; }
+pre {
+  background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1rem 1rem 1rem 1.1rem; overflow-x: auto;
+  font-family: 'Consolas', 'Cascadia Code', monospace; font-size: .88rem; line-height: 1.7; color: #b8c0e0;
+}
+code { font-family: 'Consolas', 'Cascadia Code', monospace; font-size: .88rem; }
+.inline-code {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-radius: 4px; padding: .1rem .4rem; color: var(--accent2); font-size: .87rem;
+}
+.copy-btn {
+  position: absolute; top: .5rem; right: .5rem;
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim);
+  border-radius: 5px; padding: .25rem .6rem; font-size: .75rem; cursor: pointer; transition: all .2s;
+}
+.copy-btn:hover { background: var(--accent); color: #071a08; }
+.copy-btn.copied { background: var(--success); color: #071a08; }
+
+table { width: 100%; border-collapse: collapse; margin: .8rem 0; font-size: .9rem; }
+th { background: var(--surface2); color: var(--accent2); padding: .6rem .9rem; text-align: left; font-weight: 600; }
+td { padding: .55rem .9rem; border-bottom: 1px solid var(--border); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(74,222,128,.04); }
+
+/* ARBRE INTERACTIF */
+.tree-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.2rem 0; }
+@media(max-width: 600px) { .tree-layout { grid-template-columns: 1fr; } }
+.tree-container {
+  background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.2rem; font-family: 'Consolas', 'Cascadia Code', monospace; font-size: .9rem;
+}
+.tree-root { color: var(--accent2); font-weight: 700; font-size: 1.1rem; margin-bottom: .5rem; }
+.tree-item {
+  display: flex; align-items: center; padding: .3rem .4rem; border-radius: 5px;
+  cursor: pointer; transition: background .15s; margin: .15rem 0;
+}
+.tree-item:hover { background: rgba(74,222,128,.1); }
+.tree-item.selected { background: rgba(74,222,128,.2); }
+.tree-item .tree-prefix { color: var(--text-dim); user-select: none; }
+.tree-item .tree-name { color: var(--accent); font-weight: 600; margin-right: .4rem; }
+.tree-item .tree-comment { color: var(--text-dim); font-size: .82rem; }
+.tree-panel {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.2rem; display: flex; align-items: flex-start; flex-direction: column; justify-content: center;
+  min-height: 200px;
+}
+.tree-panel-title { color: var(--accent); font-size: 1.2rem; font-weight: 700; margin-bottom: .6rem; font-family: 'Consolas', 'Cascadia Code', monospace; }
+.tree-panel-body { color: var(--text); font-size: .92rem; line-height: 1.7; }
+.tree-panel-example { margin-top: .8rem; font-family: 'Consolas', 'Cascadia Code', monospace; font-size: .82rem; color: var(--text-dim); border-top: 1px solid var(--border); padding-top: .6rem; }
+.tree-panel-placeholder { color: var(--text-dim); font-size: .9rem; }
+
+/* RECAP FILTER */
+.recap-filter-wrap { margin-bottom: 1rem; display: flex; gap: .6rem; flex-wrap: wrap; }
+.recap-filter-wrap input {
+  background: var(--surface); border: 1px solid var(--border); color: var(--text);
+  border-radius: 7px; padding: .5rem .9rem; font-size: .9rem; flex: 1; min-width: 180px; outline: none;
+}
+.recap-filter-wrap input:focus { border-color: var(--accent); }
+.recap-filter-wrap select {
+  background: var(--surface); border: 1px solid var(--border); color: var(--text);
+  border-radius: 7px; padding: .5rem .9rem; font-size: .9rem; cursor: pointer; outline: none;
+}
+.recap-filter-wrap select:focus { border-color: var(--accent); }
+.recap-empty { color: var(--text-dim); font-style: italic; padding: .8rem 0; }
+.hidden { display: none; }
+
+/* QUIZ */
+.quiz-question { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem; margin-bottom: 1rem; }
+.quiz-question h3 { color: var(--text); margin-bottom: .8rem; font-size: .95rem; }
+.quiz-options { display: flex; flex-direction: column; gap: .4rem; }
+.quiz-option {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 7px;
+  padding: .6rem 1rem; cursor: pointer; transition: all .15s; text-align: left;
+  color: var(--text); font-size: .9rem;
+}
+.quiz-option:hover:not(:disabled) { border-color: var(--accent); background: rgba(74,222,128,.1); }
+.quiz-option.correct { background: rgba(76,175,130,.15); border-color: var(--success); color: var(--success); }
+.quiz-option.wrong { background: rgba(224,92,92,.12); border-color: var(--danger); color: var(--danger); }
+.quiz-option:disabled { cursor: default; }
+.quiz-feedback { margin-top: .6rem; font-size: .88rem; padding: .5rem .8rem; border-radius: 6px; }
+.quiz-feedback.ok { background: rgba(76,175,130,.1); color: var(--success); }
+.quiz-feedback.ko { background: rgba(224,92,92,.1); color: var(--danger); }
+.quiz-score {
+  background: var(--surface2); border: 1px solid var(--accent); border-radius: var(--radius);
+  padding: 1.5rem; text-align: center; margin-top: 1rem; display: none;
+}
+.quiz-score h3 { color: var(--accent); font-size: 1.4rem; margin-bottom: .5rem; }
+.quiz-score p { color: var(--text-dim); }
+.btn-quiz {
+  background: var(--accent); color: #071a08; border: none; border-radius: 7px;
+  padding: .65rem 1.4rem; font-size: .9rem; font-weight: 700; cursor: pointer; margin-top: 1rem; transition: opacity .2s;
+}
+.btn-quiz:hover { opacity: .85; }
+.course-site-nav { display:flex; justify-content:space-between; gap:1rem; padding:.8rem 1rem; background:#1a1d27; flex-wrap:wrap; } .course-site-nav a {color:#93c5fd; font-weight:600;}
+</style>
+</head>
+<body>
+<div class="course-site-nav"><a href="../06-arborescence-linux/">← Chapitre 06</a><a href="quiz/06-arborescence-linux.html">Quiz du chapitre →</a></div>
+
+<header class="header">
+  <div class="badge">Module 06</div>
+  <h1>Arborescence Linux</h1>
+  <p>Comprendre l'organisation du système de fichiers</p>
+</header>
+
+<nav class="nav">
+  <button class="active" onclick="showTab('racine')">La racine /</button>
+  <button onclick="showTab('dossiersclés')">Dossiers clés</button>
+  <button onclick="showTab('fichiersimportants')">Fichiers importants</button>
+  <button onclick="showTab('winvslinux')">Windows vs Linux</button>
+  <button onclick="showTab('recap')">Récapitulatif</button>
+  <button onclick="showTab('quiz')">Quiz</button>
+</nav>
+
+<main>
+
+<!-- TAB 1 : La racine / -->
+<section id="tab-racine" class="tab-content active">
+  <h2>Tout part de /</h2>
+  <p>Sous Linux, il n'y a <strong>pas de lettre de lecteur</strong> (C:\, D:\ …). L'intégralité du système de fichiers forme une seule arborescence dont la <strong>racine est <span class="inline-code">/</span></strong>.</p>
+
+  <div class="callout callout-note">
+    <div class="callout-label">Analogie — L'immeuble</div>
+    <p><span class="inline-code">/</span> est comme le <strong>rez-de-chaussée d'un immeuble</strong>. Chaque dossier est un étage avec un rôle bien précis : stockage de configuration, programmes, données personnelles… Rien n'est placé au hasard.</p>
+  </div>
+
+  <h2>Arbre interactif — clique sur un dossier</h2>
+  <div class="tree-layout">
+    <div class="tree-container">
+      <div class="tree-root">/</div>
+      <div class="tree-item" onclick="selectDir(this, 'etc')">
+        <span class="tree-prefix">├── </span><span class="tree-name">etc/</span><span class="tree-comment">← configuration</span>
+      </div>
+      <div class="tree-item" onclick="selectDir(this, 'home')">
+        <span class="tree-prefix">├── </span><span class="tree-name">home/</span><span class="tree-comment">← dossiers personnels</span>
+      </div>
+      <div class="tree-item" onclick="selectDir(this, 'var')">
+        <span class="tree-prefix">├── </span><span class="tree-name">var/</span><span class="tree-comment">← données variables</span>
+      </div>
+      <div class="tree-item" onclick="selectDir(this, 'tmp')">
+        <span class="tree-prefix">├── </span><span class="tree-name">tmp/</span><span class="tree-comment">← fichiers temporaires</span>
+      </div>
+      <div class="tree-item" onclick="selectDir(this, 'usr')">
+        <span class="tree-prefix">├── </span><span class="tree-name">usr/</span><span class="tree-comment">← programmes</span>
+      </div>
+      <div class="tree-item" onclick="selectDir(this, 'bin')">
+        <span class="tree-prefix">├── </span><span class="tree-name">bin/</span><span class="tree-comment">← commandes essentielles</span>
+      </div>
+      <div class="tree-item" onclick="selectDir(this, 'boot')">
+        <span class="tree-prefix">├── </span><span class="tree-name">boot/</span><span class="tree-comment">← démarrage</span>
+      </div>
+      <div class="tree-item" onclick="selectDir(this, 'dev')">
+        <span class="tree-prefix">└── </span><span class="tree-name">dev/</span><span class="tree-comment">← périphériques</span>
+      </div>
+    </div>
+    <div class="tree-panel" id="treePanel">
+      <span class="tree-panel-placeholder">← Clique sur un dossier pour voir sa description</span>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 2 : Dossiers clés -->
+<section id="tab-dossiersclés" class="tab-content">
+  <h2>Détail des dossiers principaux</h2>
+
+  <h3>/home — Dossiers personnels</h3>
+  <p>Contient le dossier personnel de chaque utilisateur. <span class="inline-code">~</span> est un raccourci pour <span class="inline-code">/home/nom_utilisateur</span>.</p>
+  <ul>
+    <li><span class="inline-code">/home/stagiaire/</span> → dossier de l'utilisateur stagiaire</li>
+    <li><span class="inline-code">/home/alice/</span>, <span class="inline-code">/home/bob/</span> → chaque utilisateur a son propre espace</li>
+  </ul>
+
+  <h3>/etc — Configuration</h3>
+  <p>Contient <strong>tous les fichiers de configuration</strong> du système et des services. C'est ici qu'on modifie le comportement des logiciels.</p>
+  <ul>
+    <li><span class="inline-code">/etc/passwd</span> → liste des utilisateurs</li>
+    <li><span class="inline-code">/etc/hosts</span> → correspondances nom/adresse IP locales</li>
+    <li><span class="inline-code">/etc/fstab</span> → configuration du montage des disques</li>
+    <li><span class="inline-code">/etc/apt/</span> → configuration du gestionnaire de paquets</li>
+  </ul>
+
+  <h3>/var — Données variables</h3>
+  <p>Contient des données qui changent au fil du temps : journaux, bases de données, boites mail.</p>
+  <ul>
+    <li><span class="inline-code">/var/log/syslog</span> → journal système général</li>
+    <li><span class="inline-code">/var/log/auth.log</span> → tentatives de connexion</li>
+  </ul>
+
+  <h3>/tmp — Fichiers temporaires</h3>
+  <p>Zone de stockage temporaire utilisée par les programmes. Son contenu est <strong>effacé à chaque redémarrage</strong>.</p>
+  <div class="callout callout-warn">
+    <div class="callout-label">Attention</div>
+    <p>Ne stockez jamais de données importantes dans <span class="inline-code">/tmp</span>. Tout son contenu disparaît au redémarrage.</p>
+  </div>
+
+  <h3>/usr — Programmes utilisateur</h3>
+  <p>Contient la plupart des programmes installés sur le système.</p>
+  <ul>
+    <li><span class="inline-code">/usr/bin/</span> → commandes accessibles à tous les utilisateurs</li>
+    <li><span class="inline-code">/usr/sbin/</span> → commandes d'administration système</li>
+    <li><span class="inline-code">/usr/lib/</span> → bibliothèques partagées</li>
+  </ul>
+
+  <h3>/dev — Périphériques</h3>
+  <p>Contient des fichiers spéciaux représentant les périphériques matériels.</p>
+  <ul>
+    <li><span class="inline-code">/dev/sda</span> → premier disque dur</li>
+    <li><span class="inline-code">/dev/null</span> → corbeille système (poubelle noire)</li>
+    <li><span class="inline-code">/dev/tty</span> → terminal en cours</li>
+  </ul>
+
+  <h3>/boot — Démarrage</h3>
+  <p>Contient le noyau Linux et les fichiers nécessaires au démarrage du système (GRUB).</p>
+</section>
+
+<!-- TAB 3 : Fichiers importants -->
+<section id="tab-fichiersimportants" class="tab-content">
+  <h2>Fichiers système à connaître</h2>
+
+  <table>
+    <thead><tr><th>Fichier</th><th>Rôle</th></tr></thead>
+    <tbody>
+      <tr><td><span class="inline-code">/etc/passwd</span></td><td>Liste de tous les comptes utilisateurs du système</td></tr>
+      <tr><td><span class="inline-code">/etc/hosts</span></td><td>Correspondances manuelles entre noms d'hôtes et adresses IP</td></tr>
+      <tr><td><span class="inline-code">/etc/fstab</span></td><td>Définit les partitions et périphériques à monter au démarrage</td></tr>
+      <tr><td><span class="inline-code">/var/log/syslog</span></td><td>Journal système général (activité du noyau et des services)</td></tr>
+      <tr><td><span class="inline-code">/var/log/auth.log</span></td><td>Journal des authentifications (connexions, sudo, SSH)</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Commandes d'exploration du disque</h2>
+  <div class="code-wrap">
+    <pre>df -h             # espace disque disponible sur chaque partition (human readable)
+du -sh /var/log   # taille totale du dossier /var/log
+lsblk             # liste les disques et partitions</pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+  </div>
+
+  <table>
+    <thead><tr><th>Commande</th><th>Utilité</th></tr></thead>
+    <tbody>
+      <tr><td><span class="inline-code">df -h</span></td><td>Espace libre/utilisé par partition (Mo, Go…)</td></tr>
+      <tr><td><span class="inline-code">du -sh chemin</span></td><td>Taille d'un dossier spécifique</td></tr>
+      <tr><td><span class="inline-code">lsblk</span></td><td>Arborescence des disques et partitions</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- TAB 4 : Windows vs Linux -->
+<section id="tab-winvslinux" class="tab-content">
+  <h2>Correspondances Windows / Linux</h2>
+  <p>Si vous venez de Windows, voici comment s'organisent les concepts équivalents sous Linux :</p>
+
+  <table>
+    <thead><tr><th>Linux</th><th>Windows</th><th>Contenu / Usage</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><span class="inline-code">/home/utilisateur/</span></td>
+        <td><span class="inline-code">C:\Users\Nom\</span></td>
+        <td>Dossier personnel de l'utilisateur</td>
+      </tr>
+      <tr>
+        <td><span class="inline-code">/etc/</span></td>
+        <td><span class="inline-code">C:\Windows\System32\</span></td>
+        <td>Configuration système et services</td>
+      </tr>
+      <tr>
+        <td><span class="inline-code">/var/log/</span></td>
+        <td>Observateur d'événements</td>
+        <td>Journaux d'événements système</td>
+      </tr>
+      <tr>
+        <td><span class="inline-code">/tmp/</span></td>
+        <td><span class="inline-code">C:\Windows\Temp\</span></td>
+        <td>Fichiers temporaires (effacés)</td>
+      </tr>
+      <tr>
+        <td><span class="inline-code">/usr/bin/</span></td>
+        <td><span class="inline-code">C:\Program Files\</span></td>
+        <td>Programmes installés</td>
+      </tr>
+      <tr>
+        <td><span class="inline-code">/dev/sda</span></td>
+        <td><span class="inline-code">C:\</span>, <span class="inline-code">D:\</span></td>
+        <td>Disques et partitions</td>
+      </tr>
+      <tr>
+        <td><span class="inline-code">/boot/</span></td>
+        <td>Gestionnaire de démarrage Windows</td>
+        <td>Fichiers de démarrage, noyau</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-note">
+    <div class="callout-label">Différence fondamentale</div>
+    <p>Sous Windows, chaque disque a sa propre lettre (C:, D:, E:…). Sous Linux, tous les disques sont montés <strong>dans la même arborescence</strong> sous <span class="inline-code">/</span>. Un disque supplémentaire apparaîtra par exemple dans <span class="inline-code">/media/</span> ou <span class="inline-code">/mnt/</span>.</p>
+  </div>
+</section>
+
+<!-- TAB 5 : Récapitulatif -->
+<section id="tab-recap" class="tab-content">
+  <h2>Récapitulatif — Arborescence Linux</h2>
+  <div class="recap-filter-wrap">
+    <input type="text" id="recapSearch" placeholder="Filtrer par dossier ou contenu…" oninput="filterRecap()">
+    <select id="recapCat" onchange="filterRecap()">
+      <option value="">Toutes catégories</option>
+      <option value="Système">Système</option>
+      <option value="Utilisateur">Utilisateur</option>
+      <option value="Programmes">Programmes</option>
+      <option value="Données">Données</option>
+      <option value="Matériel">Matériel</option>
+    </select>
+  </div>
+  <table id="recapTable">
+    <thead><tr><th>Dossier</th><th>Contenu</th><th>Catégorie</th></tr></thead>
+    <tbody id="recapBody">
+      <tr data-cat="Système"><td><span class="inline-code">/</span></td><td>Racine de l'arborescence — tout part de là</td><td>Système</td></tr>
+      <tr data-cat="Système"><td><span class="inline-code">/etc/</span></td><td>Fichiers de configuration du système et des services</td><td>Système</td></tr>
+      <tr data-cat="Utilisateur"><td><span class="inline-code">/home/</span></td><td>Dossiers personnels des utilisateurs</td><td>Utilisateur</td></tr>
+      <tr data-cat="Données"><td><span class="inline-code">/var/</span></td><td>Données variables : journaux, bases de données, mails</td><td>Données</td></tr>
+      <tr data-cat="Données"><td><span class="inline-code">/var/log/</span></td><td>Journaux système (syslog, auth.log…)</td><td>Données</td></tr>
+      <tr data-cat="Système"><td><span class="inline-code">/tmp/</span></td><td>Fichiers temporaires — effacés au redémarrage</td><td>Système</td></tr>
+      <tr data-cat="Programmes"><td><span class="inline-code">/usr/</span></td><td>Programmes et ressources pour les utilisateurs</td><td>Programmes</td></tr>
+      <tr data-cat="Programmes"><td><span class="inline-code">/usr/bin/</span></td><td>Commandes accessibles à tous les utilisateurs</td><td>Programmes</td></tr>
+      <tr data-cat="Programmes"><td><span class="inline-code">/usr/sbin/</span></td><td>Commandes d'administration système</td><td>Programmes</td></tr>
+      <tr data-cat="Programmes"><td><span class="inline-code">/bin/</span></td><td>Commandes essentielles (souvent lien vers /usr/bin)</td><td>Programmes</td></tr>
+      <tr data-cat="Système"><td><span class="inline-code">/boot/</span></td><td>Noyau Linux et fichiers de démarrage (GRUB)</td><td>Système</td></tr>
+      <tr data-cat="Matériel"><td><span class="inline-code">/dev/</span></td><td>Fichiers représentant les périphériques matériels</td><td>Matériel</td></tr>
+      <tr data-cat="Système"><td><span class="inline-code">/mnt/</span></td><td>Points de montage temporaires (disques, clés USB)</td><td>Système</td></tr>
+      <tr data-cat="Système"><td><span class="inline-code">/media/</span></td><td>Montage automatique des médias amovibles</td><td>Système</td></tr>
+      <tr data-cat="Système"><td><span class="inline-code">/root/</span></td><td>Dossier personnel du superutilisateur root</td><td>Système</td></tr>
+    </tbody>
+  </table>
+  <div class="recap-empty hidden" id="recapEmpty">Aucun résultat pour ce filtre.</div>
+</section>
+
+<!-- TAB 6 : Quiz -->
+<section id="tab-quiz" class="tab-content">
+  <h2>Quiz — Arborescence Linux</h2>
+  <div id="quizContainer"></div>
+  <div class="quiz-score" id="quizScore">
+    <h3 id="scoreTitle"></h3>
+    <p id="scoreDetail"></p>
+    <button class="btn-quiz" onclick="resetQuiz()">Recommencer</button>
+  </div>
+</section>
+
+</main>
+
+<script>
+// TABS
+function showTab(name) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// COPY CODE
+function copyCode(btn) {
+  const pre = btn.previousElementSibling;
+  navigator.clipboard.writeText(pre.textContent).then(() => {
+    btn.textContent = 'Copié !';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 1800);
+  });
+}
+
+// ARBRE INTERACTIF
+const dirInfo = {
+  etc: {
+    title: '/etc/',
+    body: 'Contient tous les fichiers de configuration du système et des services installés. C\'est l\'endroit où l\'administrateur modifie le comportement des logiciels.',
+    examples: 'Exemples : /etc/passwd  /etc/hosts  /etc/fstab  /etc/apt/'
+  },
+  home: {
+    title: '/home/',
+    body: 'Contient les dossiers personnels de chaque utilisateur. L\'utilisateur "stagiaire" a son espace dans /home/stagiaire. Le raccourci ~ pointe vers ce dossier.',
+    examples: 'Exemples : /home/stagiaire/  /home/alice/  /home/bob/'
+  },
+  var: {
+    title: '/var/',
+    body: 'Contient des données qui varient en taille et en contenu au fil du temps : journaux système, bases de données, boites mail, fichiers de cache.',
+    examples: 'Exemples : /var/log/syslog  /var/log/auth.log  /var/cache/'
+  },
+  tmp: {
+    title: '/tmp/',
+    body: 'Zone de stockage temporaire utilisée par les programmes en cours d\'exécution. Son contenu est automatiquement effacé à chaque redémarrage.',
+    examples: 'Conseil : ne jamais y stocker des données importantes !'
+  },
+  usr: {
+    title: '/usr/',
+    body: 'Contient la majorité des programmes et ressources installés sur le système. C\'est l\'équivalent de C:\\Program Files sous Windows.',
+    examples: 'Exemples : /usr/bin/  /usr/sbin/  /usr/lib/  /usr/share/'
+  },
+  bin: {
+    title: '/bin/',
+    body: 'Contient les commandes essentielles du système (ls, cp, mv, bash…). Sur les systèmes modernes, c\'est souvent un lien symbolique vers /usr/bin.',
+    examples: 'Exemples : /bin/ls  /bin/cp  /bin/bash  /bin/cat'
+  },
+  boot: {
+    title: '/boot/',
+    body: 'Contient le noyau Linux (vmlinuz) et les fichiers nécessaires au démarrage du système, notamment GRUB (le gestionnaire de démarrage).',
+    examples: 'Exemples : /boot/vmlinuz  /boot/initrd.img  /boot/grub/'
+  },
+  dev: {
+    title: '/dev/',
+    body: 'Contient des fichiers spéciaux représentant les périphériques matériels. Sous Linux, les périphériques sont accessibles comme des fichiers.',
+    examples: 'Exemples : /dev/sda (1er disque)  /dev/null (poubelle)  /dev/tty (terminal)'
+  }
+};
+
+function selectDir(el, key) {
+  document.querySelectorAll('.tree-item').forEach(t => t.classList.remove('selected'));
+  el.classList.add('selected');
+  const info = dirInfo[key];
+  const panel = document.getElementById('treePanel');
+  panel.innerHTML = `<div class="tree-panel-title">${info.title}</div>
+    <div class="tree-panel-body">${info.body}</div>
+    <div class="tree-panel-example">${info.examples}</div>`;
+}
+
+// RECAP FILTER
+function filterRecap() {
+  const search = document.getElementById('recapSearch').value.toLowerCase();
+  const cat = document.getElementById('recapCat').value;
+  const rows = document.querySelectorAll('#recapBody tr');
+  let visible = 0;
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    const rowCat = row.dataset.cat;
+    const matchText = !search || text.includes(search);
+    const matchCat = !cat || rowCat === cat;
+    if (matchText && matchCat) { row.classList.remove('hidden'); visible++; }
+    else row.classList.add('hidden');
+  });
+  document.getElementById('recapEmpty').classList.toggle('hidden', visible > 0);
+}
+
+// QUIZ DATA
+const quizData = [
+  {
+    q: "Quel symbole représente la racine de l'arborescence Linux ?",
+    opts: ["~", "#", "/", "\\"],
+    correct: 2,
+    feedback: "/ est la racine de tout le système de fichiers Linux. Tous les chemins absolus commencent par /."
+  },
+  {
+    q: "Où se trouvent les fichiers de configuration sous Linux ?",
+    opts: ["/usr/", "/var/", "/etc/", "/home/"],
+    correct: 2,
+    feedback: "/etc/ contient tous les fichiers de configuration du système et des services. C'est l'endroit incontournable pour l'administration."
+  },
+  {
+    q: "Où sont stockés les journaux système sous Linux ?",
+    opts: ["/tmp/log/", "/var/log/", "/etc/log/", "/usr/log/"],
+    correct: 1,
+    feedback: "/var/log/ contient les journaux du système : syslog (activité générale), auth.log (connexions), kern.log (noyau)…"
+  },
+  {
+    q: "Pourquoi ne faut-il pas stocker des données importantes dans /tmp ?",
+    opts: [
+      "L'accès est trop lent",
+      "Son contenu est effacé à chaque redémarrage",
+      "On n'a pas le droit d'y écrire",
+      "Il n'y a pas assez de place"
+    ],
+    correct: 1,
+    feedback: "/tmp est une zone temporaire effacée au redémarrage (et parfois périodiquement). N'y stockez jamais de données importantes."
+  },
+  {
+    q: "Que signifie ~ dans un chemin comme ~/Documents ?",
+    opts: [
+      "La racine du système /",
+      "Un dossier caché",
+      "Le dossier personnel de l'utilisateur courant",
+      "Un dossier temporaire"
+    ],
+    correct: 2,
+    feedback: "~ est un raccourci pour le dossier personnel de l'utilisateur connecté, par exemple /home/stagiaire."
+  },
+  {
+    q: "Quelle commande affiche l'espace disque disponible sur chaque partition ?",
+    opts: ["du -sh /", "lsblk", "df -h", "ls -l /dev/"],
+    correct: 2,
+    feedback: "df -h (disk free, human readable) affiche l'espace utilisé et disponible pour chaque partition montée, dans un format lisible (Mo, Go)."
+  }
+];
+
+let answered = [];
+
+function buildQuiz() {
+  answered = new Array(quizData.length).fill(false);
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = '';
+  document.getElementById('quizScore').style.display = 'none';
+  quizData.forEach((q, qi) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question';
+    div.innerHTML = `<h3>${qi + 1}. ${q.q}</h3>
+      <div class="quiz-options">
+        ${q.opts.map((o, oi) => `<button class="quiz-option" onclick="answerQuiz(${qi},${oi})">${o}</button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="fb-${qi}" style="display:none"></div>`;
+    container.appendChild(div);
+  });
+}
+
+function answerQuiz(qi, oi) {
+  if (answered[qi]) return;
+  answered[qi] = true;
+  const q = quizData[qi];
+  const opts = document.querySelectorAll(`.quiz-question:nth-child(${qi+1}) .quiz-option`);
+  opts.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.correct) btn.classList.add('correct');
+    else if (i === oi) btn.classList.add('wrong');
+  });
+  const fb = document.getElementById('fb-' + qi);
+  fb.style.display = 'block';
+  if (oi === q.correct) {
+    fb.className = 'quiz-feedback ok';
+    fb.textContent = '✓ Bonne réponse ! ' + q.feedback;
+  } else {
+    fb.className = 'quiz-feedback ko';
+    fb.textContent = '✗ ' + q.feedback;
+  }
+  if (answered.every(Boolean)) showScore();
+}
+
+function showScore() {
+  let score = 0;
+  quizData.forEach((q, qi) => {
+    const fb = document.getElementById('fb-' + qi);
+    if (fb && fb.classList.contains('ok')) score++;
+  });
+  const scoreEl = document.getElementById('quizScore');
+  scoreEl.style.display = 'block';
+  const pct = Math.round(score / quizData.length * 100);
+  document.getElementById('scoreTitle').textContent = `${score} / ${quizData.length} — ${pct}%`;
+  document.getElementById('scoreDetail').textContent =
+    pct === 100 ? 'Parfait ! Tu connais l\'arborescence Linux sur le bout des doigts.' :
+    pct >= 66 ? 'Bien ! Quelques dossiers à revoir.' :
+    'Reprends le cours et reviens tester tes connaissances.';
+}
+
+function resetQuiz() { buildQuiz(); }
+buildQuiz();
+</script>
+</body>
+</html>

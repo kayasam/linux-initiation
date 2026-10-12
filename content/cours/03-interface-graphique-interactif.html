@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>03 — Interface graphique</title>
+<style>
+:root {
+  --bg: #0f1117; --surface: #1a1d27; --surface2: #232635; --border: #2e3148;
+  --accent: #c084fc; --accent2: #d8b4fe;
+  --warn: #f0a500; --danger: #e05c5c; --success: #4caf82;
+  --text: #d4d8f0; --text-dim: #7880a0; --code-bg: #12141f; --radius: 10px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.7; }
+
+header {
+  background: linear-gradient(135deg, #130820 0%, #150c22 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 2.5rem 2rem 1.5rem;
+  text-align: center;
+}
+.badge {
+  display: inline-block; background: var(--accent); color: #1a0a2e;
+  font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 20px; margin-bottom: .7rem;
+}
+header h1 { font-size: 1.8rem; font-weight: 700; color: #fff; line-height: 1.2; }
+header p { color: var(--text-dim); margin-top: .4rem; font-size: .95rem; }
+
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  display: flex; justify-content: center; flex-wrap: wrap; gap: .25rem; padding: .5rem 1rem;
+}
+nav button {
+  background: none; border: none; color: var(--text-dim);
+  padding: .85rem 1.1rem; font-size: .88rem; font-weight: 500; cursor: pointer;
+  border-bottom: 2px solid transparent; white-space: nowrap; transition: all .2s;
+}
+nav button:hover { color: var(--text); }
+nav button.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+.tab-content { display: none; padding: 2rem; max-width: 900px; margin: 0 auto; }
+.tab-content.active { display: block; }
+
+h2 { font-size: 1.25rem; color: var(--accent2); margin: 1.8rem 0 .8rem; border-left: 3px solid var(--accent); padding-left: .75rem; }
+h3 { font-size: 1.05rem; color: var(--text); margin: 1.4rem 0 .6rem; }
+p { margin-bottom: .9rem; }
+ul, ol { padding-left: 1.4rem; margin-bottom: .9rem; }
+li { margin-bottom: .35rem; }
+
+.callout { border-radius: var(--radius); padding: .9rem 1.1rem; margin: 1.2rem 0; border-left: 4px solid; }
+.callout.note  { background: #1e1030; border-color: var(--accent);  }
+.callout.tip   { background: #0e2018; border-color: var(--success); }
+.callout.warn  { background: #1e1800; border-color: var(--warn);    }
+.callout.danger{ background: #1e1010; border-color: var(--danger);  }
+.callout-title { font-weight: 700; font-size: .82rem; text-transform: uppercase; letter-spacing: .07em; margin-bottom: .4rem; }
+.callout.note   .callout-title { color: var(--accent); }
+.callout.tip    .callout-title { color: var(--success); }
+.callout.warn   .callout-title { color: var(--warn); }
+.callout.danger .callout-title { color: var(--danger); }
+
+.table-wrap { overflow-x: auto; margin: 1rem 0; }
+table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+th { background: var(--surface2); color: var(--accent2); text-align: left; padding: .6rem .9rem; font-weight: 600; border: 1px solid var(--border); }
+td { padding: .55rem .9rem; border: 1px solid var(--border); vertical-align: top; }
+tr:hover td { background: var(--surface2); }
+
+.code-block { position: relative; margin: 1rem 0; }
+pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1rem 1rem 1.2rem; overflow-x: auto; }
+code { font-family: 'Consolas', 'Cascadia Code', monospace; font-size: .88rem; color: #e0b4ff; }
+.copy-btn {
+  position: absolute; top: .5rem; right: .5rem;
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim);
+  padding: .25rem .6rem; font-size: .75rem; border-radius: 5px; cursor: pointer; transition: all .2s;
+}
+.copy-btn:hover { background: var(--accent); color: #1a0a2e; }
+.copy-btn.copied { background: var(--success); color: #000; }
+
+/* ENV CARDS */
+.env-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 1rem; margin: 1.2rem 0; }
+.env-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.1rem; transition: border-color .2s;
+}
+.env-card:hover { border-color: var(--accent); }
+.env-card h4 { color: var(--accent); margin-bottom: .35rem; font-size: 1rem; }
+.env-card .env-desc { font-size: .85rem; color: var(--text-dim); margin-bottom: .4rem; }
+.env-card .env-use { font-size: .82rem; color: var(--text); }
+.env-badge { display: inline-block; background: var(--surface2); border: 1px solid var(--border); font-size: .75rem; padding: 2px 7px; border-radius: 4px; color: var(--accent2); margin-top: .4rem; }
+
+/* GNOME LAYOUT MOCK */
+.gnome-mock {
+  background: #1a1730; border: 1px solid var(--border); border-radius: var(--radius);
+  overflow: hidden; margin: 1.2rem 0; font-size: .85rem;
+}
+.gnome-topbar {
+  background: #111020; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .35rem 1rem; color: var(--text-dim); font-size: .82rem;
+}
+.gnome-topbar .topbar-left { color: var(--accent2); font-weight: 600; cursor: default; }
+.gnome-topbar .topbar-center { color: var(--text); }
+.gnome-topbar .topbar-right { display: flex; gap: .8rem; }
+.gnome-desktop {
+  min-height: 160px; display: flex; align-items: flex-end; padding: 1rem;
+  background: repeating-linear-gradient(45deg, #1a1730 0px, #1a1730 20px, #1c1935 20px, #1c1935 40px);
+}
+.gnome-dock {
+  background: #111020cc; border: 1px solid var(--border); border-radius: 12px;
+  display: flex; gap: .6rem; padding: .5rem .8rem; margin: 0 auto;
+}
+.dock-icon {
+  width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center;
+  justify-content: center; font-size: 1.2rem; background: var(--surface2); cursor: default;
+}
+
+/* APP COMPARE TABLE */
+.app-filter-bar { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.app-filter-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text-dim); padding: .35rem .85rem; border-radius: 20px; font-size: .82rem; cursor: pointer; transition: all .2s; }
+.app-filter-btn:hover, .app-filter-btn.active { background: var(--accent); color: #1a0a2e; border-color: var(--accent); font-weight: 600; }
+.app-row.hidden { display: none; }
+td.win { color: #60a5fa; }
+td.lin { color: var(--accent2); }
+td.need { font-weight: 600; }
+
+/* TERMINAL SECTION */
+.terminal-ways { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin: 1.2rem 0; }
+.way-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1rem; text-align: center;
+}
+.way-card .way-icon { font-size: 1.8rem; margin-bottom: .4rem; }
+.way-card h4 { color: var(--accent); font-size: .95rem; margin-bottom: .35rem; }
+.way-card p { font-size: .85rem; color: var(--text-dim); margin: 0; }
+.terminal-mock {
+  background: #0d0a15; border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1rem 1.2rem; font-family: 'Consolas','Cascadia Code',monospace;
+  font-size: .9rem; margin: 1.2rem 0;
+}
+.terminal-mock .t-prompt { color: var(--accent2); }
+.terminal-mock .t-cmd { color: #fff; }
+.terminal-mock .t-output { color: var(--text-dim); }
+
+/* RECAP FILTER */
+.filter-bar { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.filter-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text-dim); padding: .35rem .85rem; border-radius: 20px; font-size: .82rem; cursor: pointer; transition: all .2s; }
+.filter-btn:hover, .filter-btn.active { background: var(--accent); color: #1a0a2e; border-color: var(--accent); font-weight: 600; }
+.recap-row.hidden { display: none; }
+
+/* QUIZ */
+.quiz-question { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem; margin-bottom: 1.2rem; }
+.quiz-question h4 { color: var(--accent2); margin-bottom: .9rem; font-size: .98rem; }
+.quiz-options { display: flex; flex-direction: column; gap: .5rem; }
+.quiz-option {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: .6rem .9rem; cursor: pointer;
+  font-size: .9rem; transition: all .2s; text-align: left; color: var(--text);
+}
+.quiz-option:hover:not(:disabled) { border-color: var(--accent); }
+.quiz-option.correct { background: #0d2e1e; border-color: var(--success); color: var(--success); }
+.quiz-option.wrong   { background: #2e0d0d; border-color: var(--danger);  color: var(--danger);  }
+.quiz-option:disabled { cursor: default; }
+.quiz-feedback { margin-top: .6rem; font-size: .87rem; color: var(--text-dim); font-style: italic; }
+.quiz-score {
+  background: var(--surface2); border: 1px solid var(--accent);
+  border-radius: var(--radius); padding: 1.5rem; text-align: center; margin-top: 1.5rem; display: none;
+}
+.quiz-score .score-num { font-size: 2.5rem; font-weight: 700; color: var(--accent); }
+.quiz-score p { color: var(--text-dim); margin-top: .4rem; }
+.btn-restart { background: var(--accent); color: #1a0a2e; border: none; padding: .6rem 1.4rem; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 1rem; font-size: .9rem; }
+.btn-restart:hover { background: var(--accent2); }
+
+/* PATH DISPLAY */
+.path-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+.path-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; }
+.path-box h4 { color: var(--text-dim); font-size: .85rem; margin-bottom: .5rem; text-transform: uppercase; letter-spacing: .06em; }
+.path-box .path { font-family: 'Consolas','Cascadia Code',monospace; color: var(--accent2); font-size: .95rem; }
+
+@media (max-width: 600px) { .path-compare { grid-template-columns: 1fr; } }
+.course-site-nav { display:flex; justify-content:space-between; gap:1rem; padding:.8rem 1rem; background:#1a1d27; flex-wrap:wrap; } .course-site-nav a {color:#93c5fd; font-weight:600;}
+</style>
+</head>
+<body>
+<div class="course-site-nav"><a href="../03-interface-graphique/">← Chapitre 03</a><a href="quiz/03-interface-graphique.html">Quiz du chapitre →</a></div>
+
+<header>
+  <div class="badge">Linux Initiation</div>
+  <h1>03 — Interface graphique</h1>
+  <p>Environnements de bureau Linux, GNOME, équivalences d'applications, et découverte du terminal.</p>
+</header>
+
+<nav id="main-nav">
+  <button class="active" onclick="showTab('env')">Environnements</button>
+  <button onclick="showTab('gnome')">GNOME</button>
+  <button onclick="showTab('apps')">Applications</button>
+  <button onclick="showTab('terminal')">Terminal</button>
+  <button onclick="showTab('recap')">Récapitulatif</button>
+  <button onclick="showTab('quiz')">Quiz</button>
+</nav>
+
+<!-- TAB 1 : Environnements de bureau -->
+<div id="tab-env" class="tab-content active">
+  <h2>L'interface graphique sous Linux</h2>
+  <p>Sous Linux, l'interface graphique est un <strong>composant complètement séparé</strong> du système. Contrairement à Windows ou macOS où l'interface graphique est intégrée au cœur du système, Linux vous laisse le choix : vous pouvez installer l'interface de votre choix, ou ne pas en avoir du tout (serveurs).</p>
+  <p>Ces interfaces s'appellent des <strong>environnements de bureau</strong>.</p>
+
+  <div class="callout note">
+    <div class="callout-title">Note</div>
+    Dans cette formation, nous utilisons <strong>GNOME</strong>, l'environnement par défaut de Debian. C'est également l'environnement par défaut d'Ubuntu, Fedora et de nombreuses autres distributions.
+  </div>
+
+  <h2>Les principaux environnements de bureau</h2>
+  <div class="env-grid">
+    <div class="env-card">
+      <h4>GNOME</h4>
+      <div class="env-desc">Moderne, épuré, minimaliste</div>
+      <div class="env-use">Simple à prendre en main. Par défaut sur Debian et Ubuntu.</div>
+      <span class="env-badge">Formation</span>
+    </div>
+    <div class="env-card">
+      <h4>KDE Plasma</h4>
+      <div class="env-desc">Riche, très personnalisable</div>
+      <div class="env-use">Ressemble à Windows. Adapté aux utilisateurs Windows.</div>
+    </div>
+    <div class="env-card">
+      <h4>XFCE</h4>
+      <div class="env-desc">Léger, classique, sobre</div>
+      <div class="env-use">Idéal pour les vieilles machines ou les VM avec peu de RAM.</div>
+    </div>
+    <div class="env-card">
+      <h4>MATE</h4>
+      <div class="env-desc">Classique, stable</div>
+      <div class="env-use">Peu gourmand. Rappelle l'ancienne interface GNOME 2.</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Environnement</th><th>Style</th><th>Points forts</th><th>Ressources</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>GNOME</strong></td><td>Moderne, épuré</td><td>Simple, par défaut Debian/Ubuntu</td><td>Moyen (~800 Mo RAM)</td></tr>
+        <tr><td><strong>KDE Plasma</strong></td><td>Riche, personnalisable</td><td>Ressemble à Windows</td><td>Moyen (~700 Mo RAM)</td></tr>
+        <tr><td><strong>XFCE</strong></td><td>Léger, classique</td><td>Vieilles machines</td><td>Léger (~300 Mo RAM)</td></tr>
+        <tr><td><strong>MATE</strong></td><td>Classique, sobre</td><td>Stable, peu gourmand</td><td>Léger (~350 Mo RAM)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- TAB 2 : GNOME -->
+<div id="tab-gnome" class="tab-content">
+  <h2>Le bureau GNOME</h2>
+  <p>GNOME est intentionnellement <strong>minimaliste</strong> : contrairement à Windows, il n'y a <em>pas d'icônes sur le bureau par défaut</em>. Tout passe par la vue "Activités".</p>
+
+  <h3>Maquette du bureau GNOME</h3>
+  <div class="gnome-mock">
+    <div class="gnome-topbar">
+      <span class="topbar-left">Activités</span>
+      <span class="topbar-center">Ven. 15 mai, 14h30</span>
+      <div class="topbar-right">
+        <span>Wifi</span>
+        <span>Son</span>
+        <span>Batterie</span>
+        <span>⚙</span>
+      </div>
+    </div>
+    <div class="gnome-desktop">
+      <div class="gnome-dock">
+        <div class="dock-icon" title="Firefox">🌐</div>
+        <div class="dock-icon" title="Fichiers">📁</div>
+        <div class="dock-icon" title="Terminal">⬛</div>
+        <div class="dock-icon" title="Paramètres">⚙</div>
+        <div class="dock-icon" title="Toutes les apps">⠿</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Les éléments de l'interface GNOME</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Élément</th><th>Position</th><th>Fonction</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Barre supérieure</strong></td><td>En haut de l'écran</td><td>Affiche l'heure, l'état du réseau, du son, un menu système (⚙)</td></tr>
+        <tr><td><strong>Activités</strong></td><td>Coin haut gauche</td><td>Ouvre le menu des applications, affiche les fenêtres ouvertes</td></tr>
+        <tr><td><strong>Dock</strong></td><td>Bas de l'écran (par défaut)</td><td>Applications favorites et raccourcis</td></tr>
+        <tr><td><strong>Grille d'applications</strong></td><td>Via Activités → grille</td><td>Toutes les applications installées</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Ouvrir une application</h2>
+  <ul>
+    <li>Cliquer sur <strong>Activités</strong> (coin haut gauche) → taper le nom de l'application → Entrée</li>
+    <li>Cliquer sur <strong>Activités</strong> → cliquer sur la grille (icône ⠿ en bas du dock) → choisir l'application</li>
+    <li>Cliquer directement sur une icône du <strong>Dock</strong></li>
+  </ul>
+
+  <h2>Paramètres système</h2>
+  <p>Pour accéder aux paramètres : <strong>Activités → Paramètres</strong> (icône d'engrenage) ou via le menu système en haut à droite.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Section</th><th>Permet de…</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Réseau</strong></td><td>Configurer Wi-Fi, Ethernet, VPN</td></tr>
+        <tr><td><strong>Affichage</strong></td><td>Résolution, orientation, multi-écrans</td></tr>
+        <tr><td><strong>Son</strong></td><td>Volume, périphériques audio</td></tr>
+        <tr><td><strong>Utilisateurs</strong></td><td>Ajouter/modifier des comptes utilisateurs</td></tr>
+        <tr><td><strong>Mises à jour</strong></td><td>Vérifier et installer les mises à jour système</td></tr>
+        <tr><td><strong>Accessibilité</strong></td><td>Zoom, contraste élevé, lecteur d'écran</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- TAB 3 : Applications -->
+<div id="tab-apps" class="tab-content">
+  <h2>Équivalences Windows / Linux</h2>
+  <p>Vous connaissez les logiciels Windows. Sous Linux, des équivalents existent pour presque tout. Filtrez par type de besoin :</p>
+
+  <div class="app-filter-bar">
+    <button class="app-filter-btn active" onclick="filterApps('all', this)">Tout</button>
+    <button class="app-filter-btn" onclick="filterApps('web', this)">Web</button>
+    <button class="app-filter-btn" onclick="filterApps('bureau', this)">Bureautique</button>
+    <button class="app-filter-btn" onclick="filterApps('media', this)">Médias</button>
+    <button class="app-filter-btn" onclick="filterApps('systeme', this)">Système</button>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Besoin</th><th>Windows</th><th>Linux (équivalent)</th></tr>
+      </thead>
+      <tbody>
+        <tr class="app-row" data-app="web"><td class="need">Navigateur web</td><td class="win">Chrome / Edge</td><td class="lin">Firefox, Chromium</td></tr>
+        <tr class="app-row" data-app="bureau"><td class="need">Traitement de texte</td><td class="win">Microsoft Word</td><td class="lin">LibreOffice Writer</td></tr>
+        <tr class="app-row" data-app="bureau"><td class="need">Tableur</td><td class="win">Microsoft Excel</td><td class="lin">LibreOffice Calc</td></tr>
+        <tr class="app-row" data-app="bureau"><td class="need">Présentations</td><td class="win">Microsoft PowerPoint</td><td class="lin">LibreOffice Impress</td></tr>
+        <tr class="app-row" data-app="bureau"><td class="need">Email</td><td class="win">Outlook</td><td class="lin">Thunderbird</td></tr>
+        <tr class="app-row" data-app="media"><td class="need">Retouche photo</td><td class="win">Photoshop</td><td class="lin">GIMP</td></tr>
+        <tr class="app-row" data-app="media"><td class="need">Lecteur vidéo</td><td class="win">Windows Media Player</td><td class="lin">VLC</td></tr>
+        <tr class="app-row" data-app="media"><td class="need">Musique</td><td class="win">iTunes / Groove</td><td class="lin">Rhythmbox, Audacious</td></tr>
+        <tr class="app-row" data-app="systeme"><td class="need">Gestionnaire de fichiers</td><td class="win">Explorateur Windows</td><td class="lin">Nautilus (GNOME Files)</td></tr>
+        <tr class="app-row" data-app="systeme"><td class="need">Terminal / Invite de commande</td><td class="win">Invite de commande / PowerShell</td><td class="lin">GNOME Terminal, Bash</td></tr>
+        <tr class="app-row" data-app="systeme"><td class="need">Éditeur de texte</td><td class="win">Notepad / Notepad++</td><td class="lin">gedit, nano, vim</td></tr>
+        <tr class="app-row" data-app="systeme"><td class="need">Gestionnaire de paquets (apps)</td><td class="win">Microsoft Store</td><td class="lin">GNOME Software, apt</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Le dossier personnel</h2>
+  <p>Sous Linux, chaque utilisateur possède un dossier personnel où sont stockés ses fichiers, sa configuration…</p>
+
+  <div class="path-compare">
+    <div class="path-box">
+      <h4>Windows</h4>
+      <div class="path">C:\Users\samuel\</div>
+    </div>
+    <div class="path-box">
+      <h4>Linux</h4>
+      <div class="path">/home/samuel/</div>
+    </div>
+  </div>
+
+  <div class="callout note">
+    <div class="callout-title">Note</div>
+    Les deux sont équivalents : c'est votre espace personnel. Vos Documents, Images, Musiques s'y trouvent. Sous Linux, on le désigne souvent par le symbole <code>~</code> (tilde). Par exemple, <code>~/Documents</code> = <code>/home/samuel/Documents</code>.
+  </div>
+
+  <div class="code-block">
+    <pre><code># Afficher le chemin du dossier personnel
+echo ~
+# Résultat : /home/samuel
+
+# Aller dans le dossier personnel
+cd ~
+# ou simplement :
+cd</code></pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+  </div>
+</div>
+
+<!-- TAB 4 : Terminal -->
+<div id="tab-terminal" class="tab-content">
+  <h2>Le terminal — outil central de Linux</h2>
+  <p>Le <strong>terminal</strong> (aussi appelé console, invite de commandes, ou shell) est l'interface en mode texte permettant d'interagir directement avec le système via des commandes écrites.</p>
+  <p>Si l'interface graphique est pratique au quotidien, le terminal est <strong>indispensable pour l'administration Linux</strong> : il donne accès à toutes les fonctions du système, y compris celles non accessibles via les menus graphiques.</p>
+
+  <h2>Comment ouvrir le terminal sous GNOME</h2>
+  <div class="terminal-ways">
+    <div class="way-card">
+      <div class="way-icon">🔍</div>
+      <h4>Via Activités</h4>
+      <p>Activités → taper "terminal" → Entrée</p>
+    </div>
+    <div class="way-card">
+      <div class="way-icon">🖱</div>
+      <h4>Clic droit bureau</h4>
+      <p>Clic droit sur le bureau → "Ouvrir dans un terminal"</p>
+    </div>
+    <div class="way-card">
+      <div class="way-icon">⌨</div>
+      <h4>Raccourci clavier</h4>
+      <p>Ctrl + Alt + T</p>
+    </div>
+  </div>
+
+  <h2>Le prompt — lire l'invite de commandes</h2>
+  <p>Lorsque le terminal est ouvert, vous voyez une ligne appelée <strong>prompt</strong>. Elle vous donne des informations importantes :</p>
+
+  <div class="terminal-mock">
+    <span class="t-prompt">samuel@debian</span><span class="t-output">:</span><span class="t-prompt">~</span><span class="t-output">$ </span><span class="t-cmd">_</span>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Partie du prompt</th><th>Signification</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>samuel</code></td><td>Votre nom d'utilisateur</td></tr>
+        <tr><td><code>@debian</code></td><td>Le nom de la machine (hostname)</td></tr>
+        <tr><td><code>~</code></td><td>Le répertoire courant (ici, votre dossier personnel)</td></tr>
+        <tr><td><code>$</code></td><td>Vous êtes un utilisateur normal. <code>#</code> = vous êtes root</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Premières commandes à connaître</h2>
+  <div class="code-block">
+    <pre><code>pwd          # Afficher le répertoire courant
+ls           # Lister les fichiers du dossier courant
+cd Documents # Aller dans le dossier Documents
+cd ..        # Remonter d'un niveau
+clear        # Effacer l'écran du terminal</code></pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">Tip — Module suivant</div>
+    À partir du module suivant (<em>04 — Le terminal</em>), nous travaillerons <strong>exclusivement dans le terminal</strong>. Prenez le temps de vous familiariser avec l'ouverture du terminal et la lecture du prompt avant de continuer.
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-title">Attention — Sensibilité à la casse</div>
+    Sous Linux, les noms de fichiers et commandes sont <strong>sensibles à la casse</strong> : <code>Documents</code>, <code>documents</code> et <code>DOCUMENTS</code> sont trois dossiers différents. Contrairement à Windows !
+  </div>
+</div>
+
+<!-- TAB 5 : Récapitulatif -->
+<div id="tab-recap" class="tab-content">
+  <h2>Récapitulatif — Interface graphique</h2>
+  <p>Filtrez par catégorie pour retrouver rapidement une notion.</p>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterRecap('all', this)">Tout</button>
+    <button class="filter-btn" onclick="filterRecap('env', this)">Environnements</button>
+    <button class="filter-btn" onclick="filterRecap('gnome', this)">GNOME</button>
+    <button class="filter-btn" onclick="filterRecap('apps', this)">Applications</button>
+    <button class="filter-btn" onclick="filterRecap('terminal', this)">Terminal</button>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Notion</th><th>Définition</th><th>Catégorie</th></tr>
+      </thead>
+      <tbody>
+        <tr class="recap-row" data-cat="env"><td><strong>Environnement de bureau</strong></td><td>Interface graphique Linux — composant séparé du système, remplaçable</td><td>Environnements</td></tr>
+        <tr class="recap-row" data-cat="env"><td><strong>GNOME</strong></td><td>Environnement de bureau moderne et épuré — par défaut sur Debian et Ubuntu</td><td>Environnements</td></tr>
+        <tr class="recap-row" data-cat="env"><td><strong>KDE Plasma</strong></td><td>Environnement riche et très personnalisable, proche de l'interface Windows</td><td>Environnements</td></tr>
+        <tr class="recap-row" data-cat="env"><td><strong>XFCE</strong></td><td>Environnement léger pour vieilles machines ou VM avec peu de RAM</td><td>Environnements</td></tr>
+        <tr class="recap-row" data-cat="gnome"><td><strong>Activités</strong></td><td>Coin haut gauche GNOME — ouvre la recherche d'applications et la vue des fenêtres</td><td>GNOME</td></tr>
+        <tr class="recap-row" data-cat="gnome"><td><strong>Dock</strong></td><td>Barre d'applications favorites en bas (ou à gauche) du bureau GNOME</td><td>GNOME</td></tr>
+        <tr class="recap-row" data-cat="gnome"><td><strong>Barre supérieure</strong></td><td>Barre en haut de l'écran GNOME : heure, réseau, son, menu système</td><td>GNOME</td></tr>
+        <tr class="recap-row" data-cat="apps"><td><strong>LibreOffice</strong></td><td>Suite bureautique libre et gratuite — équivalent de Microsoft Office sous Linux</td><td>Applications</td></tr>
+        <tr class="recap-row" data-cat="apps"><td><strong>GIMP</strong></td><td>Logiciel de retouche photo libre — équivalent de Photoshop</td><td>Applications</td></tr>
+        <tr class="recap-row" data-cat="apps"><td><strong>Nautilus</strong></td><td>Gestionnaire de fichiers GNOME — équivalent de l'Explorateur Windows</td><td>Applications</td></tr>
+        <tr class="recap-row" data-cat="apps"><td><strong>/home/nom/</strong></td><td>Dossier personnel de l'utilisateur sous Linux (équivalent de C:\Users\Nom\)</td><td>Applications</td></tr>
+        <tr class="recap-row" data-cat="apps"><td><strong>~ (tilde)</strong></td><td>Raccourci désignant le dossier personnel de l'utilisateur courant</td><td>Applications</td></tr>
+        <tr class="recap-row" data-cat="terminal"><td><strong>Terminal</strong></td><td>Interface en mode texte pour envoyer des commandes au système Linux</td><td>Terminal</td></tr>
+        <tr class="recap-row" data-cat="terminal"><td><strong>Prompt</strong></td><td>Invite de commandes — affiche utilisateur, machine, répertoire courant et niveau de privilèges</td><td>Terminal</td></tr>
+        <tr class="recap-row" data-cat="terminal"><td><strong>$ vs #</strong></td><td>$ = utilisateur normal ; # = root (superutilisateur)</td><td>Terminal</td></tr>
+        <tr class="recap-row" data-cat="terminal"><td><strong>Sensibilité à la casse</strong></td><td>Sous Linux, "Documents" et "documents" sont deux fichiers différents</td><td>Terminal</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- TAB 6 : Quiz -->
+<div id="tab-quiz" class="tab-content">
+  <h2>Quiz — Interface graphique</h2>
+  <p style="color:var(--text-dim); margin-bottom:1.5rem;">5 questions pour valider vos acquis.</p>
+
+  <div id="quiz-container">
+
+    <div class="quiz-question" id="q1">
+      <h4>Question 1 — Qu'est-ce qu'un "environnement de bureau" sous Linux ?</h4>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="answer(1,'a')">a) Le noyau Linux (kernel)</button>
+        <button class="quiz-option" onclick="answer(1,'b')">b) L'interface graphique, un composant séparé et remplaçable du système</button>
+        <button class="quiz-option" onclick="answer(1,'c')">c) Le gestionnaire de paquets apt</button>
+        <button class="quiz-option" onclick="answer(1,'d')">d) Un logiciel pour créer des machines virtuelles</button>
+      </div>
+      <div class="quiz-feedback" id="fb1"></div>
+    </div>
+
+    <div class="quiz-question" id="q2">
+      <h4>Question 2 — Quel environnement de bureau utilise Debian par défaut ?</h4>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="answer(2,'a')">a) KDE Plasma</button>
+        <button class="quiz-option" onclick="answer(2,'b')">b) XFCE</button>
+        <button class="quiz-option" onclick="answer(2,'c')">c) GNOME</button>
+        <button class="quiz-option" onclick="answer(2,'d')">d) MATE</button>
+      </div>
+      <div class="quiz-feedback" id="fb2"></div>
+    </div>
+
+    <div class="quiz-question" id="q3">
+      <h4>Question 3 — Quel est l'équivalent Linux de Microsoft Office ?</h4>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="answer(3,'a')">a) GIMP</button>
+        <button class="quiz-option" onclick="answer(3,'b')">b) VLC</button>
+        <button class="quiz-option" onclick="answer(3,'c')">c) LibreOffice</button>
+        <button class="quiz-option" onclick="answer(3,'d')">d) Nautilus</button>
+      </div>
+      <div class="quiz-feedback" id="fb3"></div>
+    </div>
+
+    <div class="quiz-question" id="q4">
+      <h4>Question 4 — Où se trouve le dossier personnel d'un utilisateur "samuel" sous Linux ?</h4>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="answer(4,'a')">a) C:\Users\samuel\</button>
+        <button class="quiz-option" onclick="answer(4,'b')">b) /usr/samuel/</button>
+        <button class="quiz-option" onclick="answer(4,'c')">c) /home/samuel/</button>
+        <button class="quiz-option" onclick="answer(4,'d')">d) /root/samuel/</button>
+      </div>
+      <div class="quiz-feedback" id="fb4"></div>
+    </div>
+
+    <div class="quiz-question" id="q5">
+      <h4>Question 5 — Comment ouvrir le terminal depuis GNOME ?</h4>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="answer(5,'a')">a) Faire un clic droit sur le bureau et choisir "Propriétés"</button>
+        <button class="quiz-option" onclick="answer(5,'b')">b) Activités → taper "terminal" → Entrée</button>
+        <button class="quiz-option" onclick="answer(5,'c')">c) Cliquer sur "Démarrer" puis "Exécuter"</button>
+        <button class="quiz-option" onclick="answer(5,'d')">d) Alt + F4</button>
+      </div>
+      <div class="quiz-feedback" id="fb5"></div>
+    </div>
+
+  </div>
+
+  <div class="quiz-score" id="quiz-score">
+    <div class="score-num" id="score-display">0 / 5</div>
+    <p id="score-msg"></p>
+    <button class="btn-restart" onclick="restartQuiz()">Recommencer</button>
+  </div>
+</div>
+
+<script>
+// ─── TABS ────────────────────────────────────────────────────────────────────
+function showTab(id) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ─── COPY CODE ───────────────────────────────────────────────────────────────
+function copyCode(btn) {
+  const pre = btn.previousElementSibling;
+  navigator.clipboard.writeText(pre.textContent).then(() => {
+    btn.textContent = 'Copié !'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// ─── APP FILTER ──────────────────────────────────────────────────────────────
+function filterApps(cat, btn) {
+  document.querySelectorAll('.app-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.app-row').forEach(row => {
+    if (cat === 'all' || row.dataset.app === cat) row.classList.remove('hidden');
+    else row.classList.add('hidden');
+  });
+}
+
+// ─── RECAP FILTER ────────────────────────────────────────────────────────────
+function filterRecap(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.recap-row').forEach(row => {
+    if (cat === 'all' || row.dataset.cat === cat) row.classList.remove('hidden');
+    else row.classList.add('hidden');
+  });
+}
+
+// ─── QUIZ ─────────────────────────────────────────────────────────────────────
+const answers = { 1:'b', 2:'c', 3:'c', 4:'c', 5:'b' };
+const feedbacks = {
+  1: { b: "Exact ! Sous Linux, l'interface graphique est un composant séparé — on peut choisir ou changer d'environnement de bureau.", wrong: "Non. Un environnement de bureau est l'interface graphique de Linux — un composant séparé et remplaçable." },
+  2: { c: "Correct ! Debian utilise GNOME par défaut. Ubuntu également.", wrong: "Non. Debian utilise GNOME par défaut. C'est un environnement moderne et épuré." },
+  3: { c: "Exact ! LibreOffice est la suite bureautique libre équivalente à Microsoft Office — Writer (Word), Calc (Excel), Impress (PowerPoint).", wrong: "Non. L'équivalent de Microsoft Office sous Linux est LibreOffice (Writer, Calc, Impress…)." },
+  4: { c: "Correct ! Sous Linux, le dossier personnel est /home/nom_utilisateur/ — équivalent de C:\\Users\\Nom\\ sous Windows.", wrong: "Non. Sous Linux, le dossier personnel se trouve dans /home/samuel/ — représenté par le symbole ~." },
+  5: { b: "Exact ! La méthode la plus universelle : Activités → taper 'terminal'. Le raccourci Ctrl+Alt+T fonctionne aussi.", wrong: "Non. Sous GNOME, on ouvre le terminal via Activités → taper 'terminal', ou avec le raccourci Ctrl+Alt+T." }
+};
+let score = 0;
+let answered = {};
+
+function answer(qNum, choice) {
+  if (answered[qNum]) return;
+  answered[qNum] = true;
+  score += (choice === answers[qNum]) ? 1 : 0;
+  const qEl = document.getElementById('q' + qNum);
+  qEl.querySelectorAll('.quiz-option').forEach(btn => {
+    btn.disabled = true;
+    const ltr = btn.textContent.trim()[0].toLowerCase();
+    if (ltr === answers[qNum]) btn.classList.add('correct');
+    else if (ltr === choice) btn.classList.add('wrong');
+  });
+  const fb = feedbacks[qNum];
+  document.getElementById('fb' + qNum).textContent = fb[choice] || fb.wrong;
+  if (Object.keys(answered).length === 5) showScore();
+}
+
+function showScore() {
+  const el = document.getElementById('quiz-score');
+  el.style.display = 'block';
+  document.getElementById('score-display').textContent = score + ' / 5';
+  const msgs = ['Revoyez le cours avant de continuer.','Quelques notions à revoir.','Pas mal ! Relisez les points manqués.','Très bien ! Vous maîtrisez l\'essentiel.','Parfait ! Toutes les réponses sont correctes.'];
+  document.getElementById('score-msg').textContent = msgs[score] || '';
+}
+
+function restartQuiz() {
+  score = 0; answered = {};
+  document.getElementById('quiz-score').style.display = 'none';
+  document.querySelectorAll('.quiz-option').forEach(btn => {
+    btn.disabled = false; btn.classList.remove('correct','wrong');
+  });
+  document.querySelectorAll('.quiz-feedback').forEach(fb => fb.textContent = '');
+}
+</script>
+</body>
+</html>

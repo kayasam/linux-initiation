@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10 — Réseau et services</title>
+<style>
+:root {
+  --bg: #0f1117; --surface: #1a1d27; --surface2: #232635; --border: #2e3148;
+  --accent: #94a3b8; --accent2: #cbd5e1;
+  --warn: #f0a500; --danger: #e05c5c; --success: #4caf82;
+  --text: #d4d8f0; --text-dim: #7880a0; --code-bg: #12141f; --radius: 10px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.7; }
+
+header {
+  background: linear-gradient(135deg, #0c0e14 0%, #0f1018 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 2.5rem 2rem 1.5rem;
+  text-align: center;
+}
+.badge { display: inline-block; background: var(--accent); color: #0f1117; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: .25rem .7rem; border-radius: 20px; margin-bottom: .8rem; }
+header h1 { font-size: 2rem; font-weight: 800; background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+header p { color: var(--text-dim); margin-top: .3rem; font-size: .95rem; }
+
+nav { position: sticky; top: 0; z-index: 100; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; justify-content: center; flex-wrap: wrap; gap: .25rem; padding: .5rem 1rem; }
+nav button { background: none; border: none; color: var(--text-dim); padding: .5rem 1rem; border-radius: 6px; cursor: pointer; font-size: .88rem; white-space: nowrap; transition: all .2s; }
+nav button:hover { background: var(--surface2); color: var(--text); }
+nav button.active { background: var(--accent); color: #0f1117; font-weight: 600; }
+
+main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+.tab { display: none; }
+.tab.active { display: block; }
+h2 { font-size: 1.4rem; color: var(--accent2); margin-bottom: 1rem; }
+h3 { font-size: 1.05rem; color: var(--text); margin: 1.5rem 0 .6rem; }
+
+.callout { border-radius: var(--radius); padding: 1rem 1.2rem; margin: 1rem 0; border-left: 4px solid; }
+.callout.note { background: rgba(148,163,184,.08); border-color: var(--accent); }
+.callout.warn { background: rgba(240,165,0,.08); border-color: var(--warn); }
+.callout.tip { background: rgba(76,175,130,.08); border-color: var(--success); }
+.callout.danger { background: rgba(224,92,92,.1); border-color: var(--danger); }
+.callout strong { display: block; margin-bottom: .3rem; font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; opacity: .8; }
+
+.code-block { position: relative; background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius); margin: .8rem 0; }
+.code-block pre { padding: 1rem 3rem 1rem 1rem; overflow-x: auto; font-family: 'Cascadia Code', 'Consolas', monospace; font-size: .88rem; white-space: pre; }
+.copy-btn { position: absolute; top: .6rem; right: .6rem; background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim); padding: .25rem .6rem; border-radius: 5px; cursor: pointer; font-size: .75rem; transition: all .2s; }
+.copy-btn:hover { background: var(--accent); color: #0f1117; border-color: var(--accent); }
+.copy-btn.copied { background: var(--success); color: #fff; border-color: var(--success); }
+.cmd { color: #94a3b8; } .flag { color: #facc15; } .arg { color: #4ade80; } .path { color: #22d3ee; } .comment { color: var(--text-dim); font-style: italic; } .op { color: #a78bfa; }
+
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; }
+th { background: var(--surface2); color: var(--accent2); padding: .6rem .9rem; text-align: left; border-bottom: 2px solid var(--border); }
+td { padding: .55rem .9rem; border-bottom: 1px solid var(--border); }
+tr:hover td { background: var(--surface2); }
+
+/* SERVICE STATE MACHINE */
+.service-machine { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin: 1rem 0; }
+.service-state-display { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.service-indicator { width: 14px; height: 14px; border-radius: 50%; background: var(--text-dim); transition: all .4s; flex-shrink: 0; }
+.service-indicator.running { background: var(--success); box-shadow: 0 0 10px var(--success); }
+.service-indicator.stopped { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+.service-status-text { font-size: 1rem; font-weight: 600; color: var(--text-dim); transition: color .3s; }
+.service-status-text.running { color: var(--success); }
+.service-status-text.stopped { color: var(--danger); }
+.service-status-text.enabled { color: var(--warn); }
+.service-btns { display: flex; gap: .6rem; flex-wrap: wrap; justify-content: center; margin-bottom: 1rem; }
+.svc-btn { padding: .65rem 1.3rem; border: 2px solid var(--border); border-radius: 8px; background: var(--surface2); color: var(--text-dim); cursor: pointer; font-size: .9rem; font-weight: 600; transition: all .2s; }
+.svc-btn:hover { border-color: var(--accent); color: var(--accent); }
+.svc-btn.start { border-color: rgba(76,175,130,.4); color: var(--success); }
+.svc-btn.start:hover { background: rgba(76,175,130,.12); }
+.svc-btn.stop { border-color: rgba(224,92,92,.4); color: #f87171; }
+.svc-btn.stop:hover { background: rgba(224,92,92,.1); }
+.svc-btn.restart { border-color: rgba(250,204,21,.3); color: var(--warn); }
+.svc-btn.restart:hover { background: rgba(240,165,0,.08); }
+.svc-btn.enable { border-color: rgba(148,163,184,.3); color: var(--accent2); }
+.svc-btn.enable:hover { background: rgba(148,163,184,.08); }
+.svc-detail { background: var(--code-bg); border-radius: 8px; padding: 1rem; font-size: .9rem; min-height: 70px; font-family: monospace; }
+
+/* QUIZ */
+.quiz-q { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem; margin-bottom: 1rem; }
+.quiz-q p { font-weight: 600; margin-bottom: .8rem; }
+.quiz-options { display: flex; flex-direction: column; gap: .4rem; }
+.quiz-option { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: .6rem 1rem; cursor: pointer; transition: all .2s; font-size: .9rem; }
+.quiz-option:hover:not(.locked) { border-color: var(--accent); background: rgba(148,163,184,.1); }
+.quiz-option.correct { background: rgba(76,175,130,.15); border-color: var(--success); color: var(--success); }
+.quiz-option.wrong { background: rgba(224,92,92,.12); border-color: var(--danger); color: var(--danger); }
+.quiz-option.locked { cursor: default; }
+.quiz-feedback { margin-top: .7rem; padding: .6rem .9rem; border-radius: 6px; font-size: .87rem; display: none; }
+.quiz-feedback.show { display: block; }
+.quiz-feedback.ok { background: rgba(76,175,130,.12); color: var(--success); border: 1px solid var(--success); }
+.quiz-feedback.nok { background: rgba(224,92,92,.1); color: #f87171; border: 1px solid var(--danger); }
+.quiz-score { background: var(--surface2); border-radius: var(--radius); padding: 1.5rem; text-align: center; display: none; }
+.quiz-score h3 { font-size: 1.5rem; color: var(--accent); }
+.quiz-score p { color: var(--text-dim); margin: .5rem 0 1rem; }
+.btn-restart { background: var(--accent); color: #0f1117; border: none; padding: .7rem 1.5rem; border-radius: 8px; cursor: pointer; font-size: .95rem; font-weight: 600; transition: opacity .2s; }
+.btn-restart:hover { opacity: .85; }
+
+.recap-filters { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.filter-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim); padding: .35rem .9rem; border-radius: 20px; cursor: pointer; font-size: .82rem; transition: all .2s; }
+.filter-btn:hover, .filter-btn.active { background: var(--accent); color: #0f1117; border-color: var(--accent); }
+.recap-table tr.hidden { display: none; }
+.tag { display: inline-block; padding: .15rem .55rem; border-radius: 12px; font-size: .72rem; font-weight: 600; }
+.tag-reseau { background: rgba(148,163,184,.12); color: var(--accent2); }
+.tag-ssh { background: rgba(76,175,130,.1); color: var(--success); }
+.tag-dns { background: rgba(250,204,21,.1); color: #facc21; }
+.tag-services { background: rgba(167,139,250,.12); color: #c4b5fd; }
+
+/* IFACE TABLE */
+.iface-row td:first-child { font-family: monospace; color: var(--accent2); }
+.course-site-nav { display:flex; justify-content:space-between; gap:1rem; padding:.8rem 1rem; background:#1a1d27; flex-wrap:wrap; } .course-site-nav a {color:#93c5fd; font-weight:600;}
+</style>
+</head>
+<body>
+<div class="course-site-nav"><a href="../10-reseau-et-services/">← Chapitre 10</a><a href="quiz/10-reseau-et-services.html">Quiz du chapitre →</a></div>
+
+<header>
+  <div class="badge">Linux Initiation</div>
+  <h1>10 — Réseau et services</h1>
+  <p>Interfaces, SSH, DNS, systemctl — connectivité et gestion des services Linux</p>
+</header>
+
+<nav>
+  <button class="active" onclick="showTab('reseau',this)">Réseau</button>
+  <button onclick="showTab('ssh',this)">SSH</button>
+  <button onclick="showTab('dns',this)">DNS</button>
+  <button onclick="showTab('services',this)">Services (systemctl)</button>
+  <button onclick="showTab('recap',this)">Récapitulatif</button>
+  <button onclick="showTab('quiz',this)">Quiz</button>
+</nav>
+
+<main>
+
+<!-- TAB 1 : RÉSEAU -->
+<div class="tab active" id="tab-reseau">
+  <h2>Réseau — interfaces et connectivité</h2>
+
+  <h3>Afficher les interfaces réseau</h3>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">ip</span> <span class="arg">address</span>          <span class="comment"># toutes les interfaces et leurs IPs</span>
+<span class="cmd">ip</span> <span class="flag">-br</span> <span class="arg">address</span>     <span class="comment"># version courte et lisible (brief)</span></pre>
+  </div>
+
+  <h3>Les interfaces courantes</h3>
+  <table>
+    <tr><th>Interface</th><th>Type</th><th>Adresse habituelle</th><th>Description</th></tr>
+    <tr class="iface-row"><td>lo</td><td>Loopback</td><td>127.0.0.1</td><td>Interface locale virtuelle, toujours présente</td></tr>
+    <tr class="iface-row"><td>enp0s3</td><td>Ethernet</td><td>Variable (DHCP)</td><td>Carte réseau filaire (naming Predictable)</td></tr>
+    <tr class="iface-row"><td>enp0s8</td><td>Ethernet</td><td>192.168.56.x</td><td>2e carte réseau (ex: Host-Only VirtualBox)</td></tr>
+    <tr class="iface-row"><td>wlan0</td><td>Wi-Fi</td><td>Variable (DHCP)</td><td>Carte réseau sans fil</td></tr>
+    <tr class="iface-row"><td>eth0</td><td>Ethernet</td><td>Variable</td><td>Ancienne notation (systèmes plus anciens)</td></tr>
+  </table>
+
+  <h3>Tester la connectivité avec ping</h3>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">ping</span> <span class="arg">8.8.8.8</span>           <span class="comment"># teste vers Google DNS (Ctrl+C pour arrêter)</span>
+<span class="cmd">ping</span> <span class="arg">google.com</span>        <span class="comment"># teste aussi la résolution DNS</span>
+<span class="cmd">ping</span> <span class="flag">-c 4</span> <span class="arg">google.com</span>   <span class="comment"># envoie exactement 4 paquets puis s'arrête</span></pre>
+  </div>
+
+  <div class="callout tip">
+    <strong>Astuce</strong>
+    Si <code>ping 8.8.8.8</code> fonctionne mais <code>ping google.com</code> échoue, le problème vient de la résolution DNS (pas du réseau lui-même).
+  </div>
+
+  <h3>Ports en écoute et routage</h3>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">ss</span> <span class="flag">-tulnp</span>            <span class="comment"># liste les ports en écoute (TCP/UDP)</span>
+<span class="cmd">ss</span> <span class="flag">-tulnp</span> <span class="op">|</span> <span class="cmd">grep</span> <span class="arg">22</span>  <span class="comment"># vérifier si SSH écoute sur le port 22</span>
+<span class="cmd">ip</span> <span class="arg">route</span>              <span class="comment"># affiche la table de routage</span></pre>
+  </div>
+
+  <h3>Signification des flags ss</h3>
+  <table>
+    <tr><th>Flag</th><th>Signification</th></tr>
+    <tr><td><code>-t</code></td><td>TCP</td></tr>
+    <tr><td><code>-u</code></td><td>UDP</td></tr>
+    <tr><td><code>-l</code></td><td>Listening (en écoute)</td></tr>
+    <tr><td><code>-n</code></td><td>Numérique (ne pas résoudre les noms)</td></tr>
+    <tr><td><code>-p</code></td><td>Process (affiche le programme associé)</td></tr>
+  </table>
+</div>
+
+<!-- TAB 2 : SSH -->
+<div class="tab" id="tab-ssh">
+  <h2>SSH — connexion distante sécurisée</h2>
+
+  <p><strong>SSH (Secure Shell)</strong> permet de se connecter à un serveur distant en ligne de commande, de façon <strong>chiffrée</strong>. C'est l'outil fondamental de l'administration Linux.</p>
+
+  <div class="callout note">
+    <strong>Analogie</strong>
+    SSH, c'est comme un <strong>téléphone sécurisé</strong> entre vous et le serveur. Tout ce que vous tapez et tout ce que le serveur répond est chiffré. Personne sur le réseau ne peut lire la conversation.
+  </div>
+
+  <h3>Se connecter en SSH</h3>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">ssh</span> <span class="arg">utilisateur@adresse_ip</span>
+<span class="cmd">ssh</span> <span class="arg">stagiaire@192.168.1.10</span>
+<span class="cmd">ssh</span> <span class="flag">-p 2222</span> <span class="arg">stagiaire@192.168.1.10</span>   <span class="comment"># port non standard</span></pre>
+  </div>
+
+  <h3>Quitter une session SSH</h3>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">exit</span>       <span class="comment"># quitter la session SSH (ou Ctrl+D)</span></pre>
+  </div>
+
+  <div class="callout tip">
+    <strong>Conseil professionnel</strong>
+    SSH est l'outil principal de l'administration Linux professionnelle. Dans un datacenter, on ne branche jamais un clavier sur un serveur — on se connecte toujours en SSH depuis sa machine.
+  </div>
+
+  <h3>Connexion depuis différents systèmes</h3>
+  <table>
+    <tr><th>Système client</th><th>Commande / Outil</th></tr>
+    <tr><td>Linux / macOS</td><td>Terminal natif : <code>ssh user@ip</code></td></tr>
+    <tr><td>Windows 10+</td><td>PowerShell ou cmd : <code>ssh user@ip</code></td></tr>
+    <tr><td>Windows (anciens)</td><td>PuTTY (client graphique gratuit)</td></tr>
+    <tr><td>Tous</td><td>VSCode Remote SSH (extension)</td></tr>
+  </table>
+
+  <h3>Copier des fichiers via SSH</h3>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="comment"># Copier un fichier LOCAL vers un serveur DISTANT</span>
+<span class="cmd">scp</span> <span class="arg">fichier.txt</span> <span class="arg">stagiaire@192.168.1.10:/home/stagiaire/</span>
+
+<span class="comment"># Copier un fichier DISTANT vers LOCAL</span>
+<span class="cmd">scp</span> <span class="arg">stagiaire@192.168.1.10:/etc/hosts</span> <span class="arg">./hosts-distant.txt</span></pre>
+  </div>
+</div>
+
+<!-- TAB 3 : DNS -->
+<div class="tab" id="tab-dns">
+  <h2>DNS — résolution des noms de domaine</h2>
+
+  <p>Le <strong>DNS (Domain Name System)</strong> traduit les noms lisibles par les humains (<code>google.com</code>) en adresses IP (<code>142.250.74.46</code>) que les machines comprennent.</p>
+
+  <div class="callout note">
+    <strong>Analogie</strong>
+    Le DNS est l'<strong>annuaire téléphonique d'Internet</strong> : vous cherchez "Google" et il vous donne le numéro (l'adresse IP) à appeler.
+  </div>
+
+  <h3>Tester la résolution DNS</h3>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">host</span> <span class="arg">google.com</span>          <span class="comment"># résolution simple</span>
+<span class="cmd">nslookup</span> <span class="arg">google.com</span>      <span class="comment"># résolution avec infos du serveur DNS</span></pre>
+  </div>
+
+  <h3>Configuration DNS du système</h3>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">cat</span> <span class="path">/etc/resolv.conf</span>     <span class="comment"># serveurs DNS configurés</span></pre>
+  </div>
+
+  <h3>/etc/hosts — résolution locale sans DNS</h3>
+  <p>Le fichier <code>/etc/hosts</code> permet de définir des correspondances nom ↔ IP <strong>locales</strong>, sans passer par un serveur DNS externe. Ce fichier est consulté en <strong>priorité</strong> avant le DNS.</p>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">cat</span> <span class="path">/etc/hosts</span>
+
+<span class="comment"># Contenu typique :</span>
+<span class="arg">127.0.0.1</span>       <span class="arg">localhost</span>
+<span class="arg">127.0.1.1</span>       <span class="arg">hostname-de-la-machine</span>
+<span class="arg">192.168.1.10</span>    <span class="arg">mon-serveur</span>     <span class="comment"># entrée personnalisée</span></pre>
+  </div>
+
+  <div class="callout tip">
+    <strong>Cas pratique</strong>
+    En lab, on peut ajouter une ligne dans /etc/hosts pour accéder à un VM par son nom plutôt que par son IP : <code>192.168.56.101  debian-lab</code>. On peut ensuite faire <code>ssh stagiaire@debian-lab</code>.
+  </div>
+
+  <h3>Ordre de résolution des noms</h3>
+  <table>
+    <tr><th>Priorité</th><th>Source</th><th>Fichier/Service</th></tr>
+    <tr><td>1 (prioritaire)</td><td>Fichier local</td><td><code>/etc/hosts</code></td></tr>
+    <tr><td>2</td><td>Serveur DNS</td><td>Configuré dans <code>/etc/resolv.conf</code></td></tr>
+    <tr><td>3 (fallback)</td><td>Autres méthodes</td><td>mDNS, NIS... (cas rares)</td></tr>
+  </table>
+</div>
+
+<!-- TAB 4 : SERVICES -->
+<div class="tab" id="tab-services">
+  <h2>Services — systemctl</h2>
+
+  <p>Un <strong>service</strong> (ou daemon) est un programme qui tourne en <strong>arrière-plan en permanence</strong> : SSH, serveur web, base de données, etc. On les gère avec <code>systemctl</code>.</p>
+
+  <h3>Machine à états d'un service — cliquez sur une action</h3>
+  <div class="service-machine">
+    <div class="service-state-display">
+      <div class="service-indicator" id="svc-indicator"></div>
+      <div class="service-status-text" id="svc-status">État : inconnu</div>
+    </div>
+    <div class="service-btns">
+      <button class="svc-btn start" onclick="showSvcDetail('start')">start</button>
+      <button class="svc-btn stop" onclick="showSvcDetail('stop')">stop</button>
+      <button class="svc-btn restart" onclick="showSvcDetail('restart')">restart</button>
+      <button class="svc-btn enable" onclick="showSvcDetail('enable')">enable</button>
+      <button class="svc-btn enable" onclick="showSvcDetail('disable')">disable</button>
+      <button class="svc-btn" onclick="showSvcDetail('status')">status</button>
+    </div>
+    <div class="svc-detail" id="svc-detail">Cliquez sur une action pour voir la commande et son effet.</div>
+  </div>
+
+  <h3>Toutes les commandes systemctl</h3>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">sudo</span> <span class="cmd">systemctl</span> <span class="arg">status ssh</span>       <span class="comment"># état du service ssh</span>
+<span class="cmd">sudo</span> <span class="cmd">systemctl</span> <span class="arg">start ssh</span>        <span class="comment"># démarrer</span>
+<span class="cmd">sudo</span> <span class="cmd">systemctl</span> <span class="arg">stop ssh</span>         <span class="comment"># arrêter</span>
+<span class="cmd">sudo</span> <span class="cmd">systemctl</span> <span class="arg">restart ssh</span>      <span class="comment"># redémarrer (stop + start)</span>
+<span class="cmd">sudo</span> <span class="cmd">systemctl</span> <span class="arg">reload ssh</span>       <span class="comment"># recharger la config sans couper</span>
+<span class="cmd">sudo</span> <span class="cmd">systemctl</span> <span class="arg">enable ssh</span>       <span class="comment"># démarrer automatiquement au boot</span>
+<span class="cmd">sudo</span> <span class="cmd">systemctl</span> <span class="arg">disable ssh</span>      <span class="comment"># ne plus démarrer au boot</span>
+<span class="cmd">systemctl</span> <span class="arg">list-units</span> <span class="flag">--type=service</span>  <span class="comment"># lister tous les services</span></pre>
+  </div>
+
+  <h3>Consulter les logs avec journalctl</h3>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">sudo</span> <span class="cmd">journalctl</span> <span class="flag">-u</span> <span class="arg">ssh</span>                        <span class="comment"># tous les logs du service ssh</span>
+<span class="cmd">sudo</span> <span class="cmd">journalctl</span> <span class="flag">-u</span> <span class="arg">ssh</span> <span class="flag">-f</span>                     <span class="comment"># logs en temps réel (Ctrl+C pour quitter)</span>
+<span class="cmd">sudo</span> <span class="cmd">journalctl</span> <span class="flag">-u</span> <span class="arg">ssh</span> <span class="flag">--since</span> <span class="arg">"1 hour ago"</span>  <span class="comment"># logs de la dernière heure</span></pre>
+  </div>
+
+  <div class="callout note">
+    <strong>Différence enable / start</strong>
+    <code>start</code> = démarre <em>maintenant</em> (actif jusqu'au prochain reboot).<br>
+    <code>enable</code> = démarre <em>automatiquement à chaque boot</em> (mais ne démarre pas immédiatement).<br>
+    Pour les deux en une fois : <code>sudo systemctl enable --now ssh</code>
+  </div>
+</div>
+
+<!-- TAB 5 : RECAP -->
+<div class="tab" id="tab-recap">
+  <h2>Récapitulatif</h2>
+  <div class="recap-filters">
+    <button class="filter-btn active" onclick="filterRecap('all',this)">Tout</button>
+    <button class="filter-btn" onclick="filterRecap('reseau',this)">Réseau</button>
+    <button class="filter-btn" onclick="filterRecap('ssh',this)">SSH</button>
+    <button class="filter-btn" onclick="filterRecap('dns',this)">DNS</button>
+    <button class="filter-btn" onclick="filterRecap('services',this)">Services</button>
+  </div>
+  <table>
+    <thead><tr><th>Commande</th><th>Description</th><th>Catégorie</th></tr></thead>
+    <tbody id="recap-body">
+      <tr data-cat="reseau"><td><code>ip address</code></td><td>Affiche les interfaces et adresses IP</td><td><span class="tag tag-reseau">réseau</span></td></tr>
+      <tr data-cat="reseau"><td><code>ip -br address</code></td><td>Affichage court des interfaces</td><td><span class="tag tag-reseau">réseau</span></td></tr>
+      <tr data-cat="reseau"><td><code>ping -c 4 ip</code></td><td>Envoie 4 paquets ping (test connectivité)</td><td><span class="tag tag-reseau">réseau</span></td></tr>
+      <tr data-cat="reseau"><td><code>ss -tulnp</code></td><td>Liste les ports en écoute</td><td><span class="tag tag-reseau">réseau</span></td></tr>
+      <tr data-cat="reseau"><td><code>ip route</code></td><td>Affiche la table de routage</td><td><span class="tag tag-reseau">réseau</span></td></tr>
+      <tr data-cat="ssh"><td><code>ssh user@ip</code></td><td>Connexion SSH à un serveur distant</td><td><span class="tag tag-ssh">ssh</span></td></tr>
+      <tr data-cat="ssh"><td><code>ssh -p 2222 user@ip</code></td><td>Connexion SSH sur un port non standard</td><td><span class="tag tag-ssh">ssh</span></td></tr>
+      <tr data-cat="ssh"><td><code>exit</code></td><td>Quitte la session SSH (ou Ctrl+D)</td><td><span class="tag tag-ssh">ssh</span></td></tr>
+      <tr data-cat="ssh"><td><code>scp fichier user@ip:/chemin/</code></td><td>Copie un fichier via SSH</td><td><span class="tag tag-ssh">ssh</span></td></tr>
+      <tr data-cat="dns"><td><code>host google.com</code></td><td>Résolution DNS d'un nom de domaine</td><td><span class="tag tag-dns">dns</span></td></tr>
+      <tr data-cat="dns"><td><code>nslookup google.com</code></td><td>Résolution DNS détaillée</td><td><span class="tag tag-dns">dns</span></td></tr>
+      <tr data-cat="dns"><td><code>cat /etc/resolv.conf</code></td><td>Affiche les serveurs DNS configurés</td><td><span class="tag tag-dns">dns</span></td></tr>
+      <tr data-cat="dns"><td><code>cat /etc/hosts</code></td><td>Correspondances nom ↔ IP locales</td><td><span class="tag tag-dns">dns</span></td></tr>
+      <tr data-cat="services"><td><code>sudo systemctl status ssh</code></td><td>État du service ssh</td><td><span class="tag tag-services">services</span></td></tr>
+      <tr data-cat="services"><td><code>sudo systemctl start ssh</code></td><td>Démarre le service</td><td><span class="tag tag-services">services</span></td></tr>
+      <tr data-cat="services"><td><code>sudo systemctl stop ssh</code></td><td>Arrête le service</td><td><span class="tag tag-services">services</span></td></tr>
+      <tr data-cat="services"><td><code>sudo systemctl enable ssh</code></td><td>Active le démarrage automatique au boot</td><td><span class="tag tag-services">services</span></td></tr>
+      <tr data-cat="services"><td><code>sudo systemctl disable ssh</code></td><td>Désactive le démarrage automatique</td><td><span class="tag tag-services">services</span></td></tr>
+      <tr data-cat="services"><td><code>sudo journalctl -u ssh -f</code></td><td>Logs en temps réel d'un service</td><td><span class="tag tag-services">services</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- TAB 6 : QUIZ -->
+<div class="tab" id="tab-quiz">
+  <h2>Quiz — Réseau et services</h2>
+  <div id="quiz-container"></div>
+  <div class="quiz-score" id="quiz-score">
+    <h3 id="score-text"></h3>
+    <p id="score-sub"></p>
+    <button class="btn-restart" onclick="initQuiz()">Recommencer</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function copyCode(btn) {
+  const pre = btn.nextElementSibling;
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.textContent = 'Copié !';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 1800);
+  });
+}
+
+function filterRecap(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#recap-body tr').forEach(tr => {
+    tr.classList.toggle('hidden', cat !== 'all' && tr.dataset.cat !== cat);
+  });
+}
+
+// SERVICE STATE MACHINE
+const svcActions = {
+  start: {
+    text: 'État : actif (running)',
+    cls: 'running',
+    ind: 'running',
+    cmd: 'sudo systemctl start ssh',
+    desc: 'Démarre le service <strong>immédiatement</strong>. Il tourne jusqu\'au prochain reboot. Si le service plante, systemd peut le redémarrer automatiquement selon la configuration.'
+  },
+  stop: {
+    text: 'État : inactif (stopped)',
+    cls: 'stopped',
+    ind: 'stopped',
+    cmd: 'sudo systemctl stop ssh',
+    desc: 'Arrête le service proprement. Les connexions existantes sont terminées. Le service ne redémarre pas au prochain boot (à moins qu\'il soit "enabled").'
+  },
+  restart: {
+    text: 'État : redémarrage...',
+    cls: 'running',
+    ind: 'running',
+    cmd: 'sudo systemctl restart ssh',
+    desc: 'Effectue un <strong>stop puis start</strong>. Utile après une modification de configuration. Attention : coupe brièvement le service.'
+  },
+  enable: {
+    text: 'État : activé au boot',
+    cls: 'enabled',
+    ind: '',
+    cmd: 'sudo systemctl enable ssh',
+    desc: 'Crée un lien symbolique pour que le service <strong>démarre automatiquement</strong> à chaque boot. Ne démarre pas immédiatement. Combiner avec start : <code>sudo systemctl enable --now ssh</code>'
+  },
+  disable: {
+    text: 'État : désactivé au boot',
+    cls: '',
+    ind: '',
+    cmd: 'sudo systemctl disable ssh',
+    desc: 'Supprime le lien symbolique de démarrage automatique. Le service ne démarrera plus au boot, mais reste installé et peut être lancé manuellement.'
+  },
+  status: {
+    text: 'État : vérification...',
+    cls: '',
+    ind: '',
+    cmd: 'sudo systemctl status ssh',
+    desc: 'Affiche l\'état complet du service : actif/inactif, activé/désactivé, PID, mémoire utilisée, et les dernières lignes de logs.'
+  }
+};
+
+function showSvcDetail(action) {
+  const a = svcActions[action];
+  const ind = document.getElementById('svc-indicator');
+  const status = document.getElementById('svc-status');
+  ind.className = 'service-indicator' + (a.ind ? ' ' + a.ind : '');
+  status.className = 'service-status-text' + (a.cls ? ' ' + a.cls : '');
+  status.textContent = a.text;
+  document.getElementById('svc-detail').innerHTML =
+    `<span style="color:var(--accent2)">${a.cmd}</span>\n\n${a.desc}`;
+}
+
+// QUIZ
+const questions = [
+  { q: "Quelle commande affiche les interfaces réseau et leurs adresses IP ?",
+    opts: ["ifconfig", "ip address (ou ip -br address)", "netstat -i", "net show"],
+    correct: 1, fb: "ip address est la commande moderne sur les distributions Linux actuelles. ifconfig est l'ancienne commande (paquet net-tools)." },
+  { q: "Comment envoyer exactement 4 paquets ping ?",
+    opts: ["ping -n 4 adresse", "ping -c 4 adresse", "ping --count=4 adresse", "ping4 adresse"],
+    correct: 1, fb: "L'option -c (count) spécifie le nombre de paquets à envoyer. Sans -c, ping tourne indéfiniment jusqu'à Ctrl+C." },
+  { q: "Quelle commande SSH se connecte à 192.168.1.10 avec l'utilisateur admin ?",
+    opts: ["ssh 192.168.1.10 -u admin", "ssh admin@192.168.1.10", "connect admin@192.168.1.10", "ssh --user=admin 192.168.1.10"],
+    correct: 1, fb: "La syntaxe SSH est : ssh utilisateur@adresse_ip. Simple et efficace." },
+  { q: "Où configurer une correspondance nom ↔ IP locale sans DNS ?",
+    opts: ["/etc/resolv.conf", "/etc/network/interfaces", "/etc/hosts", "/etc/dns.conf"],
+    correct: 2, fb: "/etc/hosts est consulté en priorité avant le serveur DNS. On peut y définir des alias locaux : 192.168.1.10 mon-serveur" },
+  { q: "Comment activer un service pour qu'il démarre automatiquement au démarrage ?",
+    opts: ["sudo systemctl start ssh", "sudo systemctl autostart ssh", "sudo systemctl enable ssh", "sudo service ssh boot"],
+    correct: 2, fb: "enable crée le lien symbolique pour le démarrage automatique. start démarre seulement maintenant. Pour les deux en une fois : enable --now" },
+  { q: "Quelle commande affiche les logs en temps réel d'un service ?",
+    opts: ["sudo systemctl log -u ssh", "sudo journalctl -u ssh -f", "sudo tail -f /var/log/ssh", "sudo systemctl watch ssh"],
+    correct: 1, fb: "journalctl -u service -f affiche les logs du service en temps réel (-f = follow). Ctrl+C pour arrêter." }
+];
+
+let quizAnswers = [];
+function initQuiz() {
+  quizAnswers = new Array(questions.length).fill(null);
+  document.getElementById('quiz-score').style.display = 'none';
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  questions.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-q';
+    div.id = 'qq-' + i;
+    div.innerHTML = `<p>Question ${i+1}. ${q.q}</p>
+      <div class="quiz-options">
+        ${q.opts.map((o,j) => `<div class="quiz-option" onclick="answerQuiz(${i},${j})">${o}</div>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="fb-${i}"></div>`;
+    container.appendChild(div);
+  });
+}
+
+function answerQuiz(qi, oi) {
+  if (quizAnswers[qi] !== null) return;
+  quizAnswers[qi] = oi;
+  const q = questions[qi];
+  const opts = document.querySelectorAll(`#qq-${qi} .quiz-option`);
+  opts.forEach((opt, j) => {
+    opt.classList.add('locked');
+    if (j === q.correct) opt.classList.add('correct');
+    else if (j === oi) opt.classList.add('wrong');
+  });
+  const fb = document.getElementById('fb-' + qi);
+  fb.classList.add('show');
+  const ok = oi === q.correct;
+  fb.classList.add(ok ? 'ok' : 'nok');
+  fb.innerHTML = (ok ? '✓ Correct ! ' : '✗ Incorrect. ') + q.fb;
+  if (quizAnswers.every(a => a !== null)) showScore();
+}
+
+function showScore() {
+  const score = quizAnswers.filter((a, i) => a === questions[i].correct).length;
+  const sc = document.getElementById('quiz-score');
+  sc.style.display = 'block';
+  document.getElementById('score-text').textContent = score + ' / ' + questions.length;
+  const msgs = ['Réessaie encore !', 'Pas mal, continue !', 'Bien joué !', 'Excellent !'];
+  document.getElementById('score-sub').textContent = msgs[Math.min(Math.floor(score/2), 3)];
+}
+
+initQuiz();
+</script>
+</body>
+</html>

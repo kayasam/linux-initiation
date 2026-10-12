@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>05 — Fichiers et Répertoires</title>
+<style>
+:root {
+  --bg: #0f1117; --surface: #1a1d27; --surface2: #232635; --border: #2e3148;
+  --accent: #fbbf24; --accent2: #fcd34d;
+  --warn: #f0a500; --danger: #e05c5c; --success: #4caf82;
+  --text: #d4d8f0; --text-dim: #7880a0; --code-bg: #12141f; --radius: 10px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+
+.header {
+  background: linear-gradient(135deg, #1a1200 0%, #1a1500 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 2.5rem 2rem 1.5rem;
+  text-align: center;
+}
+.badge {
+  display: inline-block; background: var(--accent); color: #0f1117;
+  font-size: .72rem; font-weight: 700; letter-spacing: .08em;
+  padding: .25rem .7rem; border-radius: 20px; text-transform: uppercase; margin-bottom: .8rem;
+}
+.header h1 {
+  font-size: 2rem; font-weight: 800; line-height: 1.1;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  margin-bottom: .4rem;
+}
+.header p { color: var(--text-dim); font-size: 1rem; }
+
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  display: flex; justify-content: center; flex-wrap: wrap; gap: .25rem; padding: .5rem 1rem;
+}
+.nav button {
+  background: none; border: none; color: var(--text-dim); cursor: pointer;
+  padding: .9rem 1.1rem; font-size: .85rem; font-weight: 500; white-space: nowrap;
+  border-bottom: 2px solid transparent; transition: all .2s;
+}
+.nav button:hover { color: var(--text); }
+.nav button.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+h2 { font-size: 1.3rem; font-weight: 700; color: var(--accent2); margin-bottom: 1rem; margin-top: 1.5rem; }
+h2:first-child { margin-top: 0; }
+h3 { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: .5rem; margin-top: 1.2rem; }
+p { color: var(--text); line-height: 1.7; margin-bottom: .8rem; }
+
+.callout { border-radius: var(--radius); padding: .9rem 1.1rem; margin: 1rem 0; border-left: 3px solid; }
+.callout-note { background: rgba(251,191,36,.08); border-color: var(--accent); }
+.callout-tip { background: rgba(76,175,130,.1); border-color: var(--success); }
+.callout-warn { background: rgba(240,165,0,.1); border-color: var(--warn); }
+.callout-danger { background: rgba(224,92,92,.12); border-color: var(--danger); }
+.callout-label { font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: .35rem; }
+.callout-note .callout-label { color: var(--accent); }
+.callout-tip .callout-label { color: var(--success); }
+.callout-warn .callout-label { color: var(--warn); }
+.callout-danger .callout-label { color: var(--danger); }
+.callout p { margin: 0; font-size: .93rem; }
+
+.code-wrap { position: relative; margin: .8rem 0; }
+pre {
+  background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1rem 1rem 1rem 1.1rem; overflow-x: auto;
+  font-family: 'Consolas', 'Cascadia Code', monospace; font-size: .88rem; line-height: 1.7; color: #b8c0e0;
+}
+code { font-family: 'Consolas', 'Cascadia Code', monospace; font-size: .88rem; }
+.inline-code {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-radius: 4px; padding: .1rem .4rem; color: var(--accent2); font-size: .87rem;
+}
+.copy-btn {
+  position: absolute; top: .5rem; right: .5rem;
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim);
+  border-radius: 5px; padding: .25rem .6rem; font-size: .75rem; cursor: pointer; transition: all .2s;
+}
+.copy-btn:hover { background: var(--accent); color: #0f1117; }
+.copy-btn.copied { background: var(--success); color: #0f1117; }
+
+table { width: 100%; border-collapse: collapse; margin: .8rem 0; font-size: .9rem; }
+th { background: var(--surface2); color: var(--accent2); padding: .6rem .9rem; text-align: left; font-weight: 600; }
+td { padding: .55rem .9rem; border-bottom: 1px solid var(--border); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(251,191,36,.04); }
+
+/* DANGER BOX */
+.danger-box {
+  background: rgba(224,92,92,.12); border: 2px solid var(--danger);
+  border-radius: var(--radius); padding: 1.1rem 1.2rem; margin: 1rem 0;
+}
+.danger-box .callout-label { color: var(--danger); }
+.danger-box p { margin: 0; color: var(--text); font-size: .93rem; }
+
+/* NANO CARDS */
+.nano-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: .7rem; margin: 1rem 0; }
+.nano-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: .9rem 1rem; cursor: pointer; transition: all .2s;
+}
+.nano-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.nano-card.flipped { background: var(--surface2); border-color: var(--accent); }
+.nano-key { font-family: 'Consolas', 'Cascadia Code', monospace; color: var(--accent); font-size: 1rem; font-weight: 700; margin-bottom: .3rem; }
+.nano-desc { color: var(--text); font-size: .88rem; }
+.nano-detail { color: var(--text-dim); font-size: .8rem; margin-top: .3rem; display: none; }
+.nano-card.flipped .nano-detail { display: block; }
+
+/* QUIZ */
+.quiz-question { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem; margin-bottom: 1rem; }
+.quiz-question h3 { color: var(--text); margin-bottom: .8rem; font-size: .95rem; }
+.quiz-options { display: flex; flex-direction: column; gap: .4rem; }
+.quiz-option {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 7px;
+  padding: .6rem 1rem; cursor: pointer; transition: all .15s; text-align: left;
+  color: var(--text); font-size: .9rem;
+}
+.quiz-option:hover:not(:disabled) { border-color: var(--accent); background: rgba(251,191,36,.1); }
+.quiz-option.correct { background: rgba(76,175,130,.15); border-color: var(--success); color: var(--success); }
+.quiz-option.wrong { background: rgba(224,92,92,.12); border-color: var(--danger); color: var(--danger); }
+.quiz-option:disabled { cursor: default; }
+.quiz-feedback { margin-top: .6rem; font-size: .88rem; padding: .5rem .8rem; border-radius: 6px; }
+.quiz-feedback.ok { background: rgba(76,175,130,.1); color: var(--success); }
+.quiz-feedback.ko { background: rgba(224,92,92,.1); color: var(--danger); }
+.quiz-score {
+  background: var(--surface2); border: 1px solid var(--accent); border-radius: var(--radius);
+  padding: 1.5rem; text-align: center; margin-top: 1rem; display: none;
+}
+.quiz-score h3 { color: var(--accent); font-size: 1.4rem; margin-bottom: .5rem; }
+.quiz-score p { color: var(--text-dim); }
+.btn-quiz {
+  background: var(--accent); color: #0f1117; border: none; border-radius: 7px;
+  padding: .65rem 1.4rem; font-size: .9rem; font-weight: 700; cursor: pointer; margin-top: 1rem; transition: opacity .2s;
+}
+.btn-quiz:hover { opacity: .85; }
+.course-site-nav { display:flex; justify-content:space-between; gap:1rem; padding:.8rem 1rem; background:#1a1d27; flex-wrap:wrap; } .course-site-nav a {color:#93c5fd; font-weight:600;}
+</style>
+</head>
+<body>
+<div class="course-site-nav"><a href="../05-fichiers-et-repertoires/">← Chapitre 05</a><a href="quiz/05-fichiers-et-repertoires.html">Quiz du chapitre →</a></div>
+
+<header class="header">
+  <div class="badge">Module 05</div>
+  <h1>Fichiers et Répertoires</h1>
+  <p>Créer, copier, déplacer, supprimer et rechercher</p>
+</header>
+
+<nav class="nav">
+  <button class="active" onclick="showTab('creer')">Créer</button>
+  <button onclick="showTab('copier')">Copier &amp; Déplacer</button>
+  <button onclick="showTab('supprimer')">Supprimer</button>
+  <button onclick="showTab('rechercher')">Rechercher</button>
+  <button onclick="showTab('nano')">nano</button>
+  <button onclick="showTab('quiz')">Quiz</button>
+</nav>
+
+<main>
+
+<!-- TAB 1 : Créer -->
+<section id="tab-creer" class="tab-content active">
+  <h2>Créer fichiers et dossiers</h2>
+  <p>Sous Linux, <strong>tout est fichier</strong> : les documents, les programmes, mais aussi les périphériques et les paramètres système.</p>
+
+  <div class="callout callout-note">
+    <div class="callout-label">Analogie</div>
+    <p>Les dossiers sont comme des <strong>tiroirs étiquetés</strong> dans un classeur : ils permettent d'organiser les fichiers et de retrouver facilement ce qu'on cherche.</p>
+  </div>
+
+  <h3>mkdir — Créer un dossier</h3>
+  <div class="code-wrap">
+    <pre>mkdir projets                     # crée le dossier "projets"
+mkdir projets/linux               # crée "linux" dans "projets"
+mkdir -p projets/linux/cours      # crée toute la hiérarchie d'un coup</pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+  </div>
+  <div class="callout callout-note">
+    <div class="callout-label">Note — Option -p</div>
+    <p>L'option <strong>-p</strong> (parents) crée tous les dossiers intermédiaires si ils n'existent pas encore. Sans -p, mkdir échoue si le dossier parent n'existe pas.</p>
+  </div>
+
+  <h3>touch — Créer un fichier vide</h3>
+  <div class="code-wrap">
+    <pre>touch notes.txt                   # crée un fichier vide (ou met à jour sa date)
+touch a.txt b.txt c.txt           # crée plusieurs fichiers d'un coup</pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+  </div>
+
+  <h3>echo et redirection — Écrire dans un fichier</h3>
+  <div class="code-wrap">
+    <pre>echo "Bonjour" > notes.txt        # écrit dans le fichier (écrase le contenu)
+echo "Ligne 2" >> notes.txt       # ajoute à la fin sans écraser
+cat notes.txt                     # vérifie le contenu</pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+  </div>
+  <table>
+    <thead><tr><th>Opérateur</th><th>Effet</th></tr></thead>
+    <tbody>
+      <tr><td><span class="inline-code">&gt;</span></td><td>Redirige la sortie vers un fichier — <strong>écrase</strong> si le fichier existe</td></tr>
+      <tr><td><span class="inline-code">&gt;&gt;</span></td><td>Redirige la sortie — <strong>ajoute</strong> à la fin sans écraser</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- TAB 2 : Copier & Déplacer -->
+<section id="tab-copier" class="tab-content">
+  <h2>cp — Copier</h2>
+  <div class="code-wrap">
+    <pre>cp notes.txt notes-sauvegarde.txt     # copie et renomme
+cp notes.txt /tmp/                    # copie dans /tmp
+cp -r projets/ /tmp/                  # copie un dossier entier (-r récursif)</pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+  </div>
+  <div class="callout callout-warn">
+    <div class="callout-label">Attention</div>
+    <p>Sans <strong>-r</strong> (récursif), <span class="inline-code">cp</span> ne peut pas copier un dossier — il retourne une erreur. Pensez toujours à <span class="inline-code">-r</span> pour les dossiers.</p>
+  </div>
+
+  <h2>mv — Déplacer ET renommer</h2>
+  <div class="code-wrap">
+    <pre>mv notes.txt documents/               # déplace dans le dossier "documents"
+mv notes.txt rapport.txt              # renomme (même dossier)
+mv projets/ /home/work/               # déplace un dossier entier</pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+  </div>
+  <div class="callout callout-tip">
+    <div class="callout-label">Astuce</div>
+    <p><span class="inline-code">mv</span> fait à la fois <strong>déplacer</strong> et <strong>renommer</strong>. Si la destination est un dossier existant, le fichier est déplacé dedans. Sinon, il est renommé.</p>
+  </div>
+
+  <h2>Récapitulatif cp vs mv</h2>
+  <table>
+    <thead><tr><th>Commande</th><th>Résultat</th><th>Fichier source</th></tr></thead>
+    <tbody>
+      <tr><td><span class="inline-code">cp a.txt b.txt</span></td><td>a.txt copié en b.txt</td><td>a.txt reste intact</td></tr>
+      <tr><td><span class="inline-code">mv a.txt b.txt</span></td><td>a.txt renommé en b.txt</td><td>a.txt disparaît</td></tr>
+      <tr><td><span class="inline-code">cp -r dir/ dest/</span></td><td>dir/ copié dans dest/</td><td>dir/ reste intact</td></tr>
+      <tr><td><span class="inline-code">mv dir/ dest/</span></td><td>dir/ déplacé dans dest/</td><td>dir/ disparaît de l'emplacement original</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- TAB 3 : Supprimer -->
+<section id="tab-supprimer" class="tab-content">
+  <h2>rm — Supprimer</h2>
+
+  <div class="code-wrap">
+    <pre>rm notes.txt                  # supprime un fichier
+rm a.txt b.txt c.txt          # supprime plusieurs fichiers
+rmdir projets/                # supprime un dossier vide
+rm -r projets/                # supprime un dossier et tout son contenu</pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+  </div>
+
+  <div class="danger-box">
+    <div class="callout-label">DANGER — rm est définitif</div>
+    <p><strong>Il n'y a pas de corbeille sous Linux.</strong> Une fois supprimé avec rm, un fichier est irrécupérable. Vérifiez toujours ce que vous tapez avant d'appuyer sur Entrée.<br><br>La commande <span class="inline-code">rm -rf /</span> peut détruire l'intégralité du système. Ne jamais l'exécuter.</p>
+  </div>
+
+  <h2>Wildcards — Jokers</h2>
+  <p>Les jokers permettent de cibler plusieurs fichiers en une seule commande.</p>
+  <table>
+    <thead><tr><th>Joker</th><th>Signification</th><th>Exemple</th><th>Correspond à</th></tr></thead>
+    <tbody>
+      <tr><td><span class="inline-code">*</span></td><td>N'importe quelle suite de caractères</td><td><span class="inline-code">*.txt</span></td><td>notes.txt, rapport.txt…</td></tr>
+      <tr><td><span class="inline-code">?</span></td><td>Un seul caractère quelconque</td><td><span class="inline-code">fichier?.txt</span></td><td>fichier1.txt, fichierA.txt…</td></tr>
+      <tr><td><span class="inline-code">[abc]</span></td><td>Un caractère parmi la liste</td><td><span class="inline-code">fichier[123].txt</span></td><td>fichier1.txt, fichier2.txt, fichier3.txt</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Exemples pratiques</h3>
+  <div class="code-wrap">
+    <pre>ls *.txt                      # lister tous les fichiers .txt
+rm rapport_*.txt              # supprimer tous les rapports
+cp *.conf /tmp/               # copier tous les fichiers de config dans /tmp
+ls fichier?.txt               # lister fichier1.txt, fichierA.txt...</pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+  </div>
+</section>
+
+<!-- TAB 4 : Rechercher -->
+<section id="tab-rechercher" class="tab-content">
+  <h2>find — Rechercher des fichiers</h2>
+  <p>La commande <span class="inline-code">find</span> parcourt une arborescence pour trouver des fichiers selon différents critères.</p>
+
+  <div class="code-wrap">
+    <pre>find /home -name "notes.txt"          # recherche par nom exact
+find /home -name "*.txt"              # tous les fichiers .txt dans /home
+find /etc -name "*.conf" -type f      # fichiers .conf uniquement (pas les dossiers)
+find /tmp -mtime -1                   # modifiés dans les dernières 24 heures</pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+  </div>
+
+  <table>
+    <thead><tr><th>Option</th><th>Signification</th><th>Exemple</th></tr></thead>
+    <tbody>
+      <tr><td><span class="inline-code">-name</span></td><td>Nom du fichier (sensible à la casse)</td><td><span class="inline-code">-name "*.log"</span></td></tr>
+      <tr><td><span class="inline-code">-iname</span></td><td>Nom (insensible à la casse)</td><td><span class="inline-code">-iname "*.TXT"</span></td></tr>
+      <tr><td><span class="inline-code">-type f</span></td><td>Fichiers uniquement</td><td></td></tr>
+      <tr><td><span class="inline-code">-type d</span></td><td>Dossiers uniquement</td><td></td></tr>
+      <tr><td><span class="inline-code">-mtime -N</span></td><td>Modifié il y a moins de N jours</td><td><span class="inline-code">-mtime -7</span></td></tr>
+      <tr><td><span class="inline-code">-size +N</span></td><td>Plus grand que N (k=Ko, M=Mo)</td><td><span class="inline-code">-size +100k</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-tip">
+    <div class="callout-label">Astuce</div>
+    <p>Pour rechercher dans tout le système, utilisez <span class="inline-code">find / ...</span> mais attendez-vous à voir des messages d'erreur pour les dossiers non accessibles. Ajoutez <span class="inline-code">2>/dev/null</span> pour les masquer.</p>
+  </div>
+</section>
+
+<!-- TAB 5 : nano -->
+<section id="tab-nano" class="tab-content">
+  <h2>nano — L'éditeur de texte en terminal</h2>
+  <p><span class="inline-code">nano</span> est l'éditeur le plus accessible pour les débutants. Ses raccourcis sont affichés en bas de l'écran.</p>
+
+  <div class="code-wrap">
+    <pre>nano notes.txt       # ouvre notes.txt (le crée s'il n'existe pas)</pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+  </div>
+
+  <p>Une fois dans nano :</p>
+  <table>
+    <thead><tr><th>Raccourci</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr><td><span class="inline-code">Ctrl + O</span></td><td>Sauvegarder (Write Out) — confirme avec Entrée</td></tr>
+      <tr><td><span class="inline-code">Ctrl + X</span></td><td>Quitter (propose de sauvegarder si modifié)</td></tr>
+      <tr><td><span class="inline-code">Ctrl + K</span></td><td>Couper la ligne courante</td></tr>
+      <tr><td><span class="inline-code">Ctrl + U</span></td><td>Coller la ligne coupée</td></tr>
+      <tr><td><span class="inline-code">Ctrl + W</span></td><td>Rechercher un mot dans le fichier</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Cartes interactives — clique pour voir l'explication</h3>
+  <div class="nano-grid">
+    <div class="nano-card" onclick="this.classList.toggle('flipped')">
+      <div class="nano-key">Ctrl + O</div>
+      <div class="nano-desc">Sauvegarder</div>
+      <div class="nano-detail">Affiche une invite en bas avec le nom du fichier. Appuie sur Entrée pour confirmer la sauvegarde.</div>
+    </div>
+    <div class="nano-card" onclick="this.classList.toggle('flipped')">
+      <div class="nano-key">Ctrl + X</div>
+      <div class="nano-desc">Quitter</div>
+      <div class="nano-detail">Si le fichier a été modifié, nano te demande si tu veux sauvegarder (Y/N/Ctrl+C pour annuler).</div>
+    </div>
+    <div class="nano-card" onclick="this.classList.toggle('flipped')">
+      <div class="nano-key">Ctrl + K</div>
+      <div class="nano-desc">Couper la ligne</div>
+      <div class="nano-detail">Coupe la ligne entière et la met en mémoire. Peut être utilisé plusieurs fois pour couper plusieurs lignes.</div>
+    </div>
+    <div class="nano-card" onclick="this.classList.toggle('flipped')">
+      <div class="nano-key">Ctrl + U</div>
+      <div class="nano-desc">Coller</div>
+      <div class="nano-detail">Colle le contenu coupé à la position du curseur. Pratique pour déplacer des lignes.</div>
+    </div>
+    <div class="nano-card" onclick="this.classList.toggle('flipped')">
+      <div class="nano-key">Ctrl + W</div>
+      <div class="nano-desc">Rechercher</div>
+      <div class="nano-detail">Ouvre une barre de recherche en bas. Tape le mot cherché puis Entrée. Ctrl+W encore pour l'occurrence suivante.</div>
+    </div>
+  </div>
+
+  <div class="callout callout-note">
+    <div class="callout-label">Note</div>
+    <p>Dans nano, le symbole <strong>^</strong> représente la touche Ctrl. Donc <strong>^O</strong> = Ctrl+O. Ces raccourcis sont toujours affichés en bas de l'écran dans nano.</p>
+  </div>
+</section>
+
+<!-- TAB 6 : Quiz -->
+<section id="tab-quiz" class="tab-content">
+  <h2>Quiz — Fichiers et Répertoires</h2>
+  <div id="quizContainer"></div>
+  <div class="quiz-score" id="quizScore">
+    <h3 id="scoreTitle"></h3>
+    <p id="scoreDetail"></p>
+    <button class="btn-quiz" onclick="resetQuiz()">Recommencer</button>
+  </div>
+</section>
+
+</main>
+
+<script>
+function showTab(name) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function copyCode(btn) {
+  const pre = btn.previousElementSibling;
+  navigator.clipboard.writeText(pre.textContent).then(() => {
+    btn.textContent = 'Copié !';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 1800);
+  });
+}
+
+const quizData = [
+  {
+    q: "Quelle commande crée un dossier ET tous ses parents intermédiaires ?",
+    opts: ["mkdir projets", "mkdir -p projets/linux/cours", "touch projets/", "mkdir --all projets/linux/cours"],
+    correct: 1,
+    feedback: "mkdir -p crée toute la hiérarchie de dossiers d'un coup, même si les dossiers parents n'existent pas."
+  },
+  {
+    q: "<code>touch notes.txt</code> — que fait cette commande si le fichier existe déjà ?",
+    opts: [
+      "Elle efface son contenu",
+      "Elle retourne une erreur",
+      "Elle met à jour la date de modification sans toucher au contenu",
+      "Elle crée un doublon notes(2).txt"
+    ],
+    correct: 2,
+    feedback: "touch met à jour l'horodatage du fichier mais ne modifie pas son contenu. Elle crée le fichier s'il n'existe pas."
+  },
+  {
+    q: "<code>echo \"texte\" >> fichier</code> — que fait l'opérateur <code>&gt;&gt;</code> ?",
+    opts: [
+      "Écrase le contenu existant",
+      "Crée un nouveau fichier",
+      "Ajoute à la fin du fichier sans écraser",
+      "Affiche le contenu du fichier"
+    ],
+    correct: 2,
+    feedback: ">> (double chevron) ajoute à la fin du fichier. > (simple) écrase tout le contenu. Distinction essentielle !"
+  },
+  {
+    q: "Comment copier un dossier entier avec cp ?",
+    opts: ["cp dossier destination", "cp -a dossier destination", "cp -r dossier destination", "cp --dir dossier destination"],
+    correct: 2,
+    feedback: "cp -r (récursif) copie le dossier et tout son contenu. Sans -r, cp refuse de copier un dossier."
+  },
+  {
+    q: "Pourquoi rm est-il particulièrement dangereux ?",
+    opts: [
+      "Il est lent sur les gros dossiers",
+      "Il supprime de façon définitive sans corbeille de récupération",
+      "Il demande toujours une confirmation",
+      "Il ne fonctionne pas sur les fichiers système"
+    ],
+    correct: 1,
+    feedback: "Contrairement à l'interface graphique, rm supprime immédiatement et définitivement. Il n'y a pas de corbeille pour récupérer."
+  },
+  {
+    q: "Quelle wildcard représente n'importe quelle suite de caractères ?",
+    opts: ["?", "[abc]", "*", "%"],
+    correct: 2,
+    feedback: "* correspond à zéro ou plusieurs caractères quelconques. Ex : *.txt correspond à tous les fichiers se terminant par .txt."
+  }
+];
+
+let answered = [];
+
+function buildQuiz() {
+  answered = new Array(quizData.length).fill(false);
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = '';
+  document.getElementById('quizScore').style.display = 'none';
+  quizData.forEach((q, qi) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question';
+    div.innerHTML = `<h3>${qi + 1}. ${q.q}</h3>
+      <div class="quiz-options">
+        ${q.opts.map((o, oi) => `<button class="quiz-option" onclick="answerQuiz(${qi},${oi})">${o}</button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="fb-${qi}" style="display:none"></div>`;
+    container.appendChild(div);
+  });
+}
+
+function answerQuiz(qi, oi) {
+  if (answered[qi]) return;
+  answered[qi] = true;
+  const q = quizData[qi];
+  const opts = document.querySelectorAll(`.quiz-question:nth-child(${qi+1}) .quiz-option`);
+  opts.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.correct) btn.classList.add('correct');
+    else if (i === oi) btn.classList.add('wrong');
+  });
+  const fb = document.getElementById('fb-' + qi);
+  fb.style.display = 'block';
+  if (oi === q.correct) {
+    fb.className = 'quiz-feedback ok';
+    fb.textContent = '✓ Bonne réponse ! ' + q.feedback;
+  } else {
+    fb.className = 'quiz-feedback ko';
+    fb.textContent = '✗ ' + q.feedback;
+  }
+  if (answered.every(Boolean)) showScore();
+}
+
+function showScore() {
+  let score = 0;
+  quizData.forEach((q, qi) => {
+    const fb = document.getElementById('fb-' + qi);
+    if (fb && fb.classList.contains('ok')) score++;
+  });
+  const scoreEl = document.getElementById('quizScore');
+  scoreEl.style.display = 'block';
+  const pct = Math.round(score / quizData.length * 100);
+  document.getElementById('scoreTitle').textContent = `${score} / ${quizData.length} — ${pct}%`;
+  document.getElementById('scoreDetail').textContent =
+    pct === 100 ? 'Parfait ! Tu maîtrises la gestion des fichiers Linux.' :
+    pct >= 66 ? 'Bien ! Quelques points à revoir.' :
+    'Continue à pratiquer — ces commandes sont fondamentales.';
+}
+
+function resetQuiz() { buildQuiz(); }
+buildQuiz();
+</script>
+</body>
+</html>

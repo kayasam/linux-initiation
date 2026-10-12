@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>09 — Redirections et tubes</title>
+<style>
+:root {
+  --bg: #0f1117; --surface: #1a1d27; --surface2: #232635; --border: #2e3148;
+  --accent: #22d3ee; --accent2: #67e8f9;
+  --warn: #f0a500; --danger: #e05c5c; --success: #4caf82;
+  --text: #d4d8f0; --text-dim: #7880a0; --code-bg: #12141f; --radius: 10px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.7; }
+
+header {
+  background: linear-gradient(135deg, #041418 0%, #061618 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 2.5rem 2rem 1.5rem;
+  text-align: center;
+}
+.badge { display: inline-block; background: var(--accent); color: #0f1117; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: .25rem .7rem; border-radius: 20px; margin-bottom: .8rem; }
+header h1 { font-size: 2rem; font-weight: 800; background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+header p { color: var(--text-dim); margin-top: .3rem; font-size: .95rem; }
+
+nav { position: sticky; top: 0; z-index: 100; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; justify-content: center; flex-wrap: wrap; gap: .25rem; padding: .5rem 1rem; }
+nav button { background: none; border: none; color: var(--text-dim); padding: .5rem 1rem; border-radius: 6px; cursor: pointer; font-size: .88rem; white-space: nowrap; transition: all .2s; }
+nav button:hover { background: var(--surface2); color: var(--text); }
+nav button.active { background: var(--accent); color: #0f1117; font-weight: 600; }
+
+main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+.tab { display: none; }
+.tab.active { display: block; }
+h2 { font-size: 1.4rem; color: var(--accent2); margin-bottom: 1rem; }
+h3 { font-size: 1.05rem; color: var(--text); margin: 1.5rem 0 .6rem; }
+
+.callout { border-radius: var(--radius); padding: 1rem 1.2rem; margin: 1rem 0; border-left: 4px solid; }
+.callout.note { background: rgba(34,211,238,.07); border-color: var(--accent); }
+.callout.warn { background: rgba(240,165,0,.08); border-color: var(--warn); }
+.callout.danger { background: rgba(224,92,92,.1); border-color: var(--danger); }
+.callout.tip { background: rgba(76,175,130,.08); border-color: var(--success); }
+.callout strong { display: block; margin-bottom: .3rem; font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; opacity: .8; }
+
+.code-block { position: relative; background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius); margin: .8rem 0; }
+.code-block pre { padding: 1rem 3rem 1rem 1rem; overflow-x: auto; font-family: 'Cascadia Code', 'Consolas', monospace; font-size: .88rem; white-space: pre; }
+.copy-btn { position: absolute; top: .6rem; right: .6rem; background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim); padding: .25rem .6rem; border-radius: 5px; cursor: pointer; font-size: .75rem; transition: all .2s; }
+.copy-btn:hover { background: var(--accent); color: #0f1117; border-color: var(--accent); }
+.copy-btn.copied { background: var(--success); color: #fff; border-color: var(--success); }
+.cmd { color: #22d3ee; } .flag { color: #facc15; } .arg { color: #4ade80; } .path { color: #f87171; } .comment { color: var(--text-dim); font-style: italic; } .op { color: #a78bfa; font-weight: 700; }
+
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; }
+th { background: var(--surface2); color: var(--accent2); padding: .6rem .9rem; text-align: left; border-bottom: 2px solid var(--border); }
+td { padding: .55rem .9rem; border-bottom: 1px solid var(--border); }
+tr:hover td { background: var(--surface2); }
+
+/* FLUX SCHEMA */
+.flux-schema { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem; margin: 1rem 0; }
+.flux-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: .7rem 1.1rem; text-align: center; font-size: .9rem; }
+.flux-box.kbd { border-color: #818cf8; }
+.flux-box.cmd { border-color: var(--accent); }
+.flux-box.out { border-color: var(--success); }
+.flux-box.err { border-color: var(--danger); }
+.flux-box small { display: block; font-size: .72rem; color: var(--text-dim); margin-top: .2rem; }
+.flux-arrow { color: var(--text-dim); font-size: 1.3rem; }
+
+/* REDIRECT VISUALIZER */
+.redirect-btns { display: flex; gap: .6rem; flex-wrap: wrap; margin: 1rem 0; }
+.redir-btn { background: var(--surface); border: 2px solid var(--border); color: var(--text-dim); padding: .6rem 1.4rem; border-radius: 8px; cursor: pointer; font-family: monospace; font-size: 1.1rem; font-weight: 700; transition: all .2s; }
+.redir-btn:hover, .redir-btn.active { color: var(--accent); border-color: var(--accent); background: rgba(34,211,238,.08); }
+.redir-detail { background: var(--surface2); border-radius: var(--radius); border: 1px solid var(--border); padding: 1.2rem; margin-top: .5rem; min-height: 80px; }
+.redir-schema { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; margin-bottom: .8rem; }
+.redir-schema .box { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: .4rem .8rem; font-family: monospace; font-size: .9rem; }
+
+/* PIPE CHAIN */
+.pipe-chain { display: flex; align-items: center; flex-wrap: wrap; gap: .2rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.2rem; margin: .8rem 0; font-family: monospace; font-size: .9rem; }
+.pipe-chain .pc-cmd { background: rgba(34,211,238,.1); border: 1px solid rgba(34,211,238,.3); color: var(--accent2); padding: .25rem .7rem; border-radius: 5px; }
+.pipe-chain .pc-pipe { color: #a78bfa; font-weight: 900; font-size: 1.2rem; padding: 0 .3rem; }
+.pipe-chain .pc-result { color: var(--text-dim); font-size: .82rem; font-family: sans-serif; margin-left: .5rem; }
+
+/* GREP CARDS */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: .8rem; margin: 1rem 0; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; cursor: pointer; transition: all .25s; }
+.card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.card h4 { color: var(--accent); font-size: .9rem; margin-bottom: .3rem; }
+.card p { color: var(--text-dim); font-size: .85rem; }
+.card .code-inline { font-family: monospace; background: var(--code-bg); padding: .15rem .4rem; border-radius: 4px; color: var(--accent2); font-size: .82rem; display: block; margin-top: .4rem; }
+.card-detail { display: none; margin-top: .6rem; padding-top: .6rem; border-top: 1px solid var(--border); color: var(--text); font-size: .85rem; }
+.card.open .card-detail { display: block; }
+
+/* QUIZ */
+.quiz-q { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem; margin-bottom: 1rem; }
+.quiz-q p { font-weight: 600; margin-bottom: .8rem; }
+.quiz-options { display: flex; flex-direction: column; gap: .4rem; }
+.quiz-option { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: .6rem 1rem; cursor: pointer; transition: all .2s; font-size: .9rem; }
+.quiz-option:hover:not(.locked) { border-color: var(--accent); background: rgba(34,211,238,.08); }
+.quiz-option.correct { background: rgba(76,175,130,.15); border-color: var(--success); color: var(--success); }
+.quiz-option.wrong { background: rgba(224,92,92,.12); border-color: var(--danger); color: var(--danger); }
+.quiz-option.locked { cursor: default; }
+.quiz-feedback { margin-top: .7rem; padding: .6rem .9rem; border-radius: 6px; font-size: .87rem; display: none; }
+.quiz-feedback.show { display: block; }
+.quiz-feedback.ok { background: rgba(76,175,130,.12); color: var(--success); border: 1px solid var(--success); }
+.quiz-feedback.nok { background: rgba(224,92,92,.1); color: #f87171; border: 1px solid var(--danger); }
+.quiz-score { background: var(--surface2); border-radius: var(--radius); padding: 1.5rem; text-align: center; display: none; }
+.quiz-score h3 { font-size: 1.5rem; color: var(--accent); }
+.quiz-score p { color: var(--text-dim); margin: .5rem 0 1rem; }
+.btn-restart { background: var(--accent); color: #0f1117; border: none; padding: .7rem 1.5rem; border-radius: 8px; cursor: pointer; font-size: .95rem; font-weight: 600; transition: opacity .2s; }
+.btn-restart:hover { opacity: .85; }
+
+.recap-filters { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.filter-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim); padding: .35rem .9rem; border-radius: 20px; cursor: pointer; font-size: .82rem; transition: all .2s; }
+.filter-btn:hover, .filter-btn.active { background: var(--accent); color: #0f1117; border-color: var(--accent); }
+.recap-table tr.hidden { display: none; }
+.tag { display: inline-block; padding: .15rem .55rem; border-radius: 12px; font-size: .72rem; font-weight: 600; }
+.tag-flux { background: rgba(129,140,248,.15); color: #a5b4fc; }
+.tag-redirect { background: rgba(34,211,238,.1); color: var(--accent); }
+.tag-pipe { background: rgba(167,139,250,.12); color: #c4b5fd; }
+.tag-grep { background: rgba(76,175,130,.1); color: var(--success); }
+.course-site-nav { display:flex; justify-content:space-between; gap:1rem; padding:.8rem 1rem; background:#1a1d27; flex-wrap:wrap; } .course-site-nav a {color:#93c5fd; font-weight:600;}
+</style>
+</head>
+<body>
+<div class="course-site-nav"><a href="../09-redirections-et-tubes/">← Chapitre 09</a><a href="quiz/09-redirections-et-tubes.html">Quiz du chapitre →</a></div>
+
+<header>
+  <div class="badge">Linux Initiation</div>
+  <h1>09 — Redirections et tubes</h1>
+  <p>Flux, &gt;, &gt;&gt;, pipes — connecter et rediriger les entrées/sorties des commandes</p>
+</header>
+
+<nav>
+  <button class="active" onclick="showTab('flux',this)">Les flux</button>
+  <button onclick="showTab('redirections',this)">Redirections</button>
+  <button onclick="showTab('pipes',this)">Tubes &amp; pipes</button>
+  <button onclick="showTab('grep',this)">grep</button>
+  <button onclick="showTab('recap',this)">Récapitulatif</button>
+  <button onclick="showTab('quiz',this)">Quiz</button>
+</nav>
+
+<main>
+
+<!-- TAB 1 : LES FLUX -->
+<div class="tab active" id="tab-flux">
+  <h2>Les 3 flux d'une commande</h2>
+
+  <p>Chaque commande Linux communique avec l'extérieur via <strong>3 canaux</strong> :</p>
+
+  <div class="flux-schema">
+    <div class="flux-box kbd">
+      <strong>clavier</strong>
+      <small>stdin (0)</small>
+    </div>
+    <div class="flux-arrow">→</div>
+    <div class="flux-box cmd">
+      <strong>[commande]</strong>
+      <small>traitement</small>
+    </div>
+    <div class="flux-arrow">→</div>
+    <div class="flux-box out">
+      <strong>écran</strong>
+      <small>stdout (1) — résultats</small>
+    </div>
+    <div style="width:100%; display:flex; justify-content:center; margin-top:.5rem;">
+      <div class="flux-arrow" style="transform:rotate(90deg); margin-right:.5rem;">↑</div>
+      <div class="flux-box err" style="margin-top:-.5rem;">
+        <strong>écran</strong>
+        <small>stderr (2) — erreurs</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout note">
+    <strong>Analogie — machine à café</strong>
+    Les <strong>grains de café</strong> = stdin (ce qu'on fournit). Le <strong>café dans la tasse</strong> = stdout (le résultat). Le <strong>voyant d'erreur</strong> qui clignote = stderr (le message d'erreur si ça plante).
+  </div>
+
+  <h3>Tableau des flux</h3>
+  <table>
+    <tr><th>Flux</th><th>Numéro</th><th>Défaut</th><th>Description</th></tr>
+    <tr><td><strong>stdin</strong></td><td>0</td><td>Clavier</td><td>Entrée standard — données fournies à la commande</td></tr>
+    <tr><td><strong>stdout</strong></td><td>1</td><td>Écran</td><td>Sortie standard — résultat normal de la commande</td></tr>
+    <tr><td><strong>stderr</strong></td><td>2</td><td>Écran</td><td>Sortie d'erreur — messages d'erreur séparés du résultat</td></tr>
+  </table>
+
+  <p>L'intérêt : stdout et stderr sont séparés, ce qui permet de rediriger les erreurs indépendamment des résultats.</p>
+</div>
+
+<!-- TAB 2 : REDIRECTIONS -->
+<div class="tab" id="tab-redirections">
+  <h2>Redirections — vers les fichiers</h2>
+
+  <h3>Les 3 opérateurs — cliquez pour détailler</h3>
+  <div class="redirect-btns">
+    <button class="redir-btn" onclick="showRedir(0,this)">&gt;</button>
+    <button class="redir-btn" onclick="showRedir(1,this)">&gt;&gt;</button>
+    <button class="redir-btn" onclick="showRedir(2,this)">2&gt;</button>
+    <button class="redir-btn" onclick="showRedir(3,this)">&amp;&gt;</button>
+  </div>
+  <div class="redir-detail" id="redir-detail">Cliquez sur un opérateur pour voir son fonctionnement.</div>
+
+  <h3>Rediriger stdout avec &gt;</h3>
+  <div class="callout danger">
+    <strong>Attention</strong>
+    <code>&gt;</code> <strong>écrase</strong> le fichier existant sans avertissement ! Si le fichier contient des données importantes, elles seront perdues.
+  </div>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">ls</span> <span class="path">/etc</span> <span class="op">&gt;</span> <span class="arg">liste.txt</span>
+<span class="cmd">date</span> <span class="op">&gt;</span> <span class="arg">date_du_jour.txt</span></pre>
+  </div>
+
+  <h3>Ajouter à la fin avec &gt;&gt;</h3>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">echo</span> <span class="arg">"Ligne 1"</span> <span class="op">&gt;</span> <span class="arg">journal.txt</span>
+<span class="cmd">echo</span> <span class="arg">"Ligne 2"</span> <span class="op">&gt;&gt;</span> <span class="arg">journal.txt</span>   <span class="comment"># ajoute sans écraser</span>
+<span class="cmd">echo</span> <span class="arg">"Ligne 3"</span> <span class="op">&gt;&gt;</span> <span class="arg">journal.txt</span></pre>
+  </div>
+
+  <h3>Rediriger stderr avec 2&gt;</h3>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">ls</span> <span class="path">/inexistant</span> <span class="op">2&gt;</span> <span class="arg">erreurs.txt</span>
+<span class="cmd">ls</span> <span class="path">/etc</span> <span class="path">/inexistant</span> <span class="op">&amp;&gt;</span> <span class="arg">tout.txt</span>  <span class="comment"># stdout ET stderr ensemble</span></pre>
+  </div>
+
+  <h3>/dev/null — le trou noir</h3>
+  <p><code>/dev/null</code> est un fichier spécial qui supprime tout ce qu'on lui envoie. Utile pour ignorer les erreurs.</p>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">ls</span> <span class="path">/inexistant</span> <span class="op">2&gt;</span> <span class="path">/dev/null</span>   <span class="comment"># erreur supprimée</span>
+<span class="cmd">commande</span> <span class="op">&amp;&gt;</span> <span class="path">/dev/null</span>           <span class="comment"># tout supprimé (mode silencieux)</span></pre>
+  </div>
+</div>
+
+<!-- TAB 3 : TUBES & PIPES -->
+<div class="tab" id="tab-pipes">
+  <h2>Tubes et pipes — enchaîner les commandes</h2>
+
+  <p>Le symbole <strong><code>|</code></strong> (pipe, tube) connecte la <strong>sortie (stdout)</strong> d'une commande à l'<strong>entrée (stdin)</strong> de la suivante.</p>
+
+  <div class="callout note">
+    <strong>Analogie — plomberie</strong>
+    Un robinet → un tuyau → un seau. L'eau (les données) coule de gauche à droite sans toucher le disque. Chaque commande filtre ou transforme les données avant de les passer à la suivante.
+  </div>
+
+  <h3>Exemples progressifs</h3>
+
+  <div class="pipe-chain">
+    <span class="pc-cmd">ls /etc</span>
+    <span class="pc-pipe">|</span>
+    <span class="pc-cmd">wc -l</span>
+    <span class="pc-result">→ compte le nombre de fichiers dans /etc</span>
+  </div>
+  <div class="pipe-chain">
+    <span class="pc-cmd">ps aux</span>
+    <span class="pc-pipe">|</span>
+    <span class="pc-cmd">grep firefox</span>
+    <span class="pc-result">→ cherche le processus firefox</span>
+  </div>
+  <div class="pipe-chain">
+    <span class="pc-cmd">apt list --installed</span>
+    <span class="pc-pipe">|</span>
+    <span class="pc-cmd">head -5</span>
+    <span class="pc-result">→ affiche les 5 premiers paquets</span>
+  </div>
+  <div class="pipe-chain">
+    <span class="pc-cmd">cat /etc/passwd</span>
+    <span class="pc-pipe">|</span>
+    <span class="pc-cmd">grep stagiaire</span>
+    <span class="pc-result">→ filtre la ligne du stagiaire</span>
+  </div>
+  <div class="pipe-chain">
+    <span class="pc-cmd">ls /etc</span>
+    <span class="pc-pipe">|</span>
+    <span class="pc-cmd">sort</span>
+    <span class="pc-pipe">|</span>
+    <span class="pc-cmd">uniq</span>
+    <span class="pc-pipe">|</span>
+    <span class="pc-cmd">wc -l</span>
+    <span class="pc-result">→ 4 commandes enchaînées</span>
+  </div>
+
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">ls</span> <span class="path">/etc</span> <span class="op">|</span> <span class="cmd">wc</span> <span class="flag">-l</span>
+<span class="cmd">ps</span> <span class="flag">aux</span> <span class="op">|</span> <span class="cmd">grep</span> <span class="arg">firefox</span>
+<span class="cmd">apt</span> <span class="arg">list --installed</span> <span class="op">|</span> <span class="cmd">head</span> <span class="flag">-5</span>
+<span class="cmd">cat</span> <span class="path">/etc/passwd</span> <span class="op">|</span> <span class="cmd">grep</span> <span class="arg">stagiaire</span>
+<span class="cmd">ls</span> <span class="path">/etc</span> <span class="op">|</span> <span class="cmd">sort</span> <span class="op">|</span> <span class="cmd">uniq</span> <span class="op">|</span> <span class="cmd">wc</span> <span class="flag">-l</span></pre>
+  </div>
+
+  <h3>Commandes de traitement courantes</h3>
+  <table>
+    <tr><th>Commande</th><th>Description</th></tr>
+    <tr><td><code>wc -l</code></td><td>Compte le nombre de lignes</td></tr>
+    <tr><td><code>sort</code></td><td>Trie les lignes par ordre alphabétique</td></tr>
+    <tr><td><code>sort -n</code></td><td>Trie numériquement</td></tr>
+    <tr><td><code>uniq</code></td><td>Supprime les lignes consécutives doublons</td></tr>
+    <tr><td><code>head -n N</code></td><td>Affiche les N premières lignes</td></tr>
+    <tr><td><code>tail -n N</code></td><td>Affiche les N dernières lignes</td></tr>
+    <tr><td><code>cut -d: -f1</code></td><td>Découpe par délimiteur, prend le champ 1</td></tr>
+  </table>
+</div>
+
+<!-- TAB 4 : GREP -->
+<div class="tab" id="tab-grep">
+  <h2>grep — filtrer par motif</h2>
+
+  <p><code>grep</code> affiche uniquement les lignes d'un fichier (ou d'un pipe) qui contiennent un motif donné. C'est l'un des outils les plus utilisés en ligne de commande.</p>
+
+  <h3>Options grep — cliquez pour détailler</h3>
+  <div class="cards">
+    <div class="card" onclick="toggleCard(this)">
+      <h4>Usage de base</h4>
+      <span class="code-inline">grep "motif" fichier</span>
+      <div class="card-detail">Affiche toutes les lignes du fichier contenant "motif". Les guillemets sont recommandés si le motif contient des espaces.</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <h4>-i (insensible à la casse)</h4>
+      <span class="code-inline">grep -i "error" fichier</span>
+      <div class="card-detail">Trouve "error", "Error", "ERROR", "eRrOr"... Très utile pour les fichiers de logs.</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <h4>-n (numéros de ligne)</h4>
+      <span class="code-inline">grep -n "motif" fichier</span>
+      <div class="card-detail">Affiche le numéro de chaque ligne trouvée. Pratique pour aller directement modifier la ligne dans un éditeur.</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <h4>-v (inverse)</h4>
+      <span class="code-inline">grep -v "motif" fichier</span>
+      <div class="card-detail">Affiche les lignes qui NE contiennent PAS le motif. Utile pour exclure certains résultats.</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <h4>-r (récursif)</h4>
+      <span class="code-inline">grep -r "mot" /etc/</span>
+      <div class="card-detail">Cherche dans tous les fichiers d'un dossier et ses sous-dossiers. Peut générer beaucoup de résultats sur /etc/.</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <h4>-c (compter)</h4>
+      <span class="code-inline">grep -c "motif" fichier</span>
+      <div class="card-detail">Affiche uniquement le nombre de lignes correspondantes, pas leur contenu.</div>
+    </div>
+  </div>
+
+  <h3>Exemples combinés avec pipes</h3>
+  <div class="code-block">
+    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+    <pre><span class="cmd">cat</span> <span class="path">/var/log/syslog</span> <span class="op">|</span> <span class="cmd">grep</span> <span class="flag">-i</span> <span class="arg">"error"</span>
+<span class="cmd">grep</span> <span class="flag">-i</span> <span class="arg">"error"</span> <span class="path">/var/log/syslog</span> <span class="op">|</span> <span class="cmd">wc</span> <span class="flag">-l</span>
+<span class="cmd">cat</span> <span class="path">/etc/passwd</span> <span class="op">|</span> <span class="cmd">grep</span> <span class="arg">"/bin/bash"</span>
+<span class="cmd">cut</span> <span class="flag">-d:</span> <span class="flag">-f1</span> <span class="path">/etc/passwd</span> <span class="op">|</span> <span class="cmd">sort</span></pre>
+  </div>
+</div>
+
+<!-- TAB 5 : RECAP -->
+<div class="tab" id="tab-recap">
+  <h2>Récapitulatif</h2>
+  <div class="recap-filters">
+    <button class="filter-btn active" onclick="filterRecap('all',this)">Tout</button>
+    <button class="filter-btn" onclick="filterRecap('flux',this)">Flux</button>
+    <button class="filter-btn" onclick="filterRecap('redirect',this)">Redirect</button>
+    <button class="filter-btn" onclick="filterRecap('pipe',this)">Pipe</button>
+    <button class="filter-btn" onclick="filterRecap('grep',this)">grep</button>
+  </div>
+  <table>
+    <thead><tr><th>Opérateur / Commande</th><th>Description</th><th>Catégorie</th></tr></thead>
+    <tbody id="recap-body">
+      <tr data-cat="flux"><td><code>stdin (0)</code></td><td>Entrée standard (clavier par défaut)</td><td><span class="tag tag-flux">flux</span></td></tr>
+      <tr data-cat="flux"><td><code>stdout (1)</code></td><td>Sortie standard (écran par défaut)</td><td><span class="tag tag-flux">flux</span></td></tr>
+      <tr data-cat="flux"><td><code>stderr (2)</code></td><td>Sortie d'erreur (écran par défaut)</td><td><span class="tag tag-flux">flux</span></td></tr>
+      <tr data-cat="redirect"><td><code>commande &gt; fichier</code></td><td>Redirige stdout vers fichier (écrase)</td><td><span class="tag tag-redirect">redirect</span></td></tr>
+      <tr data-cat="redirect"><td><code>commande &gt;&gt; fichier</code></td><td>Redirige stdout vers fichier (ajoute)</td><td><span class="tag tag-redirect">redirect</span></td></tr>
+      <tr data-cat="redirect"><td><code>commande 2&gt; fichier</code></td><td>Redirige stderr vers fichier</td><td><span class="tag tag-redirect">redirect</span></td></tr>
+      <tr data-cat="redirect"><td><code>commande &amp;&gt; fichier</code></td><td>Redirige stdout ET stderr vers fichier</td><td><span class="tag tag-redirect">redirect</span></td></tr>
+      <tr data-cat="redirect"><td><code>2&gt; /dev/null</code></td><td>Supprime les messages d'erreur</td><td><span class="tag tag-redirect">redirect</span></td></tr>
+      <tr data-cat="pipe"><td><code>cmd1 | cmd2</code></td><td>Connecte stdout de cmd1 à stdin de cmd2</td><td><span class="tag tag-pipe">pipe</span></td></tr>
+      <tr data-cat="pipe"><td><code>wc -l</code></td><td>Compte le nombre de lignes</td><td><span class="tag tag-pipe">pipe</span></td></tr>
+      <tr data-cat="pipe"><td><code>sort</code></td><td>Trie les lignes alphabétiquement</td><td><span class="tag tag-pipe">pipe</span></td></tr>
+      <tr data-cat="pipe"><td><code>head -n N</code></td><td>Affiche les N premières lignes</td><td><span class="tag tag-pipe">pipe</span></td></tr>
+      <tr data-cat="pipe"><td><code>tail -n N</code></td><td>Affiche les N dernières lignes</td><td><span class="tag tag-pipe">pipe</span></td></tr>
+      <tr data-cat="grep"><td><code>grep "motif" fichier</code></td><td>Filtre les lignes contenant le motif</td><td><span class="tag tag-grep">grep</span></td></tr>
+      <tr data-cat="grep"><td><code>grep -i</code></td><td>Insensible à la casse</td><td><span class="tag tag-grep">grep</span></td></tr>
+      <tr data-cat="grep"><td><code>grep -n</code></td><td>Affiche les numéros de ligne</td><td><span class="tag tag-grep">grep</span></td></tr>
+      <tr data-cat="grep"><td><code>grep -v</code></td><td>Lignes ne contenant PAS le motif</td><td><span class="tag tag-grep">grep</span></td></tr>
+      <tr data-cat="grep"><td><code>grep -r "mot" /dossier/</code></td><td>Cherche récursivement dans un dossier</td><td><span class="tag tag-grep">grep</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- TAB 6 : QUIZ -->
+<div class="tab" id="tab-quiz">
+  <h2>Quiz — Redirections et tubes</h2>
+  <div id="quiz-container"></div>
+  <div class="quiz-score" id="quiz-score">
+    <h3 id="score-text"></h3>
+    <p id="score-sub"></p>
+    <button class="btn-restart" onclick="initQuiz()">Recommencer</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function copyCode(btn) {
+  const pre = btn.nextElementSibling;
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.textContent = 'Copié !';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 1800);
+  });
+}
+
+function toggleCard(card) { card.classList.toggle('open'); }
+
+// REDIRECT VISUALIZER
+const redirData = [
+  {
+    op: '>',
+    title: 'Redirection simple — écrase le fichier',
+    schema: ['commande', '→', 'fichier (ÉCRASÉ)'],
+    color: '#f87171',
+    desc: 'Redirige stdout vers un fichier. Si le fichier existe déjà, son contenu est <strong>entièrement supprimé</strong> avant d\'écrire.',
+    ex: 'ls /etc > liste.txt\ndate > date_du_jour.txt'
+  },
+  {
+    op: '>>',
+    title: 'Redirection en ajout — conserve le contenu',
+    schema: ['commande', '→', 'fichier (AJOUT)'],
+    color: '#4caf82',
+    desc: 'Redirige stdout vers un fichier en <strong>ajoutant à la fin</strong>. Si le fichier n\'existe pas, il est créé.',
+    ex: 'echo "Ligne 1" > journal.txt\necho "Ligne 2" >> journal.txt'
+  },
+  {
+    op: '2>',
+    title: 'Redirection des erreurs',
+    schema: ['commande', '→(stderr)', 'fichier erreurs'],
+    color: '#f0a500',
+    desc: 'Redirige uniquement <strong>stderr (flux 2)</strong> vers un fichier. stdout continue d\'aller sur l\'écran.',
+    ex: 'ls /inexistant 2> erreurs.txt\nls /inexistant 2> /dev/null'
+  },
+  {
+    op: '&>',
+    title: 'Redirection totale — stdout + stderr',
+    schema: ['commande', '→(1+2)', 'fichier complet'],
+    color: '#a78bfa',
+    desc: 'Redirige <strong>à la fois stdout et stderr</strong> vers le même fichier. Utile pour capturer tout en log.',
+    ex: 'ls /etc /inexistant &> tout.txt\ncommande &> /dev/null'
+  }
+];
+
+let activeRedir = -1;
+function showRedir(i, btn) {
+  const btns = document.querySelectorAll('.redir-btn');
+  btns.forEach(b => b.classList.remove('active'));
+  if (activeRedir === i) {
+    activeRedir = -1;
+    document.getElementById('redir-detail').innerHTML = 'Cliquez sur un opérateur pour voir son fonctionnement.';
+    return;
+  }
+  activeRedir = i;
+  btn.classList.add('active');
+  const d = redirData[i];
+  document.getElementById('redir-detail').innerHTML = `
+    <strong style="color:${d.color}">${d.op} — ${d.title}</strong><br><br>
+    <div class="redir-schema">${d.schema.map(s => `<span class="box">${s}</span>`).join(' <span style="color:var(--accent)">→</span> ')}</div>
+    <p style="margin:.5rem 0">${d.desc}</p>
+    <div style="font-family:monospace; background:var(--code-bg); padding:.6rem .9rem; border-radius:6px; margin-top:.6rem; font-size:.87rem;">${d.ex.replace(/\n/g,'<br>')}</div>`;
+}
+
+function filterRecap(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#recap-body tr').forEach(tr => {
+    tr.classList.toggle('hidden', cat !== 'all' && tr.dataset.cat !== cat);
+  });
+}
+
+const questions = [
+  { q: "Que signifie le <code>&gt;</code> dans <code>ls /etc &gt; liste.txt</code> ?",
+    opts: ["Compare la sortie à liste.txt", "Redirige la sortie vers un fichier en écrasant son contenu", "Ajoute la sortie à la fin de liste.txt", "Lit les données depuis liste.txt"],
+    correct: 1, fb: "> redirige stdout vers un fichier. Si le fichier existe, il est écrasé sans avertissement." },
+  { q: "Différence entre <code>&gt;</code> et <code>&gt;&gt;</code> ?",
+    opts: [">> est plus rapide que >", "> écrase le fichier, >> ajoute à la fin", ">> est pour les dossiers, > pour les fichiers", "Il n'y a aucune différence"],
+    correct: 1, fb: "> recrée le fichier à chaque fois. >> ajoute au contenu existant — idéal pour les journaux (logs)." },
+  { q: "À quoi sert <code>/dev/null</code> ?",
+    opts: ["Un dossier pour les fichiers temporaires", "Un trou noir qui supprime tout ce qu'on lui envoie", "Le périphérique null-modem pour le réseau", "Un fichier de configuration système"],
+    correct: 1, fb: "/dev/null est un \"trou noir\" du système : tout ce qui y est redirigé disparaît. Utile pour silencer les erreurs." },
+  { q: "Le tube <code>|</code> connecte…",
+    opts: ["Un fichier à une commande", "La sortie d'une commande à l'entrée de la suivante", "Deux processus en réseau", "Une commande à l'écran"],
+    correct: 1, fb: "Le pipe | branche stdout d'une commande sur stdin de la suivante, sans passer par un fichier temporaire." },
+  { q: "Que fait <code>grep -v \"motif\"</code> ?",
+    opts: ["Affiche le nombre de lignes contenant le motif", "Cherche en mode verbeux", "Affiche les lignes qui NE contiennent PAS le motif", "Cherche le motif de façon récursive"],
+    correct: 2, fb: "-v (invert) inverse le filtre : grep -v affiche toutes les lignes sauf celles qui contiennent le motif." },
+  { q: "Quelle commande compte le nombre de lignes dans un fichier ?",
+    opts: ["count fichier", "ls -c fichier", "wc -l fichier", "lines fichier"],
+    correct: 2, fb: "wc = word count. wc -l compte les lignes, wc -w les mots, wc -c les caractères." }
+];
+
+let quizAnswers = [];
+function initQuiz() {
+  quizAnswers = new Array(questions.length).fill(null);
+  document.getElementById('quiz-score').style.display = 'none';
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  questions.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-q';
+    div.id = 'qq-' + i;
+    div.innerHTML = `<p>Question ${i+1}. ${q.q}</p>
+      <div class="quiz-options">
+        ${q.opts.map((o,j) => `<div class="quiz-option" onclick="answerQuiz(${i},${j})">${o}</div>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="fb-${i}"></div>`;
+    container.appendChild(div);
+  });
+}
+
+function answerQuiz(qi, oi) {
+  if (quizAnswers[qi] !== null) return;
+  quizAnswers[qi] = oi;
+  const q = questions[qi];
+  const opts = document.querySelectorAll(`#qq-${qi} .quiz-option`);
+  opts.forEach((opt, j) => {
+    opt.classList.add('locked');
+    if (j === q.correct) opt.classList.add('correct');
+    else if (j === oi) opt.classList.add('wrong');
+  });
+  const fb = document.getElementById('fb-' + qi);
+  fb.classList.add('show');
+  const ok = oi === q.correct;
+  fb.classList.add(ok ? 'ok' : 'nok');
+  fb.innerHTML = (ok ? '✓ Correct ! ' : '✗ Incorrect. ') + q.fb;
+  if (quizAnswers.every(a => a !== null)) showScore();
+}
+
+function showScore() {
+  const score = quizAnswers.filter((a, i) => a === questions[i].correct).length;
+  const sc = document.getElementById('quiz-score');
+  sc.style.display = 'block';
+  document.getElementById('score-text').textContent = score + ' / ' + questions.length;
+  const msgs = ['Réessaie encore !', 'Pas mal, continue !', 'Bien joué !', 'Excellent !'];
+  document.getElementById('score-sub').textContent = msgs[Math.min(Math.floor(score/2), 3)];
+}
+
+initQuiz();
+</script>
+</body>
+</html>
