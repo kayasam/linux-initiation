@@ -30,7 +30,7 @@ window.linuxQuizBanks = {
           "Que le logiciel est fabriqué par Apple"
         ],
         "answer": 1,
-        "explanation": "Correct ! Open Source signifie que le code source est librement accessible, modifiable et redistribuable."
+        "explanation": "Open source associe un code accessible aux droits accordés par une licence : utiliser, modifier et redistribuer. La gratuité seule ne suffit pas."
       },
       {
         "theme": "Comprendre Linux",
@@ -78,175 +78,175 @@ window.linuxQuizBanks = {
           "Fournir uniquement Internet"
         ],
         "answer": 1,
-        "explanation": "Le système gère les ressources de l’ordinateur et permet aux applications de les utiliser."
+        "explanation": "Le système répartit les ressources et permet aux applications d’utiliser le matériel."
       },
       {
         "theme": "Comprendre Linux",
-        "question": "Qui a créé le noyau Linux ?",
+        "question": "À quel système historique Linux emprunte-t-il de nombreux principes ?",
         "choices": [
-          "Bill Gates",
-          "Steve Jobs",
+          "MS-DOS uniquement",
+          "Windows 11",
+          "Unix",
+          "iOS"
+        ],
+        "answer": 2,
+        "explanation": "Unix apparaît en 1969 ; Linux reprend notamment des principes d’organisation des fichiers et des utilisateurs."
+      },
+      {
+        "theme": "Comprendre Linux",
+        "question": "Quelle affirmation décrit le lien entre Unix et Linux ?",
+        "choices": [
+          "Linux est le noyau original d’Unix renommé",
+          "Unix a été créé après Debian",
+          "Unix est un bureau graphique de Linux",
+          "Linux est de type Unix, avec un noyau développé indépendamment"
+        ],
+        "answer": 3,
+        "explanation": "Une parenté de principes ne signifie pas que les projets ont le même code d’origine."
+      },
+      {
+        "theme": "Comprendre Linux",
+        "question": "Qui a lancé le projet GNU ?",
+        "choices": [
+          "Richard Stallman",
           "Linus Torvalds",
-          "Tim Berners-Lee"
-        ],
-        "answer": 2,
-        "explanation": "Linus Torvalds a lancé le noyau Linux en 1991."
-      },
-      {
-        "theme": "Comprendre Linux",
-        "question": "Le noyau Linux correspond à…",
-        "choices": [
-          "Un navigateur web",
-          "Un traitement de texte",
-          "Une boutique de logiciels",
-          "La partie centrale qui gère notamment le matériel"
-        ],
-        "answer": 3,
-        "explanation": "Le noyau est le cœur du système ; une distribution ajoute les outils nécessaires à son utilisation."
-      },
-      {
-        "theme": "Comprendre Linux",
-        "question": "Quel exemple appartient à la famille Debian ?",
-        "choices": [
-          "Ubuntu",
-          "Rocky Linux",
-          "AlmaLinux",
-          "RHEL"
+          "Ken Thompson",
+          "Bill Gates"
         ],
         "answer": 0,
-        "explanation": "Ubuntu est une distribution de la famille Debian."
+        "explanation": "Stallman annonce GNU en 1983 ; Torvalds lance le noyau Linux en 1991."
       },
       {
         "theme": "Comprendre Linux",
-        "question": "Quel exemple appartient à la famille Red Hat ?",
+        "question": "Quel est l’objectif initial du projet GNU ?",
         "choices": [
-          "Linux Mint",
-          "Rocky Linux",
-          "Ubuntu",
-          "Debian"
+          "Créer un antivirus Windows",
+          "Construire un système libre compatible avec Unix",
+          "Vendre uniquement des ordinateurs",
+          "Remplacer les licences par une absence de règles"
         ],
         "answer": 1,
-        "explanation": "Rocky Linux appartient à la famille des distributions compatibles avec RHEL."
+        "explanation": "GNU vise un système respectueux des libertés des utilisateurs."
       },
       {
         "theme": "Comprendre Linux",
-        "question": "Une interface graphique permet principalement de…",
+        "question": "Pourquoi parle-t-on de GNU/Linux pour Debian ?",
         "choices": [
-          "Modifier physiquement la mémoire",
-          "Supprimer le besoin d’un système",
-          "Utiliser fenêtres, icônes et souris",
-          "Écrire obligatoirement chaque action sous forme de commande"
+          "GNU est le nom du processeur",
+          "Linux est un logiciel créé par Stallman",
+          "Elle associe le noyau Linux, des outils GNU et d’autres composants",
+          "Debian ne contient que le noyau"
         ],
         "answer": 2,
-        "explanation": "L’interface graphique propose des fenêtres et des commandes accessibles avec la souris."
+        "explanation": "Le nom rappelle les contributions complémentaires de GNU et du noyau Linux."
       },
       {
         "theme": "Comprendre Linux",
-        "question": "Un terminal permet de…",
+        "question": "Quelle liberté nécessite l’accès au code source ?",
         "choices": [
-          "Augmenter automatiquement la mémoire",
-          "Remplacer le disque dur",
-          "Convertir tous les fichiers en images",
-          "Saisir des commandes textuelles"
+          "Ouvrir simplement une fenêtre",
+          "Lire un document PDF",
+          "Brancher un clavier",
+          "Étudier le fonctionnement du logiciel et le modifier"
         ],
         "answer": 3,
-        "explanation": "Dans un terminal, on donne des instructions au système sous forme de texte."
+        "explanation": "L’accès au code permet d’étudier et d’adapter le programme : c’est la liberté 1."
       },
       {
         "theme": "Comprendre Linux",
-        "question": "Linux peut-il fonctionner avec un bureau graphique ?",
+        "question": "Un code visible sur Internet suffit-il à rendre un logiciel open source ?",
         "choices": [
-          "Oui, selon les logiciels installés",
-          "Non, il fonctionne uniquement en texte",
-          "Seulement avec Windows installé en même temps",
-          "Seulement sans réseau"
+          "Non, il faut aussi une licence accordant les droits nécessaires",
+          "Oui, même si toute modification est interdite",
+          "Oui, si le site est gratuit",
+          "Oui, si le logiciel possède une icône"
         ],
         "answer": 0,
-        "explanation": "Les distributions peuvent fournir un bureau graphique ou être utilisées principalement en mode texte."
+        "explanation": "Le code accessible et les droits de la licence doivent être considérés ensemble."
       },
       {
         "theme": "Comprendre Linux",
-        "question": "Le fait qu’un logiciel soit gratuit suffit-il à le rendre open source ?",
+        "question": "Un logiciel libre peut-il être vendu ?",
         "choices": [
-          "Oui, tous les logiciels gratuits sont open source",
-          "Non, il faut aussi les droits associés au code source",
-          "Oui, si le téléchargement est rapide",
-          "Oui, si le logiciel fonctionne hors ligne"
+          "Non, c’est toujours interdit",
+          "Oui, libre décrit des droits et non un prix",
+          "Seulement si le code est caché",
+          "Uniquement si sa licence est supprimée"
         ],
         "answer": 1,
-        "explanation": "La gratuité seule ne donne pas le droit d’étudier, modifier et redistribuer le code."
+        "explanation": "Il est possible de vendre un logiciel libre ou de facturer des services autour de lui."
       },
       {
         "theme": "Comprendre Linux",
-        "question": "Quel système de smartphone utilise un noyau Linux ?",
+        "question": "Quelle est l’idée principale du copyleft de la GPL ?",
         "choices": [
-          "MS-DOS",
-          "Windows 95",
-          "Android",
-          "FreeDOS"
+          "Interdire toute utilisation professionnelle",
+          "Interdire de modifier le logiciel",
+          "Préserver les libertés lors de la distribution du programme couvert et de ses versions dérivées",
+          "Supprimer les droits d’auteur"
         ],
         "answer": 2,
-        "explanation": "Android s’appuie sur le noyau Linux."
+        "explanation": "La GPL organise le partage en préservant les droits des destinataires et l’accès au code correspondant."
       },
       {
         "theme": "Comprendre Linux",
-        "question": "Quel équipement peut fonctionner sous Linux ?",
+        "question": "Écrire un document avec un programme sous GPL impose-t-il de publier ce document ?",
         "choices": [
-          "Uniquement un ordinateur portable",
-          "Uniquement un téléphone",
-          "Uniquement un ordinateur sans disque",
-          "Un serveur web"
+          "Oui, tout document doit être publié",
+          "Oui, uniquement si le document contient des images",
+          "Oui, dès que le programme est gratuit",
+          "Non, la licence du programme ne rend pas automatiquement les documents publics"
         ],
         "answer": 3,
-        "explanation": "Linux est utilisé sur des serveurs, postes de travail et équipements embarqués."
+        "explanation": "Les obligations de la GPL portent sur le logiciel couvert et sa distribution, pas automatiquement sur les documents créés avec lui."
       },
       {
         "theme": "Comprendre Linux",
-        "question": "Pourquoi parle-t-on de plusieurs distributions ?",
+        "question": "Quelle réutilisation une licence permissive comme MIT peut-elle autoriser ?",
         "choices": [
-          "Elles assemblent différemment noyau, outils et logiciels",
-          "Chaque utilisateur doit écrire son noyau",
-          "Linux ne peut installer qu’un seul logiciel",
-          "Chaque distribution correspond à une marque de clavier"
+          "L’intégration du code dans une application propriétaire en respectant ses conditions",
+          "La suppression obligatoire des mentions de licence",
+          "La réutilisation sans aucune condition",
+          "Uniquement la lecture du code"
         ],
         "answer": 0,
-        "explanation": "Les distributions proposent des choix d’outils, de logiciels et de maintenance différents."
+        "explanation": "MIT permet une réutilisation large, mais impose notamment de conserver les mentions prévues par la licence."
       },
       {
         "theme": "Comprendre Linux",
-        "question": "Quel élément faut-il ajouter au noyau pour obtenir un système utilisable ?",
+        "question": "Sous quelle licence le noyau Linux est-il distribué ?",
         "choices": [
-          "Obligatoirement une licence Windows",
-          "Des outils et logiciels système",
-          "Une seconde carte graphique",
-          "Un compte sur chaque site Internet"
+          "MIT uniquement",
+          "GNU GPL version 2",
+          "Une licence propriétaire Windows",
+          "Aucune licence"
         ],
         "answer": 1,
-        "explanation": "Le noyau seul ne fournit pas tout l’environnement d’une distribution."
+        "explanation": "Le noyau est sous GPL version 2 ; les autres composants d’une distribution ont leurs propres licences."
       },
       {
         "theme": "Comprendre Linux",
-        "question": "Pour découvrir Linux sans abandonner son système actuel, on peut…",
+        "question": "Tous les composants d’une distribution ont-ils forcément la même licence ?",
         "choices": [
-          "Effacer obligatoirement le disque principal",
-          "Remplacer le processeur",
-          "L’installer dans une machine virtuelle",
-          "Supprimer tous ses documents"
+          "Oui, celle du noyau couvre tous les logiciels",
+          "Oui, ils n’ont jamais de licence",
+          "Non, chaque composant peut avoir sa propre licence",
+          "Oui, ils sont tous automatiquement sous MIT"
         ],
         "answer": 2,
-        "explanation": "Une machine virtuelle permet d’utiliser Linux dans un environnement invité."
+        "explanation": "Une distribution assemble des logiciels sous différentes licences et peut aussi inclure des composants propriétaires."
       },
       {
         "theme": "Comprendre Linux",
-        "question": "Quelle affirmation sur l’open source est correcte ?",
+        "question": "Peut-on utiliser un terminal dans un bureau graphique Linux ?",
         "choices": [
-          "Il garantit l’absence de toute faille",
-          "Il exige toujours un paiement",
-          "Il interdit la redistribution",
-          "Le code peut être étudié selon les droits de sa licence"
+          "Non, il faut désinstaller le bureau",
+          "Seulement avec deux ordinateurs",
+          "Uniquement sans fichiers personnels",
+          "Oui, les deux interfaces peuvent coexister"
         ],
         "answer": 3,
-        "explanation": "L’accès au code et les droits de sa licence permettent de l’étudier ; cela ne garantit pas l’absence d’erreurs."
+        "explanation": "Le terminal et le bureau donnent accès au même système et aux mêmes fichiers."
       }
     ]
   },

@@ -39,7 +39,15 @@ def flat_html(body, slug):
     body = themed_html(body, slug)
     body = body.replace('../../Ressources/images/', '../Ressources/images/')
     body = body.replace('../../assets/themes/', 'assets/themes/')
+    body = re.sub(r'href="\.\./(\d\d-[^/"<>]+)/\1\.html"', r'href="\1.html"', body)
     return re.sub(r'\s+data-quiz-href="[^"]*"', '', body)
+
+def public_markdown(body, courses):
+    for course in courses:
+        slug = course.stem
+        body = body.replace(f'](quiz/{slug}.html)', f']({BASE}/cours/quiz/{slug}.html)')
+        body = body.replace(f']({slug}.md)', f']({BASE}/{slug}/)')
+    return body.replace('../Ressources/images/', BASE + '/ressources/images/')
 
 def is_published(file):
     body = file.read_text(encoding='utf-8-sig')
@@ -77,16 +85,24 @@ def prepare(source):
         body = normalize(course.read_text(encoding='utf-8'))
         body = re.sub(r'\n\n<!-- ressources-locales -->\n(?:>[^\n]*\n)+', '', body)
         body = body.replace('../../Ressources/images/', '../Ressources/images/')
+        for linked in courses:
+            linked_slug = linked.stem
+            body = body.replace(f'](../{linked_slug}/{linked_slug}.md)', f']({linked_slug}.md)')
+            body = body.replace(f']({linked_slug}-quiz.html)', f'](quiz/{linked_slug}.html)')
         write(vault / 'cours' / course.name, body)
-        write(stage / 'telechargements' / 'cours' / course.name, body.replace('../Ressources/images/', BASE + '/ressources/images/'))
+        write(stage / 'telechargements' / 'cours' / course.name, public_markdown(body, courses))
         interactive = flat_html(course.with_suffix('.html').read_text(encoding='utf-8'), slug)
         interactive = interactive.replace('../Ressources/images/', '../ressources/images/')
+        interactive = interactive.replace(f'href="{slug}-quiz.html"', f'href="quiz/{slug}.html"')
+        for linked in courses:
+            interactive = interactive.replace(f'href="{linked.stem}.html"', f'href="{BASE}/{linked.stem}/"')
         nav = f'<div class="course-site-nav"><a href="../{slug}/">← Chapitre {number}</a><a href="quiz/{slug}.html">Quiz du chapitre →</a></div>'
         interactive = interactive.replace('<body>', '<body>\n' + nav, 1)
         interactive = interactive.replace('</style>', '.course-site-nav { display:flex; justify-content:space-between; gap:1rem; padding:.8rem 1rem; background:#1a1d27; flex-wrap:wrap; } .course-site-nav a {color:#93c5fd; font-weight:600;}\n</style>', 1)
         write(stage / 'cours' / f'{slug}-interactif.html', interactive)
         # Offline interactive pages keep a working return link and their own quiz.
         offline = flat_html(course.with_suffix('.html').read_text(encoding='utf-8'), slug)
+        offline = offline.replace(f'href="{slug}-quiz.html"', f'href="quiz/{slug}.html"')
         write(vault / 'cours' / f'{slug}.html', offline)
         links = f'\n\n> [!TIP] Ressources du chapitre\n> - [Ouvrir le chapitre interactif]({BASE}/cours/{slug}-interactif.html)\n> - [Faire le quiz]({BASE}/cours/quiz/{slug}.html)\n> - <a href="{BASE}/telechargements/cours/{course.name}" download>Télécharger ce cours en Markdown</a>\n'
         if tp:
@@ -107,7 +123,7 @@ def prepare(source):
         body = re.sub(r'^(# .+)$', lambda m: m[0] + links, body, count=1, flags=re.M)
         previous = f'[← {chapters[-1]["title"]}]({BASE}/{chapters[-1]["slug"]}/)' if chapters else '[← Accueil](' + BASE + '/)'
         following = f'[Chapitre suivant →]({BASE}/{courses[i+1].stem}/)' if i+1 < len(courses) else f'[Revenir à l’accueil →]({BASE}/)'
-        body = body.replace('../Ressources/images/', BASE + '/ressources/images/')
+        body = public_markdown(body, courses)
         write(stage / slug / 'index.md', metadata(f'{number}. {title}', body + '\n---\n\n' + previous + ' · ' + following + '\n'))
         chapters.append(dict(slug=slug, title=title, tp=tp.name if tp else None))
     for tp in source.rglob('tp-*.md'):

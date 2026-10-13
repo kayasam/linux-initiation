@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" viewBox="0 0 1000 600" role="img" aria-labelledby="title description">
+<title id="title">Unix, GNU, Linux : qui apporte quoi ?</title><desc id="description">Des principes hérités, des projets distincts et un système assemblé.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L8 4 L0 8" fill="#006575" class="arrow-fill"/></marker></defs>
+<style>
+text { font-family:'Segoe UI',Arial,sans-serif; fill:#182d3e; }
+.title {font-size:28px;font-weight:750} .subtitle {font-size:18px;fill:#455d70}
+.label {font-size:22px;font-weight:700} .body {font-size:20px} .small {font-size:17px;fill:#455d70}
+.mono {font-family:Consolas,'DejaVu Sans Mono',monospace;font-size:20px} .accent {fill:#006575}
+.box {fill:#fff;stroke:#8196a6;stroke-width:1.5} .soft {fill:#e5f2f4;stroke:#006575;stroke-width:1.5}
+.line {fill:none;stroke:#006575;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+@media (prefers-color-scheme:dark) {
+.background {fill:#101923} .badge {fill:#243b4c} text {fill:#edf5fb}
+.subtitle,.small {fill:#b7c9d8} .accent,.arrow-fill {fill:#72dfeb}
+.box {fill:#192936;stroke:#587488} .soft {fill:#243b4c;stroke:#72dfeb} .line {stroke:#72dfeb}
+}
+</style>
+<rect width="1000" height="600" rx="20" fill="#f4f7fa" class="background"/>
+<rect x="28" y="26" width="48" height="42" rx="10" fill="#e5f2f4" class="badge"/>
+<text x="52" y="54" text-anchor="middle" class="label accent">01</text>
+<text x="92" y="52" class="title">Unix, GNU, Linux : qui apporte quoi ?</text>
+<text x="92" y="82" class="subtitle">Des principes hérités, des projets distincts et un système assemblé.</text>
+<rect x="55" y="116" width="890" height="90" rx="14" class="box"/>
+<text x="75" y="150" class="label" text-anchor="start">1969 — Unix</text>
+<text x="75" y="181" class="body" text-anchor="start">Des principes : utilisateurs, fichiers et petits outils combinables.</text>
+<text x="500" y="244" class="small" text-anchor="middle">GNU et Linux sont des projets développés indépendamment d’Unix.</text>
+<rect x="55" y="277" width="420" height="116" rx="14" class="soft"/>
+<text x="75" y="311" class="label" text-anchor="start">1983 / 1984 — Projet GNU</text>
+<text x="75" y="342" class="body" text-anchor="start">Richard Stallman</text>
+<text x="75" y="369" class="body" text-anchor="start">Des outils libres : Bash, GCC, ls, cp…</text>
+<rect x="525" y="277" width="420" height="116" rx="14" class="soft"/>
+<text x="545" y="311" class="label" text-anchor="start">1991 — Noyau Linux</text>
+<text x="545" y="342" class="body" text-anchor="start">Linus Torvalds</text>
+<text x="545" y="369" class="body" text-anchor="start">Gestion du processeur et de la mémoire</text>
+<path d="M265 401 L380 447" class="line" marker-end="url(#arrow)"/>
+<path d="M735 401 L620 447" class="line" marker-end="url(#arrow)"/>
+<rect x="175" y="455" width="650" height="80" rx="14" class="box"/>
+<text x="195" y="489" class="label" text-anchor="start">Une distribution GNU/Linux — exemple : Debian</text>
+<text x="195" y="520" class="body" text-anchor="start">GNU + Linux + d’autres composants et applications</text>
+<text x="40" y="568" class="small" text-anchor="start">Ces flèches montrent un assemblage de composants, pas une filiation du code d’Unix.</text>
+</svg>

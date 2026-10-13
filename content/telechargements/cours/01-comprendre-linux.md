@@ -1,113 +1,209 @@
 # Chapitre 01 — Comprendre Linux
+Vous utilisez peut-être déjà Linux sans le savoir : un téléphone Android, une box Internet ou un serveur qui héberge un site peuvent s’appuyer sur son noyau. Avant d’installer Debian, découvrons ce que recouvrent **Linux**, **GNU**, **logiciel libre** et **distribution**.
 
-
-
+> [!NOTE] Objectifs
+> À la fin du chapitre, vous pourrez expliquer le rôle d’un système d’exploitation, distinguer GNU de Linux, reconnaître les grandes familles de licences et comprendre pourquoi nous utilisons Debian.
+>
+> **Aucune commande à mémoriser pour le moment.** L’objectif est de comprendre les mots que vous rencontrerez pendant la formation.
 
 ---
 
-## 1. Qu'est-ce qu'un système d'exploitation ?
+## 1. Qu’est-ce qu’un système d’exploitation ?
 
-Avant de parler de Linux, il faut comprendre ce qu'est un **système d'exploitation** (OS pour *Operating System*).
+Un **système d’exploitation**, souvent abrégé **OS** (*Operating System*), fait fonctionner l’ordinateur et permet aux applications d’utiliser son matériel.
 
-C'est le logiciel de base qui fait fonctionner un ordinateur. Il fait l'intermédiaire entre le matériel (processeur, mémoire, disque) et les applications (navigateur, traitement de texte…).
+Quand vous ouvrez un document, le traitement de texte demande au système de lire le fichier sur le disque. Si vous lancez plusieurs applications, le système répartit entre elles le temps du processeur et la mémoire disponible. Il gère aussi les périphériques et les droits d’accès aux fichiers.
 
-> [!NOTE]
-> **Analogie** : le système d'exploitation, c'est comme le chef d'orchestre d'un concert. Il coordonne tous les musiciens (les composants matériels) pour que la musique (tes applications) fonctionne correctement.
-Les systèmes d'exploitation les plus connus :
-- **Windows** — Microsoft
-- **macOS** — Apple
-- **Linux** — communauté open source (dont Android et ChromeOS sont dérivés)
-
+> [!TIP] Une image pour comprendre
+> Imaginez un **chef d’orchestre** : les applications demandent des ressources, le système organise leur utilisation et le matériel réalise les opérations.
 
 <!-- illustration-01 -->
 ![Le système Linux fait le lien entre les applications et le matériel.](https://kayasam.github.io/linux-initiation/ressources/images/01-systeme-linux.svg)
 
-*Le système Linux fait le lien entre les applications et le matériel.*
+*Les applications s’appuient sur le système pour utiliser le matériel.*
+
+Vous connaissez probablement **Windows**, **macOS**, **Android** ou **iOS**. Sur un ordinateur, **Debian** et **Ubuntu** sont deux exemples de systèmes construits autour du noyau Linux.
+
+Le **noyau** (*kernel*) est la partie centrale du système : il gère notamment le processeur, la mémoire et l’accès aux périphériques. Le navigateur, le bureau graphique et les commandes du terminal sont d’autres logiciels, qui s’appuient sur lui.
 
 ---
 
-## 2. Qu'est-ce que Linux ?
+## 2. D’Unix à GNU/Linux : trois repères
 
-Linux est un système d'exploitation **libre et gratuit**, créé en 1991 par un étudiant finlandais, **Linus Torvalds**. À 21 ans, il a publié le code source de son système sur Internet et invité le monde entier à l'améliorer.
+### Unix : les idées de départ
 
-Aujourd'hui, Linux fait tourner :
-- La quasi-totalité des **serveurs** d'Internet (Google, Facebook, Amazon…)
-- L'essentiel des **supercalculateurs** mondiaux
-- Les **smartphones Android** (noyau Linux)
-- Les **objets connectés** (box Internet, NAS, routeurs…)
-- De nombreux **postes de travail** en entreprise
+**Unix** apparaît en **1969** aux laboratoires Bell, notamment avec **Ken Thompson** et **Dennis Ritchie**. Il permet à plusieurs personnes d’utiliser un même ordinateur et d’y exécuter plusieurs programmes. [Histoire d’Unix — The Open Group](https://www.unix.org/unix_history.html)
 
-> [!TIP]
-> Linux est partout — même si tu ne le vois pas, tu l'utilises très probablement tous les jours.
----
+Unix a popularisé une organisation que vous retrouverez sous Linux : des utilisateurs avec des droits distincts, des fichiers rangés dans une arborescence et de petits outils que l’on peut combiner.
 
-## 3. Open Source — qu'est-ce que ça veut dire ?
+**Linux est un système de type Unix** : il reprend de nombreux principes d’Unix, mais son noyau a été développé indépendamment. Linux n’est donc pas simplement « une version gratuite d’Unix ».
 
-**Open Source** signifie que le **code source** du logiciel (les instructions qui le composent) est **librement accessible, modifiable et redistribuable** par n'importe qui.
+### GNU : Richard Stallman et le logiciel libre
 
-À l'opposé, des logiciels comme Windows ou macOS sont **propriétaires** : leur code est secret et appartient à une entreprise.
+En **1983**, **Richard Stallman** annonce le projet **GNU**, dont le développement commence en **1984**. Son objectif est de construire un système compatible avec Unix qui respecte la liberté de ses utilisateurs. Le nom signifie **GNU’s Not Unix**, soit « GNU n’est pas Unix ». [Annonce du projet GNU](https://www.gnu.org/gnu/initial-announcement.html)
 
-Les avantages de l'open source :
-- **Gratuit** dans la plupart des cas
-- **Transparent** : n'importe qui peut vérifier ce que fait le logiciel
-- **Sécurisé** : les failles sont détectées et corrigées rapidement par la communauté
-- **Pérenne** : le logiciel ne peut pas être abandonné ou "coupé" par une entreprise
+Le projet fournit progressivement des outils essentiels : **Bash** pour interpréter les commandes, **GCC** pour transformer du code source en programmes et les **outils GNU** comme `ls` ou `cp`. Vous utiliserez certains de ces outils dans les prochains chapitres.
 
-> [!NOTE]
-> **Analogie** : un logiciel propriétaire, c'est comme une recette secrète qu'une entreprise garde pour elle. Un logiciel open source, c'est une recette publiée dans un livre de cuisine — tout le monde peut la lire, l'améliorer et la partager.
----
+Richard Stallman fonde également la **Free Software Foundation (FSF)** en **1985**, pour soutenir le logiciel libre. GNU développe de nombreux composants, mais son propre noyau n’est pas encore prêt pour constituer le système recherché. [Repères historiques — FSF](https://www.fsf.org/about/what-is-free-software)
 
-## 4. Les distributions Linux
+### Linux : le noyau de Linus Torvalds
 
-Linux est un **noyau** (*kernel*) — le cœur du système. Seul, il ne suffit pas. Une **distribution** Linux assemble le noyau avec des outils, une interface et un gestionnaire de logiciels pour former un système complet et utilisable.
+En **1991**, **Linus Torvalds**, alors étudiant finlandais, lance le noyau **Linux**. Des développeurs rejoignent ensuite le projet. Associé aux outils GNU et à d’autres logiciels, ce noyau permet de construire des systèmes complets.
 
-Il existe des centaines de distributions. Les principales familles :
+L’expression **GNU/Linux** rappelle cette association. Dans la conversation courante, on dit souvent simplement « Linux » pour parler de l’ensemble. **Debian est une distribution GNU/Linux.** Tous les systèmes qui utilisent le noyau Linux n’utilisent cependant pas l’environnement GNU : Android en est un exemple. [Présentation du système GNU](https://www.gnu.org/gnu/gnu-history.en.html)
 
-| Famille | Exemples | Points forts |
-|---------|---------|-------------|
-| **Debian / Ubuntu** | Debian, Ubuntu, Linux Mint | Stables, simples, idéales pour débuter |
-| **Red Hat** | RHEL, Rocky Linux, AlmaLinux | Orientées entreprise et serveurs |
-| **SUSE** | openSUSE, SUSE Enterprise | Outils d'administration puissants |
-| **Autres** | Kali, Arch, Raspberry Pi OS | Usages spécialisés |
+![Unix apporte des principes ; GNU apporte des outils libres ; Linux apporte le noyau. Une distribution assemble ces composants avec d’autres logiciels.](https://kayasam.github.io/linux-initiation/ressources/images/01-unix-gnu-linux.svg)
 
-> [!TIP]
-> Dans cette formation, nous utilisons **Debian** — l'une des distributions les plus stables et les plus répandues, idéale pour apprendre les bases de Linux.
-Arbre généalogique des distributions : https://upload.wikimedia.org/wikipedia/commons/9/96/Liste_des_distributions_Linux.svg
+> [!NOTE] Deux personnes, deux contributions
+> **Richard Stallman → GNU et les libertés du logiciel.**
+> **Linus Torvalds → le noyau Linux.**
+> Le système que nous allons utiliser est le résultat de ces projets et de nombreuses autres contributions.
 
 ---
 
-## 5. Linux en mode graphique et en mode texte
+## 3. Logiciel libre, open source et gratuit : quelle différence ?
 
-Linux peut fonctionner de deux façons :
+Le **code source** est l’ensemble des instructions écrites par les développeurs pour construire un logiciel. Vous pouvez utiliser un logiciel sans savoir lire son code, comme vous pouvez utiliser une voiture sans être mécanicien.
 
-| Mode | Description | Quand l'utiliser ? |
-|------|-------------|-------------------|
-| **Mode graphique** | Interface avec fenêtres, icônes et souris (comme Windows) | Postes de travail, apprentissage |
-| **Mode texte (terminal)** | Interface en lignes de commandes | Serveurs, administration, automatisation |
+### Les quatre libertés du logiciel libre
 
-> [!NOTE]
-> La plupart des serveurs fonctionnent **sans interface graphique** pour économiser des ressources. C'est pourquoi maîtriser le terminal est indispensable pour administrer un système Linux.
+Un **logiciel libre** donne à ses utilisateurs quatre libertés, traditionnellement numérotées de **0 à 3** :
+
+| Liberté | Ce que cela permet concrètement |
+|---|---|
+| **0 — Utiliser** | Exécuter le programme pour l’usage de son choix, personnel ou professionnel. |
+| **1 — Étudier et modifier** | Comprendre son fonctionnement et l’adapter à ses besoins, grâce au code source. |
+| **2 — Partager des copies** | Donner une copie du logiciel à un collègue ou à un proche. |
+| **3 — Partager ses modifications** | Redistribuer une version améliorée pour que d’autres en profitent. |
+
+Ces libertés portent sur les **droits accordés**, pas sur le prix du logiciel. [Définition du logiciel libre — GNU/FSF](https://www.gnu.org/philosophy/free-sw.en.html)
+
+### L’open source : le code et les droits qui l’accompagnent
+
+Un logiciel **open source** fournit l’accès à son code source avec une licence autorisant notamment son utilisation, sa modification et sa redistribution. Un code visible sur Internet, accompagné d’une interdiction de le modifier, ne suffit donc pas.
+
+Les expressions **logiciel libre** et **open source** recouvrent largement les mêmes logiciels. La première met l’accent sur les libertés des utilisateurs ; la seconde sur l’ouverture du code et le développement collaboratif. L’**Open Source Initiative (OSI)** définit les critères d’une licence open source. [Définition de l’open source — OSI](https://opensource.org/osd)
+
+> [!TIP] La recette et les permissions
+> Le code source ressemble à une **recette de cuisine**. La licence précise si vous pouvez la cuisiner, la modifier et partager votre version. **Pouvoir lire la recette ne donne pas automatiquement tous ces droits.**
+
+### Gratuit ne veut pas dire libre
+
+Un logiciel peut être **gratuit et propriétaire** : vous ne payez rien, mais vous n’avez pas nécessairement accès au code ni le droit de le modifier. À l’inverse, un logiciel libre peut être vendu, et des entreprises peuvent facturer son installation, son hébergement ou son assistance.
+
+La transparence facilite l’étude du logiciel et permet à d’autres de poursuivre son développement. Elle ne garantit toutefois **ni l’absence de failles, ni des mises à jour éternelles**. La maintenance et la bonne configuration restent nécessaires.
+
 ---
 
-## Récapitulatif
+## 4. Les licences libres : les règles du partage
 
-| Notion | Définition |
-|--------|-----------|
-| Système d'exploitation | Logiciel de base qui fait fonctionner l'ordinateur |
-| Linux | OS libre créé en 1991, open source |
-| Open Source | Code source librement accessible et modifiable |
-| Distribution | Linux complet = noyau + outils + interface + gestionnaire de paquets |
-| Debian | Distribution stable et répandue utilisée dans cette formation |
+Une **licence logicielle** est un texte qui précise les droits et les conditions d’utilisation, de modification et de redistribution d’un programme. Les auteurs conservent leurs droits d’auteur : publier un logiciel libre ne signifie pas abandonner tous leurs droits.
+
+Vous n’avez pas besoin d’apprendre ces textes par cœur. Pour débuter, retenez surtout **deux grandes approches**.
+
+### Le copyleft : conserver les libertés lors du partage
+
+La **GNU GPL** (*General Public License*) est une licence à **copyleft**. Lorsqu’une version modifiée d’un programme couvert par la GPL est distribuée, les destinataires doivent conserver les droits prévus par cette licence et pouvoir obtenir le code source correspondant selon ses conditions.
+
+**Exemple :** une entreprise adapte un outil sous GPL et distribue cette version à ses clients. Elle doit respecter la GPL pour cette version et leur permettre d’obtenir son code source. Elle ne peut pas retirer les libertés que la licence leur accorde.
+
+> [!NOTE] Utiliser un programme GPL ne rend pas vos documents publics
+> Rédiger un courrier ou utiliser un programme sous GPL ne vous oblige pas à publier votre travail. Une modification conservée pour un usage privé n’a pas non plus à être publiée simplement parce qu’elle existe. Les obligations de partage de la GPL concernent notamment la **distribution du logiciel couvert**, pas les documents que vous créez avec lui. [FAQ des licences GNU](https://www.gnu.org/licenses/gpl-faq.html#GPLRequireSourcePostedPublic)
+
+Le **noyau Linux est sous GPL version 2**. Les autres logiciels d’une distribution ont leurs propres licences : Debian n’est pas un unique programme placé sous une unique licence. [Licence du noyau Linux](https://docs.kernel.org/process/license-rules.html)
+
+### Les licences permissives : autoriser davantage de réutilisations
+
+Les licences **MIT**, **BSD** et **Apache 2.0** autorisent une réutilisation large du code, y compris dans des logiciels propriétaires, sous réserve de respecter leurs conditions. Elles imposent notamment de conserver certains avis de licence et de droits d’auteur. Apache 2.0 comprend aussi des dispositions explicites sur les brevets.
+
+| Approche | Exemples | Idée principale |
+|---|---|---|
+| **Copyleft** | GNU GPL | Préserver les libertés sur le programme couvert et ses versions dérivées distribuées. |
+| **Permissive** | MIT, BSD, Apache 2.0 | Faciliter les réutilisations, sans imposer que toute version dérivée reste libre. |
+
+**Exemple :** une entreprise peut intégrer un composant sous MIT dans une application propriétaire en respectant la licence, notamment les mentions à conserver. Les utilisateurs de l’application complète ne reçoivent pas forcément le code de cette application. [Licence MIT — OSI](https://opensource.org/license/mit), [licence Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+
+> [!TIP] Le réflexe utile
+> Avant de redistribuer un logiciel ou de réutiliser son code, cherchez son fichier **`LICENSE`**, **`COPYING`** ou sa rubrique **À propos → Licence**. Un téléchargement gratuit ne remplace pas la lecture des permissions.
 
 ---
 
-> [!NOTE]
-> ### À retenir
->
-> - Un **système d'exploitation** fait l'intermédiaire entre le matériel et les applications.
-> - **Linux** est un OS libre et gratuit, créé en 1991, qui équipe la majorité des serveurs dans le monde.
-> - **Open Source** signifie que le code source est librement accessible, modifiable et redistribuable.
-> - Une **distribution** Linux = noyau + outils + interface + gestionnaire de paquets.
-> - Les principales familles : **Debian/Ubuntu** (débutants), **Red Hat** (entreprises), **SUSE**.
-> - Linux fonctionne en **mode graphique** (interface) ou en **mode texte** (terminal).
+## 5. Une distribution : le système prêt à utiliser
+
+Une **distribution Linux** assemble un noyau Linux, des outils système, des bibliothèques nécessaires aux programmes, un gestionnaire de paquets et des applications. Elle peut aussi proposer un bureau graphique.
+
+Pour **Debian**, on peut se représenter cet assemblage ainsi :
+
+```text
+Noyau Linux + outils GNU + autres composants et applications
+                      ↓
+             Distribution Debian
+```
+
+L’équipe d’une distribution choisit les composants, prépare leur installation et fournit des mises à jour. Vous n’avez pas à assembler chaque pièce vous-même.
+
+| Famille ou projet | Exemples | Repère pour la formation |
+|---|---|---|
+| **Debian** | Debian, Ubuntu, Linux Mint | Ubuntu s’appuie sur Debian ; l’édition principale de Mint s’appuie sur Ubuntu. |
+| **Red Hat** | Fedora, RHEL, Rocky Linux, AlmaLinux | Un autre écosystème, fréquent dans les environnements professionnels. |
+| **SUSE** | openSUSE, SUSE Linux Enterprise | Un écosystème disposant de ses propres outils d’administration. |
+| **Autres projets** | Arch Linux, Kali Linux | Des choix ou usages particuliers ; Kali, basée sur Debian, vise notamment les tests de sécurité. |
+
+> [!TIP] Notre choix : Debian
+> Nous utiliserons **Debian** pour apprendre sur une base stable, documentée et utilisable aussi bien avec un bureau que comme serveur. Les principes étudiés vous serviront ensuite dans d’autres distributions.
+
+Une distribution peut contenir des composants sous différentes licences, et éventuellement des éléments propriétaires, comme certains micrologiciels nécessaires au matériel. **Utiliser Linux ne signifie donc pas que chaque composant installé est libre.**
+
 ---
+
+## 6. Bureau ou serveur : deux usages du même système
+
+Un **poste de travail** sert directement à une personne : naviguer sur le Web, écrire des documents ou consulter ses fichiers. Un **serveur** fournit des services à d’autres machines, par exemple des pages Web ou un espace de partage.
+
+| Interface | Comment l’utiliser ? | Exemple |
+|---|---|---|
+| **Bureau graphique** | Fenêtres, icônes, menus et souris. | Ouvrir le gestionnaire de fichiers et créer un dossier. |
+| **Terminal** | Saisir des commandes au clavier. | Demander l’affichage du contenu d’un dossier. |
+
+Ces interfaces accèdent au **même système et aux mêmes fichiers**. Vous pouvez ouvrir un terminal dans un bureau graphique ; il n’est pas nécessaire de choisir définitivement entre les deux.
+
+Un serveur peut fonctionner sans bureau pour économiser des ressources et limiter les logiciels à maintenir. Dans cette formation, nous commencerons avec une interface graphique, puis nous découvrirons progressivement le terminal.
+
+---
+
+## 7. Vidéo et échange
+
+Regardez la vidéo proposée, puis utilisez le cours pour répondre aux questions ci-dessous. Sa lecture nécessite une connexion Internet.
+
+<iframe width="560" height="315" style="display:block;width:100%;max-width:900px;height:auto;aspect-ratio:16/9;border:0;border-radius:12px;margin:1rem auto" src="https://www.youtube.com/embed/oL6YcXLegC0?si=0lW4t2mYmfdHQEOa" title="Vidéo proposée pour le chapitre Comprendre Linux" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+[Ouvrir la vidéo sur YouTube](https://www.youtube.com/watch?v=oL6YcXLegC0)
+
+1. Qui a lancé GNU ? Qui a créé le noyau Linux ?
+2. Un logiciel gratuit est-il forcément libre ? Expliquez avec les droits de l’utilisateur.
+3. Quelle différence principale retenez-vous entre une licence GPL et une licence MIT ?
+4. Pourquoi Debian est-elle une distribution plutôt qu’un simple noyau ?
+
+<details>
+<summary>Afficher les pistes de réponse</summary>
+<p><strong>1.</strong> Richard Stallman a lancé GNU ; Linus Torvalds a créé le noyau Linux.</p>
+<p><strong>2.</strong> Non. Le prix ne dit pas si l’on peut étudier, modifier et redistribuer le programme.</p>
+<p><strong>3.</strong> La GPL préserve les libertés sur les versions dérivées distribuées du programme couvert. MIT permet aussi des réutilisations propriétaires, à condition de respecter ses mentions et conditions.</p>
+<p><strong>4.</strong> Debian assemble le noyau avec des outils, des applications et un système de gestion et de mise à jour des logiciels.</p>
+</details>
+
+---
+
+## À retenir
+
+| Mot | L’idée essentielle |
+|---|---|
+| **Unix** | Un système historique dont Linux reprend de nombreux principes. |
+| **GNU** | Le projet libre lancé par Richard Stallman, à l’origine de nombreux outils système. |
+| **Linux** | Le noyau lancé par Linus Torvalds en 1991. |
+| **GNU/Linux** | L’association du noyau Linux et de l’environnement GNU, avec d’autres composants. |
+| **Libre / open source** | Des droits sur l’utilisation, le code, les modifications et le partage ; pas une promesse de gratuité. |
+| **Licence** | Le texte qui fixe ces droits et leurs conditions : GPL, MIT, BSD, Apache… |
+| **Distribution** | Un ensemble prêt à installer, comme Debian ou Ubuntu. |
+
+Vous pouvez maintenant [faire le quiz de 20 questions](https://kayasam.github.io/linux-initiation/cours/quiz/01-comprendre-linux.html), puis passer au [chapitre 02 — Installer la VM](https://kayasam.github.io/linux-initiation/02-installer-la-vm/).

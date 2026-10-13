@@ -163,7 +163,7 @@ def integrate(source):
         number=file.name[:2]; name=names[number]; caption=captions[number]
         marker=f'<!-- illustration-{number} -->'
         body=file.read_text(encoding='utf-8')
-        if marker not in body:
+        if marker not in body and name+'.svg' not in body:
             start=body.index(md_sections[number]); end=body.find('\n---',start)
             assert end>=0, file
             prefix='../../' if file.parent.name == file.stem else '../'
@@ -171,7 +171,7 @@ def integrate(source):
             body=body[:end]+block+body[end:]
             file.write_text(body,encoding='utf-8')
         html_file=file.with_suffix('.html');body=html_file.read_text(encoding='utf-8')
-        if marker not in body:
+        if marker not in body and name+'.svg' not in body:
             anchor='<h2>'+html_sections[number]+'</h2>'
             assert anchor in body,html_file
             figure=f'''\n{marker}\n<figure class="course-diagram" style="margin:1.25rem 0"><a href="../Ressources/images/{name}.svg" target="_blank" rel="noopener"><img src="../Ressources/images/{name}.svg" alt="{escape(caption,quote=True)}" width="1000" height="600" loading="lazy" style="width:100%;height:auto;border-radius:12px"></a><figcaption style="font-size:.9rem;margin-top:.5rem">{escape(caption)} Cliquez sur le schéma pour l’agrandir.</figcaption></figure>'''

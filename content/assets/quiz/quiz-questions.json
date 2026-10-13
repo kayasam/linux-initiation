@@ -3,7 +3,12 @@
     {
       "theme": "Comprendre Linux",
       "question": "En quelle année Linux a-t-il été créé ?",
-      "choices": ["1969", "1991", "2001", "2005"],
+      "choices": [
+        "1969",
+        "1991",
+        "2001",
+        "2005"
+      ],
       "answer": 1,
       "explanation": "Exact ! Linus Torvalds a publié le premier noyau Linux en 1991, à 21 ans."
     },
@@ -17,7 +22,7 @@
         "Que le logiciel est fabriqué par Apple"
       ],
       "answer": 1,
-      "explanation": "Correct ! Open Source signifie que le code source est librement accessible, modifiable et redistribuable."
+      "explanation": "Open source associe un code accessible aux droits accordés par une licence : utiliser, modifier et redistribuer. La gratuité seule ne suffit pas."
     },
     {
       "theme": "Comprendre Linux",
@@ -34,7 +39,12 @@
     {
       "theme": "Comprendre Linux",
       "question": "Quelle distribution Linux utilise-t-on dans cette formation ?",
-      "choices": ["Ubuntu", "Kali Linux", "Rocky Linux", "Debian"],
+      "choices": [
+        "Ubuntu",
+        "Kali Linux",
+        "Rocky Linux",
+        "Debian"
+      ],
       "answer": 3,
       "explanation": "Correct ! Dans cette formation, nous utilisons Debian, reconnue pour sa stabilité."
     },

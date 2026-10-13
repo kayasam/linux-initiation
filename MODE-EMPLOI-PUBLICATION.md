@@ -16,6 +16,8 @@ Les thèmes HTML sont dans `site-content/assets/themes`. Le bouton clair/sombre 
 
 Les dix schémas SVG sont dans `Formations/linux-initiation/Ressources/images` du coffre. Les liens restent locaux dans le coffre et dans le ZIP ; la publication copie automatiquement les images pour le site et les HTML. Pour régénérer les dessins et intégrer les illustrations manquantes : `python scripts/illustrate-linux.py`. Leur source graphique est dans ce script ; il conserve les blocs déjà présents dans les cours.
 
+Le chapitre 01 enrichi utilise le Markdown du coffre comme source pour son HTML : après modification, lancer `python scripts/render-introduction.py` (module Python `Markdown` nécessaire), puis la préparation habituelle. Ce script régénère aussi le schéma Unix / GNU / Linux. La vidéo YouTube reste en ligne et nécessite Internet, même dans le support hors ligne.
+
 Pour mettre également à jour les versions HTML originales du coffre après préparation :
 
 ```powershell
