@@ -1,578 +1,99 @@
 <!DOCTYPE html>
-<html lang="fr" data-chapter="07-utilisateurs-et-permissions">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>07 — Utilisateurs et permissions</title>
+<html lang="fr" data-chapter="07-utilisateurs-et-permissions" data-interactive-permissions="true">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Utilisateurs &amp; permissions · Le laboratoire</title>
+<meta name="description" content="Un laboratoire interactif pour comprendre les utilisateurs, les groupes et les permissions Linux : lire, manipuler chmod et résoudre des missions.">
+<link rel="stylesheet" href="assets/themes/theme.css"><script src="assets/themes/theme.js"></script>
 <style>
-:root {
-  --bg: #0f1117; --surface: #1a1d27; --surface2: #232635; --border: #2e3148;
-  --accent: #f87171; --accent2: #fca5a5;
-  --warn: #f0a500; --danger: #e05c5c; --success: #4caf82;
-  --text: #d4d8f0; --text-dim: #7880a0; --code-bg: #12141f; --radius: 10px;
-}
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.7; }
-
-/* HEADER */
-header {
-  background: linear-gradient(135deg, #1a0808 0%, #1a0c0c 100%);
-  border-bottom: 1px solid var(--border);
-  padding: 2.5rem 2rem 1.5rem;
-  text-align: center;
-}
-.badge { display: inline-block; background: var(--accent); color: #fff; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: .25rem .7rem; border-radius: 20px; margin-bottom: .8rem; }
-header h1 { font-size: 2rem; font-weight: 800; background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-header p { color: var(--text-dim); margin-top: .3rem; font-size: .95rem; }
-
-/* NAV */
-nav { position: sticky; top: 0; z-index: 100; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; justify-content: center; flex-wrap: wrap; gap: .25rem; padding: .5rem 1rem; }
-nav button { background: none; border: none; color: var(--text-dim); padding: .5rem 1rem; border-radius: 6px; cursor: pointer; font-size: .88rem; white-space: nowrap; transition: all .2s; }
-nav button:hover { background: var(--surface2); color: var(--text); }
-nav button.active { background: var(--accent); color: #fff; font-weight: 600; }
-
-/* MAIN */
-main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
-.tab { display: none; }
-.tab.active { display: block; }
-h2 { font-size: 1.4rem; color: var(--accent2); margin-bottom: 1rem; }
-h3 { font-size: 1.05rem; color: var(--text); margin: 1.5rem 0 .6rem; }
-
-/* CALLOUTS */
-.callout { border-radius: var(--radius); padding: 1rem 1.2rem; margin: 1rem 0; border-left: 4px solid; }
-.callout.note { background: rgba(130,150,255,.08); border-color: #818cf8; }
-.callout.warn { background: rgba(240,165,0,.08); border-color: var(--warn); }
-.callout.danger { background: rgba(224,92,92,.1); border-color: var(--danger); }
-.callout.tip { background: rgba(76,175,130,.08); border-color: var(--success); }
-.callout strong { display: block; margin-bottom: .3rem; font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; opacity: .8; }
-
-/* CODE */
-.code-block { position: relative; background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius); margin: .8rem 0; }
-.code-block pre { padding: 1rem 3rem 1rem 1rem; overflow-x: auto; font-family: 'Cascadia Code', 'Consolas', monospace; font-size: .88rem; white-space: pre; }
-.copy-btn { position: absolute; top: .6rem; right: .6rem; background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim); padding: .25rem .6rem; border-radius: 5px; cursor: pointer; font-size: .75rem; transition: all .2s; }
-.copy-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
-.copy-btn.copied { background: var(--success); color: #fff; border-color: var(--success); }
-.cmd { color: #f87171; } .flag { color: #facc15; } .arg { color: #4ade80; } .path { color: #22d3ee; } .comment { color: var(--text-dim); font-style: italic; }
-
-/* TABLES */
-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; }
-th { background: var(--surface2); color: var(--accent2); padding: .6rem .9rem; text-align: left; border-bottom: 2px solid var(--border); }
-td { padding: .55rem .9rem; border-bottom: 1px solid var(--border); }
-tr:hover td { background: var(--surface2); }
-
-/* CARDS */
-.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: .8rem; margin: 1rem 0; }
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; cursor: pointer; transition: all .25s; }
-.card:hover { border-color: var(--accent); transform: translateY(-2px); }
-.card h4 { color: var(--accent); font-size: .9rem; margin-bottom: .3rem; }
-.card p { color: var(--text-dim); font-size: .85rem; }
-.card .code-inline { font-family: monospace; background: var(--code-bg); padding: .15rem .4rem; border-radius: 4px; color: var(--accent2); font-size: .82rem; display: block; margin-top: .4rem; }
-.card-detail { display: none; margin-top: .6rem; padding-top: .6rem; border-top: 1px solid var(--border); color: var(--text); font-size: .85rem; }
-.card.open .card-detail { display: block; }
-
-/* PERMISSION VISUALIZER */
-.perm-display { display: flex; gap: .3rem; margin: 1.2rem 0; flex-wrap: wrap; align-items: center; }
-.perm-block { display: flex; gap: 2px; }
-.perm-char { width: 36px; height: 42px; display: flex; align-items: center; justify-content: center; font-family: monospace; font-size: 1.1rem; font-weight: 700; border-radius: 5px; cursor: pointer; transition: all .2s; user-select: none; border: 2px solid transparent; }
-.perm-char:hover, .perm-char.selected { border-color: var(--accent); background: rgba(248,113,113,.15); color: var(--accent); }
-.perm-char.r { color: var(--success); }
-.perm-char.w { color: var(--warn); }
-.perm-char.x { color: #a78bfa; }
-.perm-char.type { color: #818cf8; }
-.perm-char.dash { color: var(--text-dim); }
-.perm-sep { color: var(--text-dim); font-size: .75rem; padding: 0 .4rem; display: flex; align-items: center; }
-.perm-label { font-size: .7rem; color: var(--text-dim); text-align: center; margin-top: .2rem; }
-.perm-info { background: var(--surface2); border-radius: var(--radius); padding: 1rem; margin-top: .8rem; border: 1px solid var(--border); min-height: 60px; font-size: .9rem; }
-.perm-group { display: flex; flex-direction: column; align-items: center; }
-.perm-group-label { font-size: .68rem; color: var(--accent2); text-transform: uppercase; letter-spacing: .06em; margin-top: .3rem; }
-
-/* CHMOD CALCULATOR */
-.chmod-calc { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem; margin: 1rem 0; }
-.chmod-cols { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
-.chmod-col { flex: 1; min-width: 120px; background: var(--code-bg); border-radius: 8px; padding: .8rem; }
-.chmod-col h4 { color: var(--accent2); font-size: .85rem; text-align: center; margin-bottom: .6rem; }
-.chmod-check { display: flex; align-items: center; gap: .5rem; padding: .25rem 0; cursor: pointer; }
-.chmod-check input { accent-color: var(--accent); width: 16px; height: 16px; cursor: pointer; }
-.chmod-check label { cursor: pointer; font-size: .9rem; }
-.chmod-result { text-align: center; }
-.chmod-number { font-family: monospace; font-size: 2.5rem; font-weight: 800; color: var(--accent); }
-.chmod-symbolic { font-family: monospace; font-size: 1.1rem; color: var(--accent2); margin-top: .3rem; }
-.chmod-example { color: var(--text-dim); font-size: .85rem; margin-top: .4rem; }
-
-/* QUIZ */
-.quiz-q { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem; margin-bottom: 1rem; }
-.quiz-q p { font-weight: 600; margin-bottom: .8rem; }
-.quiz-options { display: flex; flex-direction: column; gap: .4rem; }
-.quiz-option { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: .6rem 1rem; cursor: pointer; transition: all .2s; font-size: .9rem; }
-.quiz-option:hover:not(.locked) { border-color: var(--accent); background: rgba(248,113,113,.1); }
-.quiz-option.correct { background: rgba(76,175,130,.15); border-color: var(--success); color: var(--success); }
-.quiz-option.wrong { background: rgba(224,92,92,.12); border-color: var(--danger); color: var(--danger); }
-.quiz-option.locked { cursor: default; }
-.quiz-feedback { margin-top: .7rem; padding: .6rem .9rem; border-radius: 6px; font-size: .87rem; display: none; }
-.quiz-feedback.show { display: block; }
-.quiz-feedback.ok { background: rgba(76,175,130,.12); color: var(--success); border: 1px solid var(--success); }
-.quiz-feedback.nok { background: rgba(224,92,92,.1); color: #f87171; border: 1px solid var(--danger); }
-.quiz-score { background: var(--surface2); border-radius: var(--radius); padding: 1.5rem; text-align: center; display: none; }
-.quiz-score h3 { font-size: 1.5rem; color: var(--accent); }
-.quiz-score p { color: var(--text-dim); margin: .5rem 0 1rem; }
-.btn-restart { background: var(--accent); color: #fff; border: none; padding: .7rem 1.5rem; border-radius: 8px; cursor: pointer; font-size: .95rem; font-weight: 600; transition: opacity .2s; }
-.btn-restart:hover { opacity: .85; }
-
-/* RECAP */
-.recap-filters { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
-.filter-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim); padding: .35rem .9rem; border-radius: 20px; cursor: pointer; font-size: .82rem; transition: all .2s; }
-.filter-btn:hover, .filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-.recap-table tr.hidden { display: none; }
-.tag { display: inline-block; padding: .15rem .55rem; border-radius: 12px; font-size: .72rem; font-weight: 600; }
-.tag-users { background: rgba(248,113,113,.15); color: var(--accent); }
-.tag-groupes { background: rgba(250,204,21,.12); color: #facc21; }
-.tag-permissions { background: rgba(76,175,130,.12); color: var(--success); }
+:root{--bg:#f4f7fa;--surface:#fff;--surface2:#e5edf3;--text:#182d3e;--text-dim:#455d70;--accent:#006575;--accent2:#005969;--border:#8196a6;--success:#17623c;--danger:#a32336;--radius:20px}
+html[data-theme="light"]{--purple:#6940bd;--blue:#245db7;--pink:#b12c65;--wash:#eeeafa;--u-bg:#eeeafa;--g-bg:#e5eefb;--o-bg:#fbe9f0;--shadow:0 14px 40px #23314a09}
+html[data-theme="dark"]{--purple:#c4a4ff;--blue:#91bbff;--pink:#ff9fc8;--wash:#2b2940;--u-bg:#2b2940;--g-bg:#20374c;--o-bg:#412939;--shadow:0 14px 40px #0002}
+*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 'Segoe UI',system-ui,sans-serif}button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:4px}a{color:var(--accent2);text-underline-offset:3px}h1,h2,h3,p{margin:0}h1,h2,h3{line-height:1.15}code,pre,.mono{font-family:Consolas,'Cascadia Code',monospace}code{font-size:.92em}p+p{margin-top:.7rem}.shell{max-width:1180px;margin:auto;padding:0 28px}.theme-toolbar{max-width:1180px;margin:auto;border:0;background:none;padding:.7rem 28px}
+.hero{display:flex;align-items:center;justify-content:space-between;gap:2rem;padding:24px 0 30px}.eyebrow{text-transform:uppercase;font-size:.7rem;letter-spacing:.15em;font-weight:800;color:var(--purple)}h1{font-size:clamp(2.15rem,5vw,3.5rem);letter-spacing:-.055em;margin:12px 0 16px}h1 em{font-style:normal;color:var(--purple)}.lead{color:var(--text-dim);max-width:53ch}.hero-code{padding:24px;border:1px solid var(--border);background:var(--surface);border-radius:22px;box-shadow:var(--shadow);transform:rotate(-3deg);white-space:nowrap}.hero-code p{font-size:.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.13em}.hero-mode{font:800 1.7rem/2 Consolas,monospace}.u-color{color:var(--purple)}.g-color{color:var(--blue)}.o-color{color:var(--pink)}.hero-code small{font-size:.76rem;color:var(--text-dim)}
+.tabs{display:flex;gap:5px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:6px;margin-bottom:28px;overflow-x:auto}.tabs button{flex:1;white-space:nowrap;border:0;border-radius:11px;padding:12px 15px;background:none;color:var(--text-dim);font-size:.86rem;font-weight:750}.tabs button[aria-selected="true"]{background:var(--wash);color:var(--purple)}.tabs small{opacity:.7;margin-right:6px}.section-head{display:flex;align-items:end;justify-content:space-between;gap:1rem;margin-bottom:22px}.section-head h2{font-size:1.6rem;letter-spacing:-.025em;margin-top:7px}.section-head>p{font-size:.85rem;max-width:35ch;color:var(--text-dim)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);min-width:0}.card h3{font-size:1.2rem;margin-bottom:12px}.muted{color:var(--text-dim)}.small{font-size:.8rem;color:var(--text-dim)}.note{padding:14px 18px;border-left:3px solid var(--purple);background:var(--wash);border-radius:0 12px 12px 0;font-size:.85rem;margin-top:20px}.note strong{color:var(--text)}.btn{border:1px solid var(--border);background:var(--surface2);border-radius:10px;padding:9px 14px;color:var(--text);font-size:.84rem;font-weight:700}.btn.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}.person-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:22px}.person{text-align:left;border:1px solid var(--border);border-radius:16px;background:var(--surface);padding:17px;color:var(--text)}.person[aria-pressed="true"]{background:var(--wash);border-color:var(--purple)}.avatar{width:38px;height:38px;display:grid;place-items:center;background:var(--wash);color:var(--purple);border-radius:50%;font-weight:850;margin-bottom:10px}.person strong{display:block}.person small{display:block;font-size:.75rem;color:var(--text-dim);margin-top:4px}.command-pills{display:flex;flex-wrap:wrap;gap:7px;margin:18px 0}.command-pills button{font: .83rem Consolas,monospace;border:1px solid var(--border);background:var(--surface);padding:7px 10px;border-radius:9px;color:var(--text)}.command-pills button[aria-pressed="true"]{border-color:var(--purple);color:var(--purple);background:var(--wash)}.terminal{background:#101923;color:#edf5fb;border-radius:15px;padding:20px;min-height:138px;overflow-x:auto}.terminal .prompt{color:#91e6b3;font: .85rem/1.8 Consolas,monospace;white-space:pre}.terminal pre{font-size:.85rem;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;margin:8px 0 0}.terminal .line{color:#b7c9d8}.mini-flow{display:grid;gap:12px;list-style:none;padding:0;margin:18px 0}.mini-flow li{display:flex;gap:12px;align-items:start;font-size:.87rem}.mini-flow b{flex-shrink:0;background:var(--wash);color:var(--purple);border-radius:8px;width:28px;height:28px;display:grid;place-items:center}.mini-flow strong{display:block}.mini-flow small{color:var(--text-dim)}details{margin-top:18px}summary{cursor:pointer;color:var(--accent2);font-weight:700;font-size:.87rem}.manage{display:grid;gap:10px;margin-top:12px}.manage code{display:block;overflow-wrap:anywhere}.manage p{padding:10px 0;border-bottom:1px solid var(--border);font-size:.82rem}.manage small{display:block;color:var(--text-dim);margin-top:4px}
+.listing{background:#101923;color:#edf5fb;padding:25px;border-radius:18px;margin-bottom:20px}.listing-label{font:.8rem Consolas,monospace;color:#91e6b3;margin-bottom:18px}.listing-line{display:flex;align-items:center;flex-wrap:wrap;gap:8px;font: .95rem Consolas,monospace}.listing-line button{border:1px solid #587488;background:#243b4c;color:#edf5fb;padding:10px 13px;border-radius:9px;font:700 1.2rem Consolas,monospace}.listing-line button[aria-pressed="true"]{outline:2px solid #c4a4ff;outline-offset:2px}.listing-line .read-u{color:#c4a4ff}.listing-line .read-g{color:#91bbff}.listing-line .read-o{color:#ff9fc8}.listing-line .meta{font-size:.86rem;color:#b7c9d8;margin-left:6px}.decode-message{min-height:74px}.decode-message h3{color:var(--purple);font-size:1.05rem}.decode-message p{color:var(--text-dim);font-size:.9rem;margin-top:7px}.decode-key{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}.decode-key div{padding:18px;border:1px solid var(--border);border-radius:15px;background:var(--surface)}.decode-key b{font:800 2rem Consolas,monospace;color:var(--purple);display:block}.decode-key strong{font-size:.9rem}.decode-key p{font-size:.8rem;color:var(--text-dim);margin-top:7px}.pair-controls{display:flex;gap:8px;margin:18px 0;flex-wrap:wrap}.pair-controls button[aria-pressed="true"]{border-color:var(--purple);color:var(--purple);background:var(--wash)}
+.lab-toolbar{display:flex;gap:14px;flex-wrap:wrap;align-items:end;margin-bottom:20px}.control{display:grid;gap:6px;font-size:.76rem;color:var(--text-dim);flex:1;min-width:130px}.control select,.control input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text)}.permissions{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.permission-group{border:1px solid var(--border);border-radius:16px;padding:17px;background:var(--u-bg);min-width:0}.permission-group:nth-child(2){background:var(--g-bg)}.permission-group:nth-child(3){background:var(--o-bg)}.permission-group.active-group{outline:2px solid var(--accent);outline-offset:2px}.permission-group h3{font-size:.85rem;margin-bottom:6px}.permission-group>small{font-size:.71rem;color:var(--text-dim)}.digit{font:850 2.3rem Consolas,monospace;color:var(--purple);margin:10px 0}.permission-group:nth-child(2) .digit{color:var(--blue)}.permission-group:nth-child(3) .digit{color:var(--pink)}.check-label{display:flex;align-items:center;gap:8px;font-size:.83rem;margin:10px 0;cursor:pointer}.check-label input{width:18px;height:18px;accent-color:var(--accent)}.check-label span{white-space:nowrap}.check-label small{margin-left:auto;color:var(--text-dim);font: .73rem Consolas,monospace}.mode-result{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin:20px 0 14px;padding:17px;border:1px solid var(--border);background:var(--surface);border-radius:14px}.mode-result .symbolic{font:750 1.3rem Consolas,monospace;letter-spacing:.03em}.mode-input{display:flex;align-items:center;gap:10px;font-size:.75rem;color:var(--text-dim)}.mode-input input{width:76px;letter-spacing:.1em;font:750 1.2rem Consolas,monospace;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:7px 8px}.validation{font-size:.8rem;color:var(--danger);min-height:1.4em}.presets{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0 20px}.presets button{border:1px solid var(--border);border-radius:20px;font: .76rem Consolas,monospace;background:var(--surface);color:var(--text);padding:6px 10px}.presets button:hover{border-color:var(--purple)}.access-heading{display:flex;gap:10px;align-items:center;margin-bottom:18px}.access-heading .avatar{margin:0}.access-heading h3{margin:0}.access-heading small{color:var(--text-dim);font-size:.75rem}.access-rows{display:grid;gap:10px;margin-top:15px}.access-row{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--border);padding:9px 0;font-size:.88rem}.status{font-size:.75rem;font-weight:750;border-radius:7px;padding:4px 9px;white-space:nowrap}.status.allowed{color:var(--success);background:color-mix(in srgb,var(--success) 9%,var(--surface))}.status.denied{color:var(--danger);background:color-mix(in srgb,var(--danger) 8%,var(--surface))}.command-result{font: .9rem Consolas,monospace;background:var(--surface2);border-radius:10px;padding:12px;overflow-wrap:anywhere;margin-top:15px}.symbolic-controls{display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin-top:15px}.symbolic-controls select{border:1px solid var(--border);border-radius:9px;padding:8px;background:var(--surface);color:var(--text);font:.9rem Consolas,monospace}.symbolic-controls label{display:grid;font-size:.7rem;color:var(--text-dim);gap:4px}.symbolic-controls .btn{font-size:.8rem}.inline-feedback{font-size:.81rem;color:var(--text-dim);margin-top:10px;min-height:2em}.advanced-grid{margin-top:22px}.mission-banner{border:1px solid var(--purple);background:var(--wash);padding:17px 20px;border-radius:15px;margin-bottom:22px}.mission-banner .bar{display:flex;align-items:center;justify-content:space-between;gap:15px}.mission-banner p{font-size:.87rem}.mission-banner strong{color:var(--purple)}.mission-banner button{margin-top:12px}.mission-banner .inline-feedback{color:var(--text)}.missions{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.mission{display:flex;flex-direction:column}.mission-number{font:800 2rem Consolas,monospace;color:var(--purple);margin-bottom:14px}.mission p{color:var(--text-dim);font-size:.9rem;margin-bottom:20px}.mission .btn{margin-top:auto;align-self:start}.quiz-note{margin-bottom:20px;color:var(--text-dim)}.footer{display:flex;gap:20px;justify-content:space-between;align-items:start;padding:25px 0;margin-top:30px;border-top:1px solid var(--border);font-size:.75rem;color:var(--text-dim)}.footer a{white-space:nowrap}.footer details{margin:0}.footer summary{font-size:.75rem}.footer p{max-width:70ch;margin-top:10px;font-size:.74rem}
+@media(max-width:900px){.hero-code{display:none}.grid{grid-template-columns:1fr}.missions{grid-template-columns:1fr}.section-head>p{display:none}.mission p{margin-bottom:15px}.mission-number{font-size:1.4rem}.shell{padding:0 20px}}
+@media(max-width:560px){.shell{padding:0 16px}.theme-toolbar{padding:.6rem 16px}.hero{padding:16px 0 25px}h1{font-size:2.4rem}.lead{font-size:.9rem}.tabs button{flex:none;padding:10px 12px;font-size:.8rem}.section-head h2{font-size:1.4rem}.person-grid{gap:7px}.person{padding:12px 10px}.person small{font-size:.67rem}.card{padding:19px}.permissions{gap:7px}.permission-group{padding:12px 8px}.permission-group h3{font-size:.74rem}.permission-group>small{font-size:.63rem}.check-label{gap:4px;font-size:.75rem}.check-label input{width:16px;height:16px;margin:0}.check-label small{display:none}.digit{font-size:1.9rem}.mode-result .symbolic{font-size:1.05rem}.listing{padding:19px}.listing-line{gap:6px}.listing-line button{font-size:1rem;padding:9px 11px}.listing-line .meta{font-size:.73rem;margin-left:0}.decode-key{grid-template-columns:1fr}.decode-key div{display:grid;grid-template-columns:42px 1fr;gap:2px 12px}.decode-key b{grid-row:span 2}.decode-key p{margin:0}.mission-banner .bar{align-items:start;flex-direction:column;gap:7px}.footer{flex-direction:column}.terminal{padding:16px}.terminal .prompt{font-size:.75rem}.terminal pre{font-size:.78rem}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 .course-site-nav { display:flex; justify-content:space-between; gap:1rem; padding:.8rem 1rem; background:#1a1d27; flex-wrap:wrap; } .course-site-nav a {color:#93c5fd; font-weight:600;}
-</style>
-<link rel="stylesheet" href="assets/themes/theme.css">
-<script src="assets/themes/theme.js"></script>
-</head>
-<body>
+</style></head><body>
 <div class="course-site-nav"><a href="../07-utilisateurs-et-permissions/">← Chapitre 07</a><a href="quiz/07-utilisateurs-et-permissions.html">Quiz du chapitre →</a></div>
-
-<header>
-  <div class="badge">Linux Initiation</div>
-  <h1>07 — Utilisateurs et permissions</h1>
-  <p>Comptes, droits, chmod — comprendre et gérer qui peut faire quoi</p>
-</header>
-
-<nav>
-  <button class="active" onclick="showTab('users',this)">Utilisateurs</button>
-  <button onclick="showTab('comptes',this)">Gérer les comptes</button>
-  <button onclick="showTab('perms',this)">Permissions</button>
-  <button onclick="showTab('chmod',this)">chmod</button>
-  <button onclick="showTab('recap',this)">Récapitulatif</button>
-  <button onclick="showTab('quiz',this)">Quiz</button>
-</nav>
-
+<div class="shell"><div class="hero"><div><p class="eyebrow">Linux initiation · Chapitre 07</p><h1>Qui peut faire <em>quoi ?</em></h1><p class="lead">Choisissez une identité. Décodez les droits.<br>Changez les permissions et observez leurs effets.</p></div><div class="hero-code" aria-hidden="true"><p>Un fichier · trois catégories</p><div class="hero-mode">-<span class="u-color">rw-</span><span class="g-color">r--</span><span class="o-color">---</span></div><small>alice &nbsp; stagiaires &nbsp; notes.txt</small></div></div>
+<div class="tabs" role="tablist" aria-label="Progression du laboratoire"><button id="tab-identity" role="tab" aria-selected="true" aria-controls="panel-identity" tabindex="0"><small>01</small>Les identités</button><button id="tab-read" role="tab" aria-selected="false" aria-controls="panel-read" tabindex="-1"><small>02</small>Lire les droits</button><button id="tab-lab" role="tab" aria-selected="false" aria-controls="panel-lab" tabindex="-1"><small>03</small>L’atelier chmod</button><button id="tab-missions" role="tab" aria-selected="false" aria-controls="panel-missions" tabindex="-1"><small>04</small>Les missions</button><button id="tab-test" role="tab" aria-selected="false" aria-controls="panel-test" tabindex="-1"><small>05</small>Le quiz</button></div>
 <main>
-
-<!-- TAB 1 : UTILISATEURS -->
-<div class="tab active" id="tab-users">
-  <h2>Le système multi-utilisateurs</h2>
-
-  <div class="callout note">
-    <strong>Analogie</strong>
-    Un système Linux est comme un immeuble : chaque personne a sa <strong>clé</strong> (son compte), son <strong>appartement</strong> (/home/alice), et le <strong>gardien avec le passe-partout</strong>, c'est <strong>root</strong>.
-  </div>
-
-  <h3>L'utilisateur root</h3>
-  <p>Root est le superutilisateur : il a tous les droits sur le système, sans aucune restriction.</p>
-  <div class="callout danger">
-    <strong>Danger</strong>
-    Ne jamais travailler au quotidien en tant que root. Une seule erreur (ex: <code>rm -rf /</code>) peut détruire tout le système sans confirmation.
-  </div>
-
-  <h3>Commandes d'identité</h3>
-  <div class="code-block">
-    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
-    <pre><span class="cmd">whoami</span>      <span class="comment"># utilisateur courant</span>
-<span class="cmd">id</span>          <span class="comment"># UID, GID et groupes</span>
-<span class="cmd">who</span>         <span class="comment"># utilisateurs connectés</span>
-<span class="cmd">groups</span>      <span class="comment"># groupes de l'utilisateur courant</span></pre>
-  </div>
-
-  <h3>sudo — élévation ponctuelle</h3>
-  <p><strong>sudo</strong> permet d'exécuter <em>une seule commande</em> avec les droits root, sans se connecter en root. C'est la méthode recommandée.</p>
-  <div class="code-block">
-    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
-    <pre><span class="cmd">sudo</span> <span class="arg">apt update</span>
-<span class="cmd">sudo</span> <span class="cmd">nano</span> <span class="path">/etc/hosts</span></pre>
-  </div>
-
-  <h3>Les groupes</h3>
-  <p>Chaque utilisateur appartient à un ou plusieurs groupes. Les permissions peuvent être attribuées à un groupe entier.</p>
-  <div class="code-block">
-    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
-    <pre><span class="cmd">cat</span> <span class="path">/etc/group</span>    <span class="comment"># liste de tous les groupes</span></pre>
-  </div>
-</div>
-
-<!-- TAB 2 : GÉRER LES COMPTES -->
-<div class="tab" id="tab-comptes">
-  <h2>Gérer les comptes utilisateurs</h2>
-  <p style="color:var(--text-dim); margin-bottom:1rem;">Ces commandes nécessitent <strong>sudo</strong>.</p>
-
-  <div class="callout warn">
-    <strong>Attention</strong>
-    Sur Debian, toujours utiliser <code>adduser</code> (et non <code>useradd</code>) pour créer un compte interactivement. <code>adduser</code> crée automatiquement le dossier /home, demande le mot de passe, etc.
-  </div>
-
-  <h3>Commandes de gestion — cliquez pour détailler</h3>
-  <div class="cards">
-    <div class="card" onclick="toggleCard(this)">
-      <h4>Créer un utilisateur</h4>
-      <span class="code-inline">sudo adduser alice</span>
-      <div class="card-detail">Crée l'utilisateur <em>alice</em>, son dossier <code>/home/alice</code>, et demande interactivement un mot de passe et des informations.</div>
-    </div>
-    <div class="card" onclick="toggleCard(this)">
-      <h4>Changer le mot de passe</h4>
-      <span class="code-inline">sudo passwd alice</span>
-      <div class="card-detail">Change le mot de passe de l'utilisateur alice. Sans argument (<code>passwd</code>), change le mot de passe de l'utilisateur courant.</div>
-    </div>
-    <div class="card" onclick="toggleCard(this)">
-      <h4>Ajouter au groupe sudo</h4>
-      <span class="code-inline">sudo usermod -aG sudo alice</span>
-      <div class="card-detail"><code>-a</code> = append (ajouter sans retirer les autres groupes), <code>-G</code> = groupe. Donne à alice le droit d'utiliser sudo.</div>
-    </div>
-    <div class="card" onclick="toggleCard(this)">
-      <h4>Supprimer un utilisateur</h4>
-      <span class="code-inline">sudo deluser alice</span>
-      <div class="card-detail">Supprime le compte alice, mais conserve le dossier <code>/home/alice</code> et ses fichiers.</div>
-    </div>
-    <div class="card" onclick="toggleCard(this)">
-      <h4>Supprimer avec le /home</h4>
-      <span class="code-inline">sudo deluser --remove-home alice</span>
-      <div class="card-detail">Supprime le compte ET le dossier personnel <code>/home/alice</code>. Irréversible — vérifier avant.</div>
-    </div>
-    <div class="card" onclick="toggleCard(this)">
-      <h4>Modifier un groupe</h4>
-      <span class="code-inline">sudo groupadd stagiaires</span>
-      <div class="card-detail">Crée un nouveau groupe <em>stagiaires</em>. On peut ensuite y ajouter des utilisateurs avec <code>usermod -aG stagiaires alice</code>.</div>
-    </div>
-  </div>
-
-  <h3>Récapitulatif rapide</h3>
-  <div class="code-block">
-    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
-    <pre><span class="cmd">sudo</span> <span class="arg">adduser alice</span>                    <span class="comment"># crée un utilisateur (interactif)</span>
-<span class="cmd">sudo</span> <span class="cmd">passwd</span> <span class="arg">alice</span>                    <span class="comment"># change le mot de passe</span>
-<span class="cmd">sudo</span> <span class="cmd">usermod</span> <span class="flag">-aG</span> <span class="arg">sudo alice</span>          <span class="comment"># ajoute alice au groupe sudo</span>
-<span class="cmd">sudo</span> <span class="cmd">deluser</span> <span class="arg">alice</span>                    <span class="comment"># supprime l'utilisateur</span>
-<span class="cmd">sudo</span> <span class="cmd">deluser</span> <span class="flag">--remove-home</span> <span class="arg">alice</span>    <span class="comment"># supprime aussi /home/alice</span></pre>
-  </div>
-</div>
-
-<!-- TAB 3 : PERMISSIONS -->
-<div class="tab" id="tab-perms">
-  <h2>Lire et comprendre les permissions</h2>
-<!-- illustration-07 -->
-<figure class="course-diagram" style="margin:1.25rem 0"><a href="../ressources/images/07-permissions-utilisateur-groupe-autres.svg" target="_blank" rel="noopener"><img src="../ressources/images/07-permissions-utilisateur-groupe-autres.svg" alt="Lire les trois blocs de permissions et leur valeur numérique." width="1000" height="600" loading="lazy" style="width:100%;height:auto;border-radius:12px"></a><figcaption style="font-size:.9rem;margin-top:.5rem">Lire les trois blocs de permissions et leur valeur numérique. Cliquez sur le schéma pour l’agrandir.</figcaption></figure>
-
-  <h3>Afficher les permissions</h3>
-  <div class="code-block">
-    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
-    <pre><span class="cmd">ls</span> <span class="flag">-l</span>    <span class="comment"># liste détaillée avec permissions</span></pre>
-  </div>
-  <p>Exemple de sortie :</p>
-  <div class="code-block">
-    <pre><span class="arg">-rw-r--r--</span>  1  stagiaire  stagiaire  1234  notes.txt</pre>
-  </div>
-
-  <h3>Visualiseur de permissions — cliquez sur un bloc</h3>
-  <div id="perm-visualizer">
-    <div class="perm-display">
-      <div class="perm-group">
-        <div class="perm-block">
-          <div class="perm-char type" data-info="type" onclick="showPermInfo(this, 'type', '-')">-</div>
-        </div>
-        <div class="perm-group-label">type</div>
-      </div>
-      <div class="perm-sep">|</div>
-      <div class="perm-group">
-        <div class="perm-block">
-          <div class="perm-char r" data-info="ur" onclick="showPermInfo(this,'ur','r')">r</div>
-          <div class="perm-char w" data-info="uw" onclick="showPermInfo(this,'uw','w')">w</div>
-          <div class="perm-char dash" data-info="ux" onclick="showPermInfo(this,'ux','-')">-</div>
-        </div>
-        <div class="perm-group-label">u (propriétaire)</div>
-      </div>
-      <div class="perm-sep">|</div>
-      <div class="perm-group">
-        <div class="perm-block">
-          <div class="perm-char r" data-info="gr" onclick="showPermInfo(this,'gr','r')">r</div>
-          <div class="perm-char dash" data-info="gw" onclick="showPermInfo(this,'gw','-')">-</div>
-          <div class="perm-char dash" data-info="gx" onclick="showPermInfo(this,'gx','-')">-</div>
-        </div>
-        <div class="perm-group-label">g (groupe)</div>
-      </div>
-      <div class="perm-sep">|</div>
-      <div class="perm-group">
-        <div class="perm-block">
-          <div class="perm-char r" data-info="or" onclick="showPermInfo(this,'or','r')">r</div>
-          <div class="perm-char dash" data-info="ow" onclick="showPermInfo(this,'ow','-')">-</div>
-          <div class="perm-char dash" data-info="ox" onclick="showPermInfo(this,'ox','-')">-</div>
-        </div>
-        <div class="perm-group-label">o (autres)</div>
-      </div>
-    </div>
-    <div class="perm-info" id="perm-info-box">Cliquez sur un caractère pour voir son explication.</div>
-  </div>
-
-  <h3>Les 3 droits</h3>
-  <table>
-    <tr><th>Lettre</th><th>Nom</th><th>Sur un fichier</th><th>Sur un dossier</th></tr>
-    <tr><td><strong style="color:var(--success)">r</strong></td><td>read (lecture)</td><td>Lire le contenu du fichier</td><td>Lister les fichiers du dossier</td></tr>
-    <tr><td><strong style="color:var(--warn)">w</strong></td><td>write (écriture)</td><td>Modifier le fichier</td><td>Créer/supprimer des fichiers dans le dossier</td></tr>
-    <tr><td><strong style="color:#a78bfa">x</strong></td><td>execute (exécution)</td><td>Lancer le fichier comme programme</td><td>Entrer dans le dossier (cd)</td></tr>
-  </table>
-
-  <h3>Les 3 catégories</h3>
-  <table>
-    <tr><th>Lettre</th><th>Nom</th><th>Description</th></tr>
-    <tr><td><strong style="color:var(--accent)">u</strong></td><td>user</td><td>Le propriétaire du fichier</td></tr>
-    <tr><td><strong style="color:var(--accent)">g</strong></td><td>group</td><td>Le groupe associé au fichier</td></tr>
-    <tr><td><strong style="color:var(--accent)">o</strong></td><td>others</td><td>Tous les autres utilisateurs</td></tr>
-  </table>
-</div>
-
-<!-- TAB 4 : CHMOD -->
-<div class="tab" id="tab-chmod">
-  <h2>Modifier les permissions avec chmod</h2>
-
-  <h3>Mode symbolique</h3>
-  <p>On désigne <em>qui</em> (u/g/o/a), l'<em>opération</em> (+/-/=) et le <em>droit</em> (r/w/x).</p>
-  <div class="code-block">
-    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
-    <pre><span class="cmd">chmod</span> <span class="arg">u+x script.sh</span>     <span class="comment"># ajoute exécution au propriétaire</span>
-<span class="cmd">chmod</span> <span class="arg">g-w fichier.txt</span>   <span class="comment"># retire écriture au groupe</span>
-<span class="cmd">chmod</span> <span class="arg">o+r rapport.txt</span>   <span class="comment"># donne lecture aux autres</span>
-<span class="cmd">chmod</span> <span class="arg">a+x script.sh</span>     <span class="comment"># donne exécution à tous (all)</span></pre>
-  </div>
-
-  <h3>Mode numérique (r=4, w=2, x=1)</h3>
-  <p>On additionne les valeurs pour chaque catégorie (u/g/o) :</p>
-  <table>
-    <tr><th>Valeur</th><th>Droits</th><th>Explication</th></tr>
-    <tr><td><strong>7</strong></td><td>rwx</td><td>4+2+1 = tout</td></tr>
-    <tr><td><strong>6</strong></td><td>rw-</td><td>4+2 = lecture + écriture</td></tr>
-    <tr><td><strong>5</strong></td><td>r-x</td><td>4+1 = lecture + exécution</td></tr>
-    <tr><td><strong>4</strong></td><td>r--</td><td>4 = lecture seule</td></tr>
-    <tr><td><strong>0</strong></td><td>---</td><td>aucun droit</td></tr>
-  </table>
-  <div class="code-block">
-    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
-    <pre><span class="cmd">chmod</span> <span class="arg">644 fichier.txt</span>   <span class="comment"># rw-r--r-- (fichier standard)</span>
-<span class="cmd">chmod</span> <span class="arg">755 script.sh</span>     <span class="comment"># rwxr-xr-x (script exécutable)</span>
-<span class="cmd">chmod</span> <span class="arg">700 secret.txt</span>    <span class="comment"># rwx------ (privé, personne d'autre)</span></pre>
-  </div>
-
-  <h3>Calculatrice chmod interactive</h3>
-  <div class="chmod-calc">
-    <div class="chmod-cols">
-      <div class="chmod-col">
-        <h4>u — Propriétaire</h4>
-        <label class="chmod-check"><input type="checkbox" id="ur" onchange="calcChmod()"><label for="ur">r (lecture)</label></label>
-        <label class="chmod-check"><input type="checkbox" id="uw" onchange="calcChmod()"><label for="uw">w (écriture)</label></label>
-        <label class="chmod-check"><input type="checkbox" id="ux" onchange="calcChmod()"><label for="ux">x (exécution)</label></label>
-      </div>
-      <div class="chmod-col">
-        <h4>g — Groupe</h4>
-        <label class="chmod-check"><input type="checkbox" id="gr" onchange="calcChmod()"><label for="gr">r (lecture)</label></label>
-        <label class="chmod-check"><input type="checkbox" id="gw" onchange="calcChmod()"><label for="gw">w (écriture)</label></label>
-        <label class="chmod-check"><input type="checkbox" id="gx" onchange="calcChmod()"><label for="gx">x (exécution)</label></label>
-      </div>
-      <div class="chmod-col">
-        <h4>o — Autres</h4>
-        <label class="chmod-check"><input type="checkbox" id="or2" onchange="calcChmod()"><label for="or2">r (lecture)</label></label>
-        <label class="chmod-check"><input type="checkbox" id="ow2" onchange="calcChmod()"><label for="ow2">w (écriture)</label></label>
-        <label class="chmod-check"><input type="checkbox" id="ox2" onchange="calcChmod()"><label for="ox2">x (exécution)</label></label>
-      </div>
-    </div>
-    <div class="chmod-result">
-      <div class="chmod-number" id="chmod-num">000</div>
-      <div class="chmod-symbolic" id="chmod-sym">---------</div>
-      <div class="chmod-example" id="chmod-ex">chmod 000 fichier</div>
-    </div>
-  </div>
-
-  <h3>chown — changer le propriétaire</h3>
-  <div class="code-block">
-    <button class="copy-btn" onclick="copyCode(this)">Copier</button>
-    <pre><span class="cmd">sudo</span> <span class="cmd">chown</span> <span class="arg">alice fichier.txt</span>
-<span class="cmd">sudo</span> <span class="cmd">chown</span> <span class="arg">alice:stagiaires fichier.txt</span>  <span class="comment"># propriétaire:groupe</span>
-<span class="cmd">sudo</span> <span class="cmd">chown</span> <span class="flag">-R</span> <span class="arg">alice /home/alice/</span>         <span class="comment"># récursif sur tout le dossier</span></pre>
-  </div>
-</div>
-
-<!-- TAB 5 : RÉCAP -->
-<div class="tab" id="tab-recap">
-  <h2>Récapitulatif des commandes</h2>
-  <div class="recap-filters">
-    <button class="filter-btn active" onclick="filterRecap('all',this)">Tout</button>
-    <button class="filter-btn" onclick="filterRecap('users',this)">Utilisateurs</button>
-    <button class="filter-btn" onclick="filterRecap('groupes',this)">Groupes</button>
-    <button class="filter-btn" onclick="filterRecap('permissions',this)">Permissions</button>
-  </div>
-  <table>
-    <thead><tr><th>Commande</th><th>Description</th><th>Catégorie</th></tr></thead>
-    <tbody id="recap-body">
-      <tr data-cat="users"><td><code>whoami</code></td><td>Affiche l'utilisateur courant</td><td><span class="tag tag-users">users</span></td></tr>
-      <tr data-cat="users"><td><code>id</code></td><td>Affiche UID, GID et groupes</td><td><span class="tag tag-users">users</span></td></tr>
-      <tr data-cat="users"><td><code>who</code></td><td>Affiche les utilisateurs connectés</td><td><span class="tag tag-users">users</span></td></tr>
-      <tr data-cat="users"><td><code>sudo adduser alice</code></td><td>Crée un nouvel utilisateur (interactif)</td><td><span class="tag tag-users">users</span></td></tr>
-      <tr data-cat="users"><td><code>sudo passwd alice</code></td><td>Change le mot de passe d'alice</td><td><span class="tag tag-users">users</span></td></tr>
-      <tr data-cat="users"><td><code>sudo deluser alice</code></td><td>Supprime le compte alice</td><td><span class="tag tag-users">users</span></td></tr>
-      <tr data-cat="users"><td><code>sudo deluser --remove-home alice</code></td><td>Supprime le compte et le /home</td><td><span class="tag tag-users">users</span></td></tr>
-      <tr data-cat="groupes"><td><code>groups</code></td><td>Affiche les groupes de l'utilisateur courant</td><td><span class="tag tag-groupes">groupes</span></td></tr>
-      <tr data-cat="groupes"><td><code>cat /etc/group</code></td><td>Liste tous les groupes du système</td><td><span class="tag tag-groupes">groupes</span></td></tr>
-      <tr data-cat="groupes"><td><code>sudo usermod -aG sudo alice</code></td><td>Ajoute alice au groupe sudo</td><td><span class="tag tag-groupes">groupes</span></td></tr>
-      <tr data-cat="groupes"><td><code>sudo groupadd stagiaires</code></td><td>Crée un nouveau groupe</td><td><span class="tag tag-groupes">groupes</span></td></tr>
-      <tr data-cat="permissions"><td><code>ls -l</code></td><td>Affiche les permissions des fichiers</td><td><span class="tag tag-permissions">permissions</span></td></tr>
-      <tr data-cat="permissions"><td><code>chmod 644 fichier</code></td><td>Droits rw-r--r-- (fichier standard)</td><td><span class="tag tag-permissions">permissions</span></td></tr>
-      <tr data-cat="permissions"><td><code>chmod 755 script.sh</code></td><td>Droits rwxr-xr-x (script exécutable)</td><td><span class="tag tag-permissions">permissions</span></td></tr>
-      <tr data-cat="permissions"><td><code>chmod u+x script.sh</code></td><td>Ajoute l'exécution au propriétaire</td><td><span class="tag tag-permissions">permissions</span></td></tr>
-      <tr data-cat="permissions"><td><code>chmod a+r fichier</code></td><td>Donne la lecture à tous</td><td><span class="tag tag-permissions">permissions</span></td></tr>
-      <tr data-cat="permissions"><td><code>sudo chown alice fichier</code></td><td>Change le propriétaire du fichier</td><td><span class="tag tag-permissions">permissions</span></td></tr>
-      <tr data-cat="permissions"><td><code>sudo chown -R alice /dossier/</code></td><td>Chown récursif sur un dossier</td><td><span class="tag tag-permissions">permissions</span></td></tr>
-    </tbody>
-  </table>
-</div>
-
-<!-- TAB 6 : QUIZ -->
-<div class="tab" id="tab-quiz">
-  <h2>Quiz — Utilisateurs et permissions</h2>
-  <div id="quiz-container"></div>
-  <div class="quiz-score" id="quiz-score">
-    <h3 id="score-text"></h3>
-    <p id="score-sub"></p>
-    <button class="btn-restart" onclick="initQuiz()">Recommencer</button>
-  </div>
-</div>
-
-</main>
-
-<script>
-// ========== TABS ==========
-function showTab(id, btn) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + id).classList.add('active');
-  btn.classList.add('active');
-}
-
-// ========== COPY ==========
-function copyCode(btn) {
-  const pre = btn.nextElementSibling;
-  navigator.clipboard.writeText(pre.innerText).then(() => {
-    btn.textContent = 'Copié !';
-    btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 1800);
-  });
-}
-
-// ========== CARDS ==========
-function toggleCard(card) {
-  card.classList.toggle('open');
-}
-
-// ========== PERM VISUALIZER ==========
-const permInfos = {
-  type: { '-': 'Type <strong>-</strong> : fichier ordinaire.<br>Autres possibilités : <code>d</code> = dossier, <code>l</code> = lien symbolique.' },
-  ur: { r: '<strong>Propriétaire (u)</strong> — <span style="color:var(--success)">r</span> : peut lire le fichier.' },
-  uw: { w: '<strong>Propriétaire (u)</strong> — <span style="color:var(--warn)">w</span> : peut modifier le fichier.' },
-  ux: { '-': '<strong>Propriétaire (u)</strong> — <span style="color:var(--text-dim)">-</span> : ne peut PAS exécuter ce fichier.' },
-  gr: { r: '<strong>Groupe (g)</strong> — <span style="color:var(--success)">r</span> : les membres du groupe peuvent lire le fichier.' },
-  gw: { '-': '<strong>Groupe (g)</strong> — <span style="color:var(--text-dim)">-</span> : les membres du groupe ne peuvent PAS modifier.' },
-  gx: { '-': '<strong>Groupe (g)</strong> — <span style="color:var(--text-dim)">-</span> : les membres du groupe ne peuvent PAS exécuter.' },
-  or: { r: '<strong>Autres (o)</strong> — <span style="color:var(--success)">r</span> : tout le monde peut lire ce fichier.' },
-  ow: { '-': '<strong>Autres (o)</strong> — <span style="color:var(--text-dim)">-</span> : les autres ne peuvent PAS modifier.' },
-  ox: { '-': '<strong>Autres (o)</strong> — <span style="color:var(--text-dim)">-</span> : les autres ne peuvent PAS exécuter.' }
-};
-let selectedPerm = null;
-function showPermInfo(el, key, char) {
-  if (selectedPerm) selectedPerm.classList.remove('selected');
-  el.classList.add('selected');
-  selectedPerm = el;
-  const info = permInfos[key] && permInfos[key][char];
-  document.getElementById('perm-info-box').innerHTML = info || 'Pas d\'info pour ce caractère.';
-}
-
-// ========== CHMOD CALCULATOR ==========
-function calcChmod() {
-  const u = (document.getElementById('ur').checked ? 4:0) + (document.getElementById('uw').checked ? 2:0) + (document.getElementById('ux').checked ? 1:0);
-  const g = (document.getElementById('gr').checked ? 4:0) + (document.getElementById('gw').checked ? 2:0) + (document.getElementById('gx').checked ? 1:0);
-  const o = (document.getElementById('or2').checked ? 4:0) + (document.getElementById('ow2').checked ? 2:0) + (document.getElementById('ox2').checked ? 1:0);
-  const num = '' + u + g + o;
-  const toSym = v => (v&4?'r':'-') + (v&2?'w':'-') + (v&1?'x':'-');
-  document.getElementById('chmod-num').textContent = num;
-  document.getElementById('chmod-sym').textContent = toSym(u) + toSym(g) + toSym(o);
-  document.getElementById('chmod-ex').textContent = 'chmod ' + num + ' fichier';
-}
-
-// ========== RECAP FILTER ==========
-function filterRecap(cat, btn) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelectorAll('#recap-body tr').forEach(tr => {
-    tr.classList.toggle('hidden', cat !== 'all' && tr.dataset.cat !== cat);
-  });
-}
-
-// ========== QUIZ ==========
-const questions = [
-  { q: "Que fait la commande <code>whoami</code> ?",
-    opts: ["Affiche la liste des utilisateurs du système", "Affiche le nom de l'utilisateur courant", "Montre qui est connecté en ce moment", "Affiche l'UID de root"],
-    correct: 1, fb: "<code>whoami</code> affiche simplement le nom d'utilisateur sous lequel on est connecté." },
-  { q: "Pourquoi utilise-t-on <code>sudo</code> au lieu de se connecter en root ?",
-    opts: ["Pour aller plus vite", "Pour limiter le risque : une erreur en root peut détruire le système", "Parce que root n'a pas accès à Internet", "Pour chiffrer les commandes"],
-    correct: 1, fb: "sudo limite les risques en n'accordant les droits root que pour une seule commande à la fois." },
-  { q: "Dans <code>-rw-r--r--</code>, que signifient les 3 derniers caractères <code>r--</code> ?",
-    opts: ["Les droits du propriétaire", "Les droits du groupe", "Les droits des autres utilisateurs : lecture seule", "Le type du fichier"],
-    correct: 2, fb: "Les 10 caractères se lisent : type + 3 pour u + 3 pour g + 3 pour o. Les 3 derniers (r--) = autres = lecture seule." },
-  { q: "Quelle valeur numérique correspond aux droits <code>rwx</code> ?",
-    opts: ["6", "5", "7", "3"],
-    correct: 2, fb: "r=4, w=2, x=1. Donc rwx = 4+2+1 = 7." },
-  { q: "<code>chmod 644 fichier.txt</code> donne quels droits ?",
-    opts: ["rwxrwxrwx", "rwxr--r--", "rw-r--r--", "r--r--r--"],
-    correct: 2, fb: "644 : 6=rw- (propriétaire), 4=r-- (groupe), 4=r-- (autres). Fichier standard lisible par tous, modifiable par le propriétaire." },
-  { q: "Quelle option de <code>chmod</code> modifie récursivement tout un dossier ?",
-    opts: ["-a", "-R", "--all", "-f"],
-    correct: 1, fb: "<code>chmod -R 755 dossier/</code> applique les permissions à tous les fichiers et sous-dossiers récursivement." }
-];
-
-let quizAnswers = [];
-function initQuiz() {
-  quizAnswers = new Array(questions.length).fill(null);
-  document.getElementById('quiz-score').style.display = 'none';
-  const container = document.getElementById('quiz-container');
-  container.innerHTML = '';
-  questions.forEach((q, i) => {
-    const div = document.createElement('div');
-    div.className = 'quiz-q';
-    div.id = 'qq-' + i;
-    div.innerHTML = `<p>Question ${i+1}. ${q.q}</p>
-      <div class="quiz-options">
-        ${q.opts.map((o,j) => `<div class="quiz-option" onclick="answerQuiz(${i},${j})">${o}</div>`).join('')}
-      </div>
-      <div class="quiz-feedback" id="fb-${i}"></div>`;
-    container.appendChild(div);
-  });
-}
-
-function answerQuiz(qi, oi) {
-  if (quizAnswers[qi] !== null) return;
-  quizAnswers[qi] = oi;
-  const q = questions[qi];
-  const opts = document.querySelectorAll(`#qq-${qi} .quiz-option`);
-  opts.forEach((opt, j) => {
-    opt.classList.add('locked');
-    if (j === q.correct) opt.classList.add('correct');
-    else if (j === oi) opt.classList.add('wrong');
-  });
-  const fb = document.getElementById('fb-' + qi);
-  fb.classList.add('show');
-  const ok = oi === q.correct;
-  fb.classList.add(ok ? 'ok' : 'nok');
-  fb.innerHTML = (ok ? '✓ Correct ! ' : '✗ Incorrect. ') + q.fb;
-  if (quizAnswers.every(a => a !== null)) showScore();
-}
-
-function showScore() {
-  const score = quizAnswers.filter((a, i) => a === questions[i].correct).length;
-  const sc = document.getElementById('quiz-score');
-  sc.style.display = 'block';
-  document.getElementById('score-text').textContent = score + ' / ' + questions.length;
-  const msgs = ['Réessaie encore !', 'Pas mal, continue !', 'Bien joué !', 'Excellent !'];
-  document.getElementById('score-sub').textContent = msgs[Math.min(Math.floor(score/2), 3)];
-}
-
-initQuiz();
+<section id="panel-identity" role="tabpanel" aria-labelledby="tab-identity" tabindex="0">
+<div class="section-head"><div><p class="eyebrow">D’abord : qui agit ?</p><h2>Un compte, une identité, des groupes.</h2></div><p>Les exemples ci-dessous sont simulés. Aucune modification n’est faite sur votre machine.</p></div>
+<div class="person-grid"><button class="person" data-person="alice" aria-pressed="true"><span class="avatar" aria-hidden="true">A</span><strong>Alice</strong><small>stagiaires · sudo</small></button><button class="person" data-person="bob" aria-pressed="false"><span class="avatar" aria-hidden="true">B</span><strong>Bob</strong><small>stagiaires · projet</small></button><button class="person" data-person="camille" aria-pressed="false"><span class="avatar" aria-hidden="true">C</span><strong>Camille</strong><small>visiteurs</small></button></div>
+<div class="grid"><div class="card"><h3>Interroger son identité</h3><p class="muted">Choisissez une personne, puis une commande.</p><div class="command-pills" role="group" aria-label="Commandes d’identité"><button data-identity-command="whoami" aria-pressed="true">whoami</button><button data-identity-command="id" aria-pressed="false">id</button><button data-identity-command="groups" aria-pressed="false">groups</button><button data-identity-command="sudo whoami" aria-pressed="false">sudo whoami</button></div><div class="terminal" aria-live="polite"><p class="prompt" id="identity-prompt">alice@debian:~$ whoami</p><pre id="identity-output">alice</pre></div><p class="small" id="identity-explanation" style="margin-top:13px">whoami affiche le nom de l’utilisateur qui exécute la commande.</p></div>
+<div class="card"><h3>Les trois questions à se poser</h3><ol class="mini-flow"><li><b>1</b><span><strong>Quel utilisateur agit ?</strong><small>Son nom et son identifiant numérique, l’UID.</small></span></li><li><b>2</b><span><strong>À quels groupes appartient-il ?</strong><small>Un même compte peut appartenir à plusieurs groupes.</small></span></li><li><b>3</b><span><strong>À qui appartient le fichier ?</strong><small>Chaque fichier a un propriétaire et un groupe associé.</small></span></li></ol><div class="note"><strong>sudo change les privilèges de la commande.</strong> Il ne change pas le propriétaire de tous vos fichiers. Dans cet exemple Debian, Alice est autorisée à utiliser sudo ; Bob et Camille ne le sont pas.</div><details><summary>Repères pour gérer les comptes</summary><div class="manage"><p><code>sudo adduser alice</code><small>Créer un compte interactivement sur Debian.</small></p><p><code>passwd</code><small>Changer son mot de passe ; sudo passwd alice cible le compte Alice.</small></p><p><code>sudo usermod -aG stagiaires bob</code><small>Ajouter Bob sans retirer ses autres groupes. Une nouvelle session est généralement nécessaire.</small></p><p><code>sudo deluser bob</code><small>Supprimer le compte. L’option --remove-home supprime aussi son dossier personnel : vérifiez avant de l’utiliser.</small></p></div></details></div></div>
+<div class="note"><strong>root est un compte particulier (UID 0).</strong> On garde un compte normal pour le quotidien et on utilise les privilèges administrateur lorsque c’est nécessaire. Le laboratoire de droits utilise des comptes ordinaires.</div>
+</section>
+<section id="panel-read" role="tabpanel" aria-labelledby="tab-read" tabindex="0" hidden>
+<div class="section-head"><div><p class="eyebrow">Ensuite : qui possède la ressource ?</p><h2>Dépliez une ligne de ls -l.</h2></div><p>Cliquez sur les blocs : les lettres ont une place et une fonction précises.</p></div>
+<div class="listing"><p class="listing-label">alice@debian:~$ ls -l notes.txt</p><div class="listing-line"><button data-read="type" aria-pressed="false">-</button><button class="read-u" data-read="u" aria-pressed="true">rw-</button><button class="read-g" data-read="g" aria-pressed="false">r--</button><button class="read-o" data-read="o" aria-pressed="false">---</button><span class="meta">1</span><button data-read="owner" aria-pressed="false">alice</button><button data-read="group" aria-pressed="false">stagiaires</button><span class="meta">1234 &nbsp; 13 oct &nbsp; notes.txt</span></div></div>
+<div class="card decode-message" aria-live="polite"><h3 id="read-title">u — Le propriétaire</h3><p id="read-description">Alice possède ce fichier. Le bloc rw- lui permet de lire et modifier son contenu, pas de l’exécuter.</p></div>
+<div class="pair-controls" role="group" aria-label="Sens des droits selon le type de ressource"><button class="btn" data-meaning="file" aria-pressed="true">Sur un fichier</button><button class="btn" data-meaning="directory" aria-pressed="false">Sur un dossier</button></div>
+<div class="decode-key"><div><b>r</b><strong id="meaning-r-title">Lire</strong><p id="meaning-r-text">Lire le contenu du fichier.</p></div><div><b>w</b><strong id="meaning-w-title">Modifier</strong><p id="meaning-w-text">Modifier le contenu du fichier.</p></div><div><b>x</b><strong id="meaning-x-title">Exécuter</strong><p id="meaning-x-text">Autoriser son lancement comme programme, si le fichier s’y prête.</p></div></div>
+<div class="note"><strong>Un seul bloc s’applique :</strong> propriétaire d’abord ; sinon groupe si l’utilisateur en est membre ; sinon autres. On n’additionne pas les droits de ces trois blocs.</div>
+</section>
+<section id="panel-lab" role="tabpanel" aria-labelledby="tab-lab" tabindex="0" hidden>
+<div class="section-head"><div><p class="eyebrow">Enfin : quels droits donner ?</p><h2>Manipulez. Observez. Comprenez.</h2></div><p>Les droits et les commandes évoluent ensemble. Toutes les modifications sont simulées.</p></div>
+<div id="mission-banner" class="mission-banner" hidden><div class="bar"><p><strong id="mission-title"></strong><br><span id="mission-description"></span></p><button class="btn" id="exit-mission">Quitter la mission</button></div><button class="btn primary" id="check-mission">Vérifier mes droits</button><p class="inline-feedback" id="mission-feedback" aria-live="polite">Sélectionnez uniquement les droits nécessaires, puis vérifiez.</p></div>
+<div class="lab-toolbar"><label class="control">Type de ressource<select id="resource-type"><option value="file">Fichier · notes.txt</option><option value="directory">Dossier · atelier/</option></select></label><label class="control">Utilisateur qui essaie d’y accéder<select id="actor"><option value="alice">Alice</option><option value="bob">Bob</option><option value="camille">Camille</option></select></label></div>
+<div class="grid"><div class="card"><h3>Accorder les droits</h3><p class="small">r = 4 · w = 2 · x = 1. Le bloc utilisé par l’utilisateur choisi est encadré.</p><div class="permissions" style="margin-top:20px">
+<div class="permission-group active-group" id="group-u"><h3 class="u-color">u · Propriétaire</h3><small id="owner-label">alice</small><div class="digit" id="digit-u">6</div><label class="check-label"><input type="checkbox" data-bit="u-r" checked><span>r · lire</span><small>4</small></label><label class="check-label"><input type="checkbox" data-bit="u-w" checked><span>w · écrire</span><small>2</small></label><label class="check-label"><input type="checkbox" data-bit="u-x"><span>x · exécuter</span><small>1</small></label></div>
+<div class="permission-group" id="group-g"><h3 class="g-color">g · Groupe</h3><small id="file-group-label">stagiaires</small><div class="digit" id="digit-g">4</div><label class="check-label"><input type="checkbox" data-bit="g-r" checked><span>r · lire</span><small>4</small></label><label class="check-label"><input type="checkbox" data-bit="g-w"><span>w · écrire</span><small>2</small></label><label class="check-label"><input type="checkbox" data-bit="g-x"><span>x · exécuter</span><small>1</small></label></div>
+<div class="permission-group" id="group-o"><h3 class="o-color">o · Autres</h3><small>les autres comptes</small><div class="digit" id="digit-o">0</div><label class="check-label"><input type="checkbox" data-bit="o-r"><span>r · lire</span><small>4</small></label><label class="check-label"><input type="checkbox" data-bit="o-w"><span>w · écrire</span><small>2</small></label><label class="check-label"><input type="checkbox" data-bit="o-x"><span>x · exécuter</span><small>1</small></label></div>
+</div><div class="mode-result"><span class="symbolic" id="mode-symbols">-rw-r-----</span><label class="mode-input" for="mode-input">Mode<input id="mode-input" value="640" inputmode="numeric" maxlength="3" pattern="[0-7]{3}" aria-describedby="mode-validation"></label></div><p class="validation" id="mode-validation" aria-live="polite"></p><div class="presets" aria-label="Charger un exemple"><button data-preset="600">600 · privé</button><button data-preset="640">640 · lecture groupe</button><button data-preset="644">644 · lecture tous</button><button data-preset="750">750 · exécution groupe</button><button data-preset="755">755 · exécution tous</button><button data-preset="000">000 · aucun droit</button></div><div class="command-result" id="chmod-command">chmod 640 notes.txt</div><p class="small" style="margin-top:10px">chmod modifie les droits, pas le propriétaire ou le groupe. La commande doit être exécutée par le propriétaire ou avec les privilèges appropriés.</p></div>
+<div class="card"><div class="access-heading"><span class="avatar" id="actor-avatar" aria-hidden="true">A</span><div><h3 id="actor-title">Alice essaie d’accéder au fichier</h3><small id="actor-groups">Groupes : stagiaires, sudo</small></div></div><div class="note" style="margin:0"><strong id="selected-category">Bloc utilisé : propriétaire (u)</strong><p id="selected-reason">Alice est le propriétaire : seuls les droits du bloc u s’appliquent.</p></div><div class="access-rows" id="access-results" aria-live="polite"></div><p class="small" id="access-extra" style="margin-top:18px">Pour supprimer un fichier, ce sont surtout les droits sur son dossier parent qui comptent.</p><details><summary>Ce que suppose le laboratoire</summary><p class="small" style="margin-top:10px">Nous étudions les droits classiques rwx, pour des comptes ordinaires. Les dossiers parents sont traversables. Les ACL, les droits spéciaux, les montages et les restrictions supplémentaires ne sont pas simulés. Un droit x ne transforme pas un document en programme.</p></details></div></div>
+<div class="grid advanced-grid"><div class="card"><h3>Ajouter ou retirer un droit</h3><p class="small">Le mode symbolique permet de toucher uniquement aux droits choisis.</p><div class="symbolic-controls"><label>Qui ?<select id="symbol-who"><option value="u">u · propriétaire</option><option value="g">g · groupe</option><option value="o">o · autres</option><option value="a">a · tous</option></select></label><label>Action<select id="symbol-operation"><option value="+">+ ajouter</option><option value="-">- retirer</option><option value="=">= remplacer</option></select></label><label>Droits<select id="symbol-rights"><option value="x">x</option><option value="r">r</option><option value="w">w</option><option value="rw">rw</option><option value="rwx">rwx</option></select></label><button class="btn" id="apply-symbolic">Appliquer</button></div><p id="symbol-feedback" class="inline-feedback" aria-live="polite">Essayez u+x : l’exécution s’ajoute au propriétaire, sans changer les autres blocs.</p></div>
+<div class="card"><h3>Changer qui possède la ressource</h3><p class="small">Changez l’association, puis observez quel bloc s’applique à Alice, Bob ou Camille.</p><div class="symbolic-controls"><label>Propriétaire<select id="owner"><option value="alice">alice</option><option value="bob">bob</option><option value="camille">camille</option></select></label><label>Groupe associé<select id="file-group"><option value="stagiaires">stagiaires</option><option value="projet">projet</option><option value="visiteurs">visiteurs</option></select></label></div><div class="command-result" id="chown-command">sudo chown alice:stagiaires notes.txt</div><p class="small" style="margin-top:10px">chown change le propriétaire et/ou le groupe. Les bits rwx restent les mêmes.</p></div></div>
+</section>
+<section id="panel-missions" role="tabpanel" aria-labelledby="tab-missions" tabindex="0" hidden><div class="section-head"><div><p class="eyebrow">Passez d’une intention à des droits</p><h2>Trois missions, le minimum nécessaire.</h2></div><p>Chaque mission prépare l’atelier. Vous choisissez les cases à cocher.</p></div><div class="missions"><article class="card mission"><span class="mission-number">01</span><h3>Un document privé</h3><p>Alice doit pouvoir lire et modifier ses notes. Ni le groupe, ni les autres ne doivent y accéder. Aucun droit d’exécution n’est nécessaire.</p><button class="btn primary" data-mission="private">Résoudre dans l’atelier →</button></article><article class="card mission"><span class="mission-number">02</span><h3>Partager un document</h3><p>Alice lit et modifie le document. Les stagiaires peuvent seulement le lire. Les autres n’ont aucun droit. Personne ne l’exécute.</p><button class="btn primary" data-mission="shared">Résoudre dans l’atelier →</button></article><article class="card mission"><span class="mission-number">03</span><h3>Un dossier d’équipe</h3><p>Alice peut lister, traverser et créer dans le dossier. Les stagiaires peuvent lister et traverser, sans créer ni supprimer. Les autres n’y accèdent pas.</p><button class="btn primary" data-mission="directory">Résoudre dans l’atelier →</button></article></div><div class="note"><strong>Un refus d’accès ne se résout pas systématiquement avec 777.</strong> Identifiez l’utilisateur, le bon bloc et le droit manquant avant de modifier les permissions.</div></section>
+<section id="panel-test" role="tabpanel" aria-labelledby="tab-test" tabindex="0" hidden><div class="section-head"><div><p class="eyebrow">Vérifiez votre compréhension</p><h2>Reliez les comptes, les groupes et les droits.</h2></div><p>20 questions · réponses expliquées</p></div><p class="quiz-note">Les questions sont mélangées à chaque tentative. Utilisez les explications pour revenir aux points à travailler.</p><div id="tab-quiz"><a href="quiz/07-utilisateurs-et-permissions.html">Ouvrir le quiz de 20 questions →</a></div></section>
+</main><footer class="footer"><details><summary>Sources et périmètre</summary><p>Laboratoire pédagogique des permissions classiques Unix. Références : <a href="https://www.gnu.org/software/coreutils/manual/html_node/Mode-Structure.html" target="_blank" rel="noopener">GNU — permissions</a>, <a href="https://www.gnu.org/software/coreutils/manual/html_node/chmod-invocation.html" target="_blank" rel="noopener">chmod</a>, <a href="https://man7.org/linux/man-pages/man7/inode.7.html" target="_blank" rel="noopener">Linux — inode</a>.</p></details><a href="https://kayasam.github.io/linux-initiation/07-utilisateurs-et-permissions/">Revenir au cours Markdown →</a></footer></div>
+<script id="permission-model">
+globalThis.PermissionLab=(()=>{
+ const people={alice:{name:'Alice',uid:1000,groups:['stagiaires','sudo'],sudo:true},bob:{name:'Bob',uid:1001,groups:['stagiaires','projet'],sudo:false},camille:{name:'Camille',uid:1002,groups:['visiteurs'],sudo:false}};
+ const valid=mode=>/^[0-7]{3}$/.test(mode);
+ const digits=mode=>{if(!valid(mode))throw Error('Trois chiffres de 0 à 7 attendus');return [...mode].map(Number)};
+ const bits=value=>(value&4?'r':'-')+(value&2?'w':'-')+(value&1?'x':'-');
+ const symbols=(mode,type='file')=>(type==='directory'?'d':'-')+digits(mode).map(bits).join('');
+ function category(actor,owner,group){if(actor===owner)return 'u';if(group===actor||people[actor].groups.includes(group))return 'g';return 'o'}
+ function access(mode,type,actor,owner,group){const cat=category(actor,owner,group),value=digits(mode)[{u:0,g:1,o:2}[cat]],r=!!(value&4),w=!!(value&2),x=!!(value&1);return {category:cat,value,rights:bits(value),actions:type==='directory'?{list:r,traverse:x,create:w&&x,remove:w&&x}:{read:r,write:w,execute:x}};}
+ function symbolic(mode,who,operation,rights){if(!/^[ugoa]$/.test(who)||!/^[-+=]$/.test(operation)||!/^[rwx]+$/.test(rights))throw Error('Opération symbolique invalide');const value=[...new Set(rights)].reduce((n,right)=>n|{r:4,w:2,x:1}[right],0);return digits(mode).map((n,i)=>who==='a'||who==='ugo'[i]?operation==='+'?n|value:operation==='-'?n&~value:value:n).join('');}
+ const missions={private:{title:'Mission 01 · Un document privé',description:'Alice lit et modifie ; groupe et autres sans droits ; pas d’exécution.',mode:'600',type:'file'},shared:{title:'Mission 02 · Partager un document',description:'Alice lit et modifie ; le groupe lit seulement ; les autres n’ont aucun droit.',mode:'640',type:'file'},directory:{title:'Mission 03 · Un dossier d’équipe',description:'Alice : lister, traverser, créer ; groupe : lister et traverser ; autres : aucun accès.',mode:'750',type:'directory'}};
+ return {people,valid,digits,bits,symbols,category,access,symbolic,missions};
+})();
 </script>
-</body>
-</html>
+<script id="permission-interface">
+(()=>{'use strict';const M=PermissionLab,$=id=>document.getElementById(id),all=s=>[...document.querySelectorAll(s)];
+const state={actor:'alice',owner:'alice',group:'stagiaires',mode:'640',type:'file',mission:null,identityCommand:'whoami'};
+const tabs=all('[role="tab"]');function openTab(name,focus=false){const target=$('tab-'+name);tabs.forEach(tab=>{const selected=tab===target;tab.setAttribute('aria-selected',selected);tab.tabIndex=selected?0:-1;$(tab.getAttribute('aria-controls')).hidden=!selected});if(focus){target.focus();target.scrollIntoView({block:'nearest',inline:'nearest'})}}
+tabs.forEach((tab,i)=>{tab.addEventListener('click',()=>openTab(tab.id.slice(4)));tab.addEventListener('keydown',event=>{let n;if(event.key==='ArrowRight')n=(i+1)%tabs.length;if(event.key==='ArrowLeft')n=(i-1+tabs.length)%tabs.length;if(event.key==='Home')n=0;if(event.key==='End')n=tabs.length-1;if(n!==undefined){event.preventDefault();openTab(tabs[n].id.slice(4),true)}})});
+function updateIdentity(){const p=M.people[state.actor],command=state.identityCommand;$('identity-prompt').textContent=state.actor+'@debian:~$ '+command;let output=state.actor,explanation='whoami affiche le nom de l’utilisateur qui exécute la commande.';if(command==='id'){output='uid='+p.uid+'('+state.actor+') gid='+p.uid+'('+state.actor+') groupes='+p.uid+'('+state.actor+'),'+p.groups.map(group=>({stagiaires:2000,projet:2001,visiteurs:2002,sudo:27}[group])+'('+group+')').join(',');explanation='UID identifie le compte ; GID identifie son groupe principal ; les groupes complémentaires permettent des accès collectifs.'}if(command==='groups'){output=state.actor+' '+p.groups.join(' ');explanation='Le compte a ici son groupe principal personnel et les groupes complémentaires indiqués.'}if(command==='sudo whoami'){output=p.sudo?'root':state.actor+' n’est pas autorisé à utiliser sudo dans cet exemple.';explanation=p.sudo?'La commande s’exécute ici comme root. Votre session reste celle d’Alice. sudo suit la politique configurée et peut demander une authentification.':'sudo ne donne pas automatiquement des droits administrateur à tout utilisateur.'}$('identity-output').textContent=output;$('identity-explanation').textContent=explanation;all('[data-person]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.person===state.actor));all('[data-identity-command]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.identityCommand===command))}
+all('[data-person]').forEach(b=>b.addEventListener('click',()=>{state.actor=b.dataset.person;update()}));all('[data-identity-command]').forEach(b=>b.addEventListener('click',()=>{state.identityCommand=b.dataset.identityCommand;updateIdentity()}));
+const readInfo={type:['Le type de ressource','Le premier caractère - indique un fichier ordinaire. d indique un dossier ; l indique un lien symbolique.'],u:['u — Le propriétaire','Alice possède ce fichier. Le bloc rw- lui permet de lire et modifier son contenu, pas de l’exécuter.'],g:['g — Le groupe associé','Les membres du groupe stagiaires qui ne sont pas propriétaires utilisent r-- : lecture seule.'],o:['o — Les autres','Les comptes qui ne sont ni propriétaires ni membres du groupe associé utilisent --- : aucun droit ici.'],owner:['alice — Le propriétaire du fichier','Ce champ indique à quel utilisateur appartient le fichier. Ne le confondez pas avec l’utilisateur actuellement connecté.'],group:['stagiaires — Le groupe du fichier','Ce champ désigne un groupe associé au fichier. Un utilisateur peut être membre de ce groupe même s’il a un autre groupe principal.']};
+all('[data-read]').forEach(b=>b.addEventListener('click',()=>{all('[data-read]').forEach(other=>other.setAttribute('aria-pressed',other===b));const data=readInfo[b.dataset.read];$('read-title').textContent=data[0];$('read-description').textContent=data[1]}));
+const meanings={file:{r:['Lire','Lire le contenu du fichier.'],w:['Modifier','Modifier le contenu du fichier.'],x:['Exécuter','Autoriser son lancement comme programme, si le fichier s’y prête.']},directory:{r:['Lister','Voir les noms des entrées. Sans x, leur consultation détaillée reste limitée.'],w:['Créer / supprimer','Modifier les entrées du dossier ; il faut aussi x pour créer ou supprimer.'],x:['Traverser','Entrer dans le dossier et accéder à une entrée dont on connaît le nom, sous réserve de ses propres droits.']}};
+all('[data-meaning]').forEach(b=>b.addEventListener('click',()=>{all('[data-meaning]').forEach(other=>other.setAttribute('aria-pressed',other===b));for(const right of ['r','w','x']){const data=meanings[b.dataset.meaning][right];$('meaning-'+right+'-title').textContent=data[0];$('meaning-'+right+'-text').textContent=data[1]}}));
+const actionLabels={read:'Lire le contenu',write:'Modifier le contenu',execute:'Exécuter comme programme',list:'Lister les noms',traverse:'Entrer / traverser',create:'Créer une entrée',remove:'Supprimer une entrée'};
+function update(){updateIdentity();const values=M.digits(state.mode),resource=state.type==='directory'?'atelier/':'notes.txt',p=M.people[state.actor],a=M.access(state.mode,state.type,state.actor,state.owner,state.group);$('resource-type').value=state.type;$('actor').value=state.actor;$('owner').value=state.owner;$('file-group').value=state.group;$('owner-label').textContent=state.owner;$('file-group-label').textContent=state.group;$('mode-input').value=state.mode;$('mode-input').setAttribute('aria-invalid','false');$('mode-validation').textContent='';$('mode-symbols').textContent=M.symbols(state.mode,state.type);$('chmod-command').textContent='chmod '+state.mode+' '+resource;$('chown-command').textContent='sudo chown '+state.owner+':'+state.group+' '+resource;
+for(const [i,cat]of [...'ugo'].entries()){$('digit-'+cat).textContent=values[i];$('group-'+cat).classList.toggle('active-group',a.category===cat)}all('[data-bit]').forEach(input=>{const [cat,right]=input.dataset.bit.split('-');input.checked=!!(values['ugo'.indexOf(cat)]&{r:4,w:2,x:1}[right]);input.parentElement.querySelector('span').textContent=right+' · '+(state.type==='directory'?{r:'lister',w:'écrire',x:'traverser'}:{r:'lire',w:'écrire',x:'exécuter'})[right]});
+$('actor-avatar').textContent=p.name[0];$('actor-title').textContent=p.name+' essaie d’accéder '+(state.type==='directory'?'au dossier':'au fichier');$('actor-groups').textContent='Groupes complémentaires : '+p.groups.join(', ');const categoryNames={u:'propriétaire',g:'groupe',o:'autres'};$('selected-category').textContent='Bloc utilisé : '+categoryNames[a.category]+' ('+a.category+') · '+a.rights;
+$('selected-reason').textContent=a.category==='u'?p.name+' est propriétaire : seul le bloc u s’applique, même si les autres blocs sont plus permissifs.':a.category==='g'?p.name+' appartient à '+state.group+' et n’est pas propriétaire : seul le bloc g s’applique.':p.name+' n’est ni propriétaire, ni membre de '+state.group+' : le bloc o s’applique.';
+const rows=$('access-results');rows.replaceChildren();for(const [action,allowed]of Object.entries(a.actions)){const row=document.createElement('div');row.className='access-row';const label=document.createElement('span');label.textContent=actionLabels[action];const result=document.createElement('span');result.className='status '+(allowed?'allowed':'denied');result.textContent=allowed?'✓ Autorisé':'× Refusé';row.append(label,result);rows.appendChild(row)}
+$('access-extra').textContent=state.type==='directory'?'Créer ou supprimer une entrée demande w + x sur ce dossier. Les droits du fichier lui-même ne suffisent pas à décider de sa suppression.':'Les droits du fichier contrôlent son contenu. Pour le supprimer, ce sont surtout les droits sur son dossier parent qui comptent.';
+$('mission-banner').hidden=!state.mission;if(state.mission){const mission=M.missions[state.mission];$('mission-title').textContent=mission.title;$('mission-description').textContent=mission.description}
+}
+all('[data-bit]').forEach(input=>input.addEventListener('change',()=>{const values=[0,0,0];all('[data-bit]').forEach(box=>{if(box.checked){const [cat,right]=box.dataset.bit.split('-');values['ugo'.indexOf(cat)]|={r:4,w:2,x:1}[right]}});state.mode=values.join('');update();if(state.mission)$('mission-feedback').textContent='Droits modifiés. Vérifiez votre proposition.'}));
+for(const [id,key]of [['resource-type','type'],['actor','actor'],['owner','owner'],['file-group','group']])$(id).addEventListener('change',()=>{state[key]=$(id).value;update();if(state.mission)$('mission-feedback').textContent='Paramètres modifiés. Vérifiez votre proposition.'});
+$('mode-input').addEventListener('input',()=>{const mode=$('mode-input').value;if(!M.valid(mode)){$('mode-input').setAttribute('aria-invalid','true');$('mode-validation').textContent='Saisissez exactement trois chiffres compris entre 0 et 7.';return}state.mode=mode;update();if(state.mission)$('mission-feedback').textContent='Droits modifiés. Vérifiez votre proposition.'});
+all('[data-preset]').forEach(b=>b.addEventListener('click',()=>{state.mode=b.dataset.preset;update();if(state.mission)$('mission-feedback').textContent='Exemple chargé. Vérifiez votre proposition.'}));
+$('apply-symbolic').addEventListener('click',()=>{const who=$('symbol-who').value,operation=$('symbol-operation').value,rights=$('symbol-rights').value,before=state.mode;state.mode=M.symbolic(state.mode,who,operation,rights);update();$('symbol-feedback').textContent='chmod '+who+operation+rights+' '+(state.type==='directory'?'atelier/':'notes.txt')+' : '+before+' → '+state.mode;if(state.mission)$('mission-feedback').textContent='Droits modifiés. Vérifiez votre proposition.'});
+all('[data-mission]').forEach(b=>b.addEventListener('click',()=>{state.mission=b.dataset.mission;state.mode='000';state.owner='alice';state.group='stagiaires';state.actor='alice';state.type=M.missions[state.mission].type;$('mission-feedback').textContent='Sélectionnez uniquement les droits nécessaires, puis vérifiez.';update();openTab('lab',true)}));
+$('check-mission').addEventListener('click',()=>{if(!state.mission)return;if(!M.valid($('mode-input').value)){$('mission-feedback').textContent='Corrigez le mode : trois chiffres entre 0 et 7 sont nécessaires.';return}const mission=M.missions[state.mission],correct=state.mode===mission.mode&&state.type===mission.type&&state.owner==='alice'&&state.group==='stagiaires';$('mission-feedback').textContent=correct?'Mission réussie : '+state.mode+' donne exactement les droits demandés.':'Pas encore. Vérifiez les trois blocs, le type de ressource et l’association alice:stagiaires. Ne donnez que les droits demandés.'});
+$('exit-mission').addEventListener('click',()=>{state.mission=null;update()});update();
+})();
+</script></body></html>

@@ -171,6 +171,7 @@ def integrate(source):
             body=body[:end]+block+body[end:]
             file.write_text(body,encoding='utf-8')
         html_file=file.with_suffix('.html');body=html_file.read_text(encoding='utf-8')
+        if 'data-interactive-permissions=' in body: continue
         if marker not in body and name+'.svg' not in body:
             anchor='<h2>'+html_sections[number]+'</h2>'
             assert anchor in body,html_file

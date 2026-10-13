@@ -18,6 +18,8 @@ Les dix schémas SVG sont dans `Formations/linux-initiation/Ressources/images` d
 
 Le chapitre 01 possède un compagnon interactif distinct du cours Markdown : onglets, frise illustrée et activités. Son modèle est `templates/introduction-interactive.html`. Après modification de ce modèle, lancer `python scripts/render-introduction.py`, puis la préparation habituelle. Ce script régénère aussi le schéma Unix / GNU / Linux. Les portraits et leurs crédits sont conservés dans `Ressources/images` du coffre et copiés dans le ZIP. La vidéo YouTube nécessite Internet, même dans le support hors ligne.
 
+Le laboratoire du chapitre 07 est dans `templates/permissions-interactive.html`. Pour le mettre à jour dans le coffre : `python scripts/render-permissions.py`, puis la préparation habituelle. Il simule les identités, les permissions et les changements de propriétaire sans exécuter de commandes sur la machine. Aucun SVG n’est intégré dans ce HTML. Les tests `node scripts/check-permissions.mjs` vérifient les 512 modes classiques, la priorité propriétaire/groupe/autres, les droits sur les dossiers et les interactions ; ils sont aussi exécutés lors de la publication.
+
 Pour mettre également à jour les versions HTML originales du coffre après préparation :
 
 ```powershell

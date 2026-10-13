@@ -31,6 +31,8 @@ jobs:
         run: node scripts/check-learning-ui.mjs
       - name: Verify introduction interactions and colors
         run: node scripts/check-introduction.mjs
+      - name: Verify permissions laboratory
+        run: node scripts/check-permissions.mjs
       - run: node scripts/fix-quartz-graph.mjs
       - run: node quartz/bootstrap-cli.mjs build
       - name: Copy downloads and verify local links
