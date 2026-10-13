@@ -10,6 +10,8 @@ try {
   if ($LASTEXITCODE) { throw 'Échec de préparation des supports HTML hors ligne.' }
   & node scripts/check-learning-ui.mjs
   if ($LASTEXITCODE) { throw 'Échec de vérification des quiz ou des contrastes.' }
+  & node scripts/check-introduction.mjs
+  if ($LASTEXITCODE) { throw 'Échec de vérification du chapitre 01 interactif.' }
   & node scripts/fix-quartz-graph.mjs
   if ($LASTEXITCODE) { throw 'Échec de correction du graphe.' }
   & node quartz/bootstrap-cli.mjs build

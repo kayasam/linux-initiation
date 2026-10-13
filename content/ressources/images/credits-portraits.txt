@@ -1,0 +1,18 @@
+PORTRAITS DU CHAPITRE 01 — Linux initiation
+
+Richard Stallman — photographie de 2015
+Auteur : Frank Karlitschek. Licence : Creative Commons Attribution-ShareAlike 3.0 Unported.
+Licence : https://creativecommons.org/licenses/by-sa/3.0/
+Source : https://commons.wikimedia.org/wiki/File:Richard_Stallman_(124442297).jpeg
+Original : https://upload.wikimedia.org/wikipedia/commons/6/6a/Richard_Stallman_%28124442297%29.jpeg
+Fichier conservé sans modification ; cadrage adapté à l’affichage par CSS.
+
+Linus Torvalds — LinuxCon Europe 2014
+Auteur : Krd (photo), Von Sprat (recadrage/extraction de l’image Commons).
+Licence choisie : Creative Commons Attribution-ShareAlike 4.0 International.
+Licence : https://creativecommons.org/licenses/by-sa/4.0/
+Source : https://commons.wikimedia.org/wiki/File:LinuxCon_Europe_Linus_Torvalds_03_(cropped).jpg
+Original : https://upload.wikimedia.org/wikipedia/commons/0/01/LinuxCon_Europe_Linus_Torvalds_03_%28cropped%29.jpg
+Fichier Commons conservé sans modification ; cadrage adapté à l’affichage par CSS.
+
+Ces portraits illustrent les personnes ; ils ne sont pas des photographies prises aux dates historiques de la frise.

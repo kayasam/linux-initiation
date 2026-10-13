@@ -96,6 +96,7 @@ def prepare(source):
         interactive = interactive.replace(f'href="{slug}-quiz.html"', f'href="quiz/{slug}.html"')
         for linked in courses:
             interactive = interactive.replace(f'href="{linked.stem}.html"', f'href="{BASE}/{linked.stem}/"')
+            interactive = interactive.replace(f'href="{linked.stem}.md"', f'href="{BASE}/{linked.stem}/"')
         nav = f'<div class="course-site-nav"><a href="../{slug}/">← Chapitre {number}</a><a href="quiz/{slug}.html">Quiz du chapitre →</a></div>'
         interactive = interactive.replace('<body>', '<body>\n' + nav, 1)
         interactive = interactive.replace('</style>', '.course-site-nav { display:flex; justify-content:space-between; gap:1rem; padding:.8rem 1rem; background:#1a1d27; flex-wrap:wrap; } .course-site-nav a {color:#93c5fd; font-weight:600;}\n</style>', 1)

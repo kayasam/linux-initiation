@@ -3,278 +3,150 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Comprendre Unix, GNU/Linux, le logiciel libre et ses licences, pas à pas avec des schémas, une vidéo et un quiz.">
-<title>01 — Comprendre Linux</title>
-<style>
-:root{--bg:#f4f7fa;--surface:#fff;--surface2:#e5edf3;--text:#182d3e;--text-dim:#455d70;--accent:#006575;--accent2:#005969;--border:#8196a6;--code-bg:#eef3f7;--success:#17623c;--radius:14px}
-*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:2rem}
-body{margin:0;background:var(--bg);color:var(--text);font:17px/1.8 'Segoe UI',system-ui,sans-serif}
-header{padding:3rem 1.5rem 2.4rem;border-bottom:1px solid var(--border);background:var(--surface)}
-.hero{max-width:900px;margin:auto}.badge{display:inline-block;padding:.25rem .8rem;border-radius:30px;background:var(--surface2);color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:.05em}
-h1{font-size:clamp(2rem,5vw,3rem);line-height:1.15;margin:1rem 0}.lead{font-size:1.12rem;color:var(--text-dim);max-width:65ch}
-.layout{max-width:1240px;display:grid;grid-template-columns:230px minmax(0,1fr);gap:2.5rem;margin:auto;padding:2rem 1.5rem}
-nav{align-self:start;position:sticky;top:1rem;border:1px solid var(--border);border-radius:var(--radius);padding:1rem;background:var(--surface)}
-nav strong{display:block;margin-bottom:.6rem}nav a{display:block;font-size:.87rem;line-height:1.45;padding:.45rem 0;text-decoration:none}
-main{min-width:0}h2{font-size:1.55rem;line-height:1.35;color:var(--accent2);margin:2rem 0 1rem}h3{font-size:1.12rem;line-height:1.5;margin:1.7rem 0 .8rem}
-p{margin:.8rem 0 1.1rem}a{color:var(--accent2);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}
-hr{border:0;border-top:1px solid var(--border);margin:2.5rem 0}img{border-radius:var(--radius)}
-.callout{padding:1rem 1.3rem;margin:1.5rem 0;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:var(--radius);background:var(--surface)}
-.callout-title{font-weight:700;margin:0 0 .5rem}.callout p:last-child{margin-bottom:0}.callout.tip{border-left-color:var(--success)}
-.table-wrap{overflow-x:auto;margin:1.3rem 0;border:1px solid var(--border);border-radius:var(--radius)}
-table{border-collapse:collapse;width:100%;font-size:.94rem}th,td{text-align:left;padding:.8rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}th{background:var(--surface2)}tr:last-child td{border-bottom:0}
-pre{overflow-x:auto;background:var(--code-bg);padding:1.2rem;border-radius:var(--radius);border:1px solid var(--border);line-height:1.55}code{font: .9em Consolas,monospace}
-details{padding:1rem 1.3rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin:1.5rem 0}summary{cursor:pointer;font-weight:700;color:var(--accent2)}
-.quiz-section{padding:1rem 0 2rem}.course-quiz-frame{width:100%;height:1000px;border:0;border-radius:var(--radius);margin-top:1rem}.theme-toolbar{max-width:1240px;margin:auto}
-footer{padding:1.5rem;text-align:center;color:var(--text-dim);border-top:1px solid var(--border)}
-@media(max-width:900px){.layout{grid-template-columns:minmax(0,1fr);gap:1rem}nav{position:static}nav a{display:inline-block;margin-right:1rem}body{font-size:16px}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-@media print{nav,.theme-toolbar,.quiz-section,iframe{display:none}.layout{display:block;padding:0}body{font-size:11pt}header{padding:0}details{break-inside:avoid}}
-.course-site-nav { display:flex; justify-content:space-between; gap:1rem; padding:.8rem 1rem; background:#1a1d27; flex-wrap:wrap; } .course-site-nav a {color:#93c5fd; font-weight:600;}
-</style>
+<meta name="description" content="Explorez l’histoire de GNU/Linux : frise illustrée, personnages, assemblage d’une distribution et jeux sur les licences.">
+<title>Comprendre Linux · Le voyage interactif</title>
 <link rel="stylesheet" href="assets/themes/theme.css">
 <script src="assets/themes/theme.js"></script>
-</head><body>
+<style>
+:root{--bg:#f5f5fb;--surface:#fff;--surface2:#e9edf5;--text:#182d3e;--text-dim:#455d70;--accent:#006575;--accent2:#005969;--border:#8196a6;--on-accent:#fff;--success:#17623c;--radius:22px}
+html[data-theme="light"]{--amber:#925500;--violet:#6940bd;--rose:#b12c65;--blue:#245db7;--mint:#087465;--tint:#eeebfa;--shadow:0 16px 45px #23314a0c}
+html[data-theme="dark"]{--amber:#ffcb77;--violet:#c4a4ff;--rose:#ff9fc8;--blue:#91bbff;--mint:#80dec6;--tint:#28263d;--shadow:0 16px 45px #0002}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 'Segoe UI',system-ui,sans-serif}
+button,a{-webkit-tap-highlight-color:transparent}button{cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:5px}a{color:var(--accent2);text-underline-offset:3px}
+button{font:inherit}button:disabled{cursor:default}h1,h2,h3,p{margin:0}h1,h2,h3{line-height:1.15}p+p{margin-top:.7rem}[hidden]{display:none!important}
+.shell{max-width:1180px;margin:auto;padding:0 28px}.theme-toolbar{max-width:1180px;margin:auto;background:transparent;border:0;padding:.75rem 28px}
+.intro-hero{display:flex;align-items:center;justify-content:space-between;gap:2rem;padding:22px 0 30px}.eyebrow{text-transform:uppercase;font-size:.7rem;font-weight:800;letter-spacing:.16em;color:var(--violet)}
+h1{font-size:clamp(2.1rem,5vw,3.7rem);letter-spacing:-.055em;margin:.7rem 0 1rem;max-width:700px}h1 em{font-style:normal;color:var(--violet)}.hero-copy{color:var(--text-dim);max-width:58ch;font-size:1.02rem}
+.hero-people{display:flex;align-items:center;padding-right:10px;flex-shrink:0}.hero-face{margin:0;width:108px;text-align:center}.hero-face+figure{margin-left:-12px;margin-top:36px}.hero-face img{width:100px;height:100px;object-fit:cover;object-position:center 27%;border:5px solid var(--surface);border-radius:50%;box-shadow:var(--shadow)}.hero-face figcaption{font-size:.7rem;font-weight:700;margin-top:.3rem;color:var(--text-dim)}
+.chapter-tabs{display:flex;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:6px;box-shadow:var(--shadow);margin-bottom:28px;overflow-x:auto}.chapter-tabs button{border:0;background:transparent;border-radius:11px;padding:12px 18px;color:var(--text-dim);white-space:nowrap;font-size:.9rem;font-weight:700;flex:1}.chapter-tabs button[aria-selected="true"]{background:var(--tint);color:var(--violet)}.tab-number{opacity:.7;font-size:.75rem;margin-right:6px}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:1rem;margin:0 0 22px}.section-head h2{font-size:1.6rem;letter-spacing:-.025em;margin-top:6px}.section-head p{color:var(--text-dim);font-size:.9rem;max-width:42ch}.counter{font-size:.75rem;padding:7px 12px;border:1px solid var(--border);border-radius:20px;white-space:nowrap;color:var(--text-dim)}
+.timeline{position:relative;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;padding:12px 0 27px;isolation:isolate}.timeline::before{content:"";position:absolute;top:79px;left:8%;right:8%;height:5px;border-radius:5px;background:linear-gradient(90deg,#edb159,#a783ec,#e885b2,#6faff6,#65c9ab);z-index:-1}
+.era{--era:var(--amber);position:relative;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:15px 16px;transition:transform .18s,border-color .18s;min-height:172px;box-shadow:var(--shadow)}.era:nth-child(2){--era:var(--violet)}.era:nth-child(3){--era:var(--rose)}.era:nth-child(4){--era:var(--blue)}.era:nth-child(5){--era:var(--mint)}.era::before{content:"";position:absolute;top:0;left:18px;right:18px;height:4px;background:var(--era);border-radius:0 0 4px 4px}.era:hover{transform:translateY(-4px)}.era[aria-pressed="true"]{border:2px solid var(--era);padding:14px 15px;transform:translateY(-5px)}.era-year{display:block;font-size:1.5rem;font-weight:850;color:var(--era);letter-spacing:-.04em}.era-face{width:44px;height:44px;object-fit:cover;object-position:center 26%;border-radius:50%;float:right;margin-top:6px}.era-icon{float:right;font:800 1.3rem/44px Consolas,monospace;color:var(--era)}.era-label{display:block;font-size:1.02rem;font-weight:800;margin:12px 0 2px;color:var(--text)}.era-who{font-size:.75rem;color:var(--text-dim)}
+.story{display:grid;grid-template-columns:290px minmax(0,1fr);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--surface);box-shadow:var(--shadow);min-height:310px}.story-visual{position:relative;background:linear-gradient(145deg,#514080,#1f344d);display:flex;align-items:center;justify-content:center;min-height:310px}.story-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 24%}.story-visual::after{content:"";position:absolute;inset:55% 0 0;background:linear-gradient(transparent,#101923e8)}.story-monogram{font:800 5rem/1 Consolas,monospace;color:#fff}.story-caption{position:absolute;bottom:20px;left:22px;right:18px;z-index:1;color:#fff;font-size:.8rem}.story-caption small{display:block;color:#e2e5ed;font-size:.66rem;margin-top:3px}
+.story-body{padding:28px 32px;display:flex;flex-direction:column;align-items:start}.story-kicker{font-size:.7rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--violet)}.story-body h3{font-size:1.75rem;letter-spacing:-.035em;margin:9px 0 14px}.story-body>p{color:var(--text-dim);max-width:59ch}.story-lesson{margin:18px 0;padding:11px 15px;border-radius:12px;background:var(--tint);font-weight:650;font-size:.9rem;width:100%}.story-bottom{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;margin-top:auto}.story-bottom a{font-size:.75rem}.next-era{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:7px 12px;color:var(--text);font-size:.8rem;font-weight:700}
+.bridge{display:flex;align-items:center;justify-content:space-between;gap:22px;margin:20px 0 0;padding:18px 22px;border:1px dashed var(--border);border-radius:16px;color:var(--text-dim);font-size:.85rem}.bridge strong{color:var(--text)}.bridge button{border:0;background:none;color:var(--violet);font-weight:750;white-space:nowrap}
+.activity-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}.surface{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow)}.surface h3{font-size:1.3rem;margin-bottom:12px}.muted{color:var(--text-dim)}.component-list{display:grid;gap:10px;margin-top:20px}.component{display:flex;align-items:center;gap:15px;text-align:left;border:1px solid var(--border);background:var(--surface);border-radius:13px;padding:13px 16px;color:var(--text)}.component[aria-pressed="true"]{border-color:var(--violet);background:var(--tint)}.component .check{border:1px solid var(--border);border-radius:7px;width:28px;height:28px;display:grid;place-items:center;color:var(--violet);flex-shrink:0;font-weight:800}.component small{display:block;color:var(--text-dim);font-size:.78rem}.assembly-screen{background:#101923;border-radius:15px;padding:22px;color:#edf5fb;min-height:210px;font: .9rem/2 Consolas,monospace}.assembly-screen .prompt{color:#8de1c9}.assembly-screen p{margin:0}.assembly-meter{height:7px;background:var(--surface2);border-radius:7px;overflow:hidden;margin:20px 0 15px}.assembly-meter span{display:block;background:linear-gradient(90deg,#9470e0,#57bda5);height:100%;width:0;transition:width .3s}.assembly-summary{min-height:85px}.small-note{font-size:.78rem;color:var(--text-dim);margin-top:18px}.secondary{border:1px solid var(--border);background:var(--surface2);border-radius:9px;padding:8px 14px;color:var(--text);font-size:.8rem;font-weight:700}
+.freedoms{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}.freedom{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:17px}.freedom b{display:block;font-size:1.6rem;color:var(--violet);margin-bottom:4px}.freedom strong{display:block}.freedom small{color:var(--text-dim);font-size:.77rem}.scenario-title{font-size:.7rem;color:var(--rose);font-weight:800;letter-spacing:.1em;text-transform:uppercase}.scenario-options{display:grid;gap:10px;margin-top:20px}.scenario-options button{text-align:left;padding:12px 16px;border:1px solid var(--border);border-radius:10px;color:var(--text);background:var(--surface)}.scenario-options button:hover{border-color:var(--violet)}.scenario-options button[aria-pressed="true"]{background:var(--tint);border-color:var(--violet)}.feedback{background:var(--surface2);border-radius:12px;padding:14px 17px;margin-top:16px;min-height:92px;font-size:.9rem}.license-toggle{display:flex;gap:8px;margin-bottom:19px}.license-toggle button{flex:1;padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font-weight:700}.license-toggle button[aria-pressed="true"]{background:var(--tint);border-color:var(--violet);color:var(--violet)}.license-label{font-size:2.6rem;font-weight:850;letter-spacing:-.06em;color:var(--violet);margin-bottom:10px}.license-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px}.license-tags span{font-size:.72rem;border:1px solid var(--border);border-radius:30px;padding:4px 10px}.video-frame{display:block;width:100%;aspect-ratio:16/9;border:0;border-radius:18px;background:#101923}.video-layout{display:grid;grid-template-columns:minmax(0,2fr) minmax(220px,1fr);gap:22px}.video-prompts{display:grid;gap:16px;list-style:none;padding:0;margin:18px 0}.video-prompts li{padding-bottom:14px;border-bottom:1px solid var(--border)}.video-prompts span{display:block;font-size:.7rem;color:var(--violet);font-weight:800;margin-bottom:5px}.video-layout details{margin-top:20px}.video-layout summary{cursor:pointer;font-weight:750;color:var(--violet)}
+.quiz-intro{margin-bottom:20px}.course-quiz-frame{border:1px solid var(--border);box-shadow:var(--shadow)}.footer{display:flex;justify-content:space-between;align-items:start;gap:22px;padding:26px 0;margin-top:28px;border-top:1px solid var(--border);font-size:.75rem;color:var(--text-dim)}.footer details{max-width:750px}.footer summary{cursor:pointer}.credits{font-size:.72rem;margin-top:10px;line-height:1.8}.footer-link{white-space:nowrap}
+@media(max-width:800px){.hero-people{display:none}.shell{padding:0 20px}.timeline{gap:8px}.era{padding:13px 10px;min-height:155px}.era[aria-pressed="true"]{padding:12px 9px}.era-year{font-size:1.3rem}.era-who{font-size:.68rem}.story{grid-template-columns:220px minmax(0,1fr)}.story-body{padding:24px}.activity-grid,.video-layout{grid-template-columns:1fr}.section-head p{display:none}}
+@media(max-width:560px){.shell{padding:0 16px}.theme-toolbar{padding:.6rem 16px}.intro-hero{padding:16px 0 24px}h1{font-size:2.45rem}.hero-copy{font-size:.9rem}.chapter-tabs{margin-bottom:24px;border-radius:13px}.chapter-tabs button{flex:none;padding:10px 12px;font-size:.8rem}.section-head h2{font-size:1.35rem}.counter{font-size:.65rem;padding:5px 9px}.timeline{display:flex;overflow-x:auto;gap:10px;padding:8px 0 22px;scroll-snap-type:x proximity}.timeline::before{left:0;right:0;top:73px}.era{min-width:136px;flex:0 0 136px;scroll-snap-align:start;min-height:150px}.era-face{width:38px;height:38px}.story{grid-template-columns:1fr}.story-visual{min-height:195px;height:195px}.story-photo{object-position:center 25%}.story-body{padding:22px}.story-body h3{font-size:1.5rem}.story-bottom{flex-wrap:wrap}.bridge{align-items:start;flex-direction:column;gap:9px;padding:16px}.surface{padding:21px}.freedoms{grid-template-columns:1fr 1fr}.freedom{padding:14px}.footer{flex-direction:column}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+.course-site-nav { display:flex; justify-content:space-between; gap:1rem; padding:.8rem 1rem; background:#1a1d27; flex-wrap:wrap; } .course-site-nav a {color:#93c5fd; font-weight:600;}
+</style>
+</head>
+<body>
 <div class="course-site-nav"><a href="../01-comprendre-linux/">← Chapitre 01</a><a href="quiz/01-comprendre-linux.html">Quiz du chapitre →</a></div>
-<header><div class="hero"><span class="badge">LINUX INITIATION · CHAPITRE 01</span><h1>Comprendre Linux</h1><p class="lead">Des origines d’Unix aux licences libres : les repères pour comprendre le système que vous allez utiliser.</p></div></header>
-<div class="layout"><nav aria-label="Sommaire du chapitre"><strong>Dans ce chapitre</strong><a href="#1-quest-ce-quun-systeme-dexploitation">1. Qu’est-ce qu’un système d’exploitation ?</a><a href="#2-dunix-a-gnulinux-trois-reperes">2. D’Unix à GNU/Linux : trois repères</a><a href="#3-logiciel-libre-open-source-et-gratuit-quelle-difference">3. Logiciel libre, open source et gratuit : quelle différence ?</a><a href="#4-les-licences-libres-les-regles-du-partage">4. Les licences libres : les règles du partage</a><a href="#5-une-distribution-le-systeme-pret-a-utiliser">5. Une distribution : le système prêt à utiliser</a><a href="#6-bureau-ou-serveur-deux-usages-du-meme-systeme">6. Bureau ou serveur : deux usages du même système</a><a href="#7-video-et-echange">7. Vidéo et échange</a><a href="#a-retenir">À retenir</a><a href="#quiz-chapitre">Quiz · 20 questions</a></nav><main>
-<p>Vous utilisez peut-être déjà Linux sans le savoir : un téléphone Android, une box Internet ou un serveur qui héberge un site peuvent s’appuyer sur son noyau. Avant d’installer Debian, découvrons ce que recouvrent <strong>Linux</strong>, <strong>GNU</strong>, <strong>logiciel libre</strong> et <strong>distribution</strong>.</p>
-<aside class="callout note"><p class="callout-title">Objectifs</p><p>À la fin du chapitre, vous pourrez expliquer le rôle d’un système d’exploitation, distinguer GNU de Linux, reconnaître les grandes familles de licences et comprendre pourquoi nous utilisons Debian.</p>
-<p><strong>Aucune commande à mémoriser pour le moment.</strong> L’objectif est de comprendre les mots que vous rencontrerez pendant la formation.</p></aside>
-
-<hr />
-<h2 id="1-quest-ce-quun-systeme-dexploitation">1. Qu’est-ce qu’un système d’exploitation ?</h2>
-<p>Un <strong>système d’exploitation</strong>, souvent abrégé <strong>OS</strong> (<em>Operating System</em>), fait fonctionner l’ordinateur et permet aux applications d’utiliser son matériel.</p>
-<p>Quand vous ouvrez un document, le traitement de texte demande au système de lire le fichier sur le disque. Si vous lancez plusieurs applications, le système répartit entre elles le temps du processeur et la mémoire disponible. Il gère aussi les périphériques et les droits d’accès aux fichiers.</p>
-<aside class="callout tip"><p class="callout-title">Une image pour comprendre</p><p>Imaginez un <strong>chef d’orchestre</strong> : les applications demandent des ressources, le système organise leur utilisation et le matériel réalise les opérations.</p></aside>
-
-<p><img alt="Le système Linux fait le lien entre les applications et le matériel." src="../ressources/images/01-systeme-linux.svg" / loading="lazy" style="width:100%;height:auto"></p>
-<p><em>Les applications s’appuient sur le système pour utiliser le matériel.</em></p>
-<p>Vous connaissez probablement <strong>Windows</strong>, <strong>macOS</strong>, <strong>Android</strong> ou <strong>iOS</strong>. Sur un ordinateur, <strong>Debian</strong> et <strong>Ubuntu</strong> sont deux exemples de systèmes construits autour du noyau Linux.</p>
-<p>Le <strong>noyau</strong> (<em>kernel</em>) est la partie centrale du système : il gère notamment le processeur, la mémoire et l’accès aux périphériques. Le navigateur, le bureau graphique et les commandes du terminal sont d’autres logiciels, qui s’appuient sur lui.</p>
-<hr />
-<h2 id="2-dunix-a-gnulinux-trois-reperes">2. D’Unix à GNU/Linux : trois repères</h2>
-<h3 id="unix-les-idees-de-depart">Unix : les idées de départ</h3>
-<p><strong>Unix</strong> apparaît en <strong>1969</strong> aux laboratoires Bell, notamment avec <strong>Ken Thompson</strong> et <strong>Dennis Ritchie</strong>. Il permet à plusieurs personnes d’utiliser un même ordinateur et d’y exécuter plusieurs programmes. <a href="https://www.unix.org/unix_history.html">Histoire d’Unix — The Open Group</a></p>
-<p>Unix a popularisé une organisation que vous retrouverez sous Linux : des utilisateurs avec des droits distincts, des fichiers rangés dans une arborescence et de petits outils que l’on peut combiner.</p>
-<p><strong>Linux est un système de type Unix</strong> : il reprend de nombreux principes d’Unix, mais son noyau a été développé indépendamment. Linux n’est donc pas simplement « une version gratuite d’Unix ».</p>
-<h3 id="gnu-richard-stallman-et-le-logiciel-libre">GNU : Richard Stallman et le logiciel libre</h3>
-<p>En <strong>1983</strong>, <strong>Richard Stallman</strong> annonce le projet <strong>GNU</strong>, dont le développement commence en <strong>1984</strong>. Son objectif est de construire un système compatible avec Unix qui respecte la liberté de ses utilisateurs. Le nom signifie <strong>GNU’s Not Unix</strong>, soit « GNU n’est pas Unix ». <a href="https://www.gnu.org/gnu/initial-announcement.html">Annonce du projet GNU</a></p>
-<p>Le projet fournit progressivement des outils essentiels : <strong>Bash</strong> pour interpréter les commandes, <strong>GCC</strong> pour transformer du code source en programmes et les <strong>outils GNU</strong> comme <code>ls</code> ou <code>cp</code>. Vous utiliserez certains de ces outils dans les prochains chapitres.</p>
-<p>Richard Stallman fonde également la <strong>Free Software Foundation (FSF)</strong> en <strong>1985</strong>, pour soutenir le logiciel libre. GNU développe de nombreux composants, mais son propre noyau n’est pas encore prêt pour constituer le système recherché. <a href="https://www.fsf.org/about/what-is-free-software">Repères historiques — FSF</a></p>
-<h3 id="linux-le-noyau-de-linus-torvalds">Linux : le noyau de Linus Torvalds</h3>
-<p>En <strong>1991</strong>, <strong>Linus Torvalds</strong>, alors étudiant finlandais, lance le noyau <strong>Linux</strong>. Des développeurs rejoignent ensuite le projet. Associé aux outils GNU et à d’autres logiciels, ce noyau permet de construire des systèmes complets.</p>
-<p>L’expression <strong>GNU/Linux</strong> rappelle cette association. Dans la conversation courante, on dit souvent simplement « Linux » pour parler de l’ensemble. <strong>Debian est une distribution GNU/Linux.</strong> Tous les systèmes qui utilisent le noyau Linux n’utilisent cependant pas l’environnement GNU : Android en est un exemple. <a href="https://www.gnu.org/gnu/gnu-history.en.html">Présentation du système GNU</a></p>
-<p><img alt="Unix apporte des principes ; GNU apporte des outils libres ; Linux apporte le noyau. Une distribution assemble ces composants avec d’autres logiciels." src="../ressources/images/01-unix-gnu-linux.svg" / loading="lazy" style="width:100%;height:auto"></p>
-<aside class="callout note"><p class="callout-title">Deux personnes, deux contributions</p><p><strong>Richard Stallman → GNU et les libertés du logiciel.</strong>
-<strong>Linus Torvalds → le noyau Linux.</strong>
-Le système que nous allons utiliser est le résultat de ces projets et de nombreuses autres contributions.</p></aside>
-
-<hr />
-<h2 id="3-logiciel-libre-open-source-et-gratuit-quelle-difference">3. Logiciel libre, open source et gratuit : quelle différence ?</h2>
-<p>Le <strong>code source</strong> est l’ensemble des instructions écrites par les développeurs pour construire un logiciel. Vous pouvez utiliser un logiciel sans savoir lire son code, comme vous pouvez utiliser une voiture sans être mécanicien.</p>
-<h3 id="les-quatre-libertes-du-logiciel-libre">Les quatre libertés du logiciel libre</h3>
-<p>Un <strong>logiciel libre</strong> donne à ses utilisateurs quatre libertés, traditionnellement numérotées de <strong>0 à 3</strong> :</p>
-<div class="table-wrap"><table>
-<thead>
-<tr>
-<th>Liberté</th>
-<th>Ce que cela permet concrètement</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>0 — Utiliser</strong></td>
-<td>Exécuter le programme pour l’usage de son choix, personnel ou professionnel.</td>
-</tr>
-<tr>
-<td><strong>1 — Étudier et modifier</strong></td>
-<td>Comprendre son fonctionnement et l’adapter à ses besoins, grâce au code source.</td>
-</tr>
-<tr>
-<td><strong>2 — Partager des copies</strong></td>
-<td>Donner une copie du logiciel à un collègue ou à un proche.</td>
-</tr>
-<tr>
-<td><strong>3 — Partager ses modifications</strong></td>
-<td>Redistribuer une version améliorée pour que d’autres en profitent.</td>
-</tr>
-</tbody>
-</table></div>
-<p>Ces libertés portent sur les <strong>droits accordés</strong>, pas sur le prix du logiciel. <a href="https://www.gnu.org/philosophy/free-sw.en.html">Définition du logiciel libre — GNU/FSF</a></p>
-<h3 id="lopen-source-le-code-et-les-droits-qui-laccompagnent">L’open source : le code et les droits qui l’accompagnent</h3>
-<p>Un logiciel <strong>open source</strong> fournit l’accès à son code source avec une licence autorisant notamment son utilisation, sa modification et sa redistribution. Un code visible sur Internet, accompagné d’une interdiction de le modifier, ne suffit donc pas.</p>
-<p>Les expressions <strong>logiciel libre</strong> et <strong>open source</strong> recouvrent largement les mêmes logiciels. La première met l’accent sur les libertés des utilisateurs ; la seconde sur l’ouverture du code et le développement collaboratif. L’<strong>Open Source Initiative (OSI)</strong> définit les critères d’une licence open source. <a href="https://opensource.org/osd">Définition de l’open source — OSI</a></p>
-<aside class="callout tip"><p class="callout-title">La recette et les permissions</p><p>Le code source ressemble à une <strong>recette de cuisine</strong>. La licence précise si vous pouvez la cuisiner, la modifier et partager votre version. <strong>Pouvoir lire la recette ne donne pas automatiquement tous ces droits.</strong></p></aside>
-
-<h3 id="gratuit-ne-veut-pas-dire-libre">Gratuit ne veut pas dire libre</h3>
-<p>Un logiciel peut être <strong>gratuit et propriétaire</strong> : vous ne payez rien, mais vous n’avez pas nécessairement accès au code ni le droit de le modifier. À l’inverse, un logiciel libre peut être vendu, et des entreprises peuvent facturer son installation, son hébergement ou son assistance.</p>
-<p>La transparence facilite l’étude du logiciel et permet à d’autres de poursuivre son développement. Elle ne garantit toutefois <strong>ni l’absence de failles, ni des mises à jour éternelles</strong>. La maintenance et la bonne configuration restent nécessaires.</p>
-<hr />
-<h2 id="4-les-licences-libres-les-regles-du-partage">4. Les licences libres : les règles du partage</h2>
-<p>Une <strong>licence logicielle</strong> est un texte qui précise les droits et les conditions d’utilisation, de modification et de redistribution d’un programme. Les auteurs conservent leurs droits d’auteur : publier un logiciel libre ne signifie pas abandonner tous leurs droits.</p>
-<p>Vous n’avez pas besoin d’apprendre ces textes par cœur. Pour débuter, retenez surtout <strong>deux grandes approches</strong>.</p>
-<h3 id="le-copyleft-conserver-les-libertes-lors-du-partage">Le copyleft : conserver les libertés lors du partage</h3>
-<p>La <strong>GNU GPL</strong> (<em>General Public License</em>) est une licence à <strong>copyleft</strong>. Lorsqu’une version modifiée d’un programme couvert par la GPL est distribuée, les destinataires doivent conserver les droits prévus par cette licence et pouvoir obtenir le code source correspondant selon ses conditions.</p>
-<p><strong>Exemple :</strong> une entreprise adapte un outil sous GPL et distribue cette version à ses clients. Elle doit respecter la GPL pour cette version et leur permettre d’obtenir son code source. Elle ne peut pas retirer les libertés que la licence leur accorde.</p>
-<aside class="callout note"><p class="callout-title">Utiliser un programme GPL ne rend pas vos documents publics</p><p>Rédiger un courrier ou utiliser un programme sous GPL ne vous oblige pas à publier votre travail. Une modification conservée pour un usage privé n’a pas non plus à être publiée simplement parce qu’elle existe. Les obligations de partage de la GPL concernent notamment la <strong>distribution du logiciel couvert</strong>, pas les documents que vous créez avec lui. <a href="https://www.gnu.org/licenses/gpl-faq.html#GPLRequireSourcePostedPublic">FAQ des licences GNU</a></p></aside>
-
-<p>Le <strong>noyau Linux est sous GPL version 2</strong>. Les autres logiciels d’une distribution ont leurs propres licences : Debian n’est pas un unique programme placé sous une unique licence. <a href="https://docs.kernel.org/process/license-rules.html">Licence du noyau Linux</a></p>
-<h3 id="les-licences-permissives-autoriser-davantage-de-reutilisations">Les licences permissives : autoriser davantage de réutilisations</h3>
-<p>Les licences <strong>MIT</strong>, <strong>BSD</strong> et <strong>Apache 2.0</strong> autorisent une réutilisation large du code, y compris dans des logiciels propriétaires, sous réserve de respecter leurs conditions. Elles imposent notamment de conserver certains avis de licence et de droits d’auteur. Apache 2.0 comprend aussi des dispositions explicites sur les brevets.</p>
-<div class="table-wrap"><table>
-<thead>
-<tr>
-<th>Approche</th>
-<th>Exemples</th>
-<th>Idée principale</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Copyleft</strong></td>
-<td>GNU GPL</td>
-<td>Préserver les libertés sur le programme couvert et ses versions dérivées distribuées.</td>
-</tr>
-<tr>
-<td><strong>Permissive</strong></td>
-<td>MIT, BSD, Apache 2.0</td>
-<td>Faciliter les réutilisations, sans imposer que toute version dérivée reste libre.</td>
-</tr>
-</tbody>
-</table></div>
-<p><strong>Exemple :</strong> une entreprise peut intégrer un composant sous MIT dans une application propriétaire en respectant la licence, notamment les mentions à conserver. Les utilisateurs de l’application complète ne reçoivent pas forcément le code de cette application. <a href="https://opensource.org/license/mit">Licence MIT — OSI</a>, <a href="https://www.apache.org/licenses/LICENSE-2.0">licence Apache 2.0</a></p>
-<aside class="callout tip"><p class="callout-title">Le réflexe utile</p><p>Avant de redistribuer un logiciel ou de réutiliser son code, cherchez son fichier <strong><code>LICENSE</code></strong>, <strong><code>COPYING</code></strong> ou sa rubrique <strong>À propos → Licence</strong>. Un téléchargement gratuit ne remplace pas la lecture des permissions.</p></aside>
-
-<hr />
-<h2 id="5-une-distribution-le-systeme-pret-a-utiliser">5. Une distribution : le système prêt à utiliser</h2>
-<p>Une <strong>distribution Linux</strong> assemble un noyau Linux, des outils système, des bibliothèques nécessaires aux programmes, un gestionnaire de paquets et des applications. Elle peut aussi proposer un bureau graphique.</p>
-<p>Pour <strong>Debian</strong>, on peut se représenter cet assemblage ainsi :</p>
-<pre><code class="language-text">Noyau Linux + outils GNU + autres composants et applications
-                      ↓
-             Distribution Debian
-</code></pre>
-<p>L’équipe d’une distribution choisit les composants, prépare leur installation et fournit des mises à jour. Vous n’avez pas à assembler chaque pièce vous-même.</p>
-<div class="table-wrap"><table>
-<thead>
-<tr>
-<th>Famille ou projet</th>
-<th>Exemples</th>
-<th>Repère pour la formation</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Debian</strong></td>
-<td>Debian, Ubuntu, Linux Mint</td>
-<td>Ubuntu s’appuie sur Debian ; l’édition principale de Mint s’appuie sur Ubuntu.</td>
-</tr>
-<tr>
-<td><strong>Red Hat</strong></td>
-<td>Fedora, RHEL, Rocky Linux, AlmaLinux</td>
-<td>Un autre écosystème, fréquent dans les environnements professionnels.</td>
-</tr>
-<tr>
-<td><strong>SUSE</strong></td>
-<td>openSUSE, SUSE Linux Enterprise</td>
-<td>Un écosystème disposant de ses propres outils d’administration.</td>
-</tr>
-<tr>
-<td><strong>Autres projets</strong></td>
-<td>Arch Linux, Kali Linux</td>
-<td>Des choix ou usages particuliers ; Kali, basée sur Debian, vise notamment les tests de sécurité.</td>
-</tr>
-</tbody>
-</table></div>
-<aside class="callout tip"><p class="callout-title">Notre choix : Debian</p><p>Nous utiliserons <strong>Debian</strong> pour apprendre sur une base stable, documentée et utilisable aussi bien avec un bureau que comme serveur. Les principes étudiés vous serviront ensuite dans d’autres distributions.</p></aside>
-
-<p>Une distribution peut contenir des composants sous différentes licences, et éventuellement des éléments propriétaires, comme certains micrologiciels nécessaires au matériel. <strong>Utiliser Linux ne signifie donc pas que chaque composant installé est libre.</strong></p>
-<hr />
-<h2 id="6-bureau-ou-serveur-deux-usages-du-meme-systeme">6. Bureau ou serveur : deux usages du même système</h2>
-<p>Un <strong>poste de travail</strong> sert directement à une personne : naviguer sur le Web, écrire des documents ou consulter ses fichiers. Un <strong>serveur</strong> fournit des services à d’autres machines, par exemple des pages Web ou un espace de partage.</p>
-<div class="table-wrap"><table>
-<thead>
-<tr>
-<th>Interface</th>
-<th>Comment l’utiliser ?</th>
-<th>Exemple</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Bureau graphique</strong></td>
-<td>Fenêtres, icônes, menus et souris.</td>
-<td>Ouvrir le gestionnaire de fichiers et créer un dossier.</td>
-</tr>
-<tr>
-<td><strong>Terminal</strong></td>
-<td>Saisir des commandes au clavier.</td>
-<td>Demander l’affichage du contenu d’un dossier.</td>
-</tr>
-</tbody>
-</table></div>
-<p>Ces interfaces accèdent au <strong>même système et aux mêmes fichiers</strong>. Vous pouvez ouvrir un terminal dans un bureau graphique ; il n’est pas nécessaire de choisir définitivement entre les deux.</p>
-<p>Un serveur peut fonctionner sans bureau pour économiser des ressources et limiter les logiciels à maintenir. Dans cette formation, nous commencerons avec une interface graphique, puis nous découvrirons progressivement le terminal.</p>
-<hr />
-<h2 id="7-video-et-echange">7. Vidéo et échange</h2>
-<p>Regardez la vidéo proposée, puis utilisez le cours pour répondre aux questions ci-dessous. Sa lecture nécessite une connexion Internet.</p>
-<iframe width="560" height="315" style="display:block;width:100%;max-width:900px;height:auto;aspect-ratio:16/9;border:0;border-radius:12px;margin:1rem auto" src="https://www.youtube.com/embed/oL6YcXLegC0?si=0lW4t2mYmfdHQEOa" title="Vidéo proposée pour le chapitre Comprendre Linux" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-
-<p><a href="https://www.youtube.com/watch?v=oL6YcXLegC0">Ouvrir la vidéo sur YouTube</a></p>
-<ol>
-<li>Qui a lancé GNU ? Qui a créé le noyau Linux ?</li>
-<li>Un logiciel gratuit est-il forcément libre ? Expliquez avec les droits de l’utilisateur.</li>
-<li>Quelle différence principale retenez-vous entre une licence GPL et une licence MIT ?</li>
-<li>Pourquoi Debian est-elle une distribution plutôt qu’un simple noyau ?</li>
-</ol>
-<details>
-<summary>Afficher les pistes de réponse</summary>
-<p><strong>1.</strong> Richard Stallman a lancé GNU ; Linus Torvalds a créé le noyau Linux.</p>
-<p><strong>2.</strong> Non. Le prix ne dit pas si l’on peut étudier, modifier et redistribuer le programme.</p>
-<p><strong>3.</strong> La GPL préserve les libertés sur les versions dérivées distribuées du programme couvert. MIT permet aussi des réutilisations propriétaires, à condition de respecter ses mentions et conditions.</p>
-<p><strong>4.</strong> Debian assemble le noyau avec des outils, des applications et un système de gestion et de mise à jour des logiciels.</p>
-</details>
-
-<hr />
-<h2 id="a-retenir">À retenir</h2>
-<div class="table-wrap"><table>
-<thead>
-<tr>
-<th>Mot</th>
-<th>L’idée essentielle</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Unix</strong></td>
-<td>Un système historique dont Linux reprend de nombreux principes.</td>
-</tr>
-<tr>
-<td><strong>GNU</strong></td>
-<td>Le projet libre lancé par Richard Stallman, à l’origine de nombreux outils système.</td>
-</tr>
-<tr>
-<td><strong>Linux</strong></td>
-<td>Le noyau lancé par Linus Torvalds en 1991.</td>
-</tr>
-<tr>
-<td><strong>GNU/Linux</strong></td>
-<td>L’association du noyau Linux et de l’environnement GNU, avec d’autres composants.</td>
-</tr>
-<tr>
-<td><strong>Libre / open source</strong></td>
-<td>Des droits sur l’utilisation, le code, les modifications et le partage ; pas une promesse de gratuité.</td>
-</tr>
-<tr>
-<td><strong>Licence</strong></td>
-<td>Le texte qui fixe ces droits et leurs conditions : GPL, MIT, BSD, Apache…</td>
-</tr>
-<tr>
-<td><strong>Distribution</strong></td>
-<td>Un ensemble prêt à installer, comme Debian ou Ubuntu.</td>
-</tr>
-</tbody>
-</table></div>
-<p>Vous pouvez maintenant <a href="quiz/01-comprendre-linux.html">faire le quiz de 20 questions</a>, puis passer au <a href="https://kayasam.github.io/linux-initiation/02-installer-la-vm/">chapitre 02 — Installer la VM</a>.</p>
-<section class="quiz-section" aria-labelledby="quiz-chapitre"><h2 id="quiz-chapitre">Quiz · 20 questions</h2><div id="tab-quiz"><a href="quiz/01-comprendre-linux.html">Ouvrir le quiz</a></div></section>
-</main></div><footer>Linux initiation · Comprendre avant de pratiquer</footer>
-</body></html>
+<div class="shell">
+<div class="intro-hero">
+  <div><p class="eyebrow">Linux initiation · Chapitre 01</p><h1>Une histoire<br>de <em>liberté.</em></h1><p class="hero-copy">Des idées, des personnes, un système partagé.<br>Explorez les moments qui ont donné naissance à GNU/Linux.</p></div>
+  <div class="hero-people" aria-label="Deux figures de cette histoire"><figure class="hero-face"><img src="../ressources/images/richard-stallman.jpg" alt="Richard Stallman"><figcaption>Richard Stallman</figcaption></figure><figure class="hero-face"><img src="../ressources/images/linus-torvalds.jpg" alt="Linus Torvalds"><figcaption>Linus Torvalds</figcaption></figure></div>
+</div>
+<div class="chapter-tabs" role="tablist" aria-label="Explorer le chapitre">
+  <button id="tab-history" role="tab" aria-selected="true" aria-controls="panel-history" tabindex="0"><span class="tab-number">01</span>La frise</button>
+  <button id="tab-build" role="tab" aria-selected="false" aria-controls="panel-build" tabindex="-1"><span class="tab-number">02</span>Assembler Linux</button>
+  <button id="tab-rights" role="tab" aria-selected="false" aria-controls="panel-rights" tabindex="-1"><span class="tab-number">03</span>Libertés &amp; licences</button>
+  <button id="tab-video" role="tab" aria-selected="false" aria-controls="panel-video" tabindex="-1"><span class="tab-number">04</span>La vidéo</button>
+  <button id="tab-test" role="tab" aria-selected="false" aria-controls="panel-test" tabindex="-1"><span class="tab-number">05</span>Le quiz</button>
+</div>
+<main>
+<section id="panel-history" role="tabpanel" aria-labelledby="tab-history" tabindex="0">
+  <div class="section-head"><div><p class="eyebrow">Le voyage commence ici</p><h2>Cinq dates. Une aventure collective.</h2></div><span class="counter" id="era-counter">Étape 2 / 5</span></div>
+  <div class="timeline" role="group" aria-label="Frise chronologique de 1969 à 1993">
+    <button class="era" data-era="0" aria-pressed="false" aria-controls="story"><span class="era-icon" aria-hidden="true">&gt;_</span><span class="era-year">1969</span><span class="era-label">Unix</span><span class="era-who">Les idées fondatrices</span></button>
+    <button class="era" data-era="1" aria-pressed="true" aria-controls="story"><img class="era-face" src="../ressources/images/richard-stallman.jpg" alt=""><span class="era-year">1983</span><span class="era-label">GNU</span><span class="era-who">Richard Stallman</span></button>
+    <button class="era" data-era="2" aria-pressed="false" aria-controls="story"><span class="era-icon" aria-hidden="true">©</span><span class="era-year">1985</span><span class="era-label">FSF</span><span class="era-who">Défendre les libertés</span></button>
+    <button class="era" data-era="3" aria-pressed="false" aria-controls="story"><img class="era-face" src="../ressources/images/linus-torvalds.jpg" alt=""><span class="era-year">1991</span><span class="era-label">Linux</span><span class="era-who">Linus Torvalds</span></button>
+    <button class="era" data-era="4" aria-pressed="false" aria-controls="story"><span class="era-icon" aria-hidden="true">∞</span><span class="era-year">1993</span><span class="era-label">Debian</span><span class="era-who">Assembler et partager</span></button>
+  </div>
+  <article class="story" id="story" aria-label="Étape sélectionnée">
+    <div class="story-visual"><img class="story-photo" id="story-photo" src="../ressources/images/richard-stallman.jpg" alt="Portrait de Richard Stallman"><span class="story-monogram" id="story-monogram" hidden></span><div class="story-caption"><strong id="story-person">Richard Stallman</strong><small id="story-photo-date">Portrait d’illustration · photographie de 2015</small></div></div>
+    <div class="story-body"><p class="story-kicker" id="story-date">1983 → début du développement en 1984</p><h3 id="story-title">Et si le logiciel appartenait à ses utilisateurs ?</h3><p id="story-text">Richard Stallman annonce GNU : construire un système compatible avec Unix, dont chacun peut étudier, modifier et partager les logiciels.</p><div class="story-lesson" id="story-lesson">GNU apporte des outils. Il ne faut pas le confondre avec le noyau Linux.</div><div class="story-bottom"><a id="story-source" href="https://www.gnu.org/gnu/initial-announcement.html" target="_blank" rel="noopener">À la source ↗</a><button class="next-era" id="next-era">Étape suivante →</button></div></div>
+  </article>
+  <div class="bridge"><p><strong>Des projets complémentaires.</strong> Linux n’est pas le code d’Unix renommé. GNU et Linux se rencontrent dans des distributions comme Debian.</p><button data-open-tab="build">Voir l’assemblage →</button></div>
+</section>
+<section id="panel-build" role="tabpanel" aria-labelledby="tab-build" tabindex="0" hidden>
+  <div class="section-head"><div><p class="eyebrow">À vous de jouer</p><h2>Construisez votre poste Debian.</h2></div><p>Sélectionnez les quatre pièces pour voir le système prendre forme.</p></div>
+  <div class="activity-grid"><div class="surface"><h3>Les pièces du puzzle</h3><p class="muted">Chaque composant a un rôle. Cliquez pour l’ajouter ou le retirer.</p><div class="component-list">
+    <button class="component" data-part="kernel" aria-pressed="false"><span class="check" aria-hidden="true">+</span><span><strong>Linux</strong><small>Le noyau · fait fonctionner le matériel</small></span></button>
+    <button class="component" data-part="gnu" aria-pressed="false"><span class="check" aria-hidden="true">+</span><span><strong>Les outils GNU</strong><small>Des commandes · Bash, ls, cp…</small></span></button>
+    <button class="component" data-part="apt" aria-pressed="false"><span class="check" aria-hidden="true">+</span><span><strong>APT</strong><small>Les paquets · installer et mettre à jour</small></span></button>
+    <button class="component" data-part="desktop" aria-pressed="false"><span class="check" aria-hidden="true">+</span><span><strong>Un bureau graphique</strong><small>Les fenêtres · par exemple GNOME</small></span></button>
+  </div></div><div class="surface"><h3>Votre assemblage</h3><div class="assembly-screen" aria-label="Composants sélectionnés"><p class="prompt">stagiaire@debian:~$ mon-systeme</p><div id="assembly-lines">En attente des premières pièces…</div></div><div class="assembly-meter" role="progressbar" aria-label="Pièces ajoutées" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0"><span id="assembly-progress"></span></div><div class="assembly-summary" aria-live="polite"><strong id="assembly-count">0 / 4 pièces</strong><p id="assembly-message" class="muted">Commencez par le noyau, puis explorez les autres composants.</p></div><button class="secondary" id="reset-assembly">Recommencer</button><p class="small-note">Assemblage simplifié : un vrai système contient aussi des bibliothèques, des services et des applications. Le bureau est facultatif pour un serveur.</p></div></div>
+</section>
+<section id="panel-rights" role="tabpanel" aria-labelledby="tab-rights" tabindex="0" hidden>
+  <div class="section-head"><div><p class="eyebrow">Libre, mais avec des règles</p><h2>Le prix ne dit pas quels sont vos droits.</h2></div><p>Quatre libertés, puis deux situations pour comprendre les licences.</p></div>
+  <div class="freedoms"><div class="freedom"><b>0</b><strong>Utiliser</strong><small>Pour l’usage de votre choix.</small></div><div class="freedom"><b>1</b><strong>Étudier &amp; modifier</strong><small>Avec l’accès au code source.</small></div><div class="freedom"><b>2</b><strong>Partager</strong><small>Redistribuer des copies.</small></div><div class="freedom"><b>3</b><strong>Améliorer ensemble</strong><small>Partager ses modifications.</small></div></div>
+  <div class="activity-grid"><div class="surface"><p class="scenario-title">Petite mise en situation</p><h3 style="margin-top:10px">Gratuit = libre ?</h3><p class="muted">Vous téléchargez gratuitement un logiciel. Son code est fermé et sa modification interdite. Est-il libre ?</p><div class="scenario-options" role="group" aria-label="Choisir une réponse"><button data-answer="yes" aria-pressed="false">Oui, puisque je ne paie rien.</button><button data-answer="no" aria-pressed="false">Non, le prix ne suffit pas.</button></div><div id="rights-feedback" class="feedback" aria-live="polite">Choisissez une réponse pour découvrir l’explication.</div></div>
+  <div class="surface"><div class="license-toggle" role="group" aria-label="Comparer les licences"><button data-license="gpl" aria-pressed="true">Copyleft</button><button data-license="mit" aria-pressed="false">Permissive</button></div><div class="license-label" id="license-name">GPL</div><h3 id="license-title">Les libertés voyagent avec le logiciel.</h3><p class="muted" id="license-text">Vous distribuez une version modifiée d’un programme GPL : ses destinataires doivent conserver les droits de la GPL et pouvoir obtenir le code correspondant selon ses conditions.</p><div class="license-tags" id="license-tags"><span>Partager les libertés</span><span>Code correspondant</span></div><p class="small-note" id="license-note">Utiliser un programme GPL ne vous oblige pas à publier les documents que vous créez avec lui.</p></div></div>
+</section>
+<section id="panel-video" role="tabpanel" aria-labelledby="tab-video" tabindex="0" hidden>
+  <div class="section-head"><div><p class="eyebrow">Une pause pour prendre du recul</p><h2>Regarder, puis en discuter.</h2></div><span class="counter">Connexion Internet nécessaire</span></div>
+  <div class="video-layout"><div><iframe class="video-frame" width="560" height="315" src="https://www.youtube.com/embed/oL6YcXLegC0?si=0lW4t2mYmfdHQEOa" title="Vidéo proposée pour Comprendre Linux" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe><p class="small-note"><a href="https://www.youtube.com/watch?v=oL6YcXLegC0" target="_blank" rel="noopener">Ouvrir directement sur YouTube ↗</a></p></div><aside class="surface"><h3>Trois questions à garder en tête</h3><ol class="video-prompts"><li><span>LES PERSONNES</span>Qui a lancé GNU ? Qui a créé Linux ?</li><li><span>LES DROITS</span>Que pouvez-vous faire avec un logiciel libre ?</li><li><span>LE SYSTÈME</span>Pourquoi faut-il plus qu’un noyau ?</li></ol><details><summary>Afficher les repères du cours</summary><p class="small-note">Stallman → GNU ; Torvalds → Linux. Les libertés portent sur l’usage, l’étude, les modifications et le partage. Une distribution assemble le noyau et les autres composants.</p></details></aside></div>
+</section>
+<section id="panel-test" role="tabpanel" aria-labelledby="tab-test" tabindex="0" hidden>
+  <div class="section-head"><div><p class="eyebrow">Faites le point</p><h2>À vous de relier les idées.</h2></div><span class="counter">20 questions · réponses expliquées</span></div><p class="quiz-intro muted">Le quiz mélange les questions à chaque tentative. Prenez le temps de lire les explications.</p><div id="tab-quiz"><a href="quiz/01-comprendre-linux.html">Ouvrir le quiz de 20 questions →</a></div>
+</section>
+</main>
+<footer class="footer"><details><summary>Photos &amp; sources</summary><div class="credits"><p>Portrait de <a href="https://commons.wikimedia.org/wiki/File:Richard_Stallman_(124442297).jpeg" target="_blank" rel="noopener">Richard Stallman</a> : Frank Karlitschek, photographie de 2015, <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>. Portrait de <a href="https://commons.wikimedia.org/wiki/File:LinuxCon_Europe_Linus_Torvalds_03_(cropped).jpg" target="_blank" rel="noopener">Linus Torvalds</a> : Krd (photo), Von Sprat (recadrage), photographie de 2014, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>. Fichiers conservés sans modification ; cadrage d’affichage adapté aux cartes.</p><p>Repères historiques : <a href="https://www.unix.org/unix_history.html" target="_blank" rel="noopener">The Open Group</a>, <a href="https://www.gnu.org/gnu/initial-announcement.html" target="_blank" rel="noopener">projet GNU</a>, <a href="https://www.fsf.org/about/what-is-free-software" target="_blank" rel="noopener">FSF</a>, <a href="https://docs.kernel.org/process/license-rules.html" target="_blank" rel="noopener">Linux</a>, <a href="https://www.debian.org/doc/manuals/project-history/intro" target="_blank" rel="noopener">Debian</a>. Licences : <a href="https://www.gnu.org/licenses/gpl-faq.fr.html" target="_blank" rel="noopener">GNU GPL</a>, <a href="https://opensource.org/license/mit" target="_blank" rel="noopener">MIT</a>.</p></div></details><a class="footer-link" href="https://kayasam.github.io/linux-initiation/01-comprendre-linux/">Revenir au cours Markdown →</a></footer>
+</div>
+<script>
+(()=>{
+  'use strict';
+  const tabs=[...document.querySelectorAll('[role="tab"]')];
+  function openTab(name,focus=false){
+    const target=document.getElementById('tab-'+name);if(!target)return;
+    tabs.forEach(tab=>{const selected=tab===target;tab.setAttribute('aria-selected',selected);tab.tabIndex=selected?0:-1;document.getElementById(tab.getAttribute('aria-controls')).hidden=!selected;});
+    if(focus){target.focus();target.scrollIntoView({block:'nearest',inline:'nearest'});}
+  }
+  tabs.forEach((tab,index)=>{
+    tab.addEventListener('click',()=>openTab(tab.id.slice(4)));
+    tab.addEventListener('keydown',event=>{let next;if(event.key==='ArrowRight')next=(index+1)%tabs.length;if(event.key==='ArrowLeft')next=(index-1+tabs.length)%tabs.length;if(event.key==='Home')next=0;if(event.key==='End')next=tabs.length-1;if(next!==undefined){event.preventDefault();openTab(tabs[next].id.slice(4),true);}});
+  });
+  document.querySelectorAll('[data-open-tab]').forEach(button=>button.addEventListener('click',()=>openTab(button.dataset.openTab,true)));
+  const eras=[
+    {date:'1969 · Laboratoires Bell',title:'Les racines d’une nouvelle façon de travailler.',person:'Ken Thompson & Dennis Ritchie',icon:'>_',text:'Unix pose des repères durables : plusieurs utilisateurs, des fichiers organisés et de petits outils que l’on combine. Linux reprendra ces idées avec un noyau développé indépendamment.',lesson:'Une parenté d’idées ne signifie pas que le code est identique.',source:'https://www.unix.org/unix_history.html'},
+    {date:'1983 → début du développement en 1984',title:'Et si le logiciel appartenait à ses utilisateurs ?',person:'Richard Stallman',photo:'richard-stallman.jpg',photoDate:'2015',text:'Richard Stallman annonce GNU : construire un système compatible avec Unix, dont chacun peut étudier, modifier et partager les logiciels.',lesson:'GNU apporte des outils. Il ne faut pas le confondre avec le noyau Linux.',source:'https://www.gnu.org/gnu/initial-announcement.html'},
+    {date:'1985 · Free Software Foundation',title:'Donner une voix aux libertés du logiciel.',person:'La Free Software Foundation',icon:'FSF',text:'Richard Stallman fonde la FSF pour soutenir le logiciel libre. L’enjeu dépasse le prix : il s’agit des droits des personnes qui utilisent, étudient et partagent les programmes.',lesson:'Libre parle de droits. Gratuit parle de prix.',source:'https://www.fsf.org/about/what-is-free-software'},
+    {date:'1991 · Un noyau, puis des contributions',title:'Linus écrit le cœur du système.',person:'Linus Torvalds',photo:'linus-torvalds.jpg',photoDate:'2014',text:'Étudiant finlandais, Linus Torvalds lance le noyau Linux. Son rôle : gérer notamment le processeur, la mémoire et les périphériques. D’autres développeurs contribuent ensuite au projet.',lesson:'Linux est le noyau ; le système complet ajoute des outils et des logiciels.',source:'https://docs.kernel.org/process/license-rules.html'},
+    {date:'1993 · Naissance du projet Debian',title:'Toutes les pièces, prêtes à être installées.',person:'Ian Murdock & la communauté Debian',icon:'Debian',text:'Ian Murdock lance Debian. La distribution rassemble Linux, des outils GNU et d’autres logiciels dans un ensemble organisé. C’est cette famille de systèmes que nous allons découvrir.',lesson:'Une distribution assemble, installe et entretient les composants du système.',source:'https://www.debian.org/doc/manuals/project-history/intro'}
+  ];
+  let selectedEra=1;
+  const photo=document.getElementById('story-photo'),monogram=document.getElementById('story-monogram');
+  function showEra(index){
+    selectedEra=index;const era=eras[index];
+    document.querySelectorAll('[data-era]').forEach(button=>button.setAttribute('aria-pressed',Number(button.dataset.era)===index));
+    [['story-date',era.date],['story-title',era.title],['story-text',era.text],['story-lesson',era.lesson],['story-person',era.person],['era-counter','Étape '+(index+1)+' / 5']].forEach(([id,text])=>document.getElementById(id).textContent=text);
+    photo.hidden=!era.photo;monogram.hidden=!!era.photo;
+    if(era.photo){photo.src=new URL(era.photo,photo.src).href;photo.alt='Portrait de '+era.person;}else{monogram.textContent=era.icon;}
+    document.getElementById('story-photo-date').textContent=era.photo?'Portrait d’illustration · photographie de '+era.photoDate:'Sélectionnez une autre date pour continuer le voyage.';
+    document.getElementById('story-source').href=era.source;
+    document.getElementById('next-era').textContent=index===4?'Revenir à Unix ↺':'Étape suivante →';
+  }
+  document.querySelectorAll('[data-era]').forEach(button=>button.addEventListener('click',()=>showEra(Number(button.dataset.era))));
+  document.getElementById('next-era').addEventListener('click',()=>showEra((selectedEra+1)%eras.length));
+  const parts=new Set(),partLabels={kernel:'Linux · noyau',gnu:'GNU · outils',apt:'APT · paquets',desktop:'GNOME · bureau'};
+  function updateAssembly(){
+    const output=document.getElementById('assembly-lines');output.replaceChildren();
+    if(!parts.size)output.textContent='En attente des premières pièces…';
+    Object.keys(partLabels).filter(key=>parts.has(key)).forEach(key=>{const line=document.createElement('p');line.textContent='✓ '+partLabels[key];output.appendChild(line);});
+    document.querySelectorAll('[data-part]').forEach(button=>{const selected=parts.has(button.dataset.part);button.setAttribute('aria-pressed',selected);button.querySelector('.check').textContent=selected?'✓':'+';});
+    document.getElementById('assembly-count').textContent=parts.size+' / 4 pièces';
+    document.getElementById('assembly-progress').style.width=parts.size*25+'%';document.querySelector('.assembly-meter').setAttribute('aria-valuenow',parts.size);
+    document.getElementById('assembly-message').textContent=parts.size===4?'Les grandes pièces de votre poste sont réunies ! Une distribution comme Debian les prépare pour vous.':!parts.size?'Commencez par le noyau, puis explorez les autres composants.':!parts.has('kernel')?'Il manque le noyau pour gérer le matériel.':!parts.has('desktop')&&parts.size===3?'Sans bureau, ce type de système peut servir de base à un serveur.':'Les composants se complètent : continuez votre assemblage.';
+  }
+  document.querySelectorAll('[data-part]').forEach(button=>button.addEventListener('click',()=>{const key=button.dataset.part;parts.has(key)?parts.delete(key):parts.add(key);updateAssembly();}));
+  document.getElementById('reset-assembly').addEventListener('click',()=>{parts.clear();updateAssembly();});
+  document.querySelectorAll('[data-answer]').forEach(button=>button.addEventListener('click',()=>{
+    document.querySelectorAll('[data-answer]').forEach(other=>other.setAttribute('aria-pressed',other===button));
+    document.getElementById('rights-feedback').textContent=(button.dataset.answer==='no'?'Bien vu. ':'Pas tout à fait. ')+'Un logiciel peut être gratuit et propriétaire. Ce sont les droits d’utilisation, d’étude, de modification et de partage qui déterminent s’il est libre.';
+  }));
+  const licenseData={gpl:{name:'GPL',title:'Les libertés voyagent avec le logiciel.',text:'Vous distribuez une version modifiée d’un programme GPL : ses destinataires doivent conserver les droits de la GPL et pouvoir obtenir le code correspondant selon ses conditions.',tags:['Partager les libertés','Code correspondant'],note:'Utiliser un programme GPL ne vous oblige pas à publier les documents que vous créez avec lui.'},mit:{name:'MIT · BSD · Apache',title:'Une réutilisation plus ouverte, avec des conditions.',text:'Une entreprise peut réutiliser un composant sous licence permissive dans un logiciel propriétaire. Elle doit respecter les conditions de sa licence, notamment les mentions à conserver.',tags:['Réutilisations propriétaires possibles','Conditions à respecter'],note:'MIT, BSD et Apache 2.0 ont des textes différents. Permissive ne veut pas dire « sans aucune règle ».'}};
+  document.querySelectorAll('[data-license]').forEach(button=>button.addEventListener('click',()=>{
+    document.querySelectorAll('[data-license]').forEach(other=>other.setAttribute('aria-pressed',other===button));const data=licenseData[button.dataset.license];
+    ['name','title','text','note'].forEach(key=>document.getElementById('license-'+key).textContent=data[key]);
+    const tags=document.getElementById('license-tags');tags.replaceChildren();data.tags.forEach(text=>{const tag=document.createElement('span');tag.textContent=text;tags.appendChild(tag);});
+  }));
+})();
+</script>
+</body>
+</html>
