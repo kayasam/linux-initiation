@@ -2,10 +2,12 @@
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 import argparse
+import hashlib
 import json
 import re
 import runpy
 import sys
+import tarfile
 import zipfile
 from urllib.request import Request, urlopen
 
@@ -58,6 +60,13 @@ def local_audit():
                 assert (CONTENT / slug / 'tp.md').is_file()
                 tp_count += 1
     with zipfile.ZipFile(CONTENT / 'linux-scripting-bash-obsidian.zip') as archive:
+        with tarfile.open(CONTENT / 'telechargements/bash/orion-academie.tar.gz', 'r:gz') as game:
+            for name in ['orion.py','missions.json','jouer.sh','README.md']:
+                expected = (bash_source / 'jeu' / name).read_bytes().replace(b'\r\n', b'\n')
+                assert game.extractfile('orion-academie/' + name).read() == expected, 'Jeu Orion désynchronisé : ' + name
+                assert archive.read('Linux-scripting-bash/jeu/' + name) == expected, 'Jeu Orion dans le ZIP : ' + name
+        game_archive = CONTENT / 'telechargements/bash/orion-academie.tar.gz'
+        assert game_archive.with_suffix('.gz.sha256').read_text().strip() == hashlib.sha256(game_archive.read_bytes()).hexdigest() + '  ' + game_archive.name
         equal((bash_source / 'Résumé.md').read_text(encoding='utf-8-sig'), archive.read('Linux-scripting-bash/Résumé.md'), 'Mémo Bash (ZIP)')
         for image in sorted((bash_source / 'Ressources/images').glob('bash-*.svg')):
             assert archive.read('Linux-scripting-bash/Ressources/images/' + image.name) == image.read_bytes()
@@ -105,7 +114,7 @@ def local_audit():
 
 
 def live_audit():
-    paths = sorted(set(CONTENT.glob('telechargements/**/*.md')) | set(CONTENT.glob('cours/*-interactif.html')) | set(CONTENT.glob('bash/cours/*-interactif.html')) | set(CONTENT.glob('bash/images/*.svg')) | set(CONTENT.glob('cours/quiz/*.html')) | set(CONTENT.glob('assets/brands/*')) | {CONTENT / 'assets/quiz/quiz-banks.js', CONTENT / 'linux-initiation-obsidian.zip', CONTENT / 'linux-scripting-bash-obsidian.zip'})
+    paths = sorted(set(CONTENT.glob('telechargements/**/*.md')) | set(CONTENT.glob('telechargements/**/*.tar.gz')) | set(CONTENT.glob('telechargements/**/*.sha256')) | set(CONTENT.glob('cours/*-interactif.html')) | set(CONTENT.glob('bash/cours/*-interactif.html')) | set(CONTENT.glob('bash/images/*.svg')) | set(CONTENT.glob('cours/quiz/*.html')) | set(CONTENT.glob('assets/brands/*')) | {CONTENT / 'assets/quiz/quiz-banks.js', CONTENT / 'linux-initiation-obsidian.zip', CONTENT / 'linux-scripting-bash-obsidian.zip'})
     def compare(path):
         relative = path.relative_to(CONTENT).as_posix()
         try:

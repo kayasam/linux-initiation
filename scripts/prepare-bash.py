@@ -3,6 +3,7 @@ from pathlib import Path
 import html
 import json
 import re
+import runpy
 import shutil
 import zipfile
 
@@ -49,6 +50,11 @@ def populate(destination, chapters):
     tps = sorted(p for p in candidates if not re.search(r'correction|corrig', p.name, re.I))
     routes = {p: (f'bash/{p.parent.parent.name}/tp' if p.is_relative_to(SOURCE / 'cours') else f'bash/ateliers/{p.stem}') for p in tps}
     export = {}
+    game = SOURCE / 'jeu'
+    export.update(runpy.run_path(str(ROOT / 'scripts/package-orion.py'))['package'](game, destination))
+    game_page = (game / 'README.md').read_text(encoding='utf-8')
+    game_page += f'\n\n[Télécharger Orion Académie]({BASE}/telechargements/bash/orion-academie.tar.gz) · [← Parcours Bash]({BASE}/#bash)\n'
+    write(destination / 'bash/jeu/index.md', metadata('Orion Académie — Le jeu', game_page))
     images = SOURCE / 'Ressources/images'
     if images.is_dir():
         shutil.copytree(images, destination / 'bash/images', dirs_exist_ok=True)
@@ -106,7 +112,7 @@ def populate(destination, chapters):
     write(destination / 'bash/tp/index.md', metadata('Travaux pratiques', '# Travaux pratiques Bash\n\n' + '\n'.join(tp_links) + f'\n\n[← Parcours Bash]({BASE}/#bash)\n'))
     workshops = [p for p in tps if not p.is_relative_to(SOURCE / 'cours')]
     write(destination / 'bash/ateliers/index.md', metadata('Ateliers et jeu final', '# Ateliers et jeu final\n\n' + '\n'.join(f'- [{title_of(p)}]({BASE}/{routes[p]})' for p in workshops) + '\n'))
-    write(destination / 'bash/index.md', metadata('Bash — Le parcours', '# Scripting Bash\n\n' + '\n'.join(f'- [{title_of(c)}]({BASE}/bash/{c.stem}/)' for c in courses) + f'\n\n[Travaux pratiques]({BASE}/bash/tp/)\n'))
+    write(destination / 'bash/index.md', metadata('Bash — Le parcours', '# Scripting Bash\n\n' + '\n'.join(f'- [{title_of(c)}]({BASE}/bash/{c.stem}/)' for c in courses) + f'\n\n[Travaux pratiques]({BASE}/bash/tp/) · [Orion Académie — Le jeu]({BASE}/bash/jeu/)\n'))
     export['README.md'] = '# Scripting Bash\n\nOuvrez ce dossier dans Obsidian. Chaque chapitre est dans `cours/<chapitre>/` avec son cours Markdown, sa version HTML et son dossier `tp/`. Les exercices transversaux sont dans `tp/synthese/`, `tp/final/` et `tp/bonus/`. Les corrections sont exclues.\n'
     export['cours/README.md'] = (SOURCE / 'cours/README.md').read_text(encoding='utf-8-sig')
     memo = (SOURCE / 'Résumé.md').read_text(encoding='utf-8-sig')
@@ -125,7 +131,7 @@ def populate(destination, chapters):
     home = '''<header class="home-header"><h1>Linux initiation &amp; Bash</h1><p>Deux parcours pour prendre en main Linux et automatiser vos tâches.</p><nav class="home-shortcuts" aria-label="Choisir une formation"><a href="#linux">Linux initiation <span>10 chapitres ↓</span></a><a href="#bash">Bash <span>6 chapitres ↓</span></a></nav></header>'''
     home += track('linux', 'Linux initiation', 'Découvrez Debian, le terminal, les fichiers, les permissions, le réseau et SSH.', linux_cards, './01-comprendre-linux/', 'tux.svg')
     home += track('bash', 'Bash', 'Passez des commandes aux scripts : variables, conditions, boucles et traitement de texte.', ''.join(bash_cards), './bash/01-shell-et-environnement/', 'bash.png')
-    home += f'''<div class="home-links"><a href="./bash/tp/">Les {len(tps)} TP Bash →</a><a href="./ressources/">Programme Linux initiation →</a></div><section class="home-downloads"><h2>Supports hors ligne</h2><div class="home-downloads__grid"><a href="./linux-initiation-obsidian.zip" download><strong>Linux initiation</strong><span>10 cours, versions interactives, quiz et {sum(c['tp'] is not None for c in chapters)} TP.</span><em>Télécharger le ZIP →</em></a><a href="./linux-scripting-bash-obsidian.zip" download><strong>Bash</strong><span>6 cours, versions HTML et {len(tps)} TP pour Obsidian.</span><em>Télécharger le ZIP →</em></a></div></section>'''
+    home += f'''<div class="home-links"><a href="./bash/tp/">Les {len(tps)} TP Bash →</a><a href="./bash/jeu/">Orion Académie — 48 missions dans le terminal →</a><a href="./ressources/">Programme Linux initiation →</a></div><section class="home-downloads"><h2>Supports hors ligne</h2><div class="home-downloads__grid"><a href="./linux-initiation-obsidian.zip" download><strong>Linux initiation</strong><span>10 cours, versions interactives, quiz et {sum(c['tp'] is not None for c in chapters)} TP.</span><em>Télécharger le ZIP →</em></a><a href="./linux-scripting-bash-obsidian.zip" download><strong>Bash</strong><span>6 cours, versions HTML et {len(tps)} TP pour Obsidian.</span><em>Télécharger le ZIP →</em></a></div></section>'''
     home += '<p class="brand-credits">Tux : Larry Ewing et The GIMP, Simon Budig, Garrett LeSage. <a href="./assets/brands/TUX-COPYRIGHT.txt">Crédits Tux</a> · <a href="https://commons.wikimedia.org/wiki/File:Bash_Logo_Colored.svg">Logo Bash</a></p>'
     write(destination / 'index.md', metadata('Linux initiation & Bash', home))
     assert not any(re.search(r'correction|corrig', name, re.I) for name in export)

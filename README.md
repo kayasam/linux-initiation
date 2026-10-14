@@ -12,6 +12,8 @@ Source Bash : `C:/Users/kayaw/Nextcloud/Obsidian/CoffreSam/Formations/linux-scri
 
 Le parcours Bash débutant suit une progression terminal → variables → scripts → conditions → boucles → texte. Les neuf TP utilisent des données fictives dans un atelier personnel, avec corrections privées. Les sept schémas et les HTML autonomes sont régénérés depuis les Markdown par `scripts/render-bash-supports.py`. Le mémo et les schémas sont inclus dans le ZIP.
 
+Orion Académie est une aventure hors ligne de 48 missions dans un vrai Bash, avec ASCII, indices, badges et sauvegarde. Les sources du coffre dans `jeu/` alimentent l’archive `telechargements/bash/orion-academie.tar.gz`, sa somme SHA-256 et le ZIP Obsidian. La page `/bash/jeu/` explique le téléchargement et le lancement. Le moteur utilise Python standard ; les exercices et l’arcade finale utilisent Bash. `python scripts/validate-orion-game.py --ssh debian` joue les 48 missions et vérifie le terminal interactif sur la VM. Le même contrôle tourne sur Linux dans GitHub Actions.
+
 Validation sur Debian : `python scripts/validate-bash-on-debian.py` exécute les exemples et les scénarios des solutions dans un espace temporaire, via l'alias `ssh debian`.
 
 ```powershell
