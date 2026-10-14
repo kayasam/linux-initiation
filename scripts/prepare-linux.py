@@ -154,6 +154,9 @@ def prepare(source):
         for file in sorted(vault.rglob('*')):
             if file.is_file(): z.write(file, file.relative_to(vault.parent))
     shutil.rmtree(vault)
+    # Keep the shared home and Bash course in every normal publication.
+    import runpy
+    runpy.run_path(str(ROOT / 'scripts/prepare-bash.py'))['populate'](stage, chapters)
     forbidden = [p for p in stage.rglob('*') if p.is_file() and re.search(r'correction|corrig[eé]', p.name, re.I) and p.name not in published_corrections]
     assert not forbidden, forbidden
     assert not any(':::' in p.read_text(encoding='utf-8') for p in stage.rglob('*.md'))

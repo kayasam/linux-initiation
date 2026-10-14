@@ -1,4 +1,6 @@
-# Publier Linux — Initiation
+# Publier Linux initiation & Bash
+
+L'accueil propose deux parcours comme le site GLPI/ITIL. Les URL Linux existantes sont conservées ; Bash est publié sous `/bash/` sur le même site. Le script `prepare-linux.py` appelle `prepare-bash.py` pour intégrer les six cours Bash, leurs versions HTML et les sept énoncés de TP depuis `Formations/linux-scripting-bash`. Toutes les corrections Bash restent exclues du site et de son ZIP. Chaque formation possède son archive Obsidian.
 
 Les modifications des cours se font dans `Formations/linux-initiation` du coffre Obsidian. Les dix chapitres sont conservés dans leur ordre d’origine, chacun dans `cours/NN-sujet/`, avec le Markdown, le HTML, le quiz et son sous-dossier `tp/`. Les notes de session restent dans `sessions/`.
 

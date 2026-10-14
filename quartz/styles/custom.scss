@@ -143,6 +143,21 @@ article a[href*="/telechargements/"][href$=".md"]:hover {
 .home-track {
   --home-accent: #007a87;
 }
+
+.home-track--bash {
+  --home-accent: #8956ee;
+}
+
+.home-terminal-icon {
+  font-family: var(--codeFont);
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: var(--home-accent);
+}
+
+.home-shortcuts a {
+  min-height: 4rem;
+}
 .chapter-pagination {
   display: flex;
   justify-content: space-between;

@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les variables — Scripting Bash</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #232635;
+    --border: #2e3148;
+    --accent: #7c6af7;
+    --accent2: #56cfb2;
+    --warn: #f0a500;
+    --danger: #e05c5c;
+    --success: #4caf82;
+    --text: #d4d8f0;
+    --text-dim: #7880a0;
+    --code-bg: #12141f;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  header {
+    background: linear-gradient(135deg, #0e1a30 0%, #1a1535 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 2.5rem 2rem 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%; transform: translateX(-50%);
+    width: 400px; height: 200px;
+    background: radial-gradient(ellipse, rgba(86,207,178,.2) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .badge {
+    display: inline-block;
+    background: rgba(86,207,178,.12);
+    border: 1px solid rgba(86,207,178,.35);
+    color: #56cfb2;
+    font-size: .75rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: .25rem .75rem;
+    border-radius: 20px;
+    margin-bottom: .75rem;
+  }
+  h1 {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    background: linear-gradient(135deg, #56cfb2, #a89ef8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: .4rem;
+  }
+  .subtitle { color: var(--text-dim); font-size: 1rem; }
+
+  nav {
+    position: sticky;
+    top: 0; z-index: 100;
+    background: rgba(15,17,23,.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: center;
+    gap: .25rem;
+    padding: .5rem 1rem;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    background: none;
+    border: 1px solid transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    padding: .45rem 1.1rem;
+    border-radius: 6px;
+    font-size: .88rem;
+    font-family: inherit;
+    transition: all .2s;
+  }
+  .tab-btn:hover { color: var(--text); background: var(--surface); }
+  .tab-btn.active {
+    color: #56cfb2;
+    background: rgba(86,207,178,.1);
+    border-color: rgba(86,207,178,.35);
+  }
+
+  main { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    padding-bottom: .5rem;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-title span { color: var(--accent2); }
+  h3 { font-size: 1.05rem; margin: 1.75rem 0 .75rem; }
+
+  /* CALLOUTS */
+  .callout {
+    border-left: 3px solid;
+    padding: .9rem 1.1rem;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin: 1.25rem 0;
+    font-size: .9rem;
+  }
+  .callout.note   { border-color: var(--accent);  background: rgba(124,106,247,.08); }
+  .callout.warn   { border-color: var(--warn);    background: rgba(240,165,0,.08); }
+  .callout.tip    { border-color: var(--success);  background: rgba(76,175,130,.08); }
+  .callout.danger { border-color: var(--danger);   background: rgba(224,92,92,.08); }
+  .callout-label {
+    font-size: .72rem; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase; margin-bottom: .3rem;
+  }
+  .callout.note   .callout-label { color: var(--accent); }
+  .callout.warn   .callout-label { color: var(--warn); }
+  .callout.tip    .callout-label { color: var(--success); }
+  .callout.danger .callout-label { color: var(--danger); }
+
+  /* CODE */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    font-family: 'Consolas', 'Cascadia Code', monospace;
+    font-size: .85rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+    position: relative;
+    line-height: 1.75;
+    white-space: pre;
+  }
+  .code-block .comment { color: #5a6090; }
+  .code-block .cmd     { color: #56cfb2; }
+  .code-block .flag    { color: #f0a500; }
+  .code-block .arg     { color: #a89ef8; }
+  .code-block .path    { color: #7ec8e3; }
+  .code-block .op      { color: #e05c5c; }
+  .code-block .val     { color: #f0a500; }
+  .code-block .str     { color: #56cfb2; }
+  .code-block .ok      { color: #4caf82; }
+  .code-block .err     { color: #e05c5c; }
+  .copy-btn {
+    position: absolute; top: .6rem; right: .6rem;
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text-dim); cursor: pointer;
+    padding: .25rem .6rem; border-radius: 5px;
+    font-size: .72rem; transition: all .2s;
+  }
+  .copy-btn:hover { color: var(--text); border-color: var(--accent2); }
+  .copy-btn.copied { color: var(--success); border-color: var(--success); }
+
+  code {
+    background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: 4px; padding: .1em .4em;
+    font-family: 'Consolas', monospace; font-size: .85em; color: #a89ef8;
+  }
+
+  /* TABLES */
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .88rem; }
+  th {
+    background: var(--surface2); color: var(--text-dim);
+    font-weight: 600; font-size: .75rem; letter-spacing: .06em;
+    text-transform: uppercase; padding: .6rem 1rem; text-align: left;
+    border-bottom: 2px solid var(--border);
+  }
+  td { padding: .6rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,.02); }
+  td code { font-size: .82em; }
+
+  /* CARDS */
+  .filter-bar { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .filter-btn {
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text-dim); cursor: pointer;
+    padding: .35rem .9rem; border-radius: 20px;
+    font-size: .82rem; font-family: inherit; transition: all .2s;
+  }
+  .filter-btn:hover { color: var(--text); }
+  .filter-btn.active { background: rgba(86,207,178,.12); border-color: rgba(86,207,178,.45); color: var(--accent2); }
+
+  .cmd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+  .cmd-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden; cursor: pointer;
+    transition: transform .15s, border-color .2s, box-shadow .2s;
+  }
+  .cmd-card:hover { transform: translateY(-2px); border-color: rgba(86,207,178,.35); box-shadow: 0 4px 20px rgba(0,0,0,.3); }
+  .cmd-card-header { padding: .8rem 1rem; display: flex; align-items: center; gap: .6rem; }
+  .cmd-cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .cat-basic .cmd-cat-dot { background: var(--accent2); }
+  .cat-pw    .cmd-cat-dot { background: var(--danger); }
+  .cat-multi .cmd-cat-dot { background: var(--accent); }
+  .cat-ctrl  .cmd-cat-dot { background: var(--warn); }
+
+  .cmd-name { font-family: 'Consolas', monospace; font-size: .88rem; color: #a89ef8; flex: 1; }
+  .cmd-arrow { color: var(--text-dim); font-size: .8rem; transition: transform .2s; }
+  .cmd-card.open .cmd-arrow { transform: rotate(90deg); }
+  .cmd-card-body {
+    display: none; padding: 0 1rem .85rem;
+    border-top: 1px solid var(--border);
+    font-size: .875rem; line-height: 1.6; color: var(--text-dim);
+  }
+  .cmd-card.open .cmd-card-body { display: block; }
+  .cmd-card-body p { margin-top: .6rem; }
+  .cmd-tag {
+    display: inline-block; font-size: .68rem;
+    padding: .1rem .45rem; border-radius: 4px;
+    font-weight: 600; letter-spacing: .05em; text-transform: uppercase; margin-left: auto;
+  }
+  .cat-basic .cmd-tag { background: rgba(86,207,178,.12);  color: var(--accent2); }
+  .cat-pw    .cmd-tag { background: rgba(224,92,92,.12);   color: var(--danger); }
+  .cat-multi .cmd-tag { background: rgba(124,106,247,.12); color: #a89ef8; }
+  .cat-ctrl  .cmd-tag { background: rgba(240,165,0,.12);   color: var(--warn); }
+  .cmd-card[data-hidden] { display: none; }
+
+  /* DIAGRAM shell/sous-shell */
+  .scope-demo {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin: 1.25rem 0;
+  }
+  .scope-toggle { display: flex; gap: .5rem; margin-bottom: 1.25rem; }
+  .scope-btn {
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text-dim); cursor: pointer; padding: .4rem 1rem;
+    border-radius: 6px; font-family: inherit; font-size: .85rem;
+    transition: all .2s;
+  }
+  .scope-btn.active { background: rgba(86,207,178,.12); border-color: rgba(86,207,178,.45); color: var(--accent2); }
+  .scope-panel { display: none; }
+  .scope-panel.active { display: block; }
+
+  .shell-box {
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: .75rem;
+  }
+  .shell-box-header {
+    background: var(--surface2); padding: .4rem .9rem;
+    font-size: .78rem; color: var(--text-dim);
+    display: flex; align-items: center; gap: .5rem;
+  }
+  .shell-dot { width: 7px; height: 7px; border-radius: 50%; }
+  .shell-box-body { padding: .75rem 1rem; font-family: 'Consolas', monospace; font-size: .83rem; line-height: 1.75; }
+
+  /* OPÉRATEURS CONDITIONNELS */
+  .op-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin: 1rem 0; }
+  @media (max-width: 600px) { .op-grid { grid-template-columns: 1fr; } }
+  .op-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1rem;
+    cursor: pointer; transition: border-color .2s;
+  }
+  .op-card:hover { border-color: var(--accent2); }
+  .op-card.active { border-color: var(--accent2); background: rgba(86,207,178,.06); }
+  .op-syntax { font-family: 'Consolas', monospace; font-size: .9rem; color: #a89ef8; margin-bottom: .3rem; }
+  .op-short  { font-size: .8rem; color: var(--text-dim); }
+  .op-detail {
+    margin-top: .75rem; display: none;
+    font-size: .85rem; line-height: 1.6; color: var(--text-dim);
+    border-top: 1px solid var(--border); padding-top: .65rem;
+  }
+  .op-card.active .op-detail { display: block; }
+
+  /* QUIZ */
+  .quiz-wrap { display: flex; flex-direction: column; gap: 1.5rem; }
+  .quiz-q {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.25rem; transition: border-color .3s;
+  }
+  .quiz-q.correct { border-color: var(--success); }
+  .quiz-q.wrong   { border-color: var(--danger); }
+  .quiz-question  { font-weight: 600; margin-bottom: .9rem; }
+  .quiz-options   { display: flex; flex-direction: column; gap: .5rem; }
+  .quiz-opt {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 7px; padding: .6rem .9rem; cursor: pointer;
+    font-size: .88rem; transition: all .2s;
+    display: flex; align-items: center; gap: .6rem;
+    font-family: inherit; color: var(--text); text-align: left; width: 100%;
+  }
+  .quiz-opt:hover:not(:disabled) { border-color: var(--accent2); background: rgba(86,207,178,.07); }
+  .quiz-opt:disabled { cursor: default; }
+  .quiz-opt.correct { border-color: var(--success); background: rgba(76,175,130,.1); color: #6de0a8; }
+  .quiz-opt.wrong   { border-color: var(--danger);  background: rgba(224,92,92,.1);  color: #e88080; }
+  .quiz-opt .opt-icon { font-size: .95rem; width: 1.2rem; text-align: center; flex-shrink: 0; }
+  .quiz-feedback {
+    margin-top: .75rem; font-size: .84rem; display: none;
+    padding: .5rem .75rem; border-radius: 6px; border-left: 3px solid;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok  { border-color: var(--success); background: rgba(76,175,130,.08); color: #6de0a8; }
+  .quiz-feedback.ko  { border-color: var(--danger);  background: rgba(224,92,92,.08);  color: #e88080; }
+  .quiz-score {
+    text-align: center; padding: 1.5rem;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); display: none;
+  }
+  .quiz-score.show { display: block; }
+  .score-number { font-size: 2.5rem; font-weight: 700; }
+  .score-max    { color: var(--text-dim); font-size: 1.1rem; }
+  .score-label  { margin-top: .4rem; color: var(--text-dim); }
+  .quiz-reset-btn {
+    display: inline-block; margin-top: 1rem;
+    background: rgba(86,207,178,.12); border: 1px solid rgba(86,207,178,.4);
+    color: var(--accent2); cursor: pointer; padding: .5rem 1.2rem;
+    border-radius: 6px; font-family: inherit; font-size: .9rem; transition: all .2s;
+  }
+  .quiz-reset-btn:hover { background: rgba(86,207,178,.25); }
+
+  /* RECAP */
+  .recap-cat {
+    font-size: .72rem; font-weight: 700; letter-spacing: .08em;
+    text-transform: uppercase; padding: .3rem .6rem;
+    border-radius: 4px; white-space: nowrap;
+  }
+  .rc-syntaxe { background: rgba(86,207,178,.12);  color: var(--accent2); }
+  .rc-portee  { background: rgba(124,106,247,.12); color: #a89ef8; }
+  .rc-ops     { background: rgba(240,165,0,.12);   color: var(--warn); }
+  .rc-read    { background: rgba(76,175,130,.12);  color: var(--success); }
+
+  /* MISC */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  p + p { margin-top: .6rem; }
+  p { margin-top: .5rem; }
+  strong { color: var(--text); }
+  .intro-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem; font-size: .95rem; line-height: 1.7;
+  }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+  @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+  .info-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1rem 1.25rem;
+  }
+  .info-card h4 { font-size: .92rem; margin-bottom: .5rem; color: var(--accent2); }
+
+  /* quote toggle */
+  .quote-demo {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.25rem; margin: 1rem 0;
+  }
+  .quote-tabs { display: flex; gap: .4rem; margin-bottom: 1rem; }
+  .q-tab {
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text-dim); cursor: pointer; padding: .35rem .9rem;
+    border-radius: 6px 6px 0 0; font-family: 'Consolas', monospace;
+    font-size: .85rem; transition: all .2s; border-bottom: none;
+  }
+  .q-tab.active { background: var(--code-bg); border-color: var(--accent2); color: var(--accent2); }
+  .q-panel { display: none; }
+  .q-panel.active { display: block; }
+  .q-output {
+    margin-top: .75rem; background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: 6px; padding: .6rem 1rem;
+    font-family: 'Consolas', monospace; font-size: .85rem; color: var(--success);
+  }
+  .q-output::before { content: '→ '; color: var(--text-dim); }
+.bash-site-nav{display:flex;justify-content:space-between;gap:1rem;padding:1rem;flex-wrap:wrap}.bash-site-nav a{color:var(--accent);font-weight:700}
+</style>
+<link rel="stylesheet" href="../../assets/themes/theme.css">
+<script src="../../assets/themes/theme.js"></script>
+</head>
+<body><nav class="bash-site-nav"><a href="https://kayasam.github.io/linux-initiation/bash/02-variables/">← Cours Markdown</a><a href="https://kayasam.github.io/linux-initiation/#bash">Parcours Bash →</a></nav>
+
+<header>
+  <div class="badge">Scripting Shell en Bash</div>
+  <h1>Les variables</h1>
+  <p class="subtitle">Chapitre 02 — syntaxe, portée, substitution, read</p>
+</header>
+
+<nav>
+  <button class="tab-btn active" onclick="showTab('syntaxe')">Syntaxe</button>
+  <button class="tab-btn" onclick="showTab('portee')">Portée</button>
+  <button class="tab-btn" onclick="showTab('ops')">Opérations</button>
+  <button class="tab-btn" onclick="showTab('read')">read</button>
+  <button class="tab-btn" onclick="showTab('recap')">Récapitulatif</button>
+  <button class="tab-btn" onclick="showTab('quiz')">Quiz</button>
+</nav>
+
+<main>
+
+<!-- ══════════════ SYNTAXE ══════════════ -->
+<div class="section active" id="tab-syntaxe">
+  <h2 class="section-title"><span>#</span> Syntaxe des variables</h2>
+
+  <div class="intro-box">
+    Une variable, c'est un <strong>nom</strong> associé à une <strong>valeur</strong>. C'est le mécanisme de base pour stocker
+    et réutiliser une information dans un script ou dans le shell.
+  </div>
+
+  <h3>Affectation</h3>
+  <p>L'affectation se fait avec <code>=</code>, <strong>sans espace avant ni après</strong> :</p>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="val">ma_variable</span>=Bonjour
+<span class="val">ville</span>=<span class="str">"Paris"</span>
+<span class="val">nombre</span>=42</div>
+
+  <div class="callout danger">
+    <div class="callout-label">Erreur classique</div>
+    Un espace autour du <code>=</code> provoque une erreur — bash interprète alors le nom comme une <strong>commande</strong>.
+    <div class="code-block" style="margin-top:.75rem;"><span class="err">ma_variable = Bonjour</span>   <span class="comment"># ERREUR : bash cherche une commande "ma_variable"</span>
+<span class="ok">ma_variable=Bonjour</span>    <span class="comment"># CORRECT</span></div>
+  </div>
+
+  <h3>Lecture (référencement)</h3>
+  <p>Pour accéder au contenu, on place <code>$</code> devant le nom :</p>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="cmd">echo</span> <span class="arg">$ma_variable</span>   <span class="comment"># Bonjour</span>
+<span class="cmd">echo</span> <span class="arg">$ville</span>         <span class="comment"># Paris</span></div>
+
+  <h3>Désambiguation avec <code>${}</code></h3>
+  <p>Quand le nom de la variable est accolé à d'autres caractères, les accolades délimitent clairement le nom :</p>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="val">unite</span>=gramme
+<span class="cmd">echo</span> <span class="str">"cette pomme pèse 2 <span class="arg">$unite</span>"</span>      <span class="comment"># cette pomme pèse 2 gramme</span>
+<span class="cmd">echo</span> <span class="str">"cette pomme pèse 2 <span class="arg">$unites</span>"</span>     <span class="comment"># cette pomme pèse 2   ← variable vide !</span>
+<span class="cmd">echo</span> <span class="str">"cette pomme pèse 2 <span class="arg">${unite}</span>s"</span>   <span class="comment"># cette pomme pèse 2 grammes  ✓</span></div>
+
+  <div class="callout tip">
+    <div class="callout-label">Bonne pratique</div>
+    Utiliser <code>${}</code> dès que la variable est suivie d'autres caractères pour éviter toute ambiguïté.
+  </div>
+
+  <h3>Guillemets — comportement du <code>$</code></h3>
+  <p>Le type de guillemets change tout. Cliquez pour voir l'effet :</p>
+
+  <div class="quote-demo">
+    <div class="quote-tabs">
+      <button class="q-tab active" onclick="showQuote('double', this)">guillemets doubles "…"</button>
+      <button class="q-tab" onclick="showQuote('simple', this)">guillemets simples '…'</button>
+      <button class="q-tab" onclick="showQuote('aucun', this)">sans guillemets</button>
+    </div>
+
+    <div class="q-panel active" id="q-double">
+      <div class="code-block" style="margin:0;"><span class="val">nom</span>=Samuel
+<span class="cmd">echo</span> <span class="str">"Bonjour <span class="arg">$nom</span>"</span></div>
+      <div class="q-output">Bonjour Samuel</div>
+      <p style="margin-top:.75rem; font-size:.87rem; color:var(--text-dim);">
+        Les guillemets doubles <strong>interprètent</strong> <code>$</code>, <code>`</code> et <code>\</code>.
+        La variable est remplacée par sa valeur. À utiliser pour les chaînes qui contiennent des variables.
+      </p>
+    </div>
+
+    <div class="q-panel" id="q-simple">
+      <div class="code-block" style="margin:0;"><span class="val">nom</span>=Samuel
+<span class="cmd">echo</span> <span class="str">'Bonjour $nom'</span></div>
+      <div class="q-output">Bonjour $nom</div>
+      <p style="margin-top:.75rem; font-size:.87rem; color:var(--text-dim);">
+        Les guillemets simples sont <strong>littéraux</strong> : aucune substitution n'a lieu.
+        <code>$nom</code> est affiché tel quel. À utiliser pour des chaînes fixes.
+      </p>
+    </div>
+
+    <div class="q-panel" id="q-aucun">
+      <div class="code-block" style="margin:0;"><span class="val">fichier</span>=<span class="str">"mon fichier.txt"</span>
+<span class="cmd">ls</span> <span class="arg">$fichier</span>    <span class="comment"># PROBLÈME</span>
+<span class="cmd">ls</span> <span class="str">"<span class="arg">$fichier</span>"</span>  <span class="comment"># CORRECT</span></div>
+      <div class="q-output" style="color:var(--danger);">ls: cannot access 'mon': No such file or directory</div>
+      <p style="margin-top:.75rem; font-size:.87rem; color:var(--text-dim);">
+        Sans guillemets, bash <strong>découpe</strong> la valeur sur les espaces : <code>mon fichier.txt</code>
+        devient deux arguments. Toujours citer les variables dont la valeur peut contenir des espaces.
+      </p>
+    </div>
+  </div>
+
+  <h3>Règles de nommage</h3>
+
+  <table>
+    <thead><tr><th>Règle</th><th>Exemples valides</th><th>Exemples invalides</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Lettres, chiffres, <code>_</code> uniquement</td>
+        <td><code>ma_var</code>, <code>var1</code>, <code>_tmp</code></td>
+        <td><code>ma-var</code> (tiret interdit)</td>
+      </tr>
+      <tr>
+        <td>Ne commence pas par un chiffre</td>
+        <td><code>var1</code></td>
+        <td><code>1test</code></td>
+      </tr>
+      <tr>
+        <td>Convention : minuscules = local, MAJUSCULES = env</td>
+        <td><code>compteur=0</code>, <code>PATH=/usr/bin</code></td>
+        <td>—</td>
+      </tr>
+    </tbody>
+  </table>
+</div><!-- /tab-syntaxe -->
+
+
+<!-- ══════════════ PORTÉE ══════════════ -->
+<div class="section" id="tab-portee">
+  <h2 class="section-title"><span>#</span> Portée des variables</h2>
+
+  <h3>Locale vs exportée</h3>
+  <p>Une variable locale n'existe que dans le shell courant. Elle n'est <strong>pas transmise</strong> aux sous-shells. Cliquez pour voir la différence :</p>
+
+  <div class="scope-demo">
+    <div class="scope-toggle">
+      <button class="scope-btn active" onclick="showScope('local', this)">Variable locale</button>
+      <button class="scope-btn" onclick="showScope('export', this)">Variable exportée</button>
+    </div>
+
+    <div class="scope-panel active" id="sc-local">
+      <div class="shell-box">
+        <div class="shell-box-header">
+          <div class="shell-dot" style="background:var(--success);"></div>
+          Shell parent
+        </div>
+        <div class="shell-box-body">
+          <span style="color:#f0a500;">ma_variable</span>=<span style="color:#56cfb2;">"local"</span>
+          <br><span style="color:#56cfb2;">echo</span> <span style="color:#a89ef8;">$ma_variable</span>   <span style="color:#5a6090;"># local  ✓</span>
+          <br><span style="color:#56cfb2;">bash</span>   <span style="color:#5a6090;"># ouvre un sous-shell</span>
+        </div>
+      </div>
+      <div class="shell-box" style="margin-left:2rem; border-color: var(--danger);">
+        <div class="shell-box-header" style="background: rgba(224,92,92,.08);">
+          <div class="shell-dot" style="background:var(--danger);"></div>
+          Sous-shell (bash enfant)
+        </div>
+        <div class="shell-box-body">
+          <span style="color:#56cfb2;">echo</span> <span style="color:#a89ef8;">$ma_variable</span>   <span style="color:#e05c5c;"># (vide) — variable non transmise</span>
+          <br><span style="color:#56cfb2;">exit</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="scope-panel" id="sc-export">
+      <div class="shell-box">
+        <div class="shell-box-header">
+          <div class="shell-dot" style="background:var(--success);"></div>
+          Shell parent
+        </div>
+        <div class="shell-box-body">
+          <span style="color:#56cfb2;">export</span> <span style="color:#f0a500;">MA_VARIABLE</span>=<span style="color:#56cfb2;">"environnement"</span>
+          <br><span style="color:#56cfb2;">echo</span> <span style="color:#a89ef8;">$MA_VARIABLE</span>   <span style="color:#5a6090;"># environnement  ✓</span>
+          <br><span style="color:#56cfb2;">bash</span>   <span style="color:#5a6090;"># ouvre un sous-shell</span>
+        </div>
+      </div>
+      <div class="shell-box" style="margin-left:2rem; border-color: var(--success);">
+        <div class="shell-box-header" style="background: rgba(76,175,130,.08);">
+          <div class="shell-dot" style="background:var(--success);"></div>
+          Sous-shell (bash enfant)
+        </div>
+        <div class="shell-box-body">
+          <span style="color:#56cfb2;">echo</span> <span style="color:#a89ef8;">$MA_VARIABLE</span>   <span style="color:#4caf82;"># environnement  ✓ transmise !</span>
+          <br><span style="color:#56cfb2;">exit</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Exporter une nouvelle variable</span>
+<span class="cmd">export</span> <span class="val">MA_VARIABLE</span>=<span class="str">"valeur"</span>
+
+<span class="comment"># Exporter une variable déjà définie</span>
+<span class="val">compteur</span>=0
+<span class="cmd">export</span> <span class="val">compteur</span>
+
+<span class="comment"># Repasser en locale (retirer l'export)</span>
+<span class="cmd">export</span> <span class="flag">-n</span> <span class="val">MA_VARIABLE</span>
+
+<span class="comment"># Supprimer une variable</span>
+<span class="cmd">unset</span> <span class="val">ma_variable</span>    <span class="comment"># sans le $</span></div>
+
+  <h3>Lister les variables</h3>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="cmd">env</span>          <span class="comment"># toutes les variables d'environnement (NOM=valeur)</span>
+<span class="cmd">printenv</span>     <span class="comment"># identique à env</span>
+<span class="cmd">printenv</span> <span class="arg">PATH HOME</span>   <span class="comment"># affiche des variables précises (sans $)</span>
+<span class="cmd">export</span> <span class="flag">-p</span>    <span class="comment"># format declare -x NOM="valeur"</span>
+<span class="cmd">set</span> | <span class="cmd">less</span>  <span class="comment"># toutes les variables ET fonctions du shell</span></div>
+
+  <h3>Variables système importantes</h3>
+
+  <table>
+    <thead><tr><th>Variable</th><th>Contenu</th><th>Exemple</th></tr></thead>
+    <tbody>
+      <tr><td><code>$HOME</code></td><td>Répertoire personnel (<code>~</code>)</td><td><code>/home/samuel</code></td></tr>
+      <tr><td><code>$USER</code></td><td>Nom de l'utilisateur courant</td><td><code>samuel</code></td></tr>
+      <tr><td><code>$SHELL</code></td><td>Shell configuré pour l'utilisateur</td><td><code>/bin/bash</code></td></tr>
+      <tr><td><code>$PATH</code></td><td>Dossiers où bash cherche les exécutables (séparés par <code>:</code>)</td><td><code>/usr/bin:/usr/local/bin</code></td></tr>
+      <tr><td><code>$PS1</code></td><td>Format du prompt affiché</td><td><code>\u@\h:\w\$</code></td></tr>
+      <tr><td><code>$PWD</code></td><td>Répertoire courant</td><td><code>/etc/nginx</code></td></tr>
+      <tr><td><code>$OLDPWD</code></td><td>Répertoire précédent (utilisé par <code>cd -</code>)</td><td><code>/home/samuel</code></td></tr>
+      <tr><td><code>$LANG</code></td><td>Langue et jeu de caractères</td><td><code>fr_FR.UTF-8</code></td></tr>
+      <tr><td><code>$HISTFILE</code></td><td>Fichier de l'historique des commandes</td><td><code>/home/samuel/.bash_history</code></td></tr>
+      <tr><td><code>$RANDOM</code></td><td>Nombre aléatoire entre 0 et 32767 à chaque lecture</td><td><code>17423</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Modifier le PATH</h3>
+
+  <div class="callout warn">
+    <div class="callout-label">Attention</div>
+    Ne jamais <strong>remplacer</strong> le PATH entier. Toujours <strong>ajouter</strong> avec <code>$PATH:</code> au début ou à la fin.
+    Sinon les commandes système (<code>ls</code>, <code>cd</code>…) deviennent introuvables.
+  </div>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Afficher le PATH actuel</span>
+<span class="cmd">echo</span> <span class="arg">$PATH</span>
+<span class="comment"># /usr/local/bin:/usr/bin:/bin</span>
+
+<span class="comment"># Ajouter un dossier pour la session courante</span>
+<span class="cmd">export</span> <span class="val">PATH</span>=<span class="str">"<span class="arg">$PATH</span>:/opt/mon-outil/bin"</span>
+
+<span class="comment"># Rendre la modification permanente → dans ~/.bashrc</span>
+<span class="cmd">echo</span> <span class="str">'export PATH="$PATH:/opt/mon-outil/bin"'</span> <span class="op">&gt;&gt;</span> <span class="path">~/.bashrc</span>
+<span class="cmd">source</span> <span class="path">~/.bashrc</span></div>
+
+  <div class="callout note">
+    <div class="callout-label">Variable d'env ponctuelle</div>
+    On peut passer une variable d'environnement pour <strong>une seule commande</strong>, sans modifier le shell :
+    <div class="code-block" style="margin-top:.75rem;"><span class="val">LANG</span>=C <span class="cmd">date</span>         <span class="comment"># date en anglais pour cette commande seulement</span>
+<span class="val">LANG</span>=fr_FR.UTF-8 <span class="cmd">date</span>   <span class="comment"># date en français</span></div>
+  </div>
+</div><!-- /tab-portee -->
+
+
+<!-- ══════════════ OPÉRATIONS ══════════════ -->
+<div class="section" id="tab-ops">
+  <h2 class="section-title"><span>#</span> Opérations sur les variables</h2>
+
+  <h3>Substitution de commande <code>$(…)</code></h3>
+  <p>On peut stocker le résultat d'une commande dans une variable :</p>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="val">os</span>=$(<span class="cmd">uname</span> <span class="flag">-o</span>)
+<span class="cmd">echo</span> <span class="arg">$os</span>
+<span class="comment"># GNU/Linux</span>
+
+<span class="val">date_du_jour</span>=$(<span class="cmd">date</span> <span class="flag">+%Y-%m-%d</span>)
+<span class="cmd">echo</span> <span class="arg">$date_du_jour</span>
+<span class="comment"># 2026-05-13</span>
+
+<span class="val">nb_users</span>=$(<span class="cmd">wc</span> <span class="flag">-l</span> <span class="op">&lt;</span> <span class="path">/etc/passwd</span>)
+<span class="cmd">echo</span> <span class="str">"Il y a <span class="arg">$nb_users</span> utilisateurs sur ce système"</span></div>
+
+  <div class="callout note">
+    <div class="callout-label">Note — Backticks obsolètes</div>
+    Tu peux rencontrer l'ancienne syntaxe avec des guillemets inversés : <code>os=`uname -o`</code>.
+    Cette notation est <strong>obsolète</strong> — préférer toujours <code>$()</code>.
+    Elle est plus lisible et supporte l'imbrication : <code>$(echo $(date))</code>.
+  </div>
+
+  <h3>Longueur d'une variable <code>${#…}</code></h3>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="val">os</span>=$(<span class="cmd">uname</span> <span class="flag">-o</span>)
+<span class="cmd">echo</span> <span class="arg">$os</span>       <span class="comment"># GNU/Linux</span>
+<span class="cmd">echo</span> <span class="arg">${#os}</span>    <span class="comment"># 9</span>
+
+<span class="val">mot</span>=<span class="str">"bonjour"</span>
+<span class="cmd">echo</span> <span class="arg">${#mot}</span>   <span class="comment"># 7</span></div>
+
+  <h3>Remplacement conditionnel</h3>
+  <p>Les accolades permettent de définir une valeur de substitution selon qu'une variable est définie ou non.
+  Cliquez sur un opérateur pour voir les détails :</p>
+
+  <div class="op-grid">
+    <div class="op-card" onclick="toggleOp(this)">
+      <div class="op-syntax">${variable<span style="color:var(--warn);">:-</span>texte}</div>
+      <div class="op-short">Valeur par défaut si vide</div>
+      <div class="op-detail">
+        Retourne <code>texte</code> si la variable est vide ou inexistante, sinon retourne la valeur de la variable.
+        <strong>Ne modifie pas</strong> la variable.
+        <div class="code-block" style="margin-top:.6rem; font-size:.8rem;"><span class="cmd">echo</span> <span class="arg">$nom</span>               <span class="comment"># (vide)</span>
+<span class="cmd">echo</span> <span class="arg">${nom:-Camille}</span>   <span class="comment"># Camille</span>
+<span class="cmd">echo</span> <span class="arg">$nom</span>               <span class="comment"># (toujours vide)</span></div>
+        Très utilisé dans les scripts pour gérer les arguments manquants.
+      </div>
+    </div>
+
+    <div class="op-card" onclick="toggleOp(this)">
+      <div class="op-syntax">${variable<span style="color:var(--warn);">:=</span>texte}</div>
+      <div class="op-short">Valeur par défaut + affectation</div>
+      <div class="op-detail">
+        Comme <code>:-</code> mais <strong>affecte aussi</strong> la valeur à la variable si elle est vide.
+        <div class="code-block" style="margin-top:.6rem; font-size:.8rem;"><span class="cmd">echo</span> <span class="arg">${nom:=Camille}</span>   <span class="comment"># Camille</span>
+<span class="cmd">echo</span> <span class="arg">$nom</span>               <span class="comment"># Camille ← affecté !</span></div>
+      </div>
+    </div>
+
+    <div class="op-card" onclick="toggleOp(this)">
+      <div class="op-syntax">${variable<span style="color:var(--warn);">:+</span>texte}</div>
+      <div class="op-short">Texte alternatif si définie</div>
+      <div class="op-detail">
+        Retourne <code>texte</code> si la variable est définie et non vide, sinon retourne rien.
+        L'inverse de <code>:-</code>.
+        <div class="code-block" style="margin-top:.6rem; font-size:.8rem;"><span class="val">nom</span>=Samuel
+<span class="cmd">echo</span> <span class="arg">${nom:+"Valeur définie"}</span>   <span class="comment"># Valeur définie</span>
+<span class="cmd">unset</span> <span class="val">nom</span>
+<span class="cmd">echo</span> <span class="arg">${nom:+"Valeur définie"}</span>   <span class="comment"># (vide)</span></div>
+      </div>
+    </div>
+
+    <div class="op-card" onclick="toggleOp(this)">
+      <div class="op-syntax">${variable<span style="color:var(--danger);">:?</span>texte}</div>
+      <div class="op-short">Erreur si vide → arrêt</div>
+      <div class="op-detail">
+        Si la variable est vide ou inexistante, affiche <code>texte</code> sur stderr et <strong>quitte le script avec une erreur</strong>.
+        Utile pour valider les variables obligatoires.
+        <div class="code-block" style="margin-top:.6rem; font-size:.8rem;"><span class="cmd">unset</span> <span class="val">nom</span>
+<span class="cmd">echo</span> <span class="arg">${nom:?Variable non définie}</span>
+<span class="comment"># bash: nom: Variable non définie  → arrêt</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Exemple pratique : argument avec valeur par défaut</span>
+<span class="val">cible</span>=<span class="arg">${1:-/tmp}</span>   <span class="comment"># $1 ou /tmp si aucun argument</span>
+<span class="cmd">echo</span> <span class="str">"Cible : <span class="arg">$cible</span>"</span>
+
+<span class="comment"># Valider qu'une variable obligatoire est définie</span>
+<span class="val">fichier</span>=<span class="arg">${1:?Usage: script.sh &lt;fichier&gt;}</span></div>
+</div><!-- /tab-ops -->
+
+
+<!-- ══════════════ READ ══════════════ -->
+<div class="section" id="tab-read">
+  <h2 class="section-title"><span>#</span> Lire l'entrée utilisateur — <code>read</code></h2>
+
+  <div class="intro-box">
+    La commande <strong>read</strong> lit une ligne depuis l'entrée standard (clavier ou pipe) et la stocke dans une variable.
+    C'est le moyen principal de rendre un script <strong>interactif</strong>.
+  </div>
+
+  <h3>Syntaxe de base</h3>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Lecture simple → stockée dans la variable "reponse"</span>
+<span class="cmd">read</span> <span class="val">reponse</span>
+<span class="cmd">echo</span> <span class="str">"Tu as saisi : <span class="arg">$reponse</span>"</span>
+
+<span class="comment"># Sans nom de variable → stockée dans $REPLY (variable par défaut)</span>
+<span class="cmd">read</span>
+<span class="cmd">echo</span> <span class="str">"<span class="arg">$REPLY</span>"</span></div>
+
+  <h3>Options de <code>read</code> — cliquez pour les détails</h3>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterRead('all', this)">Toutes</button>
+    <button class="filter-btn" onclick="filterRead('basic', this)">Basiques</button>
+    <button class="filter-btn" onclick="filterRead('pw', this)">Sécurité</button>
+    <button class="filter-btn" onclick="filterRead('multi', this)">Multi-variables</button>
+    <button class="filter-btn" onclick="filterRead('ctrl', this)">Contrôle</button>
+  </div>
+
+  <div class="cmd-grid" id="read-grid">
+
+    <div class="cmd-card cat-basic" data-cat="basic" onclick="toggleCard(this)">
+      <div class="cmd-card-header">
+        <div class="cmd-cat-dot"></div>
+        <span class="cmd-name">read -p "message" var</span>
+        <span class="cmd-tag">basique</span>
+        <span class="cmd-arrow">▶</span>
+      </div>
+      <div class="cmd-card-body">
+        <p>Affiche un prompt avant d'attendre la saisie. Le flag <code>-p</code> (<em>prompt</em>) évite d'avoir à faire un <code>echo</code> séparé.</p>
+        <div class="code-block" style="margin-top:.75rem; font-size:.8rem;"><span class="cmd">read</span> <span class="flag">-p</span> <span class="str">"Ton prénom : "</span> <span class="val">prenom</span>
+<span class="cmd">echo</span> <span class="str">"Bonjour, <span class="arg">$prenom</span> !"</span></div>
+      </div>
+    </div>
+
+    <div class="cmd-card cat-pw" data-cat="pw" onclick="toggleCard(this)">
+      <div class="cmd-card-header">
+        <div class="cmd-cat-dot"></div>
+        <span class="cmd-name">read -s var</span>
+        <span class="cmd-tag">sécurité</span>
+        <span class="cmd-arrow">▶</span>
+      </div>
+      <div class="cmd-card-body">
+        <p>Mode <strong>silencieux</strong> (<em>silent</em>) : les caractères tapés ne s'affichent pas à l'écran. Indispensable pour les mots de passe.</p>
+        <div class="code-block" style="margin-top:.75rem; font-size:.8rem;"><span class="cmd">read</span> <span class="flag">-s</span> <span class="flag">-p</span> <span class="str">"Mot de passe : "</span> <span class="val">mdp</span>
+<span class="cmd">echo</span>   <span class="comment"># retour à la ligne (car le \n n'est pas affiché)</span>
+<span class="cmd">echo</span> <span class="str">"Mot de passe saisi."</span></div>
+      </div>
+    </div>
+
+    <div class="cmd-card cat-ctrl" data-cat="ctrl" onclick="toggleCard(this)">
+      <div class="cmd-card-header">
+        <div class="cmd-cat-dot"></div>
+        <span class="cmd-name">read -n N var</span>
+        <span class="cmd-tag">contrôle</span>
+        <span class="cmd-arrow">▶</span>
+      </div>
+      <div class="cmd-card-body">
+        <p>Lit exactement <strong>N caractères</strong> et s'arrête sans attendre Entrée. Utile pour des confirmations à un seul caractère (o/n).</p>
+        <div class="code-block" style="margin-top:.75rem; font-size:.8rem;"><span class="cmd">read</span> <span class="flag">-n</span> 1 <span class="flag">-p</span> <span class="str">"Continuer ? (o/n) : "</span> <span class="val">choix</span>
+<span class="cmd">echo</span>   <span class="comment"># retour à la ligne</span>
+<span class="cmd">echo</span> <span class="str">"Tu as choisi : <span class="arg">$choix</span>"</span></div>
+      </div>
+    </div>
+
+    <div class="cmd-card cat-ctrl" data-cat="ctrl" onclick="toggleCard(this)">
+      <div class="cmd-card-header">
+        <div class="cmd-cat-dot"></div>
+        <span class="cmd-name">read -t N var</span>
+        <span class="cmd-tag">contrôle</span>
+        <span class="cmd-arrow">▶</span>
+      </div>
+      <div class="cmd-card-body">
+        <p>Timeout : abandonne après <strong>N secondes</strong> si aucune saisie. Le code de retour est 1 si le timeout est atteint.</p>
+        <div class="code-block" style="margin-top:.75rem; font-size:.8rem;"><span class="cmd">read</span> <span class="flag">-t</span> 10 <span class="flag">-p</span> <span class="str">"Répondez en 10 s : "</span> <span class="val">rep</span>
+<span class="comment"># si timeout → $? vaut 1</span></div>
+      </div>
+    </div>
+
+    <div class="cmd-card cat-multi" data-cat="multi" onclick="toggleCard(this)">
+      <div class="cmd-card-header">
+        <div class="cmd-cat-dot"></div>
+        <span class="cmd-name">read var1 var2 var3</span>
+        <span class="cmd-tag">multi-vars</span>
+        <span class="cmd-arrow">▶</span>
+      </div>
+      <div class="cmd-card-body">
+        <p>Lit plusieurs variables en une fois. La saisie est découpée sur les espaces (IFS). Le dernier nom récupère le reste de la ligne.</p>
+        <div class="code-block" style="margin-top:.75rem; font-size:.8rem;"><span class="cmd">read</span> <span class="val">prenom</span> <span class="val">nom</span>
+<span class="comment"># saisie : Samuel Guillard</span>
+<span class="cmd">echo</span> <span class="arg">$prenom</span>   <span class="comment"># Samuel</span>
+<span class="cmd">echo</span> <span class="arg">$nom</span>      <span class="comment"># Guillard</span></div>
+      </div>
+    </div>
+
+    <div class="cmd-card cat-basic" data-cat="basic" onclick="toggleCard(this)">
+      <div class="cmd-card-header">
+        <div class="cmd-cat-dot"></div>
+        <span class="cmd-name">read -r var</span>
+        <span class="cmd-tag">basique</span>
+        <span class="cmd-arrow">▶</span>
+      </div>
+      <div class="cmd-card-body">
+        <p>Désactive l'interprétation des antislashs (<em>raw mode</em>). Sans <code>-r</code>, un <code>\n</code> tapé serait interprété comme un retour à la ligne.
+        <strong>Bonne pratique</strong> : utiliser <code>read -r</code> par défaut dans les scripts.</p>
+        <div class="code-block" style="margin-top:.75rem; font-size:.8rem;"><span class="cmd">read</span> <span class="flag">-r</span> <span class="val">ligne</span>   <span class="comment"># lecture brute sans interprétation</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <h3>Exemple complet — script interactif</h3>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment">#!/bin/bash</span>
+
+<span class="cmd">read</span> <span class="flag">-p</span> <span class="str">"Prénom : "</span> <span class="val">prenom</span>
+<span class="cmd">read</span> <span class="flag">-p</span> <span class="str">"Nom : "</span> <span class="val">nom</span>
+<span class="cmd">read</span> <span class="flag">-s</span> <span class="flag">-p</span> <span class="str">"Mot de passe : "</span> <span class="val">mdp</span>
+<span class="cmd">echo</span>   <span class="comment"># retour à la ligne après le mot de passe silencieux</span>
+
+<span class="cmd">echo</span> <span class="str">"Bienvenue, <span class="arg">$prenom</span> <span class="arg">$nom</span> !"</span>
+<span class="cmd">echo</span> <span class="str">"Longueur du mot de passe : <span class="arg">${#mdp}</span> caractères"</span></div>
+
+  <h3><code>read</code> depuis un pipe ou un fichier</h3>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Lire une ligne depuis un fichier avec redirection</span>
+<span class="cmd">read</span> <span class="val">premiere_ligne</span> <span class="op">&lt;</span> <span class="path">/etc/hostname</span>
+<span class="cmd">echo</span> <span class="arg">$premiere_ligne</span>
+
+<span class="comment"># Lire toutes les lignes d'un fichier dans une boucle</span>
+<span class="cmd">while</span> <span class="cmd">read</span> <span class="flag">-r</span> <span class="val">ligne</span>; <span class="cmd">do</span>
+    <span class="cmd">echo</span> <span class="str">"→ <span class="arg">$ligne</span>"</span>
+<span class="cmd">done</span> <span class="op">&lt;</span> <span class="path">/etc/hosts</span></div>
+
+  <div class="callout note">
+    <div class="callout-label">Note — IFS et read</div>
+    <code>IFS</code> (<em>Internal Field Separator</em>) détermine comment <code>read</code> découpe la saisie.
+    On peut le changer temporairement pour utiliser un autre séparateur :
+    <div class="code-block" style="margin-top:.75rem; font-size:.83rem;"><span class="comment"># Lire un fichier CSV (séparé par des virgules)</span>
+<span class="val">IFS</span>=<span class="str">','</span> <span class="cmd">read</span> <span class="flag">-r</span> <span class="val">champ1</span> <span class="val">champ2</span> <span class="val">champ3</span> <span class="op">&lt;&lt;&lt;</span> <span class="str">"Paris,Lyon,Marseille"</span>
+<span class="cmd">echo</span> <span class="arg">$champ1</span>   <span class="comment"># Paris</span>
+<span class="cmd">echo</span> <span class="arg">$champ2</span>   <span class="comment"># Lyon</span></div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-label">Récap des flags à retenir</div>
+    <code>-p</code> prompt · <code>-s</code> silencieux · <code>-r</code> raw (à mettre par défaut dans les scripts) ·
+    <code>-n N</code> N caractères · <code>-t N</code> timeout N secondes
+  </div>
+</div><!-- /tab-read -->
+
+
+<!-- ══════════════ RÉCAPITULATIF ══════════════ -->
+<div class="section" id="tab-recap">
+  <h2 class="section-title"><span>#</span> Récapitulatif des commandes</h2>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterRecap('all', this)">Toutes</button>
+    <button class="filter-btn" onclick="filterRecap('syntaxe', this)">Syntaxe</button>
+    <button class="filter-btn" onclick="filterRecap('portee', this)">Portée</button>
+    <button class="filter-btn" onclick="filterRecap('ops', this)">Opérations</button>
+    <button class="filter-btn" onclick="filterRecap('read', this)">read</button>
+  </div>
+
+  <table id="recap-table">
+    <thead>
+      <tr><th>Commande / Syntaxe</th><th>Description</th><th>Catégorie</th></tr>
+    </thead>
+    <tbody>
+      <tr data-cat="syntaxe"><td><code>variable=valeur</code></td><td>Crée une variable locale (sans espace autour de <code>=</code>)</td><td><span class="recap-cat rc-syntaxe">syntaxe</span></td></tr>
+      <tr data-cat="syntaxe"><td><code>echo $variable</code></td><td>Affiche la valeur d'une variable</td><td><span class="recap-cat rc-syntaxe">syntaxe</span></td></tr>
+      <tr data-cat="syntaxe"><td><code>echo ${variable}</code></td><td>Idem, avec délimitation explicite du nom</td><td><span class="recap-cat rc-syntaxe">syntaxe</span></td></tr>
+      <tr data-cat="syntaxe"><td><code>"$variable"</code></td><td>Guillemets doubles : le <code>$</code> est interprété</td><td><span class="recap-cat rc-syntaxe">syntaxe</span></td></tr>
+      <tr data-cat="syntaxe"><td><code>'$variable'</code></td><td>Guillemets simples : tout est littéral</td><td><span class="recap-cat rc-syntaxe">syntaxe</span></td></tr>
+      <tr data-cat="portee"><td><code>export VARIABLE=valeur</code></td><td>Crée une variable d'environnement (transmise aux processus enfants)</td><td><span class="recap-cat rc-portee">portée</span></td></tr>
+      <tr data-cat="portee"><td><code>export -n VARIABLE</code></td><td>Repasse une variable d'environnement en locale</td><td><span class="recap-cat rc-portee">portée</span></td></tr>
+      <tr data-cat="portee"><td><code>unset variable</code></td><td>Supprime une variable (sans le <code>$</code>)</td><td><span class="recap-cat rc-portee">portée</span></td></tr>
+      <tr data-cat="portee"><td><code>env</code></td><td>Liste toutes les variables d'environnement</td><td><span class="recap-cat rc-portee">portée</span></td></tr>
+      <tr data-cat="portee"><td><code>printenv NOM</code></td><td>Affiche la valeur d'une variable précise (sans <code>$</code>)</td><td><span class="recap-cat rc-portee">portée</span></td></tr>
+      <tr data-cat="portee"><td><code>export -p</code></td><td>Liste les variables exportées (format <code>declare -x</code>)</td><td><span class="recap-cat rc-portee">portée</span></td></tr>
+      <tr data-cat="portee"><td><code>set | less</code></td><td>Affiche toutes les variables et fonctions du shell</td><td><span class="recap-cat rc-portee">portée</span></td></tr>
+      <tr data-cat="portee"><td><code>LANG=C commande</code></td><td>Variable d'env ponctuelle pour une seule commande</td><td><span class="recap-cat rc-portee">portée</span></td></tr>
+      <tr data-cat="ops"><td><code>$(commande)</code></td><td>Substitution de commande — stocke le résultat dans une variable</td><td><span class="recap-cat rc-ops">opérations</span></td></tr>
+      <tr data-cat="ops"><td><code>${#variable}</code></td><td>Retourne la longueur (nombre de caractères) de la variable</td><td><span class="recap-cat rc-ops">opérations</span></td></tr>
+      <tr data-cat="ops"><td><code>${variable:-défaut}</code></td><td>Retourne la valeur ou <code>défaut</code> si vide/inexistante (sans modifier)</td><td><span class="recap-cat rc-ops">opérations</span></td></tr>
+      <tr data-cat="ops"><td><code>${variable:=défaut}</code></td><td>Idem et affecte <code>défaut</code> à la variable si vide</td><td><span class="recap-cat rc-ops">opérations</span></td></tr>
+      <tr data-cat="ops"><td><code>${variable:+texte}</code></td><td>Retourne <code>texte</code> si la variable est définie et non vide</td><td><span class="recap-cat rc-ops">opérations</span></td></tr>
+      <tr data-cat="ops"><td><code>${variable:?message}</code></td><td>Quitte avec erreur et affiche <code>message</code> si la variable est vide</td><td><span class="recap-cat rc-ops">opérations</span></td></tr>
+      <tr data-cat="read"><td><code>read var</code></td><td>Lit une ligne depuis stdin et la stocke dans <code>var</code></td><td><span class="recap-cat rc-read">read</span></td></tr>
+      <tr data-cat="read"><td><code>read -p "msg" var</code></td><td>Affiche un prompt avant la saisie</td><td><span class="recap-cat rc-read">read</span></td></tr>
+      <tr data-cat="read"><td><code>read -s var</code></td><td>Saisie silencieuse (caractères non affichés — mots de passe)</td><td><span class="recap-cat rc-read">read</span></td></tr>
+      <tr data-cat="read"><td><code>read -r var</code></td><td>Raw mode : désactive l'interprétation des antislashs</td><td><span class="recap-cat rc-read">read</span></td></tr>
+      <tr data-cat="read"><td><code>read -n N var</code></td><td>Lit exactement N caractères (sans attendre Entrée)</td><td><span class="recap-cat rc-read">read</span></td></tr>
+      <tr data-cat="read"><td><code>read -t N var</code></td><td>Abandonne après N secondes si aucune saisie</td><td><span class="recap-cat rc-read">read</span></td></tr>
+      <tr data-cat="read"><td><code>read v1 v2</code></td><td>Lit plusieurs variables (découpées sur l'IFS)</td><td><span class="recap-cat rc-read">read</span></td></tr>
+    </tbody>
+  </table>
+</div><!-- /tab-recap -->
+
+
+<!-- ══════════════ QUIZ ══════════════ -->
+<div class="section" id="tab-quiz">
+  <h2 class="section-title"><span>#</span> Quiz de révision</h2>
+  <p style="color:var(--text-dim); margin-bottom:1.5rem; font-size:.88rem;">
+    Testez vos connaissances — cliquez sur la bonne réponse.
+  </p>
+
+  <div class="quiz-wrap" id="quiz-wrap">
+
+    <div class="quiz-q" data-answer="c">
+      <div class="quiz-question">1. Quelle ligne provoque une erreur dans bash ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>ville="Paris"</button>
+        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>nombre=42</button>
+        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>ma_variable = Bonjour</button>
+        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>_tmp=ok</button>
+      </div>
+      <div class="quiz-feedback">
+        Les espaces autour du <code>=</code> font que bash interprète <code>ma_variable</code> comme une <strong>commande</strong> avec les arguments <code>=</code> et <code>Bonjour</code>.
+        L'affectation doit toujours être écrite sans espace : <code>ma_variable=Bonjour</code>.
+      </div>
+    </div>
+
+    <div class="quiz-q" data-answer="b">
+      <div class="quiz-question">2. nom="Samuel". Que s'affiche avec echo 'Bonjour $nom' (guillemets simples) ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>Bonjour Samuel</button>
+        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>Bonjour $nom</button>
+        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>Erreur : variable non définie</button>
+        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>Bonjour (vide)</button>
+      </div>
+      <div class="quiz-feedback">
+        Les guillemets simples sont <strong>littéraux</strong> : aucune substitution n'a lieu.
+        <code>$nom</code> est affiché tel quel. Pour que la variable soit interprétée, il faut des guillemets doubles : <code>"Bonjour $nom"</code>.
+      </div>
+    </div>
+
+    <div class="quiz-q" data-answer="d">
+      <div class="quiz-question">3. Quelle commande rend une variable visible dans les scripts appelés depuis le shell courant ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>source VARIABLE=valeur</button>
+        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>declare VARIABLE=valeur</button>
+        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>set VARIABLE=valeur</button>
+        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>export VARIABLE=valeur</button>
+      </div>
+      <div class="quiz-feedback">
+        <strong>export</strong> marque la variable comme variable d'environnement : elle est transmise à tous les processus enfants (scripts, commandes).
+        Une variable locale n'est visible que dans le shell courant.
+      </div>
+    </div>
+
+    <div class="quiz-q" data-answer="a">
+      <div class="quiz-question">4. Comment stocker le résultat de la commande "date" dans la variable "auj" ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>auj=$(date)</button>
+        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>auj="date"</button>
+        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>auj=${date}</button>
+        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>auj=&lt;date&gt;</button>
+      </div>
+      <div class="quiz-feedback">
+        <strong>$(commande)</strong> est la substitution de commande : bash exécute la commande et remplace <code>$(…)</code> par son résultat.
+        L'ancienne syntaxe avec backticks (<code>`date`</code>) fonctionne aussi mais est obsolète.
+      </div>
+    </div>
+
+    <div class="quiz-q" data-answer="c">
+      <div class="quiz-question">5. nom="" (variable vide). Que retourne echo ${nom:-Camille} ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>Une erreur</button>
+        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>(vide)</button>
+        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>Camille</button>
+        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>Camille et $nom vaut maintenant Camille</button>
+      </div>
+      <div class="quiz-feedback">
+        <code>${:-}</code> retourne la valeur de remplacement si la variable est vide ou inexistante, mais <strong>ne modifie pas</strong> la variable.
+        Après cet echo, <code>$nom</code> est toujours vide. Pour affecter aussi, il faudrait <code>${nom:=Camille}</code>.
+      </div>
+    </div>
+
+    <div class="quiz-q" data-answer="b">
+      <div class="quiz-question">6. Quel flag de read masque les caractères tapés au clavier (utile pour un mot de passe) ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>read -p</button>
+        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>read -s</button>
+        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>read -n</button>
+        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>read -h</button>
+      </div>
+      <div class="quiz-feedback">
+        <code>read -s</code> active le mode <strong>silencieux</strong> (<em>silent</em>) : les caractères tapés ne s'affichent pas à l'écran.
+        On l'utilise systématiquement pour la saisie de mots de passe. Penser à ajouter <code>echo</code> après pour revenir à la ligne.
+      </div>
+    </div>
+
+    <div class="quiz-q" data-answer="d">
+      <div class="quiz-question">7. mot="hello". Que retourne echo ${#mot} ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>hello</button>
+        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>mot</button>
+        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>1</button>
+        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>5</button>
+      </div>
+      <div class="quiz-feedback">
+        <code>${#variable}</code> retourne la <strong>longueur</strong> (nombre de caractères) de la valeur.
+        "hello" fait 5 caractères → affiche <code>5</code>.
+      </div>
+    </div>
+
+  </div><!-- /quiz-wrap -->
+
+  <div class="quiz-score" id="quiz-score">
+    <div class="score-number" id="score-n">—</div>
+    <div class="score-max">/ <span id="score-total"></span></div>
+    <div class="score-label" id="score-label"></div>
+    <button class="quiz-reset-btn" onclick="resetQuiz()">Recommencer</button>
+  </div>
+
+</div><!-- /tab-quiz -->
+
+</main>
+
+<script>
+// ── TABS ──
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── COPY ──
+function copyCode(btn) {
+  const block = btn.parentElement;
+  let text = '';
+  block.childNodes.forEach(n => {
+    if (n.nodeType === 3) text += n.textContent;
+    else if (n.tagName !== 'BUTTON') text += n.textContent;
+  });
+  navigator.clipboard.writeText(text.trim()).then(() => {
+    btn.textContent = '✓ copié';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '⎘ copier'; btn.classList.remove('copied'); }, 1600);
+  });
+}
+
+// ── QUOTE TABS ──
+function showQuote(id, btn) {
+  document.querySelectorAll('.q-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.q-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('q-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── SCOPE TOGGLE ──
+function showScope(id, btn) {
+  document.querySelectorAll('.scope-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.scope-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sc-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── OP CARDS ──
+function toggleOp(card) {
+  const isActive = card.classList.contains('active');
+  document.querySelectorAll('.op-card.active').forEach(c => c.classList.remove('active'));
+  if (!isActive) card.classList.add('active');
+}
+
+// ── READ / ALIAS CARDS ──
+function toggleCard(card) {
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.cmd-card.open').forEach(c => c.classList.remove('open'));
+  if (!isOpen) card.classList.add('open');
+}
+
+function filterRead(cat, btn) {
+  document.querySelectorAll('#read-grid').forEach(grid => {
+    grid.querySelectorAll('.filter-btn');
+  });
+  btn.closest('.filter-bar').querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#read-grid .cmd-card').forEach(card => {
+    if (cat === 'all' || card.dataset.cat === cat) card.removeAttribute('data-hidden');
+    else card.dataset.hidden = '1';
+  });
+}
+
+// ── RECAP FILTER ──
+function filterRecap(cat, btn) {
+  btn.closest('.filter-bar').querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#recap-table tbody tr').forEach(row => {
+    row.style.display = (cat === 'all' || row.dataset.cat === cat) ? '' : 'none';
+  });
+}
+
+// ── QUIZ ──
+let score = 0, answered = 0;
+
+function answer(btn) {
+  const qBlock = btn.closest('.quiz-q');
+  if (qBlock.classList.contains('correct') || qBlock.classList.contains('wrong')) return;
+  const correct = qBlock.dataset.answer;
+  const chosen = btn.dataset.val;
+  const feedback = qBlock.querySelector('.quiz-feedback');
+
+  qBlock.querySelectorAll('.quiz-opt').forEach(b => {
+    b.disabled = true;
+    if (b.dataset.val === correct) { b.classList.add('correct'); b.querySelector('.opt-icon').textContent = '✓'; }
+  });
+
+  if (chosen === correct) {
+    qBlock.classList.add('correct');
+    btn.querySelector('.opt-icon').textContent = '✓';
+    feedback.classList.add('show', 'ok');
+    score++;
+  } else {
+    qBlock.classList.add('wrong');
+    btn.classList.add('wrong');
+    btn.querySelector('.opt-icon').textContent = '✗';
+    feedback.classList.add('show', 'ko');
+  }
+
+  answered++;
+  const total = document.querySelectorAll('.quiz-q').length;
+  if (answered === total) showScore(total);
+}
+
+function showScore(total) {
+  const pct = Math.round(score / total * 100);
+  const label = pct >= 85 ? 'Excellent !' : pct >= 60 ? 'Bien joué — quelques révisions utiles.' : 'Revois le cours avant de continuer.';
+  document.getElementById('score-n').textContent = score;
+  document.getElementById('score-n').style.color = pct >= 85 ? 'var(--success)' : pct >= 60 ? 'var(--warn)' : 'var(--danger)';
+  document.getElementById('score-total').textContent = total;
+  document.getElementById('score-label').textContent = label;
+  document.getElementById('quiz-score').classList.add('show');
+}
+
+function resetQuiz() {
+  score = 0; answered = 0;
+  document.querySelectorAll('.quiz-q').forEach(q => {
+    q.classList.remove('correct', 'wrong');
+    q.querySelectorAll('.quiz-opt').forEach(b => {
+      b.disabled = false;
+      b.classList.remove('correct', 'wrong');
+      b.querySelector('.opt-icon').textContent = '';
+    });
+    q.querySelector('.quiz-feedback').classList.remove('show', 'ok', 'ko');
+  });
+  document.getElementById('quiz-score').classList.remove('show');
+}
+</script>
+
+</body>
+</html>

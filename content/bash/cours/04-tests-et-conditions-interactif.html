@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tests et conditions — Scripting Bash</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #232635;
+    --border: #2e3148;
+    --accent: #4facde;
+    --accent2: #81d4fa;
+    --warn: #f0a500;
+    --danger: #e05c5c;
+    --success: #4caf82;
+    --text: #d4d8f0;
+    --text-dim: #7880a0;
+    --code-bg: #12141f;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; min-height: 100vh; }
+
+  header {
+    background: linear-gradient(135deg, #091520 0%, #0d1a2a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 2.5rem 2rem 1.5rem; text-align: center; position: relative; overflow: hidden;
+  }
+  header::before {
+    content: ''; position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
+    width: 400px; height: 200px;
+    background: radial-gradient(ellipse, rgba(79,172,222,.2) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .badge { display: inline-block; background: rgba(79,172,222,.12); border: 1px solid rgba(79,172,222,.35); color: var(--accent); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; padding: .25rem .75rem; border-radius: 20px; margin-bottom: .75rem; }
+  h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; background: linear-gradient(135deg, #4facde, #81d4fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: .4rem; }
+  .subtitle { color: var(--text-dim); font-size: 1rem; }
+
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(15,17,23,.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; justify-content: center; gap: .25rem; padding: .5rem 1rem; flex-wrap: wrap; }
+  .tab-btn { background: none; border: 1px solid transparent; color: var(--text-dim); cursor: pointer; padding: .45rem 1.1rem; border-radius: 6px; font-size: .88rem; font-family: inherit; transition: all .2s; }
+  .tab-btn:hover { color: var(--text); background: var(--surface); }
+  .tab-btn.active { color: var(--accent); background: rgba(79,172,222,.1); border-color: rgba(79,172,222,.35); }
+
+  main { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  .section { display: none; } .section.active { display: block; }
+  .section-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; padding-bottom: .5rem; border-bottom: 2px solid var(--border); }
+  .section-title span { color: var(--accent); }
+  h3 { font-size: 1.05rem; margin: 1.75rem 0 .75rem; }
+
+  /* CALLOUTS */
+  .callout { border-left: 3px solid; padding: .9rem 1.1rem; border-radius: 0 var(--radius) var(--radius) 0; margin: 1.25rem 0; font-size: .9rem; }
+  .callout.note   { border-color: #7c6af7; background: rgba(124,106,247,.08); }
+  .callout.warn   { border-color: var(--warn); background: rgba(240,165,0,.08); }
+  .callout.tip    { border-color: var(--success); background: rgba(76,175,130,.08); }
+  .callout.danger { border-color: var(--danger); background: rgba(224,92,92,.08); }
+  .callout-label { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .3rem; }
+  .callout.note   .callout-label { color: #a89ef8; }
+  .callout.warn   .callout-label { color: var(--warn); }
+  .callout.tip    .callout-label { color: var(--success); }
+  .callout.danger .callout-label { color: var(--danger); }
+
+  /* CODE */
+  .code-block { background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; font-family: 'Consolas','Cascadia Code',monospace; font-size: .85rem; overflow-x: auto; margin: 1rem 0; position: relative; line-height: 1.75; white-space: pre; }
+  .code-block .comment { color: #5a6090; }
+  .code-block .cmd   { color: #56cfb2; }
+  .code-block .flag  { color: #f0a500; }
+  .code-block .arg   { color: #a89ef8; }
+  .code-block .path  { color: #7ec8e3; }
+  .code-block .op    { color: #e05c5c; }
+  .code-block .val   { color: #f0a500; }
+  .code-block .str   { color: #56cfb2; }
+  .code-block .shb   { color: #e8944a; }
+  .code-block .ok    { color: #4caf82; }
+  .code-block .err   { color: #e05c5c; }
+  .code-block .kw    { color: #4facde; }
+  .copy-btn { position: absolute; top: .6rem; right: .6rem; background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; padding: .25rem .6rem; border-radius: 5px; font-size: .72rem; transition: all .2s; }
+  .copy-btn:hover { color: var(--text); border-color: var(--accent); }
+  .copy-btn.copied { color: var(--success); border-color: var(--success); }
+  code { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: .1em .4em; font-family: 'Consolas',monospace; font-size: .85em; color: #a89ef8; }
+
+  /* TABLES */
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .88rem; }
+  th { background: var(--surface2); color: var(--text-dim); font-weight: 600; font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; padding: .6rem 1rem; text-align: left; border-bottom: 2px solid var(--border); }
+  td { padding: .6rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,.02); }
+  td code { font-size: .82em; }
+
+  /* TRUE/FALSE VISUAL */
+  .bool-demo { display: flex; gap: 1rem; margin: 1.25rem 0; }
+  .bool-box { flex: 1; border-radius: var(--radius); padding: 1.1rem 1.25rem; text-align: center; border: 1.5px solid; }
+  .bool-box.true-box  { border-color: var(--success); background: rgba(76,175,130,.08); }
+  .bool-box.false-box { border-color: var(--danger);  background: rgba(224,92,92,.08); }
+  .bool-val  { font-family: 'Consolas',monospace; font-size: 1.8rem; font-weight: 700; }
+  .bool-box.true-box  .bool-val { color: var(--success); }
+  .bool-box.false-box .bool-val { color: var(--danger); }
+  .bool-label { font-size: .8rem; color: var(--text-dim); margin-top: .3rem; }
+
+  /* SYNTAX TOGGLE */
+  .syn-tabs { display: flex; gap: .4rem; margin-bottom: 0; }
+  .syn-tab { background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; padding: .4rem 1rem; border-radius: 6px 6px 0 0; font-family: 'Consolas',monospace; font-size: .85rem; transition: all .2s; border-bottom: none; }
+  .syn-tab.active { background: var(--code-bg); border-color: var(--accent); color: var(--accent); }
+  .syn-panel { display: none; border: 1px solid var(--border); border-radius: 0 var(--radius) var(--radius) var(--radius); }
+  .syn-panel.active { display: block; }
+
+  /* OPERATOR CARDS */
+  .filter-bar { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .filter-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; padding: .35rem .9rem; border-radius: 20px; font-size: .82rem; font-family: inherit; transition: all .2s; }
+  .filter-btn:hover { color: var(--text); }
+  .filter-btn.active { background: rgba(79,172,222,.12); border-color: rgba(79,172,222,.4); color: var(--accent); }
+
+  .op-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: .85rem; }
+  .op-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: .9rem 1rem; cursor: pointer; transition: border-color .2s, background .2s; }
+  .op-card:hover { border-color: var(--accent); background: rgba(79,172,222,.04); }
+  .op-card.active { border-color: var(--accent); background: rgba(79,172,222,.07); }
+  .op-card[data-hidden] { display: none; }
+  .op-syn { font-family: 'Consolas',monospace; font-size: .92rem; color: #a89ef8; margin-bottom: .25rem; }
+  .op-meaning { font-size: .82rem; color: var(--text-dim); }
+  .op-body { display: none; margin-top: .75rem; font-size: .83rem; color: var(--text-dim); line-height: 1.6; border-top: 1px solid var(--border); padding-top: .6rem; }
+  .op-card.active .op-body { display: block; }
+  .op-tag { display: inline-block; font-size: .68rem; padding: .12rem .5rem; border-radius: 4px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; float: right; }
+  .tag-str  { background: rgba(79,172,222,.12);  color: var(--accent); }
+  .tag-num  { background: rgba(240,165,0,.12);   color: var(--warn); }
+  .tag-file { background: rgba(76,175,130,.12);  color: var(--success); }
+
+  /* IF ANATOMY */
+  .if-anatomy { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin: 1.25rem 0; }
+  .if-line { display: flex; align-items: stretch; cursor: pointer; border-bottom: 1px solid var(--border); transition: background .15s; }
+  .if-line:last-child { border-bottom: none; }
+  .if-line:hover, .if-line.active { background: rgba(79,172,222,.06); }
+  .if-line.active { border-left: 3px solid var(--accent); }
+  .if-num { width: 2.8rem; text-align: right; padding: .65rem .6rem; color: var(--text-dim); font-family: 'Consolas',monospace; font-size: .8rem; flex-shrink: 0; border-right: 1px solid var(--border); user-select: none; }
+  .if-code { flex: 1; padding: .65rem 1rem; font-family: 'Consolas',monospace; font-size: .84rem; line-height: 1.5; }
+  .if-detail { display: none; background: rgba(79,172,222,.04); border-top: 1px solid var(--border); padding: .7rem 1.1rem; font-size: .84rem; color: var(--text-dim); line-height: 1.6; }
+  .if-line.active + .if-detail { display: block; }
+  .if-hint { text-align: center; color: var(--text-dim); font-size: .8rem; padding: .6rem; border-top: 1px solid var(--border); }
+
+  /* CASE ANATOMY */
+  .case-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.25rem 0; }
+  @media (max-width: 640px) { .case-wrap { grid-template-columns: 1fr; } }
+  .case-col-title { font-size: .8rem; color: var(--text-dim); margin-bottom: .4rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+
+  /* RECAP */
+  .recap-cat { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: .3rem .6rem; border-radius: 4px; white-space: nowrap; }
+  .rc-test  { background: rgba(79,172,222,.12);  color: var(--accent); }
+  .rc-ops   { background: rgba(124,106,247,.12); color: #a89ef8; }
+  .rc-if    { background: rgba(240,165,0,.12);   color: var(--warn); }
+  .rc-case  { background: rgba(76,175,130,.12);  color: var(--success); }
+
+  /* QUIZ */
+  .quiz-wrap { display: flex; flex-direction: column; gap: 1.5rem; }
+  .quiz-q { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; transition: border-color .3s; }
+  .quiz-q.correct { border-color: var(--success); } .quiz-q.wrong { border-color: var(--danger); }
+  .quiz-question { font-weight: 600; margin-bottom: .9rem; }
+  .quiz-options { display: flex; flex-direction: column; gap: .5rem; }
+  .quiz-opt { background: var(--surface2); border: 1px solid var(--border); border-radius: 7px; padding: .6rem .9rem; cursor: pointer; font-size: .88rem; transition: all .2s; display: flex; align-items: center; gap: .6rem; font-family: inherit; color: var(--text); text-align: left; width: 100%; }
+  .quiz-opt:hover:not(:disabled) { border-color: var(--accent); background: rgba(79,172,222,.07); }
+  .quiz-opt:disabled { cursor: default; }
+  .quiz-opt.correct { border-color: var(--success); background: rgba(76,175,130,.1); color: #6de0a8; }
+  .quiz-opt.wrong   { border-color: var(--danger);  background: rgba(224,92,92,.1);  color: #e88080; }
+  .quiz-opt .opt-icon { font-size: .95rem; width: 1.2rem; text-align: center; flex-shrink: 0; }
+  .quiz-feedback { margin-top: .75rem; font-size: .84rem; display: none; padding: .5rem .75rem; border-radius: 6px; border-left: 3px solid; }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { border-color: var(--success); background: rgba(76,175,130,.08); color: #6de0a8; }
+  .quiz-feedback.ko { border-color: var(--danger);  background: rgba(224,92,92,.08);  color: #e88080; }
+  .quiz-score { text-align: center; padding: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); display: none; }
+  .quiz-score.show { display: block; }
+  .score-number { font-size: 2.5rem; font-weight: 700; }
+  .score-max { color: var(--text-dim); font-size: 1.1rem; }
+  .score-label { margin-top: .4rem; color: var(--text-dim); }
+  .quiz-reset-btn { display: inline-block; margin-top: 1rem; background: rgba(79,172,222,.12); border: 1px solid rgba(79,172,222,.4); color: var(--accent); cursor: pointer; padding: .5rem 1.2rem; border-radius: 6px; font-family: inherit; font-size: .9rem; transition: all .2s; }
+  .quiz-reset-btn:hover { background: rgba(79,172,222,.25); }
+
+  /* MISC */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  p + p { margin-top: .6rem; } p { margin-top: .5rem; } strong { color: var(--text); }
+  .intro-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; font-size: .95rem; line-height: 1.7; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+  @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+.bash-site-nav{display:flex;justify-content:space-between;gap:1rem;padding:1rem;flex-wrap:wrap}.bash-site-nav a{color:var(--accent);font-weight:700}
+</style>
+<link rel="stylesheet" href="../../assets/themes/theme.css">
+<script src="../../assets/themes/theme.js"></script>
+</head>
+<body><nav class="bash-site-nav"><a href="https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/">← Cours Markdown</a><a href="https://kayasam.github.io/linux-initiation/#bash">Parcours Bash →</a></nav>
+
+<header>
+  <div class="badge">Scripting Shell en Bash</div>
+  <h1>Tests et conditions</h1>
+  <p class="subtitle">Chapitre 04 — tests, opérateurs, if/elif/else, case</p>
+</header>
+
+<nav>
+  <button class="tab-btn active" onclick="showTab('tests')">Tests</button>
+  <button class="tab-btn" onclick="showTab('operateurs')">Opérateurs</button>
+  <button class="tab-btn" onclick="showTab('if')">if / elif / else</button>
+  <button class="tab-btn" onclick="showTab('case')">case</button>
+  <button class="tab-btn" onclick="showTab('recap')">Récapitulatif</button>
+  <button class="tab-btn" onclick="showTab('quiz')">Quiz</button>
+</nav>
+
+<main>
+
+<!-- ══════════════ TESTS ══════════════ -->
+<div class="section active" id="tab-tests">
+  <h2 class="section-title"><span>#</span> Les tests</h2>
+
+  <div class="intro-box">
+    Un test évalue une condition et retourne un <strong>code de retour</strong>.
+    C'est ce code que <code>if</code>, <code>while</code> et <code>&amp;&amp;</code> lisent pour décider quoi faire.
+  </div>
+
+  <h3>0 = VRAI — l'inverse des autres langages</h3>
+
+  <div class="bool-demo">
+    <div class="bool-box true-box">
+      <div class="bool-val">0</div>
+      <div class="bool-label">VRAI — test réussi</div>
+    </div>
+    <div class="bool-box false-box">
+      <div class="bool-val">1–255</div>
+      <div class="bool-label">FAUX — test échoué</div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-label">Attention</div>
+    En bash, <strong>0 signifie VRAI</strong> et toute autre valeur signifie FAUX.
+    C'est l'inverse de la plupart des langages de programmation (Python, C, JS…).
+    La logique vient des codes de retour Unix : 0 = succès, autre = erreur.
+  </div>
+
+  <h3>Les trois syntaxes — cliquez pour comparer</h3>
+
+  <div class="syn-tabs">
+    <button class="syn-tab active" onclick="showSyn('test',this)">test …</button>
+    <button class="syn-tab" onclick="showSyn('single',this)">[ … ]</button>
+    <button class="syn-tab" onclick="showSyn('double',this)">[[ … ]]</button>
+  </div>
+
+  <div class="syn-panel active" id="syn-test">
+    <div class="code-block" style="border-radius:0 var(--radius) var(--radius) var(--radius);"><span class="cmd">test</span> <span class="flag">-d</span> <span class="path">/etc</span>
+<span class="cmd">echo</span> <span class="arg">$?</span>   <span class="comment"># 0 ← vrai</span>
+
+<span class="cmd">test</span> <span class="flag">-f</span> <span class="path">/etc</span>
+<span class="cmd">echo</span> <span class="arg">$?</span>   <span class="comment"># 1 ← faux, /etc est un dossier, pas un fichier</span></div>
+    <p style="padding:.75rem 1rem; font-size:.87rem; color:var(--text-dim);">Syntaxe longue, la commande <code>test</code> de base. Rarement utilisée directement — préférer les crochets.</p>
+  </div>
+
+  <div class="syn-panel" id="syn-single">
+    <div class="code-block" style="border-radius:0 var(--radius) var(--radius) var(--radius);"><span class="comment"># Syntaxe POSIX — compatible tous les shells</span>
+[ <span class="flag">-d</span> <span class="path">/etc</span> ] ; <span class="cmd">echo</span> <span class="arg">$?</span>    <span class="comment"># 0 ← vrai</span>
+[ <span class="flag">-f</span> <span class="path">/etc</span> ] ; <span class="cmd">echo</span> <span class="arg">$?</span>    <span class="comment"># 1 ← faux</span>
+
+<span class="comment"># Opérateurs logiques POSIX dans [ ]</span>
+[ <span class="flag">-d</span> <span class="path">/etc</span> <span class="flag">-a</span> <span class="flag">-r</span> <span class="path">/etc</span> ]    <span class="comment"># -a = ET</span>
+[ <span class="flag">-f</span> <span class="path">/etc</span> <span class="flag">-o</span> <span class="flag">-d</span> <span class="path">/etc</span> ]    <span class="comment"># -o = OU</span></div>
+    <p style="padding:.75rem 1rem; font-size:.87rem; color:var(--text-dim);">Équivalent à <code>test</code>. Compatible POSIX (<code>sh</code>). Espaces obligatoires autour des crochets. À utiliser pour les scripts portables.</p>
+  </div>
+
+  <div class="syn-panel" id="syn-double">
+    <div class="code-block" style="border-radius:0 var(--radius) var(--radius) var(--radius);"><span class="comment"># Syntaxe bash étendue — RECOMMANDÉE</span>
+[[ <span class="flag">-d</span> <span class="path">/etc</span> ]] ; <span class="cmd">echo</span> <span class="arg">$?</span>    <span class="comment"># 0 ← vrai</span>
+[[ <span class="flag">-f</span> <span class="path">/etc</span> ]] ; <span class="cmd">echo</span> <span class="arg">$?</span>    <span class="comment"># 1 ← faux</span>
+
+<span class="comment"># Opérateurs logiques natifs dans [[ ]]</span>
+[[ <span class="flag">-d</span> <span class="path">/etc</span> <span class="op">&amp;&amp;</span> <span class="flag">-r</span> <span class="path">/etc</span> ]]   <span class="comment"># ET</span>
+[[ <span class="flag">-f</span> <span class="path">/a</span> <span class="op">||</span> <span class="flag">-d</span> <span class="path">/a</span> ]]    <span class="comment"># OU</span>
+[[ <span class="op">!</span> <span class="flag">-e</span> <span class="path">/tmp/lock</span> ]]       <span class="comment"># NON</span>
+
+<span class="comment"># Supporte les motifs glob et regex</span>
+[[ <span class="arg">"$fichier"</span> <span class="op">==</span> <span class="str">*.sh</span> ]]    <span class="comment"># glob</span>
+[[ <span class="arg">"$chaine"</span> <span class="op">=~</span> <span class="str">^[0-9]+$</span> ]]  <span class="comment"># regex POSIX étendue</span></div>
+    <p style="padding:.75rem 1rem; font-size:.87rem; color:var(--text-dim);">Syntaxe recommandée dans tout script bash. Plus sûre (pas besoin de guillemets obligatoires), supporte <code>&amp;&amp;</code>, <code>||</code>, <code>!</code>, les globs et les expressions régulières.</p>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-label">Règle simple</div>
+    <strong><code>[[ ]]</code></strong> dans les scripts bash. <strong><code>[ ]</code></strong> uniquement si le script doit tourner avec <code>sh</code> (POSIX strict).
+  </div>
+
+  <h3>Opérateurs logiques combinés</h3>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># ET — les deux conditions doivent être vraies</span>
+[[ <span class="flag">-d</span> <span class="arg">"$rep"</span> <span class="op">&amp;&amp;</span> <span class="flag">-w</span> <span class="arg">"$rep"</span> ]] <span class="op">&amp;&amp;</span> <span class="cmd">echo</span> <span class="str">"dossier accessible en écriture"</span>
+
+<span class="comment"># OU — au moins une condition doit être vraie</span>
+[[ <span class="flag">-f</span> <span class="arg">"$f"</span> <span class="op">||</span> <span class="flag">-L</span> <span class="arg">"$f"</span> ]] <span class="op">&amp;&amp;</span> <span class="cmd">echo</span> <span class="str">"fichier ou lien symbolique"</span>
+
+<span class="comment"># NON — inverse le résultat</span>
+[[ <span class="op">!</span> <span class="flag">-e</span> <span class="arg">"$fichier"</span> ]] <span class="op">&amp;&amp;</span> <span class="cmd">echo</span> <span class="str">"le fichier n'existe pas"</span></div>
+
+  <div class="callout note">
+    <div class="callout-label">Note — && et || hors des crochets</div>
+    <code>&amp;&amp;</code> et <code>||</code> s'utilisent aussi entre commandes, sans crochets :
+    <code>mkdir /tmp/test &amp;&amp; echo "créé"</code> — le <code>echo</code> ne s'exécute que si <code>mkdir</code> réussit.
+  </div>
+</div>
+
+
+<!-- ══════════════ OPÉRATEURS ══════════════ -->
+<div class="section" id="tab-operateurs">
+  <h2 class="section-title"><span>#</span> Opérateurs de test</h2>
+  <p style="color:var(--text-dim); font-size:.88rem; margin-bottom:1.25rem;">Cliquez sur un opérateur pour voir les détails et un exemple.</p>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterOps('all',this)">Tous</button>
+    <button class="filter-btn" onclick="filterOps('str',this)">Chaînes</button>
+    <button class="filter-btn" onclick="filterOps('num',this)">Numériques</button>
+    <button class="filter-btn" onclick="filterOps('file',this)">Fichiers</button>
+  </div>
+
+  <div class="op-grid" id="op-grid">
+
+    <!-- CHAÎNES -->
+    <div class="op-card" data-cat="str" onclick="toggleOp(this)">
+      <span class="op-tag tag-str">chaîne</span>
+      <div class="op-syn">-z "$var"</div>
+      <div class="op-meaning">Vrai si la variable est <strong>vide</strong></div>
+      <div class="op-body">
+        Le <code>z</code> vient de <em>zero</em> — longueur zéro.
+        <div class="code-block" style="margin-top:.6rem;font-size:.8rem;"><span class="val">a</span>=
+[[ <span class="flag">-z</span> <span class="arg">"$a"</span> ]] ; <span class="cmd">echo</span> <span class="arg">$?</span>   <span class="comment"># 0 ← vrai</span>
+<span class="val">a</span>=bonjour
+[[ <span class="flag">-z</span> <span class="arg">"$a"</span> ]] ; <span class="cmd">echo</span> <span class="arg">$?</span>   <span class="comment"># 1 ← faux</span></div>
+      </div>
+    </div>
+
+    <div class="op-card" data-cat="str" onclick="toggleOp(this)">
+      <span class="op-tag tag-str">chaîne</span>
+      <div class="op-syn">-n "$var"</div>
+      <div class="op-meaning">Vrai si la variable est <strong>non vide</strong></div>
+      <div class="op-body">
+        Le <code>n</code> vient de <em>non-zero</em>. L'inverse de <code>-z</code>.
+        Utile pour vérifier qu'un argument a bien été fourni.
+        <div class="code-block" style="margin-top:.6rem;font-size:.8rem;"><span class="val">a</span>=bonjour
+[[ <span class="flag">-n</span> <span class="arg">"$a"</span> ]] ; <span class="cmd">echo</span> <span class="arg">$?</span>   <span class="comment"># 0 ← vrai</span></div>
+      </div>
+    </div>
+
+    <div class="op-card" data-cat="str" onclick="toggleOp(this)">
+      <span class="op-tag tag-str">chaîne</span>
+      <div class="op-syn">"$a" = "$b"</div>
+      <div class="op-meaning">Vrai si les deux chaînes sont <strong>identiques</strong></div>
+      <div class="op-body">
+        Dans <code>[[ ]]</code> on peut aussi utiliser <code>==</code>. Dans <code>[ ]</code>, utiliser <code>=</code> (un seul <code>=</code>).
+        <div class="code-block" style="margin-top:.6rem;font-size:.8rem;">[[ <span class="arg">"$os"</span> <span class="op">==</span> <span class="str">"debian"</span> ]] <span class="op">&amp;&amp;</span> <span class="cmd">echo</span> <span class="str">"C'est Debian"</span></div>
+      </div>
+    </div>
+
+    <div class="op-card" data-cat="str" onclick="toggleOp(this)">
+      <span class="op-tag tag-str">chaîne</span>
+      <div class="op-syn">"$a" != "$b"</div>
+      <div class="op-meaning">Vrai si les deux chaînes sont <strong>différentes</strong></div>
+      <div class="op-body">
+        <div class="code-block" style="margin-top:.6rem;font-size:.8rem;">[[ <span class="arg">"$USER"</span> <span class="op">!=</span> <span class="str">"root"</span> ]] <span class="op">&amp;&amp;</span> <span class="cmd">echo</span> <span class="str">"Pas root"</span></div>
+      </div>
+    </div>
+
+    <!-- NUMÉRIQUES -->
+    <div class="op-card" data-cat="num" onclick="toggleOp(this)">
+      <span class="op-tag tag-num">numérique</span>
+      <div class="op-syn">-eq</div>
+      <div class="op-meaning">Égal (<em>equal</em>)</div>
+      <div class="op-body">
+        <div class="code-block" style="margin-top:.6rem;font-size:.8rem;"><span class="val">a</span>=5 ; <span class="val">b</span>=5
+[[ <span class="arg">"$a"</span> <span class="flag">-eq</span> <span class="arg">"$b"</span> ]] ; <span class="cmd">echo</span> <span class="arg">$?</span>   <span class="comment"># 0 ← vrai</span></div>
+        Ne pas utiliser <code>=</code> pour comparer des nombres : <code>[ "10" = "9" ]</code> compare des chaînes (résultat faux), pas des valeurs.
+      </div>
+    </div>
+
+    <div class="op-card" data-cat="num" onclick="toggleOp(this)">
+      <span class="op-tag tag-num">numérique</span>
+      <div class="op-syn">-ne</div>
+      <div class="op-meaning">Différent (<em>not equal</em>)</div>
+      <div class="op-body">
+        <div class="code-block" style="margin-top:.6rem;font-size:.8rem;">[[ <span class="arg">$#</span> <span class="flag">-ne</span> 1 ]] <span class="op">&amp;&amp;</span> <span class="cmd">echo</span> <span class="str">"Mauvais nombre d'arguments"</span></div>
+      </div>
+    </div>
+
+    <div class="op-card" data-cat="num" onclick="toggleOp(this)">
+      <span class="op-tag tag-num">numérique</span>
+      <div class="op-syn">-lt</div>
+      <div class="op-meaning">Inférieur (<em>less than</em>)</div>
+      <div class="op-body">
+        <div class="code-block" style="margin-top:.6rem;font-size:.8rem;"><span class="val">a</span>=10 ; <span class="val">b</span>=20
+[[ <span class="arg">"$a"</span> <span class="flag">-lt</span> <span class="arg">"$b"</span> ]] ; <span class="cmd">echo</span> <span class="arg">$?</span>   <span class="comment"># 0 ← vrai</span></div>
+      </div>
+    </div>
+
+    <div class="op-card" data-cat="num" onclick="toggleOp(this)">
+      <span class="op-tag tag-num">numérique</span>
+      <div class="op-syn">-gt</div>
+      <div class="op-meaning">Supérieur (<em>greater than</em>)</div>
+      <div class="op-body">
+        <div class="code-block" style="margin-top:.6rem;font-size:.8rem;"><span class="val">a</span>=30
+[[ <span class="arg">"$a"</span> <span class="flag">-gt</span> 18 ]] <span class="op">&amp;&amp;</span> <span class="cmd">echo</span> <span class="str">"Majeur"</span></div>
+      </div>
+    </div>
+
+    <div class="op-card" data-cat="num" onclick="toggleOp(this)">
+      <span class="op-tag tag-num">numérique</span>
+      <div class="op-syn">-le</div>
+      <div class="op-meaning">Inférieur ou égal (<em>less or equal</em>)</div>
+      <div class="op-body">
+        <div class="code-block" style="margin-top:.6rem;font-size:.8rem;">[[ <span class="arg">"$note"</span> <span class="flag">-le</span> 10 ]] <span class="op">&amp;&amp;</span> <span class="cmd">echo</span> <span class="str">"Insuffisant"</span></div>
+      </div>
+    </div>
+
+    <div class="op-card" data-cat="num" onclick="toggleOp(this)">
+      <span class="op-tag tag-num">numérique</span>
+      <div class="op-syn">-ge</div>
+      <div class="op-meaning">Supérieur ou égal (<em>greater or equal</em>)</div>
+      <div class="op-body">
+        <div class="code-block" style="margin-top:.6rem;font-size:.8rem;">[[ <span class="arg">"$score"</span> <span class="flag">-ge</span> 80 ]] <span class="op">&amp;&amp;</span> <span class="cmd">echo</span> <span class="str">"Mention bien"</span></div>
+      </div>
+    </div>
+
+    <!-- FICHIERS -->
+    <div class="op-card" data-cat="file" onclick="toggleOp(this)">
+      <span class="op-tag tag-file">fichier</span>
+      <div class="op-syn">-e fichier</div>
+      <div class="op-meaning">Vrai si le fichier ou dossier <strong>existe</strong></div>
+      <div class="op-body">
+        Test générique — ne distingue pas fichier et dossier.
+        <div class="code-block" style="margin-top:.6rem;font-size:.8rem;">[[ <span class="flag">-e</span> <span class="path">/etc/hosts</span> ]] <span class="op">&amp;&amp;</span> <span class="cmd">echo</span> <span class="str">"existe"</span></div>
+      </div>
+    </div>
+
+    <div class="op-card" data-cat="file" onclick="toggleOp(this)">
+      <span class="op-tag tag-file">fichier</span>
+      <div class="op-syn">-f fichier</div>
+      <div class="op-meaning">Vrai si c'est un <strong>fichier ordinaire</strong></div>
+      <div class="op-body">
+        Exclut les dossiers, liens symboliques seuls, devices…
+        <div class="code-block" style="margin-top:.6rem;font-size:.8rem;">[[ <span class="flag">-f</span> <span class="path">/etc/hosts</span> ]] ; <span class="cmd">echo</span> <span class="arg">$?</span>   <span class="comment"># 0 ← fichier ordinaire</span>
+[[ <span class="flag">-f</span> <span class="path">/etc</span> ]] ; <span class="cmd">echo</span> <span class="arg">$?</span>        <span class="comment"># 1 ← c'est un dossier</span></div>
+      </div>
+    </div>
+
+    <div class="op-card" data-cat="file" onclick="toggleOp(this)">
+      <span class="op-tag tag-file">fichier</span>
+      <div class="op-syn">-d fichier</div>
+      <div class="op-meaning">Vrai si c'est un <strong>dossier</strong></div>
+      <div class="op-body">
+        <div class="code-block" style="margin-top:.6rem;font-size:.8rem;">[[ <span class="flag">-d</span> <span class="path">/etc</span> ]] ; <span class="cmd">echo</span> <span class="arg">$?</span>   <span class="comment"># 0 ← c'est bien un dossier</span></div>
+      </div>
+    </div>
+
+    <div class="op-card" data-cat="file" onclick="toggleOp(this)">
+      <span class="op-tag tag-file">fichier</span>
+      <div class="op-syn">-r / -w / -x</div>
+      <div class="op-meaning">Vrai si le fichier est <strong>lisible / modifiable / exécutable</strong></div>
+      <div class="op-body">
+        Vérifie les droits de l'utilisateur courant sur le fichier.
+        <div class="code-block" style="margin-top:.6rem;font-size:.8rem;">[[ <span class="flag">-x</span> <span class="path">/bin/bash</span> ]] ; <span class="cmd">echo</span> <span class="arg">$?</span>   <span class="comment"># 0</span>
+[[ <span class="flag">-w</span> <span class="path">/etc/passwd</span> ]] ; <span class="cmd">echo</span> <span class="arg">$?</span> <span class="comment"># 1 (sauf root)</span></div>
+      </div>
+    </div>
+
+    <div class="op-card" data-cat="file" onclick="toggleOp(this)">
+      <span class="op-tag tag-file">fichier</span>
+      <div class="op-syn">-s fichier</div>
+      <div class="op-meaning">Vrai si le fichier est <strong>non vide</strong> (taille &gt; 0)</div>
+      <div class="op-body">
+        Utile pour vérifier qu'un fichier de log ou de résultat contient bien quelque chose.
+        <div class="code-block" style="margin-top:.6rem;font-size:.8rem;">[[ <span class="flag">-s</span> <span class="arg">"$log"</span> ]] <span class="op">&amp;&amp;</span> <span class="cmd">echo</span> <span class="str">"Le log contient des données"</span></div>
+      </div>
+    </div>
+
+    <div class="op-card" data-cat="file" onclick="toggleOp(this)">
+      <span class="op-tag tag-file">fichier</span>
+      <div class="op-syn">-L fichier</div>
+      <div class="op-meaning">Vrai si c'est un <strong>lien symbolique</strong></div>
+      <div class="op-body">
+        <div class="code-block" style="margin-top:.6rem;font-size:.8rem;">[[ <span class="flag">-L</span> <span class="path">/bin</span> ]] ; <span class="cmd">echo</span> <span class="arg">$?</span>   <span class="comment"># 0 sur Debian (bin → usr/bin)</span></div>
+      </div>
+    </div>
+
+  </div><!-- /op-grid -->
+
+  <div class="callout danger" style="margin-top:1.5rem;">
+    <div class="callout-label">Erreur classique — guillemets obligatoires</div>
+    Toujours mettre les variables entre guillemets doubles dans les tests.
+    Sans guillemets, si la variable est vide, bash génère une erreur de syntaxe.
+    <div class="code-block" style="margin-top:.75rem;"><span class="val">a</span>=
+[ <span class="err">$a</span> = <span class="str">"test"</span> ]     <span class="comment"># ERREUR : bash voit [ = "test" ]</span>
+[ <span class="ok">"$a"</span> = <span class="str">"test"</span> ]   <span class="comment"># CORRECT</span></div>
+  </div>
+</div>
+
+
+<!-- ══════════════ IF ══════════════ -->
+<div class="section" id="tab-if">
+  <h2 class="section-title"><span>#</span> if / elif / else</h2>
+
+  <p>La commande <code>if</code> exécute des commandes uniquement si une condition est vraie (code retour = 0).</p>
+
+  <h3>Structure complète — cliquez sur chaque ligne</h3>
+
+  <div class="if-anatomy">
+    <div class="if-line" onclick="toggleIf(this)">
+      <div class="if-num">1</div>
+      <div class="if-code"><span class="kw">if</span> [[ <span class="flag">-d</span> <span class="arg">"$repertoire"</span> ]] ; <span class="kw">then</span></div>
+    </div>
+    <div class="if-detail"><strong style="color:var(--accent);">if … ; then</strong> — évalue la condition. Si le code retour est 0 (vrai), les commandes du bloc suivant s'exécutent. Le <code>;</code> avant <code>then</code> peut être remplacé par un retour à la ligne.</div>
+
+    <div class="if-line" onclick="toggleIf(this)">
+      <div class="if-num">2</div>
+      <div class="if-code">    <span class="cmd">echo</span> <span class="str">"$repertoire existe"</span></div>
+    </div>
+    <div class="if-detail">Commandes exécutées si la condition est vraie. L'<strong>indentation</strong> (4 espaces) n'est pas obligatoire mais indispensable pour la lisibilité.</div>
+
+    <div class="if-line" onclick="toggleIf(this)">
+      <div class="if-num">3</div>
+      <div class="if-code"><span class="kw">elif</span> [[ <span class="flag">-e</span> <span class="arg">"$repertoire"</span> ]] ; <span class="kw">then</span></div>
+    </div>
+    <div class="if-detail"><strong style="color:var(--accent);">elif</strong> — optionnel, répétable. Testé uniquement si le <code>if</code> précédent était faux. On peut enchaîner autant de <code>elif</code> que nécessaire.</div>
+
+    <div class="if-line" onclick="toggleIf(this)">
+      <div class="if-num">4</div>
+      <div class="if-code">    <span class="cmd">echo</span> <span class="str">"$repertoire existe mais ce n'est pas un dossier"</span></div>
+    </div>
+    <div class="if-detail">Commandes du bloc <code>elif</code>.</div>
+
+    <div class="if-line" onclick="toggleIf(this)">
+      <div class="if-num">5</div>
+      <div class="if-code"><span class="kw">else</span></div>
+    </div>
+    <div class="if-detail"><strong style="color:var(--accent);">else</strong> — optionnel, une seule fois. Exécuté si aucune des conditions précédentes n'était vraie. Il n'a pas de condition propre.</div>
+
+    <div class="if-line" onclick="toggleIf(this)">
+      <div class="if-num">6</div>
+      <div class="if-code">    <span class="cmd">echo</span> <span class="str">"$repertoire n'existe pas"</span></div>
+    </div>
+    <div class="if-detail">Commandes du bloc <code>else</code>.</div>
+
+    <div class="if-line" onclick="toggleIf(this)">
+      <div class="if-num">7</div>
+      <div class="if-code"><span class="kw">fi</span></div>
+    </div>
+    <div class="if-detail"><strong style="color:var(--accent);">fi</strong> — ferme obligatoirement le bloc <code>if</code>. C'est <em>if</em> écrit à l'envers. Oublier le <code>fi</code> est une erreur de syntaxe courante.</div>
+
+    <div class="if-hint">↑ Cliquez sur une ligne pour voir son rôle</div>
+  </div>
+
+  <h3>Exemples pratiques</h3>
+
+  <div class="two-col">
+    <div>
+      <p style="font-size:.82rem; color:var(--text-dim); margin-bottom:.4rem; font-weight:600;">Tester un fichier :</p>
+      <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="shb">#!/usr/bin/env bash</span>
+<span class="cmd">set</span> <span class="flag">-euo pipefail</span>
+
+<span class="val">cible</span>=<span class="arg">"$1"</span>
+
+<span class="kw">if</span> [[ <span class="flag">-f</span> <span class="arg">"$cible"</span> ]] ; <span class="kw">then</span>
+    <span class="cmd">echo</span> <span class="str">"fichier ordinaire"</span>
+<span class="kw">elif</span> [[ <span class="flag">-d</span> <span class="arg">"$cible"</span> ]] ; <span class="kw">then</span>
+    <span class="cmd">echo</span> <span class="str">"dossier"</span>
+<span class="kw">else</span>
+    <span class="cmd">echo</span> <span class="str">"n'existe pas"</span>
+<span class="kw">fi</span></div>
+    </div>
+    <div>
+      <p style="font-size:.82rem; color:var(--text-dim); margin-bottom:.4rem; font-weight:600;">Valider les arguments :</p>
+      <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="shb">#!/usr/bin/env bash</span>
+<span class="cmd">set</span> <span class="flag">-euo pipefail</span>
+
+<span class="kw">if</span> [[ <span class="arg">$#</span> <span class="flag">-ne</span> 1 ]] ; <span class="kw">then</span>
+    <span class="cmd">echo</span> <span class="str">"Usage : $0 &lt;nom&gt;"</span> <span class="op">&gt;&amp;2</span>
+    <span class="cmd">exit</span> 1
+<span class="kw">fi</span>
+
+<span class="cmd">echo</span> <span class="str">"Bonjour, <span class="arg">$1</span> !"</span></div>
+    </div>
+  </div>
+
+  <h3>Tester si une commande est disponible</h3>
+  <p>La bonne façon de vérifier si un outil est installé :</p>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="kw">if</span> <span class="cmd">command</span> <span class="flag">-v</span> curl <span class="op">&gt;</span> <span class="path">/dev/null</span> ; <span class="kw">then</span>
+    <span class="cmd">echo</span> <span class="str">"curl est installé"</span>
+<span class="kw">else</span>
+    <span class="cmd">echo</span> <span class="str">"curl n'est pas installé"</span>
+    <span class="cmd">exit</span> 1
+<span class="kw">fi</span></div>
+
+  <div class="callout note">
+    <div class="callout-label">Note — command -v vs which</div>
+    Préférer <code>command -v</code> à <code>which</code> : c'est une commande interne bash, plus fiable et portable.
+    <code>which</code> est un programme externe dont le comportement varie selon les systèmes.
+  </div>
+
+  <h3>Comparaison numérique — exemple</h3>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="shb">#!/usr/bin/env bash</span>
+<span class="cmd">set</span> <span class="flag">-euo pipefail</span>
+
+<span class="val">a</span>=<span class="arg">"$1"</span>
+<span class="val">b</span>=<span class="arg">"$2"</span>
+
+<span class="kw">if</span> [[ <span class="arg">"$a"</span> <span class="flag">-gt</span> <span class="arg">"$b"</span> ]] ; <span class="kw">then</span>
+    <span class="cmd">echo</span> <span class="str">"<span class="arg">$a</span> est supérieur à <span class="arg">$b</span>"</span>
+<span class="kw">elif</span> [[ <span class="arg">"$a"</span> <span class="flag">-lt</span> <span class="arg">"$b"</span> ]] ; <span class="kw">then</span>
+    <span class="cmd">echo</span> <span class="str">"<span class="arg">$a</span> est inférieur à <span class="arg">$b</span>"</span>
+<span class="kw">else</span>
+    <span class="cmd">echo</span> <span class="str">"<span class="arg">$a</span> est égal à <span class="arg">$b</span>"</span>
+<span class="kw">fi</span></div>
+</div>
+
+
+<!-- ══════════════ CASE ══════════════ -->
+<div class="section" id="tab-case">
+  <h2 class="section-title"><span>#</span> La structure case</h2>
+
+  <div class="intro-box">
+    <code>case</code> simplifie les conditions à <strong>choix multiples</strong> sur une même variable.
+    Équivalent à une série de <code>if/elif</code>, mais bien plus lisible quand il y a plus de 3 cas.
+  </div>
+
+  <h3>Syntaxe annotée</h3>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="kw">case</span> <span class="str">"$variable"</span> <span class="kw">in</span>
+    <span class="val">motif1</span>)
+        commandes
+        <span class="op">;;</span>              <span class="comment">← obligatoire — ferme le bloc</span>
+    <span class="val">motif2</span> <span class="op">|</span> <span class="val">motif3</span>)  <span class="comment">← plusieurs motifs pour le même bloc</span>
+        commandes
+        <span class="op">;;</span>
+    <span class="val">*</span>)               <span class="comment">← cas par défaut (comme else)</span>
+        commandes
+        <span class="op">;;</span>
+<span class="kw">esac</span></div>
+
+  <table style="margin-top:1rem;">
+    <thead><tr><th>Élément</th><th>Rôle</th></tr></thead>
+    <tbody>
+      <tr><td><code>;;</code></td><td>Ferme chaque bloc — obligatoire</td></tr>
+      <tr><td><code>|</code></td><td>Sépare les motifs alternatifs pour un même bloc</td></tr>
+      <tr><td><code>*</code></td><td>Correspond à tout le reste — cas par défaut</td></tr>
+      <tr><td><code>?</code></td><td>Joker : n'importe quel caractère unique</td></tr>
+      <tr><td><code>esac</code></td><td>Ferme le <code>case</code> (<em>case</em> à l'envers)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Exemple — distributions Linux</h3>
+
+  <div class="case-wrap">
+    <div>
+      <div class="case-col-title">Avec case</div>
+      <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="kw">case</span> <span class="str">"$distro"</span> <span class="kw">in</span>
+  debian <span class="op">|</span> ubuntu <span class="op">|</span> mint)
+      <span class="cmd">echo</span> <span class="str">"format DEB"</span>
+      <span class="op">;;</span>
+  centos <span class="op">|</span> fedora <span class="op">|</span> opensuse)
+      <span class="cmd">echo</span> <span class="str">"format RPM"</span>
+      <span class="op">;;</span>
+  <span class="val">*</span>)
+      <span class="cmd">echo</span> <span class="str">"inconnu"</span>
+      <span class="op">;;</span>
+<span class="kw">esac</span></div>
+    </div>
+    <div>
+      <div class="case-col-title">Équivalent avec if/elif</div>
+      <div class="code-block"><span class="comment"># Moins lisible avec 6 valeurs…</span>
+<span class="kw">if</span> [[ <span class="arg">"$distro"</span> <span class="op">==</span> <span class="str">"debian"</span> <span class="op">||</span>
+       <span class="arg">"$distro"</span> <span class="op">==</span> <span class="str">"ubuntu"</span> <span class="op">||</span>
+       <span class="arg">"$distro"</span> <span class="op">==</span> <span class="str">"mint"</span> ]] ; <span class="kw">then</span>
+    <span class="cmd">echo</span> <span class="str">"format DEB"</span>
+<span class="kw">elif</span> [[ <span class="arg">"$distro"</span> <span class="op">==</span> <span class="str">"centos"</span> <span class="op">||</span>
+        <span class="arg">"$distro"</span> <span class="op">==</span> <span class="str">"fedora"</span> <span class="op">||</span>
+        <span class="arg">"$distro"</span> <span class="op">==</span> <span class="str">"opensuse"</span> ]] ; <span class="kw">then</span>
+    <span class="cmd">echo</span> <span class="str">"format RPM"</span>
+<span class="kw">else</span>
+    <span class="cmd">echo</span> <span class="str">"inconnu"</span>
+<span class="kw">fi</span></div>
+    </div>
+  </div>
+
+  <h3>Exemple — menu interactif</h3>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="shb">#!/usr/bin/env bash</span>
+<span class="cmd">set</span> <span class="flag">-euo pipefail</span>
+
+<span class="cmd">echo</span> <span class="str">"Que voulez-vous faire ?"</span>
+<span class="cmd">echo</span> <span class="str">"  1) Afficher la date"</span>
+<span class="cmd">echo</span> <span class="str">"  2) Afficher l'espace disque"</span>
+<span class="cmd">echo</span> <span class="str">"  3) Quitter"</span>
+<span class="cmd">read</span> <span class="flag">-p</span> <span class="str">"Votre choix : "</span> <span class="val">choix</span>
+
+<span class="kw">case</span> <span class="str">"$choix"</span> <span class="kw">in</span>
+    1)  <span class="cmd">date</span> ;;
+    2)  <span class="cmd">df</span> <span class="flag">-h</span> / ;;
+    3)  <span class="cmd">echo</span> <span class="str">"Au revoir !"</span> ; <span class="cmd">exit</span> 0 ;;
+    <span class="val">*</span>)  <span class="cmd">echo</span> <span class="str">"Choix invalide : $choix"</span> <span class="op">&gt;&amp;2</span> ; <span class="cmd">exit</span> 1 ;;
+<span class="kw">esac</span></div>
+
+  <h3>Insensibilité à la casse — nocasematch</h3>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="cmd">shopt</span> <span class="flag">-s</span> nocasematch   <span class="comment"># active — oui/OUI/Oui seront tous reconnus</span>
+
+<span class="kw">case</span> <span class="str">"$reponse"</span> <span class="kw">in</span>
+    oui <span class="op">|</span> o <span class="op">|</span> yes <span class="op">|</span> y)
+        <span class="cmd">echo</span> <span class="str">"Confirmé"</span>
+        ;;
+    non <span class="op">|</span> n <span class="op">|</span> no)
+        <span class="cmd">echo</span> <span class="str">"Annulé"</span>
+        ;;
+<span class="kw">esac</span>
+
+<span class="cmd">shopt</span> <span class="flag">-u</span> nocasematch   <span class="comment"># désactive après usage</span></div>
+
+  <div class="callout tip">
+    <div class="callout-label">Quand utiliser case plutôt que if</div>
+    Dès qu'on compare la <strong>même variable</strong> à plus de 2 ou 3 valeurs.
+    Pour des tests sur des types différents ou des conditions complexes, rester sur <code>if</code>.
+  </div>
+</div>
+
+
+<!-- ══════════════ RÉCAPITULATIF ══════════════ -->
+<div class="section" id="tab-recap">
+  <h2 class="section-title"><span>#</span> Récapitulatif des commandes</h2>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterRecap('all',this)">Toutes</button>
+    <button class="filter-btn" onclick="filterRecap('test',this)">Tests</button>
+    <button class="filter-btn" onclick="filterRecap('ops',this)">Opérateurs</button>
+    <button class="filter-btn" onclick="filterRecap('if',this)">if</button>
+    <button class="filter-btn" onclick="filterRecap('case',this)">case</button>
+  </div>
+
+  <table id="recap-table">
+    <thead><tr><th>Commande / Syntaxe</th><th>Description</th><th>Catégorie</th></tr></thead>
+    <tbody>
+      <tr data-cat="test"><td><code>test expression</code></td><td>Évalue un test (0 = vrai, 1 = faux)</td><td><span class="recap-cat rc-test">test</span></td></tr>
+      <tr data-cat="test"><td><code>[ expression ]</code></td><td>Syntaxe POSIX — équivalent à <code>test</code></td><td><span class="recap-cat rc-test">test</span></td></tr>
+      <tr data-cat="test"><td><code>[[ expression ]]</code></td><td>Syntaxe bash étendue — recommandée</td><td><span class="recap-cat rc-test">test</span></td></tr>
+      <tr data-cat="test"><td><code>&amp;&amp;</code></td><td>ET logique dans <code>[[ ]]</code> ou entre commandes</td><td><span class="recap-cat rc-test">test</span></td></tr>
+      <tr data-cat="test"><td><code>||</code></td><td>OU logique dans <code>[[ ]]</code> ou entre commandes</td><td><span class="recap-cat rc-test">test</span></td></tr>
+      <tr data-cat="test"><td><code>!</code></td><td>NON logique — inverse le résultat du test</td><td><span class="recap-cat rc-test">test</span></td></tr>
+      <tr data-cat="ops"><td><code>-z "$var"</code></td><td>Vrai si la variable est vide</td><td><span class="recap-cat rc-ops">opérateurs</span></td></tr>
+      <tr data-cat="ops"><td><code>-n "$var"</code></td><td>Vrai si la variable est non vide</td><td><span class="recap-cat rc-ops">opérateurs</span></td></tr>
+      <tr data-cat="ops"><td><code>"$a" = "$b"</code></td><td>Vrai si les chaînes sont identiques</td><td><span class="recap-cat rc-ops">opérateurs</span></td></tr>
+      <tr data-cat="ops"><td><code>"$a" != "$b"</code></td><td>Vrai si les chaînes sont différentes</td><td><span class="recap-cat rc-ops">opérateurs</span></td></tr>
+      <tr data-cat="ops"><td><code>-eq / -ne</code></td><td>Numérique : égal / différent</td><td><span class="recap-cat rc-ops">opérateurs</span></td></tr>
+      <tr data-cat="ops"><td><code>-lt / -gt</code></td><td>Numérique : inférieur / supérieur</td><td><span class="recap-cat rc-ops">opérateurs</span></td></tr>
+      <tr data-cat="ops"><td><code>-le / -ge</code></td><td>Numérique : inférieur ou égal / supérieur ou égal</td><td><span class="recap-cat rc-ops">opérateurs</span></td></tr>
+      <tr data-cat="ops"><td><code>-e fichier</code></td><td>Vrai si le fichier ou dossier existe</td><td><span class="recap-cat rc-ops">opérateurs</span></td></tr>
+      <tr data-cat="ops"><td><code>-f fichier</code></td><td>Vrai si c'est un fichier ordinaire</td><td><span class="recap-cat rc-ops">opérateurs</span></td></tr>
+      <tr data-cat="ops"><td><code>-d fichier</code></td><td>Vrai si c'est un dossier</td><td><span class="recap-cat rc-ops">opérateurs</span></td></tr>
+      <tr data-cat="ops"><td><code>-r / -w / -x</code></td><td>Vrai si lisible / modifiable / exécutable</td><td><span class="recap-cat rc-ops">opérateurs</span></td></tr>
+      <tr data-cat="ops"><td><code>-s fichier</code></td><td>Vrai si le fichier est non vide (taille &gt; 0)</td><td><span class="recap-cat rc-ops">opérateurs</span></td></tr>
+      <tr data-cat="ops"><td><code>-L fichier</code></td><td>Vrai si c'est un lien symbolique</td><td><span class="recap-cat rc-ops">opérateurs</span></td></tr>
+      <tr data-cat="if"><td><code>if … ; then … fi</code></td><td>Condition simple — se ferme avec <code>fi</code></td><td><span class="recap-cat rc-if">if</span></td></tr>
+      <tr data-cat="if"><td><code>elif … ; then</code></td><td>Condition alternative (optionnel, répétable)</td><td><span class="recap-cat rc-if">if</span></td></tr>
+      <tr data-cat="if"><td><code>else</code></td><td>Bloc exécuté si aucune condition n'est vraie</td><td><span class="recap-cat rc-if">if</span></td></tr>
+      <tr data-cat="if"><td><code>command -v nom</code></td><td>Vérifie si une commande est disponible sur le système</td><td><span class="recap-cat rc-if">if</span></td></tr>
+      <tr data-cat="if"><td><code>exit 1</code></td><td>Quitte le script avec un code d'erreur</td><td><span class="recap-cat rc-if">if</span></td></tr>
+      <tr data-cat="case"><td><code>case "$var" in … esac</code></td><td>Choix multiples sur une variable</td><td><span class="recap-cat rc-case">case</span></td></tr>
+      <tr data-cat="case"><td><code>;;</code></td><td>Ferme chaque bloc d'un <code>case</code> — obligatoire</td><td><span class="recap-cat rc-case">case</span></td></tr>
+      <tr data-cat="case"><td><code>motif1 | motif2)</code></td><td>Plusieurs motifs alternatifs pour un même bloc</td><td><span class="recap-cat rc-case">case</span></td></tr>
+      <tr data-cat="case"><td><code>*)</code></td><td>Cas par défaut — correspond à tout le reste</td><td><span class="recap-cat rc-case">case</span></td></tr>
+      <tr data-cat="case"><td><code>shopt -s nocasematch</code></td><td>Active la correspondance insensible à la casse</td><td><span class="recap-cat rc-case">case</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ══════════════ QUIZ ══════════════ -->
+<div class="section" id="tab-quiz">
+  <h2 class="section-title"><span>#</span> Quiz de révision</h2>
+  <p style="color:var(--text-dim); margin-bottom:1.5rem; font-size:.88rem;">Testez vos connaissances — cliquez sur la bonne réponse.</p>
+
+  <div class="quiz-wrap" id="quiz-wrap">
+
+    <div class="quiz-q" data-answer="a">
+      <div class="quiz-question">1. En bash, un test retourne 0. Cela signifie…</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>Le test est VRAI</button>
+        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>Le test est FAUX</button>
+        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>La variable est vide</button>
+        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>Une erreur s'est produite</button>
+      </div>
+      <div class="quiz-feedback">
+        En bash (et Unix en général), <strong>0 = succès = VRAI</strong>. C'est l'inverse de la plupart des langages.
+        La logique vient des codes de retour : 0 = la commande a réussi, autre valeur = erreur.
+      </div>
+    </div>
+
+    <div class="quiz-q" data-answer="c">
+      <div class="quiz-question">2. Quelle syntaxe de test est recommandée dans un script bash ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>test expression</button>
+        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>[ expression ]</button>
+        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>[[ expression ]]</button>
+        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>(( expression ))</button>
+      </div>
+      <div class="quiz-feedback">
+        <strong>[[ ]]</strong> est la syntaxe bash étendue recommandée. Elle est plus sûre (pas besoin de guillemets obligatoires), supporte <code>&amp;&amp;</code>, <code>||</code>, les globs (<code>*.sh</code>) et les expressions régulières (<code>=~</code>).
+        Réserver <code>[ ]</code> uniquement pour les scripts POSIX portables (<code>sh</code>).
+      </div>
+    </div>
+
+    <div class="quiz-q" data-answer="b">
+      <div class="quiz-question">3. Quel opérateur vérifie qu'une variable de chaîne est vide ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>-n "$var"</button>
+        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>-z "$var"</button>
+        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>-e "$var"</button>
+        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>-eq 0</button>
+      </div>
+      <div class="quiz-feedback">
+        <strong>-z</strong> vient de <em>zero</em> (longueur zéro). Vrai si la variable est vide.
+        <code>-n</code> (<em>non-zero</em>) est l'inverse : vrai si la variable est non vide.
+      </div>
+    </div>
+
+    <div class="quiz-q" data-answer="d">
+      <div class="quiz-question">4. Comment comparer correctement deux entiers a=10 et b=20 pour vérifier que a est inférieur à b ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>[[ "$a" &lt; "$b" ]]</button>
+        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>[[ "$a" = "$b" ]]</button>
+        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>[[ "$a" -eq "$b" ]]</button>
+        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>[[ "$a" -lt "$b" ]]</button>
+      </div>
+      <div class="quiz-feedback">
+        <strong>-lt</strong> (<em>less than</em>) compare des valeurs numériques.
+        <code>&lt;</code> dans <code>[[ ]]</code> compare des chaînes par ordre lexicographique (alphabétique), pas des nombres :
+        <code>"9"</code> serait "supérieur" à <code>"10"</code> en comparaison de chaînes.
+      </div>
+    </div>
+
+    <div class="quiz-q" data-answer="a">
+      <div class="quiz-question">5. Quel opérateur vérifie qu'un chemin est un dossier existant ET accessible en écriture ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>[[ -d "$rep" &amp;&amp; -w "$rep" ]]</button>
+        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>[[ -d "$rep" -w "$rep" ]]</button>
+        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>[[ -dw "$rep" ]]</button>
+        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>[[ -d "$rep" || -w "$rep" ]]</button>
+      </div>
+      <div class="quiz-feedback">
+        Dans <code>[[ ]]</code>, on combine avec <strong>&amp;&amp;</strong> (ET). Les deux conditions doivent être vraies.
+        <code>||</code> (OU) serait vrai si l'une ou l'autre est vraie — ce n'est pas ce qu'on veut ici.
+      </div>
+    </div>
+
+    <div class="quiz-q" data-answer="c">
+      <div class="quiz-question">6. Dans un case, que représente *) ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>Un motif glob qui correspond à tous les fichiers</button>
+        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>La valeur de toutes les variables</button>
+        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>Le cas par défaut — correspond à tout ce qui n'a pas été capturé</button>
+        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>Une erreur de syntaxe</button>
+      </div>
+      <div class="quiz-feedback">
+        <strong>*)</strong> est le cas par défaut d'un <code>case</code> — l'équivalent du <code>else</code> d'un <code>if</code>.
+        Il correspond à toute valeur qui n'a pas été capturée par les motifs précédents. Il doit toujours être en dernier.
+      </div>
+    </div>
+
+    <div class="quiz-q" data-answer="b">
+      <div class="quiz-question">7. Pourquoi est-il dangereux d'écrire [ $a = "test" ] sans guillemets autour de $a ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>Ça compare des entiers au lieu de chaînes</button>
+        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>Si $a est vide, bash voit [ = "test" ] et génère une erreur de syntaxe</button>
+        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>Le test retourne toujours faux sans guillemets</button>
+        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>Les guillemets sont nécessaires uniquement avec [[ ]]</button>
+      </div>
+      <div class="quiz-feedback">
+        Sans guillemets, si <code>$a</code> est vide, bash substitue la variable par rien et obtient <code>[ = "test" ]</code>.
+        Bash voit alors un opérateur <code>=</code> sans opérande gauche : erreur de syntaxe.
+        Avec <code>[[ ]]</code> ce risque est moindre, mais l'habitude des guillemets reste bonne dans tous les cas.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="quiz-score" id="quiz-score">
+    <div class="score-number" id="score-n">—</div>
+    <div class="score-max">/ <span id="score-total"></span></div>
+    <div class="score-label" id="score-label"></div>
+    <button class="quiz-reset-btn" onclick="resetQuiz()">Recommencer</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function copyCode(btn) {
+  const block = btn.parentElement;
+  let text = '';
+  block.childNodes.forEach(n => {
+    if (n.nodeType === 3) text += n.textContent;
+    else if (n.tagName !== 'BUTTON') text += n.textContent;
+  });
+  navigator.clipboard.writeText(text.trim()).then(() => {
+    btn.textContent = '✓ copié'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '⎘ copier'; btn.classList.remove('copied'); }, 1600);
+  });
+}
+
+function showSyn(id, btn) {
+  document.querySelectorAll('.syn-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.syn-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('syn-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function filterOps(cat, btn) {
+  btn.closest('.filter-bar').querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#op-grid .op-card').forEach(c => {
+    if (cat === 'all' || c.dataset.cat === cat) c.removeAttribute('data-hidden');
+    else c.dataset.hidden = '1';
+  });
+}
+
+function toggleOp(card) {
+  const isActive = card.classList.contains('active');
+  document.querySelectorAll('.op-card.active').forEach(c => c.classList.remove('active'));
+  if (!isActive) card.classList.add('active');
+}
+
+function toggleIf(line) {
+  const isActive = line.classList.contains('active');
+  document.querySelectorAll('.if-line.active').forEach(l => l.classList.remove('active'));
+  if (!isActive) line.classList.add('active');
+}
+
+function filterRecap(cat, btn) {
+  btn.closest('.filter-bar').querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#recap-table tbody tr').forEach(row => {
+    row.style.display = (cat === 'all' || row.dataset.cat === cat) ? '' : 'none';
+  });
+}
+
+let score = 0, answered = 0;
+function answer(btn) {
+  const q = btn.closest('.quiz-q');
+  if (q.classList.contains('correct') || q.classList.contains('wrong')) return;
+  const correct = q.dataset.answer, chosen = btn.dataset.val;
+  const fb = q.querySelector('.quiz-feedback');
+  q.querySelectorAll('.quiz-opt').forEach(b => {
+    b.disabled = true;
+    if (b.dataset.val === correct) { b.classList.add('correct'); b.querySelector('.opt-icon').textContent = '✓'; }
+  });
+  if (chosen === correct) {
+    q.classList.add('correct'); btn.querySelector('.opt-icon').textContent = '✓'; fb.classList.add('show','ok'); score++;
+  } else {
+    q.classList.add('wrong'); btn.classList.add('wrong'); btn.querySelector('.opt-icon').textContent = '✗'; fb.classList.add('show','ko');
+  }
+  answered++;
+  if (answered === document.querySelectorAll('.quiz-q').length) showScore();
+}
+function showScore() {
+  const total = document.querySelectorAll('.quiz-q').length;
+  const pct = Math.round(score / total * 100);
+  const label = pct >= 85 ? 'Excellent !' : pct >= 60 ? 'Bien joué — quelques révisions utiles.' : 'Revois le cours avant de continuer.';
+  document.getElementById('score-n').textContent = score;
+  document.getElementById('score-n').style.color = pct >= 85 ? 'var(--success)' : pct >= 60 ? 'var(--warn)' : 'var(--danger)';
+  document.getElementById('score-total').textContent = total;
+  document.getElementById('score-label').textContent = label;
+  document.getElementById('quiz-score').classList.add('show');
+}
+function resetQuiz() {
+  score = 0; answered = 0;
+  document.querySelectorAll('.quiz-q').forEach(q => {
+    q.classList.remove('correct','wrong');
+    q.querySelectorAll('.quiz-opt').forEach(b => { b.disabled = false; b.classList.remove('correct','wrong'); b.querySelector('.opt-icon').textContent = ''; });
+    q.querySelector('.quiz-feedback').classList.remove('show','ok','ko');
+  });
+  document.getElementById('quiz-score').classList.remove('show');
+}
+</script>
+</body>
+</html>

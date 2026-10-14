@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les boucles — Scripting Bash</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #232635;
+    --border: #2e3148;
+    --accent: #f472b6;
+    --accent2: #fb9fcf;
+    --warn: #f0a500;
+    --danger: #e05c5c;
+    --success: #4caf82;
+    --text: #d4d8f0;
+    --text-dim: #7880a0;
+    --code-bg: #12141f;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; min-height: 100vh; }
+
+  header {
+    background: linear-gradient(135deg, #1a0c18 0%, #1a0f1a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 2.5rem 2rem 1.5rem; text-align: center; position: relative; overflow: hidden;
+  }
+  header::before {
+    content: ''; position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
+    width: 400px; height: 200px;
+    background: radial-gradient(ellipse, rgba(244,114,182,.2) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .badge { display: inline-block; background: rgba(244,114,182,.12); border: 1px solid rgba(244,114,182,.35); color: var(--accent); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; padding: .25rem .75rem; border-radius: 20px; margin-bottom: .75rem; }
+  h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; background: linear-gradient(135deg, #f472b6, #fb9fcf); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: .4rem; }
+  .subtitle { color: var(--text-dim); font-size: 1rem; }
+
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(15,17,23,.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; justify-content: center; gap: .25rem; padding: .5rem 1rem; flex-wrap: wrap; }
+  .tab-btn { background: none; border: 1px solid transparent; color: var(--text-dim); cursor: pointer; padding: .45rem 1.1rem; border-radius: 6px; font-size: .88rem; font-family: inherit; transition: all .2s; }
+  .tab-btn:hover { color: var(--text); background: var(--surface); }
+  .tab-btn.active { color: var(--accent); background: rgba(244,114,182,.1); border-color: rgba(244,114,182,.35); }
+
+  main { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  .section { display: none; } .section.active { display: block; }
+  .section-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; padding-bottom: .5rem; border-bottom: 2px solid var(--border); }
+  .section-title span { color: var(--accent); }
+  h3 { font-size: 1.05rem; margin: 1.75rem 0 .75rem; }
+
+  /* CALLOUTS */
+  .callout { border-left: 3px solid; padding: .9rem 1.1rem; border-radius: 0 var(--radius) var(--radius) 0; margin: 1.25rem 0; font-size: .9rem; }
+  .callout.note   { border-color: #7c6af7; background: rgba(124,106,247,.08); }
+  .callout.warn   { border-color: var(--warn); background: rgba(240,165,0,.08); }
+  .callout.tip    { border-color: var(--success); background: rgba(76,175,130,.08); }
+  .callout.danger { border-color: var(--danger); background: rgba(224,92,92,.08); }
+  .callout-label { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .3rem; }
+  .callout.note   .callout-label { color: #a89ef8; }
+  .callout.warn   .callout-label { color: var(--warn); }
+  .callout.tip    .callout-label { color: var(--success); }
+  .callout.danger .callout-label { color: var(--danger); }
+
+  /* CODE */
+  .code-block { background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; font-family: 'Consolas','Cascadia Code',monospace; font-size: .85rem; overflow-x: auto; margin: 1rem 0; position: relative; line-height: 1.75; white-space: pre; }
+  .code-block .comment { color: #5a6090; }
+  .code-block .cmd   { color: #56cfb2; }
+  .code-block .flag  { color: #f0a500; }
+  .code-block .arg   { color: #a89ef8; }
+  .code-block .path  { color: #7ec8e3; }
+  .code-block .op    { color: #e05c5c; }
+  .code-block .val   { color: #f0a500; }
+  .code-block .str   { color: #56cfb2; }
+  .code-block .shb   { color: #e8944a; }
+  .code-block .ok    { color: #4caf82; }
+  .code-block .err   { color: #e05c5c; }
+  .code-block .kw    { color: #f472b6; }
+  .code-block .num   { color: #fb9fcf; }
+  .copy-btn { position: absolute; top: .6rem; right: .6rem; background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; padding: .25rem .6rem; border-radius: 5px; font-size: .72rem; transition: all .2s; }
+  .copy-btn:hover { color: var(--text); border-color: var(--accent); }
+  .copy-btn.copied { color: var(--success); border-color: var(--success); }
+  code { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: .1em .4em; font-family: 'Consolas',monospace; font-size: .85em; color: #a89ef8; }
+
+  /* TABLES */
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .88rem; }
+  th { background: var(--surface2); color: var(--text-dim); font-weight: 600; font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; padding: .6rem 1rem; text-align: left; border-bottom: 2px solid var(--border); }
+  td { padding: .6rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,.02); }
+  td code { font-size: .82em; }
+
+  /* FOR ANATOMY */
+  .anatomy-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin: 1.25rem 0; }
+  .anatomy-line { display: flex; align-items: stretch; cursor: pointer; border-bottom: 1px solid var(--border); transition: background .15s; }
+  .anatomy-line:last-child { border-bottom: none; }
+  .anatomy-line:hover, .anatomy-line.active { background: rgba(244,114,182,.06); }
+  .anatomy-line.active { border-left: 3px solid var(--accent); }
+  .anatomy-num { width: 2.8rem; text-align: right; padding: .65rem .6rem; color: var(--text-dim); font-family: 'Consolas',monospace; font-size: .8rem; flex-shrink: 0; border-right: 1px solid var(--border); user-select: none; }
+  .anatomy-code { flex: 1; padding: .65rem 1rem; font-family: 'Consolas',monospace; font-size: .84rem; line-height: 1.5; }
+  .anatomy-detail { display: none; background: rgba(244,114,182,.04); border-top: 1px solid var(--border); padding: .7rem 1.1rem; font-size: .84rem; color: var(--text-dim); line-height: 1.6; }
+  .anatomy-line.active + .anatomy-detail { display: block; }
+  .anatomy-hint { text-align: center; color: var(--text-dim); font-size: .8rem; padding: .6rem; border-top: 1px solid var(--border); }
+
+  /* VARIANT CARDS */
+  .variant-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px,1fr)); gap: .85rem; margin: 1.25rem 0; }
+  .variant-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color .2s, background .2s; }
+  .variant-card:hover { border-color: var(--accent); background: rgba(244,114,182,.04); }
+  .variant-card.active { border-color: var(--accent); background: rgba(244,114,182,.07); }
+  .variant-header { padding: .8rem 1rem; display: flex; align-items: center; gap: .6rem; }
+  .variant-icon { font-size: 1.1rem; flex-shrink: 0; }
+  .variant-title { font-weight: 600; font-size: .9rem; flex: 1; }
+  .variant-arrow { color: var(--text-dim); font-size: .8rem; transition: transform .2s; }
+  .variant-card.active .variant-arrow { transform: rotate(90deg); }
+  .variant-body { display: none; border-top: 1px solid var(--border); padding: .1rem 0 .9rem; }
+  .variant-card.active .variant-body { display: block; }
+  .variant-body .code-block { margin: .75rem 1rem; border-radius: 7px; font-size: .8rem; }
+
+  /* WHILE vs UNTIL */
+  .loop-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.25rem 0; }
+  @media (max-width: 580px) { .loop-compare { grid-template-columns: 1fr; } }
+  .loop-box { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .loop-box-header { padding: .7rem 1rem; font-weight: 700; font-size: .9rem; display: flex; align-items: center; gap: .5rem; }
+  .loop-while .loop-box-header { background: rgba(79,172,222,.08); color: #4facde; border-bottom: 1px solid var(--border); }
+  .loop-until .loop-box-header { background: rgba(244,114,182,.08); color: var(--accent); border-bottom: 1px solid var(--border); }
+  .loop-box-body { padding: .85rem 1rem; font-size: .85rem; color: var(--text-dim); line-height: 1.6; }
+  .loop-box-body .code-block { margin: .6rem 0 0; font-size: .8rem; }
+
+  /* FLOW DIAGRAM */
+  .flow-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin: 1.25rem 0; }
+  .flow-steps { display: flex; flex-direction: column; align-items: center; gap: 0; min-width: 280px; }
+  .flow-node { background: var(--surface2); border: 1.5px solid var(--border); border-radius: var(--radius); padding: .6rem 1.2rem; width: 100%; max-width: 400px; text-align: center; font-size: .87rem; }
+  .flow-node.kw-node { border-color: var(--accent); color: var(--accent); font-weight: 700; font-family: 'Consolas',monospace; }
+  .flow-node.cond-node { border-color: var(--warn); }
+  .flow-node.cmd-node  { border-color: var(--success); }
+  .flow-node.end-node  { border-color: var(--text-dim); color: var(--text-dim); }
+  .flow-arrow-v { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 400px; }
+  .flow-arrow-line { width: 2px; height: 16px; background: var(--border); }
+  .flow-arrow-head { color: var(--border); font-size: .9rem; }
+  .flow-side { display: flex; justify-content: space-between; width: 100%; max-width: 400px; padding: 0 .5rem; font-size: .78rem; }
+  .side-true  { color: var(--success); font-weight: 600; }
+  .side-false { color: var(--danger);  font-weight: 600; }
+
+  /* ARITH CARDS */
+  .arith-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(160px,1fr)); gap: .7rem; margin: 1rem 0; }
+  .arith-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: .9rem; text-align: center; }
+  .arith-op  { font-family: 'Consolas',monospace; font-size: 1.2rem; color: var(--accent); font-weight: 700; margin-bottom: .3rem; }
+  .arith-name { font-size: .78rem; color: var(--text-dim); }
+  .arith-ex  { font-family: 'Consolas',monospace; font-size: .78rem; color: #a89ef8; margin-top: .4rem; }
+
+  /* INTERACTIVE CALC */
+  .calc-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin: 1.25rem 0; }
+  .calc-box h4 { font-size: .9rem; color: var(--accent); margin-bottom: 1rem; }
+  .calc-inputs { display: flex; gap: .75rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .calc-input-group { display: flex; flex-direction: column; gap: .3rem; }
+  .calc-input-group label { font-size: .78rem; color: var(--text-dim); }
+  .calc-input-group input { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: .45rem .7rem; color: var(--text); font-family: 'Consolas',monospace; font-size: .9rem; width: 80px; outline: none; }
+  .calc-input-group input:focus { border-color: var(--accent); }
+  .calc-btn { background: rgba(244,114,182,.12); border: 1px solid rgba(244,114,182,.4); color: var(--accent); cursor: pointer; padding: .45rem 1.1rem; border-radius: 6px; font-family: inherit; font-size: .88rem; transition: all .2s; align-self: flex-end; }
+  .calc-btn:hover { background: rgba(244,114,182,.25); }
+  .calc-results { display: grid; grid-template-columns: repeat(auto-fill,minmax(130px,1fr)); gap: .5rem; }
+  .calc-result { background: var(--code-bg); border: 1px solid var(--border); border-radius: 7px; padding: .5rem .75rem; font-family: 'Consolas',monospace; font-size: .82rem; }
+  .calc-result .cr-op  { color: var(--accent); }
+  .calc-result .cr-val { color: var(--success); font-weight: 700; float: right; }
+
+  /* BREAK/CONTINUE VISUAL */
+  .bc-demo { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin: 1.25rem 0; }
+  .bc-demo h4 { font-size: .9rem; margin-bottom: 1rem; color: var(--accent); }
+  .bc-controls { display: flex; gap: .5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  .bc-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; padding: .4rem .9rem; border-radius: 6px; font-family: inherit; font-size: .85rem; transition: all .2s; }
+  .bc-btn:hover { color: var(--text); border-color: var(--accent); }
+  .bc-btn.active { background: rgba(244,114,182,.12); border-color: rgba(244,114,182,.4); color: var(--accent); }
+  .bc-steps { display: flex; gap: .4rem; flex-wrap: wrap; }
+  .bc-step { width: 2.2rem; height: 2.2rem; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Consolas',monospace; font-size: .85rem; font-weight: 700; border: 1.5px solid var(--border); color: var(--text-dim); transition: all .3s; }
+  .bc-step.shown   { background: rgba(76,175,130,.15);  border-color: var(--success); color: var(--success); }
+  .bc-step.skipped { background: rgba(240,165,0,.12);   border-color: var(--warn);    color: var(--warn); text-decoration: line-through; }
+  .bc-step.stopped { background: rgba(224,92,92,.12);   border-color: var(--danger);  color: var(--danger); }
+  .bc-legend { display: flex; gap: 1rem; margin-top: .75rem; font-size: .78rem; }
+  .bc-legend span { display: flex; align-items: center; gap: .35rem; color: var(--text-dim); }
+  .bc-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+  /* RECAP */
+  .filter-bar { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .filter-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; padding: .35rem .9rem; border-radius: 20px; font-size: .82rem; font-family: inherit; transition: all .2s; }
+  .filter-btn:hover { color: var(--text); }
+  .filter-btn.active { background: rgba(244,114,182,.12); border-color: rgba(244,114,182,.4); color: var(--accent); }
+  .recap-cat { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: .3rem .6rem; border-radius: 4px; white-space: nowrap; }
+  .rc-for    { background: rgba(244,114,182,.12); color: var(--accent); }
+  .rc-while  { background: rgba(79,172,222,.12);  color: #4facde; }
+  .rc-arith  { background: rgba(240,165,0,.12);   color: var(--warn); }
+  .rc-ctrl   { background: rgba(76,175,130,.12);  color: var(--success); }
+
+  /* QUIZ */
+  .quiz-wrap { display: flex; flex-direction: column; gap: 1.5rem; }
+  .quiz-q { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; transition: border-color .3s; }
+  .quiz-q.correct { border-color: var(--success); } .quiz-q.wrong { border-color: var(--danger); }
+  .quiz-question { font-weight: 600; margin-bottom: .9rem; }
+  .quiz-options { display: flex; flex-direction: column; gap: .5rem; }
+  .quiz-opt { background: var(--surface2); border: 1px solid var(--border); border-radius: 7px; padding: .6rem .9rem; cursor: pointer; font-size: .88rem; transition: all .2s; display: flex; align-items: center; gap: .6rem; font-family: inherit; color: var(--text); text-align: left; width: 100%; }
+  .quiz-opt:hover:not(:disabled) { border-color: var(--accent); background: rgba(244,114,182,.07); }
+  .quiz-opt:disabled { cursor: default; }
+  .quiz-opt.correct { border-color: var(--success); background: rgba(76,175,130,.1); color: #6de0a8; }
+  .quiz-opt.wrong   { border-color: var(--danger);  background: rgba(224,92,92,.1);  color: #e88080; }
+  .quiz-opt .opt-icon { font-size: .95rem; width: 1.2rem; text-align: center; flex-shrink: 0; }
+  .quiz-feedback { margin-top: .75rem; font-size: .84rem; display: none; padding: .5rem .75rem; border-radius: 6px; border-left: 3px solid; }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { border-color: var(--success); background: rgba(76,175,130,.08); color: #6de0a8; }
+  .quiz-feedback.ko { border-color: var(--danger);  background: rgba(224,92,92,.08);  color: #e88080; }
+  .quiz-score { text-align: center; padding: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); display: none; }
+  .quiz-score.show { display: block; }
+  .score-number { font-size: 2.5rem; font-weight: 700; }
+  .score-max { color: var(--text-dim); font-size: 1.1rem; }
+  .score-label { margin-top: .4rem; color: var(--text-dim); }
+  .quiz-reset-btn { display: inline-block; margin-top: 1rem; background: rgba(244,114,182,.12); border: 1px solid rgba(244,114,182,.4); color: var(--accent); cursor: pointer; padding: .5rem 1.2rem; border-radius: 6px; font-family: inherit; font-size: .9rem; transition: all .2s; }
+  .quiz-reset-btn:hover { background: rgba(244,114,182,.25); }
+
+  /* MISC */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  p + p { margin-top: .6rem; } p { margin-top: .5rem; } strong { color: var(--text); }
+  .intro-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; font-size: .95rem; line-height: 1.7; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+  @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+.bash-site-nav{display:flex;justify-content:space-between;gap:1rem;padding:1rem;flex-wrap:wrap}.bash-site-nav a{color:var(--accent);font-weight:700}
+</style>
+<link rel="stylesheet" href="../../assets/themes/theme.css">
+<script src="../../assets/themes/theme.js"></script>
+</head>
+<body><nav class="bash-site-nav"><a href="https://kayasam.github.io/linux-initiation/bash/05-boucles/">← Cours Markdown</a><a href="https://kayasam.github.io/linux-initiation/#bash">Parcours Bash →</a></nav>
+
+<header>
+  <div class="badge">Scripting Shell en Bash</div>
+  <h1>Les boucles</h1>
+  <p class="subtitle">Chapitre 05 — for, while, until, arithmétique, break/continue</p>
+</header>
+
+<nav>
+  <button class="tab-btn active" onclick="showTab('for')">for</button>
+  <button class="tab-btn" onclick="showTab('while')">while &amp; until</button>
+  <button class="tab-btn" onclick="showTab('arith')">Arithmétique</button>
+  <button class="tab-btn" onclick="showTab('ctrl')">break &amp; continue</button>
+  <button class="tab-btn" onclick="showTab('recap')">Récapitulatif</button>
+  <button class="tab-btn" onclick="showTab('quiz')">Quiz</button>
+</nav>
+
+<main>
+
+<!-- ══════════════ FOR ══════════════ -->
+<div class="section active" id="tab-for">
+  <h2 class="section-title"><span>#</span> La boucle for</h2>
+
+  <div class="intro-box">
+    La boucle <code>for</code> exécute une série de commandes <strong>pour chaque élément d'une liste</strong>.
+    C'est la boucle la plus utilisée en bash, aussi bien dans les scripts qu'en ligne de commande directe.
+    <br><br>
+    En français : <em>"POUR chaque élément DE la liste, FAIRE … FIN"</em>
+  </div>
+
+  <h3>Anatomie — cliquez sur chaque partie</h3>
+
+  <div class="anatomy-wrap">
+    <div class="anatomy-line" onclick="toggleLine(this)">
+      <div class="anatomy-num">1</div>
+      <div class="anatomy-code"><span class="kw">for</span> <span class="val">jour</span> <span class="kw">in</span> lundi mardi mercredi jeudi vendredi <span class="op">;</span> <span class="kw">do</span></div>
+    </div>
+    <div class="anatomy-detail">
+      <strong style="color:var(--accent);">for variable in liste ; do</strong><br>
+      — <code>for</code> : "pour chaque"<br>
+      — <code>jour</code> : nom de la variable qui prendra chaque valeur (libre choix)<br>
+      — <code>in lundi mardi…</code> : la liste à parcourir, séparée par des espaces<br>
+      — <code>do</code> : "faire" — ouvre le bloc à répéter. Le <code>;</code> avant <code>do</code> peut être remplacé par un retour à la ligne.
+    </div>
+    <div class="anatomy-line" onclick="toggleLine(this)">
+      <div class="anatomy-num">2</div>
+      <div class="anatomy-code">    <span class="cmd">echo</span> <span class="str">"Aujourd'hui : <span class="arg">$jour</span>"</span></div>
+    </div>
+    <div class="anatomy-detail">
+      <strong>Corps de la boucle</strong> — les commandes à exécuter à chaque tour.
+      La variable <code>$jour</code> prend successivement chaque valeur de la liste : <em>lundi</em>, puis <em>mardi</em>, etc.
+      L'indentation (4 espaces) n'est pas obligatoire mais indispensable pour la lisibilité.
+    </div>
+    <div class="anatomy-line" onclick="toggleLine(this)">
+      <div class="anatomy-num">3</div>
+      <div class="anatomy-code"><span class="kw">done</span></div>
+    </div>
+    <div class="anatomy-detail">
+      <strong style="color:var(--accent);">done</strong> — ferme le bloc de la boucle. Obligatoire.
+      Bash retourne ensuite à la ligne <code>for</code> pour l'itération suivante, jusqu'à épuisement de la liste.
+    </div>
+    <div class="anatomy-hint">↑ Cliquez sur une ligne pour voir son rôle</div>
+  </div>
+
+  <h3>Variantes — cliquez pour voir les exemples</h3>
+
+  <div class="variant-grid">
+
+    <div class="variant-card" onclick="toggleVariant(this)">
+      <div class="variant-header">
+        <span class="variant-icon">📝</span>
+        <span class="variant-title">Liste statique</span>
+        <span class="variant-arrow">▶</span>
+      </div>
+      <div class="variant-body">
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="kw">for</span> <span class="val">jour</span> <span class="kw">in</span> lundi mardi mercredi jeudi vendredi <span class="op">;</span> <span class="kw">do</span>
+    <span class="cmd">echo</span> <span class="str">"Aujourd'hui : <span class="arg">$jour</span>"</span>
+<span class="kw">done</span></div>
+        <p style="padding:0 .75rem .5rem; font-size:.83rem; color:var(--text-dim);">La liste est écrite directement dans la commande, séparée par des espaces.</p>
+      </div>
+    </div>
+
+    <div class="variant-card" onclick="toggleVariant(this)">
+      <div class="variant-header">
+        <span class="variant-icon">🔢</span>
+        <span class="variant-title">Plage de nombres {1..10}</span>
+        <span class="variant-arrow">▶</span>
+      </div>
+      <div class="variant-body">
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Plage simple</span>
+<span class="kw">for</span> <span class="val">i</span> <span class="kw">in</span> {<span class="num">1</span>..<span class="num">5</span>} <span class="op">;</span> <span class="kw">do</span>
+    <span class="cmd">echo</span> <span class="str">"Itération <span class="arg">$i</span>"</span>
+<span class="kw">done</span>
+
+<span class="comment"># Plage avec pas</span>
+<span class="kw">for</span> <span class="val">i</span> <span class="kw">in</span> {<span class="num">0</span>..<span class="num">10</span>..<span class="num">2</span>} <span class="op">;</span> <span class="kw">do</span>
+    <span class="cmd">echo</span> <span class="arg">$i</span>   <span class="comment"># 0 2 4 6 8 10</span>
+<span class="kw">done</span>
+
+<span class="comment"># Compte à rebours</span>
+<span class="kw">for</span> <span class="val">i</span> <span class="kw">in</span> {<span class="num">5</span>..<span class="num">1</span>} <span class="op">;</span> <span class="kw">do</span>
+    <span class="cmd">echo</span> <span class="arg">$i</span> <span class="op">&&</span> <span class="cmd">sleep</span> 1
+<span class="kw">done</span>
+<span class="cmd">echo</span> <span class="str">"Décollage !"</span></div>
+      </div>
+    </div>
+
+    <div class="variant-card" onclick="toggleVariant(this)">
+      <div class="variant-header">
+        <span class="variant-icon">⚙️</span>
+        <span class="variant-title">Style C — (( ))</span>
+        <span class="variant-arrow">▶</span>
+      </div>
+      <div class="variant-body">
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Syntaxe proche du C</span>
+<span class="kw">for</span> (( <span class="val">i</span>=<span class="num">0</span> ; i&lt;<span class="num">5</span> ; i++ )) <span class="op">;</span> <span class="kw">do</span>
+    <span class="cmd">echo</span> <span class="arg">$i</span>
+<span class="kw">done</span>
+<span class="comment"># 0 1 2 3 4</span>
+
+<span class="comment"># Compte à rebours style C</span>
+<span class="kw">for</span> (( <span class="val">i</span>=<span class="num">5</span> ; i&gt;=<span class="num">1</span> ; i-- )) <span class="op">;</span> <span class="kw">do</span>
+    <span class="cmd">echo</span> <span class="arg">$i</span> <span class="op">&&</span> <span class="cmd">sleep</span> 1
+<span class="kw">done</span></div>
+        <p style="padding:0 .75rem .5rem; font-size:.83rem; color:var(--text-dim);">Utile quand on a besoin d'un compteur avec initialisation, condition et pas personnalisés.</p>
+      </div>
+    </div>
+
+    <div class="variant-card" onclick="toggleVariant(this)">
+      <div class="variant-header">
+        <span class="variant-icon">📁</span>
+        <span class="variant-title">Fichiers par glob</span>
+        <span class="variant-arrow">▶</span>
+      </div>
+      <div class="variant-body">
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Bonne pratique : glob direct</span>
+<span class="kw">for</span> <span class="val">fichier</span> <span class="kw">in</span> <span class="path">*.txt</span> <span class="op">;</span> <span class="kw">do</span>
+    <span class="cmd">echo</span> <span class="str">"Traitement de <span class="arg">$fichier</span>"</span>
+<span class="kw">done</span>
+
+<span class="comment"># À éviter : $(ls *.txt)</span>
+<span class="comment"># → casse si les noms contiennent des espaces</span></div>
+        <p style="padding:0 .75rem .5rem; font-size:.83rem; color:var(--text-dim);">Le glob (<code>*.txt</code>) est plus sûr que <code>$(ls *.txt)</code> car il gère correctement les espaces dans les noms de fichiers.</p>
+      </div>
+    </div>
+
+    <div class="variant-card" onclick="toggleVariant(this)">
+      <div class="variant-header">
+        <span class="variant-icon">💻</span>
+        <span class="variant-title">Résultat de commande</span>
+        <span class="variant-arrow">▶</span>
+      </div>
+      <div class="variant-body">
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Utilisateurs du système</span>
+<span class="kw">for</span> <span class="val">user</span> <span class="kw">in</span> $(<span class="cmd">cut</span> <span class="flag">-d:</span> <span class="flag">-f1</span> <span class="path">/etc/passwd</span>) <span class="op">;</span> <span class="kw">do</span>
+    <span class="cmd">echo</span> <span class="arg">$user</span>
+<span class="kw">done</span></div>
+        <p style="padding:0 .75rem .5rem; font-size:.83rem; color:var(--text-dim);">La substitution de commande <code>$(…)</code> génère la liste à la volée. Attention aux espaces dans les valeurs.</p>
+      </div>
+    </div>
+
+    <div class="variant-card" onclick="toggleVariant(this)">
+      <div class="variant-header">
+        <span class="variant-icon">↔️</span>
+        <span class="variant-title">Sur une ligne</span>
+        <span class="variant-arrow">▶</span>
+      </div>
+      <div class="variant-body">
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Pratique en ligne de commande directe</span>
+<span class="kw">for</span> <span class="val">i</span> <span class="kw">in</span> {<span class="num">1</span>..<span class="num">3</span>} <span class="op">;</span> <span class="kw">do</span> <span class="cmd">echo</span> <span class="str">"ligne <span class="arg">$i</span>"</span> <span class="op">;</span> <span class="kw">done</span>
+
+<span class="comment"># Créer 5 fichiers en une commande</span>
+<span class="kw">for</span> <span class="val">i</span> <span class="kw">in</span> {<span class="num">1</span>..<span class="num">5</span>} <span class="op">;</span> <span class="kw">do</span> <span class="cmd">touch</span> <span class="path">"fichier${i}.txt"</span> <span class="op">;</span> <span class="kw">done</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════ WHILE / UNTIL ══════════════ -->
+<div class="section" id="tab-while">
+  <h2 class="section-title"><span>#</span> while &amp; until</h2>
+
+  <p><code>while</code> et <code>until</code> exécutent un bloc de commandes de façon répétée en fonction d'une condition, quand on ne connaît pas à l'avance le nombre d'itérations.</p>
+
+  <h3>Comparaison while vs until</h3>
+
+  <div class="loop-compare">
+    <div class="loop-box loop-while">
+      <div class="loop-box-header">⟳ while — "tant que"</div>
+      <div class="loop-box-body">
+        Continue <strong>tant que</strong> la condition est <span style="color:var(--success);">VRAIE</span>.
+        S'arrête quand elle devient fausse.
+        <div class="code-block"><span class="kw">while</span> [[ <span class="arg">"$c"</span> <span class="flag">-lt</span> <span class="num">5</span> ]] <span class="op">;</span> <span class="kw">do</span>
+    <span class="cmd">echo</span> <span class="arg">$c</span>
+    (( c++ ))
+<span class="kw">done</span></div>
+      </div>
+    </div>
+    <div class="loop-box loop-until">
+      <div class="loop-box-header">⟳ until — "jusqu'à ce que"</div>
+      <div class="loop-box-body">
+        Continue <strong>tant que</strong> la condition est <span style="color:var(--danger);">FAUSSE</span>.
+        S'arrête quand elle devient vraie. L'inverse exact de <code>while</code>.
+        <div class="code-block"><span class="kw">until</span> [[ <span class="flag">-f</span> <span class="path">"/tmp/signal"</span> ]] <span class="op">;</span> <span class="kw">do</span>
+    <span class="cmd">echo</span> <span class="str">"En attente…"</span>
+    <span class="cmd">sleep</span> 2
+<span class="kw">done</span>
+<span class="cmd">echo</span> <span class="str">"Signal reçu !"</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1rem; margin:1rem 0;">
+    <table style="margin:0;">
+      <thead><tr><th>Structure</th><th>Continue tant que…</th><th>S'arrête quand…</th></tr></thead>
+      <tbody>
+        <tr><td><code>while</code></td><td>la condition est <strong style="color:var(--success);">vraie (0)</strong></td><td>la condition devient <strong style="color:var(--danger);">fausse</strong></td></tr>
+        <tr><td><code>until</code></td><td>la condition est <strong style="color:var(--danger);">fausse</strong></td><td>la condition devient <strong style="color:var(--success);">vraie (0)</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Exemples while</h3>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Compteur classique</span>
+<span class="val">compteur</span>=<span class="num">0</span>
+<span class="kw">while</span> [[ <span class="arg">"$compteur"</span> <span class="flag">-lt</span> <span class="num">5</span> ]] <span class="op">;</span> <span class="kw">do</span>
+    <span class="cmd">echo</span> <span class="str">"Compteur : <span class="arg">$compteur</span>"</span>
+    (( compteur++ ))
+<span class="kw">done</span></div>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Saisie utilisateur jusqu'à réponse valide</span>
+<span class="val">reponse</span>=<span class="str">""</span>
+<span class="kw">while</span> [[ <span class="arg">"$reponse"</span> <span class="op">!=</span> <span class="str">"oui"</span> <span class="op">&amp;&amp;</span> <span class="arg">"$reponse"</span> <span class="op">!=</span> <span class="str">"non"</span> ]] <span class="op">;</span> <span class="kw">do</span>
+    <span class="cmd">read</span> <span class="flag">-p</span> <span class="str">"Continuer ? (oui/non) : "</span> <span class="val">reponse</span>
+<span class="kw">done</span>
+<span class="cmd">echo</span> <span class="str">"Vous avez répondu : <span class="arg">$reponse</span>"</span></div>
+
+  <div class="callout danger">
+    <div class="callout-label">Danger — boucle infinie</div>
+    Oublier d'incrémenter le compteur crée une <strong>boucle infinie</strong>. Pour en sortir : <kbd>Ctrl+C</kbd>.
+    <div class="code-block" style="margin-top:.75rem;"><span class="val">c</span>=<span class="num">0</span>
+<span class="kw">while</span> [[ <span class="arg">"$c"</span> <span class="flag">-lt</span> <span class="num">5</span> ]] <span class="op">;</span> <span class="kw">do</span>
+    <span class="cmd">echo</span> <span class="arg">$c</span>
+    <span class="comment"># (( c++ ))  ← oublié → boucle infinie !</span>
+<span class="kw">done</span></div>
+  </div>
+
+  <h3>Lire un fichier ligne par ligne</h3>
+  <p>La combinaison <code>while read</code> est le moyen idiomatique de traiter un fichier :</p>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="kw">while</span> <span class="cmd">read</span> <span class="flag">-r</span> <span class="val">ligne</span> <span class="op">;</span> <span class="kw">do</span>
+    <span class="cmd">echo</span> <span class="str">"→ <span class="arg">$ligne</span>"</span>
+<span class="kw">done</span> <span class="op">&lt;</span> <span class="path">/etc/hosts</span></div>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Afficher uniquement les utilisateurs bash</span>
+<span class="kw">while</span> <span class="cmd">read</span> <span class="flag">-r</span> <span class="val">ligne</span> <span class="op">;</span> <span class="kw">do</span>
+    <span class="kw">if</span> [[ <span class="arg">"$ligne"</span> <span class="op">==</span> <span class="str">*"/bin/bash"</span> ]] <span class="op">;</span> <span class="kw">then</span>
+        <span class="cmd">echo</span> <span class="arg">"$ligne"</span> <span class="op">|</span> <span class="cmd">cut</span> <span class="flag">-d:</span> <span class="flag">-f1</span>
+    <span class="kw">fi</span>
+<span class="kw">done</span> <span class="op">&lt;</span> <span class="path">/etc/passwd</span></div>
+
+  <div class="callout note">
+    <div class="callout-label">Note — toujours read -r</div>
+    Utiliser systématiquement <code>read -r</code> pour lire un fichier.
+    Sans <code>-r</code>, bash interprète les antislashs présents dans le fichier comme des caractères spéciaux, ce qui peut corrompre la valeur lue.
+  </div>
+</div>
+
+
+<!-- ══════════════ ARITHMÉTIQUE ══════════════ -->
+<div class="section" id="tab-arith">
+  <h2 class="section-title"><span>#</span> Expressions arithmétiques</h2>
+
+  <div class="intro-box">
+    Bash évalue les expressions arithmétiques avec <code>$(( expression ))</code>.
+    Attention : bash ne gère que les <strong>entiers</strong>.
+    Pour des calculs avec décimaux, il faut utiliser la commande externe <code>bc</code>.
+  </div>
+
+  <h3>Opérateurs</h3>
+
+  <div class="arith-grid">
+    <div class="arith-card"><div class="arith-op">+</div><div class="arith-name">Addition</div><div class="arith-ex">$(( a + b ))</div></div>
+    <div class="arith-card"><div class="arith-op">-</div><div class="arith-name">Soustraction</div><div class="arith-ex">$(( a - b ))</div></div>
+    <div class="arith-card"><div class="arith-op">*</div><div class="arith-name">Multiplication</div><div class="arith-ex">$(( a * b ))</div></div>
+    <div class="arith-card"><div class="arith-op">/</div><div class="arith-name">Division entière</div><div class="arith-ex">$(( a / b ))</div></div>
+    <div class="arith-card"><div class="arith-op">%</div><div class="arith-name">Modulo</div><div class="arith-ex">$(( a % b ))</div></div>
+    <div class="arith-card"><div class="arith-op">**</div><div class="arith-name">Puissance</div><div class="arith-ex">$(( 2**8 ))</div></div>
+  </div>
+
+  <h3>Calculatrice interactive</h3>
+
+  <div class="calc-box">
+    <h4>Tester les opérateurs arithmétiques</h4>
+    <div class="calc-inputs">
+      <div class="calc-input-group"><label>a =</label><input type="number" id="calc-a" value="10"></div>
+      <div class="calc-input-group"><label>b =</label><input type="number" id="calc-b" value="3"></div>
+      <button class="calc-btn" onclick="runCalc()">Calculer</button>
+    </div>
+    <div class="calc-results" id="calc-results">
+      <div class="calc-result"><span class="cr-op">a + b</span><span class="cr-val" id="r-add">13</span></div>
+      <div class="calc-result"><span class="cr-op">a - b</span><span class="cr-val" id="r-sub">7</span></div>
+      <div class="calc-result"><span class="cr-op">a * b</span><span class="cr-val" id="r-mul">30</span></div>
+      <div class="calc-result"><span class="cr-op">a / b</span><span class="cr-val" id="r-div">3</span></div>
+      <div class="calc-result"><span class="cr-op">a % b</span><span class="cr-val" id="r-mod">1</span></div>
+      <div class="calc-result"><span class="cr-op">a ** b</span><span class="cr-val" id="r-pow">1000</span></div>
+    </div>
+  </div>
+
+  <h3>Modifier une variable</h3>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="val">compteur</span>=<span class="num">0</span>
+
+<span class="comment"># Affectation classique</span>
+<span class="val">compteur</span>=$(( compteur + <span class="num">1</span> ))
+
+<span class="comment"># Raccourcis avec (( )) — pas besoin de $</span>
+(( compteur++ ))       <span class="comment"># +1</span>
+(( compteur-- ))       <span class="comment"># -1</span>
+(( compteur += <span class="num">5</span> ))   <span class="comment"># +5</span>
+(( compteur *= <span class="num">2</span> ))   <span class="comment"># ×2</span></div>
+
+  <div class="callout warn">
+    <div class="callout-label">Entiers uniquement</div>
+    <code>$(( 10 / 3 ))</code> retourne <code>3</code>, pas <code>3.33</code>. La division est entière.
+    Pour des décimaux, utiliser <code>bc</code> :
+    <div class="code-block" style="margin-top:.75rem;"><span class="cmd">echo</span> <span class="str">"scale=2; 10 / 3"</span> <span class="op">|</span> <span class="cmd">bc</span>   <span class="comment"># 3.33</span>
+<span class="cmd">echo</span> <span class="str">"scale=4; sqrt(2)"</span> <span class="op">|</span> <span class="cmd">bc</span>  <span class="comment"># 1.4142</span></div>
+  </div>
+
+  <h3>Utilisation dans les boucles</h3>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Afficher les carrés de 1 à 5</span>
+<span class="kw">for</span> <span class="val">i</span> <span class="kw">in</span> {<span class="num">1</span>..<span class="num">5</span>} <span class="op">;</span> <span class="kw">do</span>
+    <span class="cmd">echo</span> <span class="str">"<span class="arg">$i</span>² = $(( i * i ))"</span>
+<span class="kw">done</span>
+
+<span class="comment"># Afficher les nombres pairs de 1 à 20</span>
+<span class="kw">for</span> <span class="val">i</span> <span class="kw">in</span> {<span class="num">1</span>..<span class="num">20</span>} <span class="op">;</span> <span class="kw">do</span>
+    [[ $(( i % <span class="num">2</span> )) <span class="flag">-eq</span> <span class="num">0</span> ]] <span class="op">&amp;&amp;</span> <span class="cmd">echo</span> <span class="arg">$i</span>
+<span class="kw">done</span></div>
+</div>
+
+
+<!-- ══════════════ BREAK & CONTINUE ══════════════ -->
+<div class="section" id="tab-ctrl">
+  <h2 class="section-title"><span>#</span> break &amp; continue</h2>
+
+  <p>Ces deux commandes permettent de contrôler le déroulement d'une boucle depuis l'intérieur du bloc.</p>
+
+  <h3>Visualisation — choisissez le comportement</h3>
+
+  <div class="bc-demo">
+    <h4>Boucle sur {1..6} — que se passe-t-il ?</h4>
+    <div class="bc-controls">
+      <button class="bc-btn active" onclick="showBc('normal',this)">Sans break/continue</button>
+      <button class="bc-btn" onclick="showBc('break',this)">break quand i=4</button>
+      <button class="bc-btn" onclick="showBc('continue',this)">continue si i pair</button>
+    </div>
+    <div class="bc-steps" id="bc-steps"></div>
+    <div id="bc-msg" style="margin-top:.75rem; font-size:.85rem; color:var(--text-dim);"></div>
+    <div class="bc-legend">
+      <span><div class="bc-dot" style="background:rgba(76,175,130,.3);border:1.5px solid var(--success);"></div>Affiché</span>
+      <span><div class="bc-dot" style="background:rgba(240,165,0,.2);border:1.5px solid var(--warn);"></div>Sauté (continue)</span>
+      <span><div class="bc-dot" style="background:rgba(224,92,92,.2);border:1.5px solid var(--danger);"></div>Arrêt (break)</span>
+    </div>
+  </div>
+
+  <h3>break — sortir de la boucle</h3>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="kw">for</span> <span class="val">i</span> <span class="kw">in</span> {<span class="num">1</span>..<span class="num">10</span>} <span class="op">;</span> <span class="kw">do</span>
+    <span class="kw">if</span> [[ <span class="arg">"$i"</span> <span class="flag">-eq</span> <span class="num">5</span> ]] <span class="op">;</span> <span class="kw">then</span>
+        <span class="cmd">echo</span> <span class="str">"Arrêt à <span class="arg">$i</span>"</span>
+        <span class="kw">break</span>
+    <span class="kw">fi</span>
+    <span class="cmd">echo</span> <span class="arg">$i</span>
+<span class="kw">done</span>
+<span class="comment"># Affiche : 1  2  3  4  Arrêt à 5</span></div>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># break dans un while — chercher le premier fichier .conf</span>
+<span class="kw">for</span> <span class="val">f</span> <span class="kw">in</span> <span class="path">/etc/</span>* <span class="op">;</span> <span class="kw">do</span>
+    <span class="kw">if</span> [[ <span class="arg">"$f"</span> <span class="op">==</span> <span class="str">*.conf</span> ]] <span class="op">;</span> <span class="kw">then</span>
+        <span class="cmd">echo</span> <span class="str">"Premier .conf : <span class="arg">$f</span>"</span>
+        <span class="kw">break</span>
+    <span class="kw">fi</span>
+<span class="kw">done</span></div>
+
+  <h3>continue — passer à l'itération suivante</h3>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Afficher uniquement les nombres impairs</span>
+<span class="kw">for</span> <span class="val">i</span> <span class="kw">in</span> {<span class="num">1</span>..<span class="num">6</span>} <span class="op">;</span> <span class="kw">do</span>
+    <span class="kw">if</span> [[ $(( i % <span class="num">2</span> )) <span class="flag">-eq</span> <span class="num">0</span> ]] <span class="op">;</span> <span class="kw">then</span>
+        <span class="kw">continue</span>    <span class="comment"># on saute les pairs</span>
+    <span class="kw">fi</span>
+    <span class="cmd">echo</span> <span class="arg">$i</span>
+<span class="kw">done</span>
+<span class="comment"># Affiche : 1  3  5</span></div>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Traiter des fichiers — sauter ceux qui n'existent pas</span>
+<span class="kw">for</span> <span class="val">f</span> <span class="kw">in</span> <span class="arg">"$@"</span> <span class="op">;</span> <span class="kw">do</span>
+    [[ <span class="flag">-f</span> <span class="arg">"$f"</span> ]] <span class="op">||</span> { <span class="cmd">echo</span> <span class="str">"Ignoré : <span class="arg">$f</span>"</span> <span class="op">&gt;&amp;2</span> <span class="op">;</span> <span class="kw">continue</span> <span class="op">;</span> }
+    <span class="cmd">echo</span> <span class="str">"Traitement de <span class="arg">$f</span>"</span>
+<span class="kw">done</span></div>
+
+  <div class="callout tip">
+    <div class="callout-label">Résumé</div>
+    <strong>break</strong> : sort immédiatement de la boucle en cours — le reste du script continue après <code>done</code>.<br>
+    <strong>continue</strong> : saute le reste du bloc courant et passe directement à l'itération suivante.
+  </div>
+
+  <h3>Exercices — exemples complets</h3>
+
+  <div class="two-col">
+    <div>
+      <p style="font-size:.82rem; color:var(--text-dim); margin-bottom:.4rem; font-weight:600;">Compte à rebours (for) :</p>
+      <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="shb">#!/usr/bin/env bash</span>
+<span class="cmd">set</span> <span class="flag">-euo pipefail</span>
+
+<span class="kw">for</span> <span class="val">i</span> <span class="kw">in</span> {<span class="num">5</span>..<span class="num">1</span>} <span class="op">;</span> <span class="kw">do</span>
+    <span class="cmd">echo</span> <span class="arg">$i</span>
+    <span class="cmd">sleep</span> 1
+<span class="kw">done</span>
+<span class="cmd">echo</span> <span class="str">"Décollage !"</span></div>
+    </div>
+    <div>
+      <p style="font-size:.82rem; color:var(--text-dim); margin-bottom:.4rem; font-weight:600;">Créer des fichiers en série :</p>
+      <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="shb">#!/usr/bin/env bash</span>
+<span class="cmd">set</span> <span class="flag">-euo pipefail</span>
+
+<span class="val">dossier</span>=<span class="arg">"$1"</span>
+[[ <span class="flag">-d</span> <span class="arg">"$dossier"</span> ]] <span class="op">||</span> { <span class="cmd">echo</span> <span class="str">"Erreur"</span> <span class="op">&gt;&amp;2</span> <span class="op">;</span> <span class="cmd">exit</span> 1 <span class="op">;</span> }
+
+<span class="kw">for</span> <span class="val">i</span> <span class="kw">in</span> {<span class="num">1</span>..<span class="num">5</span>} <span class="op">;</span> <span class="kw">do</span>
+    <span class="cmd">touch</span> <span class="path">"$dossier/fichier${i}.txt"</span>
+    <span class="cmd">echo</span> <span class="str">"Créé : fichier<span class="arg">$i</span>.txt"</span>
+<span class="kw">done</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════ RÉCAPITULATIF ══════════════ -->
+<div class="section" id="tab-recap">
+  <h2 class="section-title"><span>#</span> Récapitulatif des commandes</h2>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterRecap('all',this)">Toutes</button>
+    <button class="filter-btn" onclick="filterRecap('for',this)">for</button>
+    <button class="filter-btn" onclick="filterRecap('while',this)">while/until</button>
+    <button class="filter-btn" onclick="filterRecap('arith',this)">Arithmétique</button>
+    <button class="filter-btn" onclick="filterRecap('ctrl',this)">Contrôle</button>
+  </div>
+
+  <table id="recap-table">
+    <thead><tr><th>Commande / Syntaxe</th><th>Description</th><th>Catégorie</th></tr></thead>
+    <tbody>
+      <tr data-cat="for"><td><code>for var in liste ; do … done</code></td><td>Boucle sur une liste d'éléments</td><td><span class="recap-cat rc-for">for</span></td></tr>
+      <tr data-cat="for"><td><code>for var in {1..10} ; do … done</code></td><td>Boucle sur une plage de nombres</td><td><span class="recap-cat rc-for">for</span></td></tr>
+      <tr data-cat="for"><td><code>for var in {0..10..2} ; do … done</code></td><td>Plage avec un pas</td><td><span class="recap-cat rc-for">for</span></td></tr>
+      <tr data-cat="for"><td><code>for var in *.ext ; do … done</code></td><td>Boucle sur des fichiers par glob (préférer à <code>$(ls)</code>)</td><td><span class="recap-cat rc-for">for</span></td></tr>
+      <tr data-cat="for"><td><code>for var in $(cmd) ; do … done</code></td><td>Boucle sur le résultat d'une commande</td><td><span class="recap-cat rc-for">for</span></td></tr>
+      <tr data-cat="for"><td><code>for (( i=0; i&lt;n; i++ )) ; do … done</code></td><td>Boucle style C avec compteur entier</td><td><span class="recap-cat rc-for">for</span></td></tr>
+      <tr data-cat="while"><td><code>while [[ condition ]] ; do … done</code></td><td>Boucle tant que la condition est vraie</td><td><span class="recap-cat rc-while">while</span></td></tr>
+      <tr data-cat="while"><td><code>until [[ condition ]] ; do … done</code></td><td>Boucle jusqu'à ce que la condition soit vraie (inverse de while)</td><td><span class="recap-cat rc-while">while</span></td></tr>
+      <tr data-cat="while"><td><code>while read -r ligne ; do … done &lt; fichier</code></td><td>Lire un fichier ligne par ligne</td><td><span class="recap-cat rc-while">while</span></td></tr>
+      <tr data-cat="arith"><td><code>$(( a + b ))</code></td><td>Calcul arithmétique entier — retourne le résultat</td><td><span class="recap-cat rc-arith">arithmétique</span></td></tr>
+      <tr data-cat="arith"><td><code>(( compteur++ ))</code></td><td>Incrémentation</td><td><span class="recap-cat rc-arith">arithmétique</span></td></tr>
+      <tr data-cat="arith"><td><code>(( compteur-- ))</code></td><td>Décrémentation</td><td><span class="recap-cat rc-arith">arithmétique</span></td></tr>
+      <tr data-cat="arith"><td><code>(( compteur += n ))</code></td><td>Addition et affectation</td><td><span class="recap-cat rc-arith">arithmétique</span></td></tr>
+      <tr data-cat="arith"><td><code>a % b</code></td><td>Modulo — reste de la division entière</td><td><span class="recap-cat rc-arith">arithmétique</span></td></tr>
+      <tr data-cat="arith"><td><code>echo "scale=2; a/b" | bc</code></td><td>Calcul avec décimaux (bc)</td><td><span class="recap-cat rc-arith">arithmétique</span></td></tr>
+      <tr data-cat="ctrl"><td><code>break</code></td><td>Interrompt immédiatement la boucle courante</td><td><span class="recap-cat rc-ctrl">contrôle</span></td></tr>
+      <tr data-cat="ctrl"><td><code>continue</code></td><td>Passe à l'itération suivante sans exécuter le reste du bloc</td><td><span class="recap-cat rc-ctrl">contrôle</span></td></tr>
+      <tr data-cat="ctrl"><td><code>sleep n</code></td><td>Pause de n secondes</td><td><span class="recap-cat rc-ctrl">contrôle</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ══════════════ QUIZ ══════════════ -->
+<div class="section" id="tab-quiz">
+  <h2 class="section-title"><span>#</span> Quiz de révision</h2>
+  <p style="color:var(--text-dim); margin-bottom:1.5rem; font-size:.88rem;">Testez vos connaissances — cliquez sur la bonne réponse.</p>
+
+  <div class="quiz-wrap" id="quiz-wrap">
+
+    <div class="quiz-q" data-answer="c">
+      <div class="quiz-question">1. Que génère for i in {3..7} ; do echo $i ; done ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>3 4 5 6 7 (les 5 valeurs)</button>
+        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>3 7 (seulement début et fin)</button>
+        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>3 4 5 6 7 — chaque valeur sur une ligne</button>
+        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>Une erreur — les accolades ne fonctionnent pas dans for</button>
+      </div>
+      <div class="quiz-feedback">
+        <code>{3..7}</code> génère la séquence 3 4 5 6 7. La boucle s'exécute 5 fois, et <code>echo $i</code> affiche chaque valeur sur une nouvelle ligne. C'est l'une des formes les plus pratiques pour les plages numériques.
+      </div>
+    </div>
+
+    <div class="quiz-q" data-answer="b">
+      <div class="quiz-question">2. Quelle est la différence fondamentale entre while et until ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>while est pour les nombres, until pour les chaînes</button>
+        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>while continue tant que la condition est vraie ; until continue tant qu'elle est fausse</button>
+        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>until s'exécute au moins une fois avant de vérifier la condition</button>
+        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>Il n'y a pas de différence, ce sont des synonymes</button>
+      </div>
+      <div class="quiz-feedback">
+        <strong>while</strong> : continue tant que la condition est <strong>vraie (0)</strong>.
+        <strong>until</strong> : continue tant que la condition est <strong>fausse</strong>, s'arrête quand elle devient vraie.
+        Ce sont des inverses exacts — les deux vérifient la condition <em>avant</em> chaque tour.
+      </div>
+    </div>
+
+    <div class="quiz-q" data-answer="d">
+      <div class="quiz-question">3. Quelle est la bonne façon d'itérer sur des fichiers .log pour éviter les problèmes avec les espaces dans les noms ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>for f in $(ls *.log)</button>
+        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>for f in "$(ls *.log)"</button>
+        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>for f in $(find . -name "*.log")</button>
+        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>for f in *.log</button>
+      </div>
+      <div class="quiz-feedback">
+        Le <strong>glob direct</strong> <code>for f in *.log</code> est la bonne pratique.
+        <code>$(ls *.log)</code> découpe le résultat sur les espaces : un fichier nommé <code>mon log.log</code> serait vu comme deux arguments séparés.
+        Le glob bash respecte nativement les espaces dans les noms.
+      </div>
+    </div>
+
+    <div class="quiz-q" data-answer="a">
+      <div class="quiz-question">4. Que retourne $(( 7 % 3 )) ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>1</button>
+        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>2</button>
+        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>2.33</button>
+        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>0</button>
+      </div>
+      <div class="quiz-feedback">
+        <code>%</code> est le <strong>modulo</strong> — le reste de la division entière.
+        7 ÷ 3 = 2 reste <strong>1</strong>. Le modulo est très utile pour tester si un nombre est pair (<code>n % 2 == 0</code>) ou pour des cycles.
+      </div>
+    </div>
+
+    <div class="quiz-q" data-answer="c">
+      <div class="quiz-question">5. Dans une boucle for i in {1..10}, que fait continue quand i=5 ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>Sort de la boucle — les itérations 6 à 10 ne s'exécutent pas</button>
+        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>Arrête tout le script</button>
+        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>Saute le reste du bloc pour i=5 et passe directement à i=6</button>
+        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>Recommence la boucle depuis i=1</button>
+      </div>
+      <div class="quiz-feedback">
+        <strong>continue</strong> saute le reste du corps de la boucle pour l'itération courante et passe à la suivante.
+        La boucle continue donc normalement pour i=6, 7, 8, 9, 10.
+        C'est <code>break</code> qui sortirait de la boucle.
+      </div>
+    </div>
+
+    <div class="quiz-q" data-answer="b">
+      <div class="quiz-question">6. Quelle ligne est indispensable dans un while avec compteur pour éviter une boucle infinie ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>set -e en début de script</button>
+        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>L'incrémentation du compteur dans le corps de la boucle</button>
+        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>Un break à la fin du bloc</button>
+        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>Un sleep 1 pour ralentir l'exécution</button>
+      </div>
+      <div class="quiz-feedback">
+        Si le compteur n'évolue jamais, la condition reste toujours vraie et la boucle ne s'arrête jamais.
+        Il faut toujours <strong>incrémenter</strong> (ou modifier) la variable de la condition : <code>(( compteur++ ))</code>.
+        Pour sortir d'une boucle infinie : <kbd>Ctrl+C</kbd>.
+      </div>
+    </div>
+
+    <div class="quiz-q" data-answer="d">
+      <div class="quiz-question">7. Pourquoi utiliser read -r pour lire un fichier ligne par ligne ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>Pour lire plus rapidement les gros fichiers</button>
+        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>Pour afficher un prompt avant chaque ligne</button>
+        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>Pour ignorer les lignes vides</button>
+        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>Pour empêcher bash d'interpréter les antislashs présents dans la ligne</button>
+      </div>
+      <div class="quiz-feedback">
+        Sans <code>-r</code> (<em>raw</em>), bash interprète les séquences <code>\n</code>, <code>\t</code>, <code>\\</code> etc. trouvées dans les lignes lues.
+        Avec <code>-r</code>, la ligne est lue telle quelle. C'est la bonne pratique systématique pour la lecture de fichiers.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="quiz-score" id="quiz-score">
+    <div class="score-number" id="score-n">—</div>
+    <div class="score-max">/ <span id="score-total"></span></div>
+    <div class="score-label" id="score-label"></div>
+    <button class="quiz-reset-btn" onclick="resetQuiz()">Recommencer</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ── TABS ──
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── COPY ──
+function copyCode(btn) {
+  const block = btn.parentElement;
+  let text = '';
+  block.childNodes.forEach(n => {
+    if (n.nodeType === 3) text += n.textContent;
+    else if (n.tagName !== 'BUTTON') text += n.textContent;
+  });
+  navigator.clipboard.writeText(text.trim()).then(() => {
+    btn.textContent = '✓ copié'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '⎘ copier'; btn.classList.remove('copied'); }, 1600);
+  });
+}
+
+// ── ANATOMY ──
+function toggleLine(line) {
+  const isActive = line.classList.contains('active');
+  document.querySelectorAll('.anatomy-line.active').forEach(l => l.classList.remove('active'));
+  if (!isActive) line.classList.add('active');
+}
+
+// ── VARIANT CARDS ──
+function toggleVariant(card) {
+  const isOpen = card.classList.contains('active');
+  document.querySelectorAll('.variant-card.active').forEach(c => c.classList.remove('active'));
+  if (!isOpen) card.classList.add('active');
+}
+
+// ── CALC ──
+function runCalc() {
+  const a = parseInt(document.getElementById('calc-a').value) || 0;
+  const b = parseInt(document.getElementById('calc-b').value) || 0;
+  document.getElementById('r-add').textContent = a + b;
+  document.getElementById('r-sub').textContent = a - b;
+  document.getElementById('r-mul').textContent = a * b;
+  document.getElementById('r-div').textContent = b !== 0 ? Math.trunc(a / b) : 'Div/0';
+  document.getElementById('r-mod').textContent = b !== 0 ? ((a % b + Math.abs(b)) % Math.abs(b)) : 'Div/0';
+  document.getElementById('r-pow').textContent = Math.pow(a, b);
+}
+
+// ── BREAK/CONTINUE DEMO ──
+function showBc(mode, btn) {
+  document.querySelectorAll('.bc-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const steps = document.getElementById('bc-steps');
+  const msg   = document.getElementById('bc-msg');
+  steps.innerHTML = '';
+  const msgs = {
+    normal:   'Tous les nombres sont affichés.',
+    break:    'La boucle s\'arrête à 4. Les valeurs 5 et 6 ne sont jamais atteintes.',
+    continue: 'Les nombres pairs (2, 4, 6) sont sautés. Seuls 1, 3, 5 sont affichés.'
+  };
+  msg.textContent = msgs[mode];
+  for (let i = 1; i <= 6; i++) {
+    const el = document.createElement('div');
+    el.className = 'bc-step';
+    el.textContent = i;
+    if (mode === 'normal') {
+      el.classList.add('shown');
+    } else if (mode === 'break') {
+      if (i < 4) el.classList.add('shown');
+      else if (i === 4) el.classList.add('stopped');
+      else el.style.opacity = '.25';
+    } else if (mode === 'continue') {
+      if (i % 2 !== 0) el.classList.add('shown');
+      else el.classList.add('skipped');
+    }
+    steps.appendChild(el);
+  }
+}
+
+// ── RECAP ──
+function filterRecap(cat, btn) {
+  btn.closest('.filter-bar').querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#recap-table tbody tr').forEach(row => {
+    row.style.display = (cat === 'all' || row.dataset.cat === cat) ? '' : 'none';
+  });
+}
+
+// ── QUIZ ──
+let score = 0, answered = 0;
+function answer(btn) {
+  const q = btn.closest('.quiz-q');
+  if (q.classList.contains('correct') || q.classList.contains('wrong')) return;
+  const correct = q.dataset.answer, chosen = btn.dataset.val;
+  const fb = q.querySelector('.quiz-feedback');
+  q.querySelectorAll('.quiz-opt').forEach(b => {
+    b.disabled = true;
+    if (b.dataset.val === correct) { b.classList.add('correct'); b.querySelector('.opt-icon').textContent = '✓'; }
+  });
+  if (chosen === correct) {
+    q.classList.add('correct'); btn.querySelector('.opt-icon').textContent = '✓'; fb.classList.add('show','ok'); score++;
+  } else {
+    q.classList.add('wrong'); btn.classList.add('wrong'); btn.querySelector('.opt-icon').textContent = '✗'; fb.classList.add('show','ko');
+  }
+  answered++;
+  if (answered === document.querySelectorAll('.quiz-q').length) showScore();
+}
+function showScore() {
+  const total = document.querySelectorAll('.quiz-q').length;
+  const pct = Math.round(score / total * 100);
+  const label = pct >= 85 ? 'Excellent !' : pct >= 60 ? 'Bien joué — quelques révisions utiles.' : 'Revois le cours avant de continuer.';
+  document.getElementById('score-n').textContent = score;
+  document.getElementById('score-n').style.color = pct >= 85 ? 'var(--success)' : pct >= 60 ? 'var(--warn)' : 'var(--danger)';
+  document.getElementById('score-total').textContent = total;
+  document.getElementById('score-label').textContent = label;
+  document.getElementById('quiz-score').classList.add('show');
+}
+function resetQuiz() {
+  score = 0; answered = 0;
+  document.querySelectorAll('.quiz-q').forEach(q => {
+    q.classList.remove('correct','wrong');
+    q.querySelectorAll('.quiz-opt').forEach(b => { b.disabled = false; b.classList.remove('correct','wrong'); b.querySelector('.opt-icon').textContent = ''; });
+    q.querySelector('.quiz-feedback').classList.remove('show','ok','ko');
+  });
+  document.getElementById('quiz-score').classList.remove('show');
+}
+
+// Init bc demo and calc
+showBc('normal', document.querySelector('.bc-btn.active'));
+</script>
+</body>
+</html>

@@ -1,10 +1,12 @@
-# Linux — Initiation
+# Linux initiation & Bash
 
 Site Quartz de la formation Linux, construit sur le modèle ITIL.
 
 Source officielle : `C:/Users/kayaw/Nextcloud/Obsidian/CoffreSam/Formations/linux-initiation`.
 
-10 chapitres, leurs versions HTML interactives et leurs quiz, 7 TP, téléchargements Markdown et archive Obsidian. Les corrections restent dans le coffre du formateur.
+Deux parcours sur le même site : Linux initiation (10 chapitres et 8 TP) et Bash (6 chapitres et 7 TP). Versions HTML, téléchargements Markdown et une archive Obsidian par formation. Les corrections restent dans le coffre du formateur.
+
+Source Bash : `C:/Users/kayaw/Nextcloud/Obsidian/CoffreSam/Formations/linux-scripting-bash`.
 
 ```powershell
 npm ci
