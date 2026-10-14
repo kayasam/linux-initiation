@@ -84,6 +84,9 @@ def populate(destination, chapters):
         for name, body in export.items():
             archive.writestr('Linux-scripting-bash/' + name, body)
     linux_cards = ''.join(card(c['slug'][:2], c['title'], f'./{c["slug"]}/') for c in chapters)
+    linux_overview = '# Linux initiation\n\n' + '\n'.join(f'- [{c["slug"][:2]}. {c["title"]}]({BASE}/{c["slug"]}/)' for c in chapters)
+    linux_overview += f'\n\n[Programme et objectifs]({BASE}/ressources/)\n\n[Télécharger le coffre Obsidian]({BASE}/linux-initiation-obsidian.zip)\n'
+    write(destination / 'linux-initiation/index.md', metadata('Linux initiation', linux_overview))
     home = '''<header class="home-header"><h1>Linux initiation &amp; Bash</h1><p>Deux parcours pour prendre en main Linux et automatiser vos tâches.</p><nav class="home-shortcuts" aria-label="Choisir une formation"><a href="#linux">Linux initiation <span>10 chapitres ↓</span></a><a href="#bash">Bash <span>6 chapitres ↓</span></a></nav></header>'''
     home += track('linux', 'Linux initiation', 'Découvrez Debian, le terminal, les fichiers, les permissions, le réseau et SSH.', linux_cards, './01-comprendre-linux/', '&gt;_')
     home += track('bash', 'Bash', 'Passez des commandes aux scripts : variables, conditions, boucles et traitement de texte.', ''.join(bash_cards), './bash/01-shell-et-environnement/', '$ _')

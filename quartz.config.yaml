@@ -164,8 +164,23 @@ plugins:
   - source: "@quartz-community/explorer"
     enabled: true
     options:
+      mapFn: >-
+        function(node) {
+          if (!node.slugSegment) {
+            const linux = node.children.find(child => child.slugSegment === "linux-initiation");
+            if (linux) {
+              const chapters = node.children.filter(child => /^\d\d-/.test(child.slugSegment) || child.slugSegment === "ressources");
+              linux.children.push(...chapters);
+              node.children = node.children.filter(child => !chapters.includes(child));
+              linux.displayName = "Linux initiation";
+            }
+          }
+          if (node.slug === "bash/index") node.displayName = "Bash";
+        }
       sortFn: >-
         function(a, b) {
+          const order = { "linux-initiation": 0, "bash": 1 };
+          if (a.slugSegment in order || b.slugSegment in order) return (order[a.slugSegment] ?? 2) - (order[b.slugSegment] ?? 2);
           if (a.isFolder !== b.isFolder) return a.isFolder ? -1 : 1;
           return a.displayName.localeCompare(b.displayName, "fr", { numeric: true, sensitivity: "base" });
         }
