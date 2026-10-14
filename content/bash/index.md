@@ -11,4 +11,4 @@ title: "Bash — Le parcours"
 - [Les boucles](https://kayasam.github.io/linux-initiation/bash/05-boucles/)
 - [Traiter du texte avec sed et awk](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/)
 
-[Travaux pratiques](https://kayasam.github.io/linux-initiation/bash/tp/)
+[Travaux pratiques](https://kayasam.github.io/linux-initiation/bash/tp/) · [Orion Académie — Le jeu](https://kayasam.github.io/linux-initiation/bash/jeu/)
