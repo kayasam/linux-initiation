@@ -12,6 +12,10 @@ Double-cliquer sur **Publier les cours.cmd**, puis saisir un message et confirme
 
 Pour vérifier sans publier : `./publier-les-cours.ps1 -PrepareOnly`.
 
+Le script régénère d'abord les six HTML Bash et leurs schémas depuis les cours Markdown du coffre. Il faut le module Python Markdown, présent sur le poste de référence ; pour un nouveau poste : `python -m pip install -r scripts/requirements-bash.txt`. Les HTML distribués sont autonomes et conservent les liens vers leurs TP. Éditer les Markdown, puis régénérer les HTML, évite de maintenir deux cours différents.
+
+Pour vérifier les manipulations Bash sur la VM : `python scripts/validate-bash-on-debian.py`. L'alias `ssh debian` doit fonctionner sans demande de mot de passe. La validation isole les exemples dans un dossier temporaire et le retire ensuite ; elle ne touche pas aux services existants. Les étapes de saisie dans nano restent manuelles. Ce contrôle distant est lancé séparément : une VM éteinte n'empêche pas de préparer le site.
+
 La préparation actualise automatiquement les copies générées des quiz et thèmes dans le coffre Linux, puis vérifie la correspondance entre les cours/TP du coffre, les téléchargements et les deux ZIP. Les ZIP sont reproductibles : une seconde exécution sans modification ne change pas les fichiers publiables. La publication ne sélectionne que `content`, `site-content`, `chapters.json` et `publication-policy.json` ; les autres fichiers de travail ne sont pas ajoutés automatiquement au commit.
 
 Après déploiement, vérifier les fichiers réellement servis en ligne avec `python scripts/check-source-sync.py --live`. Ce contrôle compare les 16 cours Markdown, les 16 TP, les 16 versions HTML, les quiz, les logos et les deux ZIP aux contenus préparés depuis le coffre. L'ancien lanceur dans `D:/Projet-git/linux-scripting-bash-web` délègue au même script commun.

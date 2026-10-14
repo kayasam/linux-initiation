@@ -49,13 +49,19 @@ def populate(destination, chapters):
     tps = sorted(p for p in candidates if not re.search(r'correction|corrig', p.name, re.I))
     routes = {p: (f'bash/{p.parent.parent.name}/tp' if p.is_relative_to(SOURCE / 'cours') else f'bash/ateliers/{p.stem}') for p in tps}
     export = {}
+    images = SOURCE / 'Ressources/images'
+    if images.is_dir():
+        shutil.copytree(images, destination / 'bash/images', dirs_exist_ok=True)
+        for image in sorted(images.glob('bash-*.svg')):
+            export['Ressources/images/' + image.name] = image.read_bytes()
     bash_cards = []
     for course in courses:
         slug, title = course.stem, title_of(course)
         offline_body = normalize(course.read_text(encoding='utf-8-sig'))
         body = re.sub(r'\n\n<!-- ressources-locales -->\n(?:>[^\n]*\n)+', '', offline_body)
+        body = body.replace('../../Ressources/images/', BASE + '/bash/images/')
         html_name = f'{slug}-interactif.html'
-        links = f'\n\n> [!TIP] Ressources du chapitre\n> - [Version HTML interactive]({BASE}/bash/cours/{html_name})\n> - <a href="{BASE}/telechargements/bash/cours/{course.name}" download>Télécharger le cours en Markdown</a>\n'
+        links = f'\n\n> [!TIP] Ressources du chapitre\n> - [Version HTML]({BASE}/bash/cours/{html_name})\n> - <a href="{BASE}/telechargements/bash/cours/{course.name}" download>Télécharger le cours en Markdown</a>\n'
         matching = [p for p in tps if p.parent == course.parent / 'tp']
         if matching:
             links += f'> - [Passer au TP]({BASE}/{routes[matching[0]]})\n'
@@ -66,6 +72,12 @@ def populate(destination, chapters):
         write(destination / 'telechargements/bash/cours' / course.name, body)
         interactive = course.with_suffix('.html').read_text(encoding='utf-8-sig')
         offline = interactive
+        interactive = interactive.replace('../../Ressources/images/', BASE + '/bash/images/')
+        for linked in courses:
+            interactive = interactive.replace(f'href="../{linked.stem}/{linked.stem}.html"', f'href="{BASE}/bash/cours/{linked.stem}-interactif.html"')
+        interactive = interactive.replace(f'href="{course.name}"', f'href="{BASE}/bash/{slug}/"')
+        if matching:
+            interactive = interactive.replace(f'href="tp/{matching[0].name}"', f'href="{BASE}/{routes[matching[0]]}"')
         theme = '<link rel="stylesheet" href="../../assets/themes/theme.css">\n<script src="../../assets/themes/theme.js"></script>\n'
         interactive = interactive.replace('</head>', theme + '</head>', 1)
         nav = f'<nav class="bash-site-nav"><a href="{BASE}/bash/{slug}/">← Cours Markdown</a><a href="{BASE}/#bash">Parcours Bash →</a></nav>'
@@ -96,6 +108,11 @@ def populate(destination, chapters):
     write(destination / 'bash/ateliers/index.md', metadata('Synthèse et bonus', '# Synthèse et bonus\n\n' + '\n'.join(f'- [{title_of(p)}]({BASE}/{routes[p]})' for p in workshops) + '\n'))
     write(destination / 'bash/index.md', metadata('Bash — Le parcours', '# Scripting Bash\n\n' + '\n'.join(f'- [{title_of(c)}]({BASE}/bash/{c.stem}/)' for c in courses) + f'\n\n[Travaux pratiques]({BASE}/bash/tp/)\n'))
     export['README.md'] = '# Scripting Bash\n\nOuvrez ce dossier dans Obsidian. Chaque chapitre est dans `cours/<chapitre>/` avec son cours Markdown, sa version HTML et son dossier `tp/`. Les exercices transversaux sont dans `tp/synthese/` et `tp/bonus/`. Les corrections sont exclues.\n'
+    export['cours/README.md'] = (SOURCE / 'cours/README.md').read_text(encoding='utf-8-sig')
+    memo = (SOURCE / 'Résumé.md').read_text(encoding='utf-8-sig')
+    export['Résumé.md'] = memo
+    write(destination / 'bash/memo.md', metadata('Bash — Mémo', memo.replace('](cours/README.md)', f']({BASE}/#bash)')))
+    write(destination / 'telechargements/bash/memo.md', memo.replace('](cours/README.md)', f']({BASE}/#bash)'))
     with zipfile.ZipFile(destination / 'linux-scripting-bash-obsidian.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
         for name, body in export.items():
             entry = zipfile.ZipInfo('Linux-scripting-bash/' + name, date_time=(2020, 1, 1, 0, 0, 0))

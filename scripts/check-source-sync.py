@@ -58,12 +58,17 @@ def local_audit():
                 assert (CONTENT / slug / 'tp.md').is_file()
                 tp_count += 1
     with zipfile.ZipFile(CONTENT / 'linux-scripting-bash-obsidian.zip') as archive:
+        equal((bash_source / 'Résumé.md').read_text(encoding='utf-8-sig'), archive.read('Linux-scripting-bash/Résumé.md'), 'Mémo Bash (ZIP)')
+        for image in sorted((bash_source / 'Ressources/images').glob('bash-*.svg')):
+            assert archive.read('Linux-scripting-bash/Ressources/images/' + image.name) == image.read_bytes()
+            assert (CONTENT / 'bash/images' / image.name).read_bytes() == image.read_bytes()
         for course in bash_courses:
             slug = course.stem
             offline = bash['normalize'](course.read_text(encoding='utf-8-sig'))
             equal(offline, archive.read('Linux-scripting-bash/' + course.relative_to(bash_source).as_posix()), course.name + ' (ZIP Bash)')
             equal(course.with_suffix('.html').read_text(encoding='utf-8-sig'), archive.read('Linux-scripting-bash/' + course.with_suffix('.html').relative_to(bash_source).as_posix()), slug + ' (HTML ZIP Bash)')
             body = re.sub(r'\n\n<!-- ressources-locales -->\n(?:>[^\n]*\n)+', '', offline)
+            body = body.replace('../../Ressources/images/', BASE + '/bash/images/')
             tps = [p for p in (course.parent / 'tp').glob('tp-*.md') if not re.search(r'correction|corrig', p.name, re.I)]
             assert len(tps) == 1
             body = body.replace(f'](tp/{tps[0].name})', f']({BASE}/bash/{slug}/tp)')
@@ -100,7 +105,7 @@ def local_audit():
 
 
 def live_audit():
-    paths = sorted(set(CONTENT.glob('telechargements/**/*.md')) | set(CONTENT.glob('cours/*-interactif.html')) | set(CONTENT.glob('bash/cours/*-interactif.html')) | set(CONTENT.glob('cours/quiz/*.html')) | set(CONTENT.glob('assets/brands/*')) | {CONTENT / 'assets/quiz/quiz-banks.js', CONTENT / 'linux-initiation-obsidian.zip', CONTENT / 'linux-scripting-bash-obsidian.zip'})
+    paths = sorted(set(CONTENT.glob('telechargements/**/*.md')) | set(CONTENT.glob('cours/*-interactif.html')) | set(CONTENT.glob('bash/cours/*-interactif.html')) | set(CONTENT.glob('bash/images/*.svg')) | set(CONTENT.glob('cours/quiz/*.html')) | set(CONTENT.glob('assets/brands/*')) | {CONTENT / 'assets/quiz/quiz-banks.js', CONTENT / 'linux-initiation-obsidian.zip', CONTENT / 'linux-scripting-bash-obsidian.zip'})
     def compare(path):
         relative = path.relative_to(CONTENT).as_posix()
         try:

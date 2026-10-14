@@ -10,6 +10,10 @@ Dans les deux formations, chaque chapitre contient son cours Markdown, sa versio
 
 Source Bash : `C:/Users/kayaw/Nextcloud/Obsidian/CoffreSam/Formations/linux-scripting-bash`.
 
+Le parcours Bash débutant suit une progression terminal → variables → scripts → conditions → boucles → texte. Les huit TP utilisent des données fictives dans un atelier personnel, avec corrections privées. Les six schémas et les HTML autonomes sont régénérés depuis les Markdown par `scripts/render-bash-supports.py`. Le mémo et les schémas sont inclus dans le ZIP.
+
+Validation sur Debian : `python scripts/validate-bash-on-debian.py` exécute les exemples et les scénarios des solutions dans un espace temporaire, via l'alias `ssh debian`.
+
 ```powershell
 npm ci
 .\publier-les-cours.ps1 -PrepareOnly
