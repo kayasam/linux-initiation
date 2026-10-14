@@ -297,3 +297,37 @@
   background-image: none;
   font: 800 1rem var(--codeFont);
 }
+
+/* Use the same recognizable brand assets for parents, chapters and TP folders. */
+.explorer-content .folder-container[data-folderpath^="bash/"] {
+  --chapter-accent: #348331;
+  --chapter-icon: url("/linux-initiation/assets/brands/bash.png");
+}
+
+.explorer-content .folder-container[data-folderpath^="bash/"]::before {
+  content: "";
+  background-color: transparent;
+  background-image: var(--chapter-icon);
+  background-size: contain;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+@each $slug in "linux-initiation", "01-comprendre-linux", "02-installer-la-vm",
+  "03-interface-graphique", "04-le-terminal", "05-fichiers-et-repertoires",
+  "06-arborescence-linux", "07-utilisateurs-et-permissions", "08-gestion-des-paquets",
+  "09-redirections-et-tubes", "10-reseau-et-services"
+{
+  .explorer-content .folder-container[data-folderpath^="#{$slug}/"] {
+    --chapter-icon: url("/linux-initiation/assets/brands/tux.svg");
+  }
+
+  .explorer-content .folder-container[data-folderpath^="#{$slug}/"]::before {
+    content: "";
+    background-color: transparent;
+    background-image: var(--chapter-icon);
+    background-size: contain;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}

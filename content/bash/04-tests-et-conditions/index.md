@@ -1,5 +1,5 @@
 ---
-title: "Bash 04 — Tests et conditions"
+title: "04. Tests et conditions"
 ---
 
 # Chapitre 04 — Tests et conditions

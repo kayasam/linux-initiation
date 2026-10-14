@@ -1,5 +1,5 @@
 ---
-title: "Bash 03 — Bases du scripting"
+title: "03. Bases du scripting"
 ---
 
 # Chapitre 03 — Bases du scripting

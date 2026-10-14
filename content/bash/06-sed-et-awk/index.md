@@ -1,5 +1,5 @@
 ---
-title: "Bash 06 — sed et awk"
+title: "06. sed et awk"
 ---
 
 # Chapitre 06 — sed et awk

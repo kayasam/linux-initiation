@@ -1,5 +1,5 @@
 ---
-title: "Bash 01 — Le shell et son environnement"
+title: "01. Le shell et son environnement"
 ---
 
 # Chapitre 01 — Le shell et son environnement

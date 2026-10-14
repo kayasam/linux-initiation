@@ -1,5 +1,5 @@
 ---
-title: "Bash — Travaux pratiques"
+title: "Travaux pratiques"
 ---
 
 # Travaux pratiques Bash

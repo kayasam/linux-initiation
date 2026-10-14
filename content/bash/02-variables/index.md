@@ -1,5 +1,5 @@
 ---
-title: "Bash 02 — Les variables"
+title: "02. Les variables"
 ---
 
 # Chapitre 02 — Les variables

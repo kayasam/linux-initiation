@@ -1,5 +1,5 @@
 ---
-title: "Bash 05 — Les boucles"
+title: "05. Les boucles"
 ---
 
 # Chapitre 05 — Les boucles

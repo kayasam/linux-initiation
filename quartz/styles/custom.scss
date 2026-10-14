@@ -158,6 +158,19 @@ article a[href*="/telechargements/"][href$=".md"]:hover {
 .home-shortcuts a {
   min-height: 4rem;
 }
+
+.home-track__logo img {
+  width: 4.5rem;
+  height: 4.5rem;
+  max-height: 4.5rem;
+  object-fit: contain;
+}
+
+.brand-credits {
+  margin-top: 1.5rem;
+  color: var(--darkgray);
+  font-size: 0.75rem;
+}
 .chapter-pagination {
   display: flex;
   justify-content: space-between;
