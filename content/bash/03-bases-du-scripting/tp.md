@@ -2,99 +2,74 @@
 title: "TP 03"
 ---
 
-# TP 03 — Bases du scripting
+# TP 03 — Programmer le robot d'accueil
 
-> Chapitre associé : `03-bases-du-scripting.md`
-> Durée estimée : 1h
+> Chapitre associé : [03 — Écrire son premier script](https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/)
 
----
+## Mission
 
-## Objectifs
+Le robot Orion doit accueillir les visiteurs avec leur nom et leur rôle. Crée un programme que tout l'équipage pourra relancer.
 
-- Créer et exécuter un script bash
-- Utiliser le shebang et les options de sécurité
-- Récupérer et utiliser les arguments d'un script
-- Lire le code de retour d'une commande
+## Partie A — Construire le robot
 
----
+**A1.** Prépare son atelier :
 
-## Partie A — Premier script (15 min)
+```bash
+mkdir -p ~/atelier-bash/03-robot
+cd ~/atelier-bash/03-robot
+```
 
-**A1.** Crée le répertoire `~/scripting` qui servira de dossier de travail pour tous les TP de scripting.
+**A2.** Ouvre `robot.sh` avec nano. Ajoute le shebang Bash en première ligne, puis un commentaire décrivant le rôle du programme.
 
-**A2.** Dans ce dossier, crée un script `bonjour.sh` qui affiche `Bonjour le monde !`.
-Le script doit contenir : le shebang, les options de sécurité (`set -euo pipefail`), et la commande d'affichage.
+**A3.** Crée deux variables : `prenom`, qui lit le premier argument ou utilise `visiteur`, et `role`, qui lit le deuxième argument ou utilise `explorateur`.
 
-**A3.** Exécute le script avec `bash`, sans lui donner le droit d'exécution.
+> Indice : `${1:-visiteur}` ; adapte cette écriture au deuxième argument.
 
-**A4.** Donne le droit d'exécution au script et exécute-le avec `./`.
+**A4.** Affiche une ligne de cette forme :
 
-**A5.** Essaie de l'exécuter sans le `./` (juste `bonjour.sh`). Que se passe-t-il ? Explique pourquoi.
+```text
+Bonjour Mila, ton role sur Orion est pilote.
+```
 
----
+Utilise `printf` et tes deux variables. Enregistre et quitte nano.
 
-## Partie B — Code de retour (10 min)
+## Partie B — Les essais du robot
 
-**B1.** Exécute `ls /etc` et affiche immédiatement son code de retour.
+**B1.** Vérifie la syntaxe avec `bash -n`, puis lance le script avec Bash et les arguments `Mila pilote`.
 
-**B2.** Exécute `ls /dossier-inexistant` et affiche son code de retour. Quelle valeur obtiens-tu ?
+**B2.** Ajoute le droit d'exécution, puis refais le test avec `./robot.sh`.
 
-**B3.** Crée un script `test-retour.sh` qui :
-1. Exécute `ls /etc`
-2. Affiche le code de retour
-3. Exécute `ls /dossier-inexistant`
-4. Affiche le code de retour
+**B3.** Teste ensuite ces deux cas :
 
-Que se passe-t-il avec `set -e` actif quand `ls /dossier-inexistant` échoue ?
+```bash
+./robot.sh
+./robot.sh "Mila Vega" "responsable radio"
+```
 
-**B4.** Modifie le script pour désactiver `-e` juste autour de la commande qui échoue, puis le réactiver.
+**Points de contrôle :** le premier utilise les valeurs par défaut ; le second conserve les noms composés.
 
----
+**B4.** Relance le cas `Mila pilote`, récupère immédiatement son code de retour et affiche-le. Attendu : **0**.
 
-## Partie C — Arguments et variables spéciales (20 min)
+## Partie C — Comprendre le programme
 
-**C1.** Crée un script `infos.sh` qui affiche :
-- Le nom du script
-- Le nombre d'arguments reçus
-- Le premier et le deuxième argument
-- Tous les arguments d'un coup
+**C1.** Lance `bash -x robot.sh Mila pilote`. Repère les affectations des deux variables.
 
-Teste-le avec : `./infos.sh Linux Bash Scripting`
+**C2.** Ajoute une ligne qui affiche le nombre d'arguments reçus, puis refais les essais sans argument et avec deux arguments.
 
-**C2.** Crée un script `saluer.sh` qui prend un prénom en argument et affiche `Bonjour, <prénom> !`.
-Teste-le avec ton prénom.
+**C3.** Explique pourquoi on écrit `./robot.sh` et pourquoi on entoure `Mila Vega` de guillemets.
 
-**C3.** Améliore `saluer.sh` pour qu'il affiche aussi le nombre d'arguments reçus et le nom du script.
+## Bonus — Le journal des arrivées
 
-**C4.** Crée un script `afficher-date.sh` qui :
-1. Stocke la date du jour (format `AAAA-MM-JJ`) dans une variable
-2. Affiche : `Nous sommes le <date>`
+Ajoute au programme une ligne qui enregistre le prénom et le rôle dans `arrivees.txt`, avec `>>`. Lance le robot deux fois et lis le journal : les deux arrivées doivent être présentes.
 
----
+Le journal est créé dans le dossier **depuis lequel tu lances le script**. Pour ce TP, reste dans `03-robot`.
 
-## Partie D — Script complet (15 min)
+## Mission accomplie si…
 
-**D1.** Crée un script `rapport-systeme.sh` qui affiche les informations suivantes, chacune sur une ligne bien lisible :
-- Nom de la machine (`hostname`)
-- Utilisateur courant
-- Date et heure actuelles
-- Répertoire courant
-- Espace disque disponible sur `/` (`df -h /`)
-
-Le script doit utiliser le shebang correct et les options de sécurité.
-
----
-
-## Questions de vérification
-
-- [ ] Quelle est la première ligne obligatoire d'un script bash ?
-- [ ] Quelle commande donne le droit d'exécution à un script ?
-- [ ] Pourquoi faut-il écrire `./script.sh` et pas juste `script.sh` ?
-- [ ] Que font `set -e`, `set -u` et `set -o pipefail` ?
-- [ ] Quelle variable contient le code de retour de la dernière commande ?
-- [ ] Comment récupère-t-on le premier argument passé à un script ?
-
----
+- La syntaxe est correcte.
+- Les trois essais produisent les bons noms et rôles.
+- Le programme indique 0 argument ou 2 arguments selon l'essai.
+- Le bonus ajoute des lignes sans remplacer les arrivées précédentes.
 
 [← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/)
 

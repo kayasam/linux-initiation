@@ -1,985 +1,174 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>sed et awk — Scripting Bash</title>
-<style>
-  :root {
-    --bg: #0f1117;
-    --surface: #1a1d27;
-    --surface2: #232635;
-    --border: #2e3148;
-    --accent: #a3e635;
-    --accent2: #bef264;
-    --warn: #f0a500;
-    --danger: #e05c5c;
-    --success: #4caf82;
-    --text: #d4d8f0;
-    --text-dim: #7880a0;
-    --code-bg: #12141f;
-    --radius: 10px;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; min-height: 100vh; }
-
-  header {
-    background: linear-gradient(135deg, #0e1a08 0%, #121a0a 100%);
-    border-bottom: 1px solid var(--border);
-    padding: 2.5rem 2rem 1.5rem; text-align: center; position: relative; overflow: hidden;
-  }
-  header::before {
-    content: ''; position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
-    width: 400px; height: 200px;
-    background: radial-gradient(ellipse, rgba(163,230,53,.18) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .badge { display: inline-block; background: rgba(163,230,53,.1); border: 1px solid rgba(163,230,53,.3); color: var(--accent); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; padding: .25rem .75rem; border-radius: 20px; margin-bottom: .75rem; }
-  h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; background: linear-gradient(135deg, #a3e635, #bef264); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: .4rem; }
-  .subtitle { color: var(--text-dim); font-size: 1rem; }
-
-  nav { position: sticky; top: 0; z-index: 100; background: rgba(15,17,23,.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; justify-content: center; gap: .25rem; padding: .5rem 1rem; flex-wrap: wrap; }
-  .tab-btn { background: none; border: 1px solid transparent; color: var(--text-dim); cursor: pointer; padding: .45rem 1.1rem; border-radius: 6px; font-size: .88rem; font-family: inherit; transition: all .2s; }
-  .tab-btn:hover { color: var(--text); background: var(--surface); }
-  .tab-btn.active { color: var(--accent); background: rgba(163,230,53,.08); border-color: rgba(163,230,53,.3); }
-
-  main { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
-  .section { display: none; } .section.active { display: block; }
-  .section-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; padding-bottom: .5rem; border-bottom: 2px solid var(--border); }
-  .section-title span { color: var(--accent); }
-  h3 { font-size: 1.05rem; margin: 1.75rem 0 .75rem; }
-
-  /* CALLOUTS */
-  .callout { border-left: 3px solid; padding: .9rem 1.1rem; border-radius: 0 var(--radius) var(--radius) 0; margin: 1.25rem 0; font-size: .9rem; }
-  .callout.note   { border-color: #7c6af7; background: rgba(124,106,247,.08); }
-  .callout.warn   { border-color: var(--warn); background: rgba(240,165,0,.08); }
-  .callout.tip    { border-color: var(--success); background: rgba(76,175,130,.08); }
-  .callout.danger { border-color: var(--danger); background: rgba(224,92,92,.08); }
-  .callout-label { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .3rem; }
-  .callout.note  .callout-label { color: #a89ef8; }
-  .callout.warn  .callout-label { color: var(--warn); }
-  .callout.tip   .callout-label { color: var(--success); }
-  .callout.danger .callout-label { color: var(--danger); }
-
-  /* CODE */
-  .code-block { background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; font-family: 'Consolas','Cascadia Code',monospace; font-size: .85rem; overflow-x: auto; margin: 1rem 0; position: relative; line-height: 1.75; white-space: pre; }
-  .code-block .comment { color: #5a6090; }
-  .code-block .cmd   { color: #56cfb2; }
-  .code-block .flag  { color: #f0a500; }
-  .code-block .arg   { color: #a89ef8; }
-  .code-block .path  { color: #7ec8e3; }
-  .code-block .op    { color: #e05c5c; }
-  .code-block .val   { color: #f0a500; }
-  .code-block .str   { color: #56cfb2; }
-  .code-block .kw    { color: #a3e635; }
-  .code-block .rx    { color: #f472b6; }
-  .code-block .ok    { color: #4caf82; }
-  .code-block .err   { color: #e05c5c; }
-  .copy-btn { position: absolute; top: .6rem; right: .6rem; background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; padding: .25rem .6rem; border-radius: 5px; font-size: .72rem; transition: all .2s; }
-  .copy-btn:hover { color: var(--text); border-color: var(--accent); }
-  .copy-btn.copied { color: var(--success); border-color: var(--success); }
-  code { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: .1em .4em; font-family: 'Consolas',monospace; font-size: .85em; color: #a89ef8; }
-
-  /* TABLES */
-  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .88rem; }
-  th { background: var(--surface2); color: var(--text-dim); font-weight: 600; font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; padding: .6rem 1rem; text-align: left; border-bottom: 2px solid var(--border); }
-  td { padding: .6rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: rgba(255,255,255,.02); }
-  td code { font-size: .82em; }
-
-  /* SED ANATOMY */
-  .sed-anatomy { display: flex; align-items: stretch; background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius); font-family: 'Consolas',monospace; font-size: 1rem; overflow: hidden; margin: 1.25rem 0; flex-wrap: wrap; }
-  .sed-part { padding: .7rem .9rem; cursor: pointer; transition: background .15s; border-right: 1px solid var(--border); display: flex; align-items: center; }
-  .sed-part:last-child { border-right: none; }
-  .sed-part:hover { background: rgba(163,230,53,.08); }
-  .sed-part.active { background: rgba(163,230,53,.12); outline: 2px solid var(--accent); outline-offset: -2px; }
-  .sed-detail { border-top: 1px solid var(--border); padding: .85rem 1.1rem; font-size: .85rem; color: var(--text-dim); font-family: 'Segoe UI',sans-serif; line-height: 1.6; min-height: 3.5rem; }
-
-  /* SED COMMAND CARDS */
-  .cmd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: .85rem; margin: 1.25rem 0; }
-  .cmd-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); cursor: pointer; overflow: hidden; transition: border-color .2s; }
-  .cmd-card:hover { border-color: var(--accent); }
-  .cmd-card.active { border-color: var(--accent); background: rgba(163,230,53,.05); }
-  .cmd-card-header { padding: .8rem 1rem; display: flex; align-items: center; gap: .7rem; }
-  .cmd-badge { font-family: 'Consolas',monospace; font-size: .95rem; font-weight: 700; color: var(--accent); min-width: 1.4rem; }
-  .cmd-title { font-size: .9rem; flex: 1; }
-  .cmd-arrow { color: var(--text-dim); font-size: .8rem; transition: transform .2s; }
-  .cmd-card.active .cmd-arrow { transform: rotate(90deg); }
-  .cmd-body { display: none; border-top: 1px solid var(--border); padding: .1rem 0 .9rem; }
-  .cmd-card.active .cmd-body { display: block; }
-  .cmd-body .code-block { margin: .75rem 1rem; font-size: .8rem; border-radius: 7px; }
-  .cmd-body p { padding: 0 1rem; font-size: .85rem; color: var(--text-dim); margin-top: .5rem; }
-
-  /* SED SIMULATOR */
-  .simulator { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin: 1.25rem 0; }
-  .simulator h4 { color: var(--accent); font-size: .9rem; margin-bottom: 1rem; }
-  .sim-row { display: flex; gap: .75rem; flex-wrap: wrap; margin-bottom: .75rem; align-items: flex-end; }
-  .sim-group { display: flex; flex-direction: column; gap: .3rem; }
-  .sim-group label { font-size: .75rem; color: var(--text-dim); }
-  .sim-group input, .sim-group textarea { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: .45rem .7rem; color: var(--text); font-family: 'Consolas',monospace; font-size: .85rem; outline: none; }
-  .sim-group input { width: 160px; }
-  .sim-group input:focus, .sim-group textarea:focus { border-color: var(--accent); }
-  .sim-group textarea { width: 100%; min-height: 70px; resize: vertical; font-size: .82rem; }
-  .sim-check { display: flex; align-items: center; gap: .4rem; font-size: .82rem; color: var(--text-dim); cursor: pointer; align-self: flex-end; padding-bottom: .5rem; }
-  .sim-check input { width: auto; }
-  .sim-btn { background: rgba(163,230,53,.1); border: 1px solid rgba(163,230,53,.35); color: var(--accent); cursor: pointer; padding: .45rem 1.1rem; border-radius: 6px; font-family: inherit; font-size: .88rem; transition: all .2s; align-self: flex-end; }
-  .sim-btn:hover { background: rgba(163,230,53,.2); }
-  .sim-output { background: var(--code-bg); border: 1px solid var(--border); border-radius: 7px; padding: .75rem 1rem; font-family: 'Consolas',monospace; font-size: .82rem; min-height: 60px; margin-top: .75rem; line-height: 1.7; white-space: pre-wrap; }
-  .sim-output .highlight { background: rgba(163,230,53,.2); border-radius: 2px; color: var(--accent); }
-
-  /* AWK FIELD VISUALIZER */
-  .awk-viz { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin: 1.25rem 0; }
-  .awk-viz h4 { color: var(--accent); font-size: .9rem; margin-bottom: .75rem; }
-  .awk-line { font-family: 'Consolas',monospace; font-size: .88rem; display: flex; flex-wrap: wrap; gap: 0; background: var(--code-bg); border: 1px solid var(--border); border-radius: 7px; overflow: hidden; margin-bottom: .75rem; }
-  .awk-field { padding: .5rem .6rem; cursor: pointer; border-right: 1px dashed var(--border); transition: background .15s; position: relative; }
-  .awk-field:last-child { border-right: none; }
-  .awk-field:hover { background: rgba(163,230,53,.1); }
-  .awk-field.active { background: rgba(163,230,53,.15); }
-  .awk-field .sep { color: var(--danger); opacity: .7; }
-  .awk-field .fval { color: var(--text); }
-  .awk-field .fnum { position: absolute; top: 2px; left: 4px; font-size: .58rem; color: var(--accent); opacity: .8; }
-  .awk-info { background: rgba(163,230,53,.06); border: 1px solid rgba(163,230,53,.2); border-radius: 7px; padding: .7rem 1rem; font-size: .85rem; color: var(--text-dim); min-height: 2.5rem; }
-
-  /* AWK FEATURE CARDS */
-  .feature-tabs { display: flex; gap: .4rem; margin-bottom: 0; flex-wrap: wrap; }
-  .feature-tab { background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; padding: .4rem 1rem; border-radius: 6px 6px 0 0; font-family: inherit; font-size: .85rem; transition: all .2s; border-bottom: none; }
-  .feature-tab.active { background: var(--code-bg); border-color: var(--accent); color: var(--accent); }
-  .feature-panel { display: none; border: 1px solid var(--border); border-radius: 0 var(--radius) var(--radius) var(--radius); background: var(--surface); padding: 1.1rem 1.25rem; }
-  .feature-panel.active { display: block; }
-
-  /* PIPE EXAMPLES */
-  .pipe-chain { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; font-family: 'Consolas',monospace; font-size: .83rem; background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: .85rem 1rem; margin: .75rem 0; }
-  .pipe-cmd  { background: rgba(86,207,178,.12); border: 1px solid rgba(86,207,178,.25); color: #56cfb2; padding: .25rem .6rem; border-radius: 5px; }
-  .pipe-sym  { color: var(--danger); font-weight: 700; font-size: 1rem; }
-  .pipe-desc { font-family: 'Segoe UI',sans-serif; font-size: .78rem; color: var(--text-dim); width: 100%; margin-top: .3rem; }
-
-  /* RECAP */
-  .filter-bar { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
-  .filter-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; padding: .35rem .9rem; border-radius: 20px; font-size: .82rem; font-family: inherit; transition: all .2s; }
-  .filter-btn:hover { color: var(--text); }
-  .filter-btn.active { background: rgba(163,230,53,.1); border-color: rgba(163,230,53,.35); color: var(--accent); }
-  .recap-cat { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: .3rem .6rem; border-radius: 4px; white-space: nowrap; }
-  .rc-sed  { background: rgba(163,230,53,.1); color: var(--accent); }
-  .rc-awk  { background: rgba(79,172,222,.12); color: #4facde; }
-  .rc-pipe { background: rgba(244,114,182,.12); color: #f472b6; }
-
-  /* QUIZ */
-  .quiz-wrap { display: flex; flex-direction: column; gap: 1.5rem; }
-  .quiz-q { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; transition: border-color .3s; }
-  .quiz-q.correct { border-color: var(--success); } .quiz-q.wrong { border-color: var(--danger); }
-  .quiz-question { font-weight: 600; margin-bottom: .9rem; }
-  .quiz-options { display: flex; flex-direction: column; gap: .5rem; }
-  .quiz-opt { background: var(--surface2); border: 1px solid var(--border); border-radius: 7px; padding: .6rem .9rem; cursor: pointer; font-size: .88rem; transition: all .2s; display: flex; align-items: center; gap: .6rem; font-family: inherit; color: var(--text); text-align: left; width: 100%; }
-  .quiz-opt:hover:not(:disabled) { border-color: var(--accent); background: rgba(163,230,53,.06); }
-  .quiz-opt:disabled { cursor: default; }
-  .quiz-opt.correct { border-color: var(--success); background: rgba(76,175,130,.1); color: #6de0a8; }
-  .quiz-opt.wrong   { border-color: var(--danger);  background: rgba(224,92,92,.1);  color: #e88080; }
-  .quiz-opt .opt-icon { font-size: .95rem; width: 1.2rem; text-align: center; flex-shrink: 0; }
-  .quiz-feedback { margin-top: .75rem; font-size: .84rem; display: none; padding: .5rem .75rem; border-radius: 6px; border-left: 3px solid; }
-  .quiz-feedback.show { display: block; }
-  .quiz-feedback.ok { border-color: var(--success); background: rgba(76,175,130,.08); color: #6de0a8; }
-  .quiz-feedback.ko { border-color: var(--danger);  background: rgba(224,92,92,.08);  color: #e88080; }
-  .quiz-score { text-align: center; padding: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); display: none; }
-  .quiz-score.show { display: block; }
-  .score-number { font-size: 2.5rem; font-weight: 700; }
-  .score-max { color: var(--text-dim); font-size: 1.1rem; }
-  .score-label { margin-top: .4rem; color: var(--text-dim); }
-  .quiz-reset-btn { display: inline-block; margin-top: 1rem; background: rgba(163,230,53,.1); border: 1px solid rgba(163,230,53,.35); color: var(--accent); cursor: pointer; padding: .5rem 1.2rem; border-radius: 6px; font-family: inherit; font-size: .9rem; transition: all .2s; }
-  .quiz-reset-btn:hover { background: rgba(163,230,53,.22); }
-
-  /* MISC */
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-  p + p { margin-top: .6rem; } p { margin-top: .5rem; } strong { color: var(--text); }
-  .intro-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; font-size: .95rem; line-height: 1.7; }
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
-  @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Chapitre 06 — Traiter du texte avec sed et awk — Bash débutant</title><style>
+:root{color-scheme:light;--bg:#f4f7fa;--surface:#fff;--text:#172c3c;--text-dim:#455c6d;--accent:#176e78;--border:#c7d6df;--code-bg:#edf3f7;--ink:var(--text);--muted:var(--text-dim);--line:var(--border);--code:var(--code-bg)}
+@media(prefers-color-scheme:dark){:root{color-scheme:dark;--bg:#0e1921;--surface:#172630;--text:#edf6fc;--text-dim:#b9cdd9;--accent:#81d9d9;--border:#405864;--code-bg:#10202a}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.75 'Segoe UI',system-ui,sans-serif}main{max-width:920px;margin:auto;padding:30px 34px 70px;background:var(--surface)}a{color:var(--accent);text-underline-offset:3px}h1{font-size:2.2rem;line-height:1.2;margin:.5em 0 1em}h2{margin:2.3em 0 .7em;padding-top:.5em;border-top:1px solid var(--line);font-size:1.45rem;line-height:1.35}h3{font-size:1.15rem}p,ul,ol{margin:.8em 0}li{margin:.3em 0}code{font-family:'Cascadia Code',Consolas,monospace;font-size:.94em;background:var(--code);padding:.12em .3em;border-radius:4px}pre{padding:18px 20px;background:var(--code);border:1px solid var(--line);border-radius:10px;overflow-x:auto;line-height:1.6}pre code{padding:0;background:transparent;white-space:pre}table{display:block;overflow:auto;border-collapse:collapse;width:100%;margin:1em 0;font-size:.94em}th,td{text-align:left;padding:10px 13px;border-bottom:1px solid var(--line)}th{background:var(--code)}img{display:block;max-width:100%;height:auto;margin:1.4em auto;border-radius:12px}aside{border-left:4px solid var(--accent);padding:12px 18px;background:var(--code);border-radius:0 8px 8px 0;margin:1.2em 0}aside.warning{border-color:#b87913}aside p{margin:.3em 0}.lesson-nav{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;padding:12px 0 22px;font-size:.9rem}.lesson-nav a{font-weight:650}.chapter-label{color:var(--muted);font-size:.83rem;font-weight:700;letter-spacing:.06em}summary{cursor:pointer;font-weight:650}details.toc{border:1px solid var(--line);border-radius:8px;padding:12px 18px;margin-bottom:25px}details.toc ul{margin:.4em 0}hr{border:0;border-top:1px solid var(--line);margin:2em 0}.table-wrap{overflow:auto}@media(max-width:620px){body{font-size:17px}main{padding:20px 18px 45px}h1{font-size:1.8rem}pre{padding:12px}}
 .bash-site-nav{display:flex;justify-content:space-between;gap:1rem;padding:1rem;flex-wrap:wrap}.bash-site-nav a{color:var(--accent);font-weight:700}
-</style>
-<link rel="stylesheet" href="../../assets/themes/theme.css">
+</style><link rel="stylesheet" href="../../assets/themes/theme.css">
 <script src="../../assets/themes/theme.js"></script>
-</head>
-<body><nav class="bash-site-nav"><a href="https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/">← Cours Markdown</a><a href="https://kayasam.github.io/linux-initiation/#bash">Parcours Bash →</a></nav>
-
-<header>
-  <div class="badge">Scripting Shell en Bash — Chapitre 06</div>
-  <h1>sed &amp; awk</h1>
-  <p class="subtitle">Transformer et extraire du texte en ligne de commande</p>
-</header>
-
-<nav>
-  <button class="tab-btn active" onclick="showTab('intro')">Intro</button>
-  <button class="tab-btn" onclick="showTab('sed')">sed</button>
-  <button class="tab-btn" onclick="showTab('awk')">awk</button>
-  <button class="tab-btn" onclick="showTab('combine')">Combiné</button>
-  <button class="tab-btn" onclick="showTab('recap')">Récapitulatif</button>
-  <button class="tab-btn" onclick="showTab('quiz')">Quiz</button>
-</nav>
-
-<main>
-
-<!-- ══════════════ INTRO ══════════════ -->
-<div class="section active" id="tab-intro">
-  <h2 class="section-title"><span>#</span> Pourquoi sed et awk ?</h2>
-
-  <div class="intro-box">
-    <code>grep</code> cherche des lignes. <strong>sed</strong> et <strong>awk</strong> vont plus loin :
-    ils <strong>transforment</strong> le texte. Ces trois outils se combinent naturellement avec les tubes <code>|</code>
-    et constituent la base du traitement de texte en ligne de commande Unix.
-  </div>
-
-  <table>
-    <thead><tr><th>Outil</th><th>Rôle principal</th><th>Cas d'usage typique</th></tr></thead>
-    <tbody>
-      <tr>
-        <td><code>grep</code></td>
-        <td>Filtrer des lignes</td>
-        <td>Trouver les lignes contenant "error"</td>
-      </tr>
-      <tr>
-        <td><code>sed</code></td>
-        <td>Modifier du texte</td>
-        <td>Remplacer un mot, supprimer des lignes, nettoyer un fichier</td>
-      </tr>
-      <tr>
-        <td><code>awk</code></td>
-        <td>Extraire des colonnes et calculer</td>
-        <td>Afficher la 3e colonne, calculer une somme, générer un rapport</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div class="pipe-chain">
-    <div class="pipe-cmd">grep '/bin/bash' /etc/passwd</div>
-    <div class="pipe-sym">|</div>
-    <div class="pipe-cmd">awk -F: '{print $1, $3}'</div>
-    <div class="pipe-desc">→ Filtre les lignes bash avec grep, puis awk extrait le nom et l'UID — exemple de pipe typique.</div>
-  </div>
-
-  <h3>Philosophie Unix</h3>
-  <p>Chaque outil fait une chose et la fait bien. On les assemble avec <code>|</code> pour des traitements plus complexes.
-  <code>sed</code> nettoie le texte, <code>awk</code> en extrait les données, <code>grep</code> filtre. Ensemble, ils remplacent des scripts entiers.</p>
-
-  <div class="two-col" style="margin-top:1.5rem;">
-    <div style="background:var(--surface); border:1px solid rgba(163,230,53,.2); border-radius:var(--radius); padding:1rem 1.25rem;">
-      <div style="font-size:.8rem; color:var(--accent); font-weight:700; text-transform:uppercase; letter-spacing:.06em; margin-bottom:.6rem;">sed — à retenir</div>
-      <ul style="padding-left:1.2rem; font-size:.87rem; color:var(--text-dim); line-height:1.8;">
-        <li>Lit ligne par ligne</li>
-        <li>Modifie le texte (substitution, suppression)</li>
-        <li>N'écrit pas dans le fichier sans <code>-i</code></li>
-        <li>Basé sur les expressions régulières</li>
-      </ul>
-    </div>
-    <div style="background:var(--surface); border:1px solid rgba(79,172,222,.2); border-radius:var(--radius); padding:1rem 1.25rem;">
-      <div style="font-size:.8rem; color:#4facde; font-weight:700; text-transform:uppercase; letter-spacing:.06em; margin-bottom:.6rem;">awk — à retenir</div>
-      <ul style="padding-left:1.2rem; font-size:.87rem; color:var(--text-dim); line-height:1.8;">
-        <li>Lit ligne par ligne</li>
-        <li>Découpe en champs ($1, $2…)</li>
-        <li>Peut filtrer, calculer, formater</li>
-        <li>Mini langage de programmation</li>
-      </ul>
-    </div>
-  </div>
+</head><body><nav class="bash-site-nav"><a href="https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/">← Cours Markdown</a><a href="https://kayasam.github.io/linux-initiation/#bash">Parcours Bash →</a></nav><main><nav class="lesson-nav" aria-label="Parcours"><a href="https://kayasam.github.io/linux-initiation/bash/cours/05-boucles-interactif.html">← Chapitre précédent</a><a href="https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/">Cours Markdown</a><span>Fin du parcours</span></nav><p class="chapter-label">BASH · CHAPITRE 06 / 06</p><details class="toc"><summary>Sommaire du chapitre</summary><div class="toc">
+<ul>
+<li><a href="#chapitre-06-traiter-du-texte-avec-sed-et-awk">Chapitre 06 — Traiter du texte avec sed et awk</a><ul>
+<li><a href="#a-connaitre-sed-sg-sed-n-awk-f-1-nr-end">À connaître : sed 's/.../.../g', sed -n, awk -F, $1, NR, END.</a></li>
+<li><a href="#1-choisir-loutil-selon-la-tache">1. Choisir l'outil selon la tâche</a></li>
+<li><a href="#2-preparer-un-petit-inventaire">2. Préparer un petit inventaire</a></li>
+<li><a href="#3-remplacer-du-texte-avec-sed">3. Remplacer du texte avec sed</a></li>
+<li><a href="#4-choisir-ou-retirer-des-lignes">4. Choisir ou retirer des lignes</a></li>
+<li><a href="#5-lire-les-champs-avec-awk">5. Lire les champs avec awk</a></li>
+<li><a href="#6-filtrer-avec-une-condition">6. Filtrer avec une condition</a></li>
+<li><a href="#7-calculer-un-total">7. Calculer un total</a></li>
+<li><a href="#8-relier-deux-outils">8. Relier deux outils</a></li>
+<li><a href="#pour-aller-plus-loin-modifier-avec-une-sauvegarde">Pour aller plus loin : modifier avec une sauvegarde</a></li>
+<li><a href="#a-retenir">À retenir</a></li>
+</ul>
+</li>
+</ul>
 </div>
-
-
-<!-- ══════════════ SED ══════════════ -->
-<div class="section" id="tab-sed">
-  <h2 class="section-title"><span>#</span> sed — l'éditeur de flux</h2>
-
-  <p><code>sed</code> (<em>Stream EDitor</em>) lit un fichier <strong>ligne par ligne</strong> et applique des transformations.
-  Il n'ouvre jamais de fenêtre — tout se passe dans le terminal.</p>
-
-  <div class="callout warn">
-    <div class="callout-label">Important</div>
-    Par défaut, <strong>sed n'écrit pas dans le fichier</strong> — il affiche le résultat sur la sortie standard.
-    Le fichier original est intact. Pour modifier en place, utiliser <code>-i</code>.
-  </div>
-
-  <h3>Anatomie de la commande — cliquez sur chaque partie</h3>
-
-  <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; margin:1.25rem 0;">
-    <div style="padding:.6rem 1rem; font-size:.78rem; color:var(--text-dim); border-bottom:1px solid var(--border);">Cliquez sur un élément pour voir son rôle</div>
-    <div class="sed-anatomy" id="sed-parts">
-      <div class="sed-part" data-id="cmd" onclick="clickSed(this)"><span style="color:#56cfb2;">sed</span></div>
-      <div class="sed-part" data-id="s" onclick="clickSed(this)"><span style="color:#a3e635;">'</span><span style="color:#f472b6;">s</span></div>
-      <div class="sed-part" data-id="sep1" onclick="clickSed(this)"><span style="color:#7880a0;">/</span></div>
-      <div class="sed-part" data-id="old" onclick="clickSed(this)"><span style="color:#f0a500;">ancien</span></div>
-      <div class="sed-part" data-id="sep2" onclick="clickSed(this)"><span style="color:#7880a0;">/</span></div>
-      <div class="sed-part" data-id="new" onclick="clickSed(this)"><span style="color:#56cfb2;">nouveau</span></div>
-      <div class="sed-part" data-id="sep3" onclick="clickSed(this)"><span style="color:#7880a0;">/</span></div>
-      <div class="sed-part" data-id="g" onclick="clickSed(this)"><span style="color:#a3e635;">g</span><span style="color:#a3e635;">'</span></div>
-      <div class="sed-part" data-id="file" onclick="clickSed(this)"><span style="color:#7ec8e3;">fichier.txt</span></div>
-    </div>
-    <div class="sed-detail" id="sed-detail">
-      <span style="color:var(--text-dim);">← Cliquez sur un élément de la commande pour voir son rôle</span>
-    </div>
-  </div>
-
-  <h3>Les commandes essentielles — cliquez pour les détails</h3>
-
-  <div class="cmd-grid">
-
-    <div class="cmd-card" onclick="toggleCmd(this)">
-      <div class="cmd-card-header">
-        <div class="cmd-badge">s</div>
-        <div class="cmd-title">Substitution (remplacer)</div>
-        <div class="cmd-arrow">▶</div>
-      </div>
-      <div class="cmd-body">
-        <p>La commande la plus utilisée. Remplace le texte correspondant au motif.</p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Remplacer toutes les occurrences</span>
-<span class="cmd">sed</span> <span class="str">'s/http/https/g'</span> <span class="path">config.txt</span>
-
-<span class="comment"># Uniquement la 1ère occurrence par ligne (sans g)</span>
-<span class="cmd">sed</span> <span class="str">'s/erreur/error/'</span> <span class="path">app.log</span>
-
-<span class="comment"># Insensible à la casse (flag I)</span>
-<span class="cmd">sed</span> <span class="str">'s/erreur/error/gI'</span> <span class="path">app.log</span>
-
-<span class="comment"># Supprimer un mot (remplacer par rien)</span>
-<span class="cmd">sed</span> <span class="str">'s/DEBUG: //g'</span> <span class="path">app.log</span>
-
-<span class="comment"># Remplacer uniquement sur les lignes contenant "serveur"</span>
-<span class="cmd">sed</span> <span class="str">'/serveur/s/localhost/192.168.1.10/g'</span> <span class="path">config.txt</span></div>
-      </div>
-    </div>
-
-    <div class="cmd-card" onclick="toggleCmd(this)">
-      <div class="cmd-card-header">
-        <div class="cmd-badge">d</div>
-        <div class="cmd-title">Suppression de lignes</div>
-        <div class="cmd-arrow">▶</div>
-      </div>
-      <div class="cmd-body">
-        <p>Supprime les lignes correspondant au motif ou au numéro de ligne.</p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Supprimer les lignes contenant "DEBUG"</span>
-<span class="cmd">sed</span> <span class="str">'/DEBUG/d'</span> <span class="path">app.log</span>
-
-<span class="comment"># Supprimer les lignes vides</span>
-<span class="cmd">sed</span> <span class="str">'/^$/d'</span> <span class="path">fichier.txt</span>
-
-<span class="comment"># Supprimer les commentaires (lignes commençant par #)</span>
-<span class="cmd">sed</span> <span class="str">'/^#/d'</span> <span class="path">config.conf</span>
-
-<span class="comment"># Supprimer commentaires ET lignes vides (-e = plusieurs expressions)</span>
-<span class="cmd">sed</span> <span class="flag">-e</span> <span class="str">'/^#/d'</span> <span class="flag">-e</span> <span class="str">'/^$/d'</span> <span class="path">config.conf</span>
-
-<span class="comment"># Supprimer la première ligne (en-tête CSV)</span>
-<span class="cmd">sed</span> <span class="str">'1d'</span> <span class="path">donnees.csv</span></div>
-      </div>
-    </div>
-
-    <div class="cmd-card" onclick="toggleCmd(this)">
-      <div class="cmd-card-header">
-        <div class="cmd-badge">p</div>
-        <div class="cmd-title">Affichage sélectif (-n)</div>
-        <div class="cmd-arrow">▶</div>
-      </div>
-      <div class="cmd-body">
-        <p><code>-n</code> supprime l'affichage automatique. <code>p</code> affiche explicitement les lignes voulues.</p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Afficher seulement les lignes ERROR</span>
-<span class="cmd">sed</span> <span class="flag">-n</span> <span class="str">'/ERROR/p'</span> <span class="path">app.log</span>
-
-<span class="comment"># Afficher les lignes 5 à 10</span>
-<span class="cmd">sed</span> <span class="flag">-n</span> <span class="str">'5,10p'</span> <span class="path">fichier.txt</span>
-
-<span class="comment"># Afficher uniquement la 1ère ligne</span>
-<span class="cmd">sed</span> <span class="flag">-n</span> <span class="str">'1p'</span> <span class="path">fichier.txt</span>
-
-<span class="comment"># Afficher uniquement la dernière ligne</span>
-<span class="cmd">sed</span> <span class="flag">-n</span> <span class="str">'$p'</span> <span class="path">fichier.txt</span></div>
-      </div>
-    </div>
-
-    <div class="cmd-card" onclick="toggleCmd(this)">
-      <div class="cmd-card-header">
-        <div class="cmd-badge">-i</div>
-        <div class="cmd-title">Modification en place</div>
-        <div class="cmd-arrow">▶</div>
-      </div>
-      <div class="cmd-body">
-        <p>Modifie le fichier directement. Avec <code>-i.bak</code>, crée une sauvegarde avant.</p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Modifier le fichier directement</span>
-<span class="cmd">sed</span> <span class="flag">-i</span> <span class="str">'s/ancien/nouveau/g'</span> <span class="path">fichier.txt</span>
-
-<span class="comment"># Modifier avec sauvegarde automatique (.bak)</span>
-<span class="cmd">sed</span> <span class="flag">-i.bak</span> <span class="str">'s/ancien/nouveau/g'</span> <span class="path">fichier.txt</span>
-<span class="comment"># → fichier.txt (modifié) + fichier.txt.bak (original)</span>
-
-<span class="comment"># Changer le port SSH (exemple réel)</span>
-<span class="cmd">sed</span> <span class="flag">-i</span> <span class="str">'s/^Port 22$/Port 2222/'</span> <span class="path">/etc/ssh/sshd_config</span></div>
-      </div>
-    </div>
-
-  </div>
-
-  <h3>Simulateur sed</h3>
-  <div class="simulator">
-    <h4>Tester une substitution en direct</h4>
-    <div class="sim-row">
-      <div class="sim-group"><label>Chercher</label><input type="text" id="sim-old" value="http" placeholder="motif"></div>
-      <div class="sim-group"><label>Remplacer par</label><input type="text" id="sim-new" value="https" placeholder="remplacement"></div>
-      <label class="sim-check"><input type="checkbox" id="sim-global" checked> global (g)</label>
-      <label class="sim-check"><input type="checkbox" id="sim-icase"> insensible casse (I)</label>
-      <button class="sim-btn" onclick="runSim()">Appliquer</button>
-    </div>
-    <div class="sim-group" style="width:100%;">
-      <label>Texte source</label>
-      <textarea id="sim-input">Connexion http://mon-serveur.local
-Ressource http://api.example.com/data
-URL non sécurisée : http://admin.local
-# Configuration http du serveur</textarea>
-    </div>
-    <div id="sim-cmd" style="font-family:'Consolas',monospace; font-size:.82rem; color:var(--text-dim); margin:.6rem 0 .3rem; padding:.45rem .75rem; background:var(--code-bg); border-radius:6px;"></div>
-    <div class="sim-output" id="sim-output"></div>
-  </div>
-
-  <h3>Exemples pratiques</h3>
-
-  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Nettoyer sshd_config : retirer commentaires et lignes vides</span>
-<span class="cmd">sed</span> <span class="flag">-e</span> <span class="str">'/^#/d'</span> <span class="flag">-e</span> <span class="str">'/^$/d'</span> <span class="path">/etc/ssh/sshd_config</span>
-
-<span class="comment"># Extraire les erreurs d'un log</span>
-<span class="cmd">sed</span> <span class="flag">-n</span> <span class="str">'/ERROR/p'</span> <span class="path">/var/log/app.log</span>
-
-<span class="comment"># Remplacer les virgules par des point-virgules dans un CSV</span>
-<span class="cmd">sed</span> <span class="str">'s/,/;/g'</span> <span class="path">fichier.csv</span>
-
-<span class="comment"># Afficher le fichier sans la première ligne (en-tête)</span>
-<span class="cmd">sed</span> <span class="str">'1d'</span> <span class="path">donnees.csv</span></div>
-
-  <div class="callout note">
-    <div class="callout-label">Note — ^ et $</div>
-    <code>^</code> = début de ligne · <code>$</code> = fin de ligne · <code>/^$/</code> = ligne vide (début suivi immédiatement de la fin).
-    Ce sont des ancrages d'expressions régulières POSIX.
-  </div>
-</div>
-
-
-<!-- ══════════════ AWK ══════════════ -->
-<div class="section" id="tab-awk">
-  <h2 class="section-title"><span>#</span> awk — le traiteur de colonnes</h2>
-
-  <p><code>awk</code> lit un fichier ligne par ligne et <strong>découpe chaque ligne en champs</strong> selon un séparateur.
-  C'est l'outil idéal pour extraire des colonnes et faire des calculs.
-  Son nom vient des initiales de ses créateurs : <strong>A</strong>ho, <strong>W</strong>einberger, <strong>K</strong>ernighan (Bell Labs, 1977).</p>
-
-  <h3>Visualiseur de champs — cliquez sur un champ</h3>
-
-  <div class="awk-viz">
-    <h4>Ligne de /etc/passwd avec <code>-F:</code></h4>
-    <div class="awk-line" id="awk-line">
-      <div class="awk-field" data-f="1" onclick="clickField(this)"><span class="fnum">$1</span><span class="fval">samuel</span><span class="sep">:</span></div>
-      <div class="awk-field" data-f="2" onclick="clickField(this)"><span class="fnum">$2</span><span class="fval">x</span><span class="sep">:</span></div>
-      <div class="awk-field" data-f="3" onclick="clickField(this)"><span class="fnum">$3</span><span class="fval">1000</span><span class="sep">:</span></div>
-      <div class="awk-field" data-f="4" onclick="clickField(this)"><span class="fnum">$4</span><span class="fval">1000</span><span class="sep">:</span></div>
-      <div class="awk-field" data-f="5" onclick="clickField(this)"><span class="fnum">$5</span><span class="fval">Samuel Guillard</span><span class="sep">:</span></div>
-      <div class="awk-field" data-f="6" onclick="clickField(this)"><span class="fnum">$6</span><span class="fval">/home/samuel</span><span class="sep">:</span></div>
-      <div class="awk-field" data-f="7" onclick="clickField(this)"><span class="fnum">$7</span><span class="fval">/bin/bash</span></div>
-    </div>
-    <div class="awk-info" id="awk-info">← Cliquez sur un champ pour voir comment y accéder avec awk</div>
-  </div>
-
-  <h3>Variables intégrées</h3>
-
-  <table>
-    <thead><tr><th>Variable</th><th>Contenu</th><th>Exemple</th></tr></thead>
-    <tbody>
-      <tr><td><code>$0</code></td><td>La ligne entière</td><td><code>awk '{print $0}'</code> ≡ cat</td></tr>
-      <tr><td><code>$1, $2…</code></td><td>1er champ, 2e champ…</td><td><code>awk '{print $1}'</code></td></tr>
-      <tr><td><code>$NF</code></td><td>Dernier champ (quel que soit leur nombre)</td><td><code>awk '{print $NF}'</code></td></tr>
-      <tr><td><code>NR</code></td><td>Numéro de la ligne en cours</td><td><code>awk '{print NR, $0}'</code></td></tr>
-      <tr><td><code>NF</code></td><td>Nombre de champs dans la ligne</td><td><code>awk '{print NF}'</code></td></tr>
-      <tr><td><code>FS</code></td><td>Séparateur de champs (défaut : espace/tab)</td><td><code>awk -F: …</code> ou <code>BEGIN{FS=":"}</code></td></tr>
-    </tbody>
-  </table>
-
-  <h3>Fonctionnalités — cliquez pour les détails</h3>
-
-  <div class="feature-tabs">
-    <button class="feature-tab active" onclick="showFeature('print',this)">Afficher</button>
-    <button class="feature-tab" onclick="showFeature('filter',this)">Filtrer</button>
-    <button class="feature-tab" onclick="showFeature('begin',this)">BEGIN / END</button>
-    <button class="feature-tab" onclick="showFeature('calc',this)">Calculer</button>
-  </div>
-
-  <div class="feature-panel active" id="feat-print">
-    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Afficher le 1er champ (noms d'utilisateurs)</span>
-<span class="cmd">awk</span> <span class="flag">-F:</span> <span class="str">'{print $1}'</span> <span class="path">/etc/passwd</span>
-
-<span class="comment"># Afficher plusieurs champs</span>
-<span class="cmd">awk</span> <span class="flag">-F:</span> <span class="str">'{print $1, $7}'</span> <span class="path">/etc/passwd</span>
-
-<span class="comment"># Avec un format personnalisé</span>
-<span class="cmd">awk</span> <span class="flag">-F:</span> <span class="str">'{print "Utilisateur : " $1 " → shell : " $7}'</span> <span class="path">/etc/passwd</span>
-
-<span class="comment"># Numéroter les lignes</span>
-<span class="cmd">awk</span> <span class="str">'{print NR, $0}'</span> <span class="path">fichier.txt</span>
-
-<span class="comment"># Afficher le dernier champ (peu importe combien il y en a)</span>
-<span class="cmd">awk</span> <span class="str">'{print $NF}'</span> <span class="path">fichier.txt</span></div>
-  </div>
-
-  <div class="feature-panel" id="feat-filter">
-    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Filtrer par motif (comme grep)</span>
-<span class="cmd">awk</span> <span class="str">'/ERROR/ {print $0}'</span> <span class="path">app.log</span>
-
-<span class="comment"># Filtrer par valeur d'un champ numérique</span>
-<span class="cmd">awk</span> <span class="flag">-F:</span> <span class="str">'$3 >= 1000 {print $1}'</span> <span class="path">/etc/passwd</span>   <span class="comment"># UID ≥ 1000</span>
-
-<span class="comment"># Filtrer par valeur d'un champ chaîne</span>
-<span class="cmd">awk</span> <span class="flag">-F'|'</span> <span class="str">'$3 == "Informatique" {print $0}'</span> <span class="path">employes.txt</span>
-
-<span class="comment"># Afficher uniquement la ligne N (NR = numéro de ligne)</span>
-<span class="cmd">awk</span> <span class="str">'NR==5'</span> <span class="path">fichier.txt</span>
-
-<span class="comment"># Afficher les lignes sauf les commentaires (!= inverse)</span>
-<span class="cmd">awk</span> <span class="str">'!/^#/'</span> <span class="path">config.conf</span></div>
-  </div>
-
-  <div class="feature-panel" id="feat-begin">
-    <p style="margin-bottom:.75rem;"><code>BEGIN</code> s'exécute <strong>avant</strong> de lire le fichier (en-têtes, initialisation).
-    <code>END</code> s'exécute <strong>après</strong> le dernier enregistrement (totaux, rapports).</p>
-    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Compter les lignes d'un fichier</span>
-<span class="cmd">awk</span> <span class="str">'BEGIN {n=0} {n++} END {print "Total : " n " lignes"}'</span> <span class="path">fichier.txt</span>
-
-<span class="comment"># En-tête + données + pied de page</span>
-<span class="cmd">awk</span> <span class="flag">-F:</span> <span class="str">'BEGIN {print "=== Utilisateurs ==="} {print $1} END {print "=== Fin ==="}'</span> <span class="path">/etc/passwd</span>
-
-<span class="comment"># Initialiser le séparateur dans BEGIN</span>
-<span class="cmd">awk</span> <span class="str">'BEGIN {FS=":"} {print $1, $3}'</span> <span class="path">/etc/passwd</span></div>
-  </div>
-
-  <div class="feature-panel" id="feat-calc">
-    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Calculer la somme d'une colonne</span>
-<span class="cmd">awk</span> <span class="flag">-F'|'</span> <span class="str">'{total += $4} END {print "Masse salariale : " total}'</span> <span class="path">employes.txt</span>
-
-<span class="comment"># Calculer une moyenne</span>
-<span class="cmd">awk</span> <span class="str">'{s += $1; n++} END {print "Moyenne : " s/n}'</span> <span class="path">notes.txt</span>
-
-<span class="comment"># Trouver le maximum</span>
-<span class="cmd">awk</span> <span class="str">'BEGIN{max=0} $1>max{max=$1} END{print "Max : " max}'</span> <span class="path">valeurs.txt</span>
-
-<span class="comment"># Afficher les 5 processus qui consomment le plus de CPU</span>
-<span class="cmd">ps</span> aux <span class="op">|</span> <span class="cmd">sort</span> <span class="flag">-k3</span> <span class="flag">-rn</span> <span class="op">|</span> <span class="cmd">awk</span> <span class="str">'NR&lt;=5 {print $1, $3"%", $11}'</span></div>
-  </div>
-</div>
-
-
-<!-- ══════════════ COMBINÉ ══════════════ -->
-<div class="section" id="tab-combine">
-  <h2 class="section-title"><span>#</span> sed + awk en pratique</h2>
-
-  <h3>Comparaison — sed vs awk</h3>
-
-  <table>
-    <thead><tr><th>Tâche</th><th>sed</th><th>awk</th></tr></thead>
-    <tbody>
-      <tr><td>Remplacer du texte</td><td><code>sed 's/a/b/g'</code></td><td>Possible mais sed est plus simple</td></tr>
-      <tr><td>Supprimer des lignes</td><td><code>sed '/motif/d'</code></td><td><code>awk '!/motif/'</code></td></tr>
-      <tr><td>Extraire une colonne</td><td>Compliqué</td><td><code>awk '{print $2}'</code></td></tr>
-      <tr><td>Calculer une somme</td><td>Impossible</td><td><code>awk '{s+=$1} END{print s}'</code></td></tr>
-      <tr><td>Filtrer + transformer</td><td colspan="2" style="text-align:center; color:var(--accent);">Les deux combinés avec <code>|</code></td></tr>
-    </tbody>
-  </table>
-
-  <div class="callout tip">
-    <div class="callout-label">Règle pratique</div>
-    <strong>sed</strong> pour modifier/nettoyer du texte (remplacer, supprimer).
-    <strong>awk</strong> pour extraire des colonnes et faire des calculs. Les deux se combinent très bien avec des tubes.
-  </div>
-
-  <h3>Exemples combinés</h3>
-
-  <div class="pipe-chain">
-    <div class="pipe-cmd">grep '/bin/bash' /etc/passwd</div>
-    <div class="pipe-sym">|</div>
-    <div class="pipe-cmd">awk -F: '{print $1, $3}'</div>
-    <div class="pipe-desc">Filtre les utilisateurs bash avec grep, puis extrait nom + UID avec awk.</div>
-  </div>
-
-  <div class="pipe-chain">
-    <div class="pipe-cmd">sed '/^#/d' employes.csv</div>
-    <div class="pipe-sym">|</div>
-    <div class="pipe-cmd">awk -F, '{total += $4} END {print total}'</div>
-    <div class="pipe-desc">Nettoie le CSV en supprimant les commentaires, puis calcule la somme de la 4e colonne.</div>
-  </div>
-
-  <div class="pipe-chain">
-    <div class="pipe-cmd">ps aux</div>
-    <div class="pipe-sym">|</div>
-    <div class="pipe-cmd">sort -k3 -rn</div>
-    <div class="pipe-sym">|</div>
-    <div class="pipe-cmd">awk 'NR&lt;=5 {print $1, $3"%", $11}'</div>
-    <div class="pipe-desc">Top 5 processus CPU : ps liste, sort trie par CPU décroissant, awk extrait les 5 premières lignes.</div>
-  </div>
-
-  <div class="pipe-chain">
-    <div class="pipe-cmd">awk '/ERROR/ {print $3}' app.log</div>
-    <div class="pipe-sym">|</div>
-    <div class="pipe-cmd">sort</div>
-    <div class="pipe-sym">|</div>
-    <div class="pipe-cmd">uniq -c</div>
-    <div class="pipe-sym">|</div>
-    <div class="pipe-cmd">sort -rn</div>
-    <div class="pipe-desc">Compte les erreurs par type, triées par fréquence décroissante.</div>
-  </div>
-
-  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Extraire les utilisateurs bash et leur UID</span>
-<span class="cmd">grep</span> <span class="str">'/bin/bash'</span> <span class="path">/etc/passwd</span> <span class="op">|</span> <span class="cmd">awk</span> <span class="flag">-F:</span> <span class="str">'{print $1, $3}'</span>
-
-<span class="comment"># Nettoyer un CSV puis calculer la somme</span>
-<span class="cmd">sed</span> <span class="str">'/^#/d'</span> <span class="path">employes.csv</span> <span class="op">|</span> <span class="cmd">awk</span> <span class="flag">-F,</span> <span class="str">'{total += $4} END {print total}'</span>
-
-<span class="comment"># Top 5 processus CPU</span>
-<span class="cmd">ps</span> aux <span class="op">|</span> <span class="cmd">sort</span> <span class="flag">-k3</span> <span class="flag">-rn</span> <span class="op">|</span> <span class="cmd">awk</span> <span class="str">'NR&lt;=5 {print $1, $3"%", $11}'</span>
-
-<span class="comment"># Compter les erreurs par type</span>
-<span class="cmd">awk</span> <span class="str">'/ERROR/ {print $3}'</span> <span class="path">app.log</span> <span class="op">|</span> <span class="cmd">sort</span> <span class="op">|</span> <span class="cmd">uniq</span> <span class="flag">-c</span> <span class="op">|</span> <span class="cmd">sort</span> <span class="flag">-rn</span></div>
-
-  <h3>Récap visuel — quel outil pour quoi ?</h3>
-
-  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:.75rem; margin:1.25rem 0;">
-    <div style="background:var(--surface); border:1px solid rgba(86,207,178,.2); border-radius:var(--radius); padding:.9rem;">
-      <div style="color:#56cfb2; font-weight:700; margin-bottom:.5rem; font-size:.88rem;">grep</div>
-      <ul style="padding-left:1rem; font-size:.82rem; color:var(--text-dim); line-height:1.8;"><li>Chercher un motif</li><li>Filtrer des lignes</li><li>Compter des occurrences</li></ul>
-    </div>
-    <div style="background:var(--surface); border:1px solid rgba(163,230,53,.2); border-radius:var(--radius); padding:.9rem;">
-      <div style="color:var(--accent); font-weight:700; margin-bottom:.5rem; font-size:.88rem;">sed</div>
-      <ul style="padding-left:1rem; font-size:.82rem; color:var(--text-dim); line-height:1.8;"><li>Remplacer du texte</li><li>Supprimer des lignes</li><li>Nettoyer des fichiers</li></ul>
-    </div>
-    <div style="background:var(--surface); border:1px solid rgba(79,172,222,.2); border-radius:var(--radius); padding:.9rem;">
-      <div style="color:#4facde; font-weight:700; margin-bottom:.5rem; font-size:.88rem;">awk</div>
-      <ul style="padding-left:1rem; font-size:.82rem; color:var(--text-dim); line-height:1.8;"><li>Extraire des colonnes</li><li>Calculer des totaux</li><li>Générer des rapports</li></ul>
-    </div>
-  </div>
-</div>
-
-
-<!-- ══════════════ RÉCAPITULATIF ══════════════ -->
-<div class="section" id="tab-recap">
-  <h2 class="section-title"><span>#</span> Récapitulatif des commandes</h2>
-
-  <div class="filter-bar">
-    <button class="filter-btn active" onclick="filterRecap('all',this)">Toutes</button>
-    <button class="filter-btn" onclick="filterRecap('sed',this)">sed</button>
-    <button class="filter-btn" onclick="filterRecap('awk',this)">awk</button>
-    <button class="filter-btn" onclick="filterRecap('pipe',this)">Combiné</button>
-  </div>
-
-  <table id="recap-table">
-    <thead><tr><th>Commande / Syntaxe</th><th>Description</th><th>Catégorie</th></tr></thead>
-    <tbody>
-      <tr data-cat="sed"><td><code>sed 's/a/b/g' fichier</code></td><td>Remplace <em>a</em> par <em>b</em> — toutes les occurrences</td><td><span class="recap-cat rc-sed">sed</span></td></tr>
-      <tr data-cat="sed"><td><code>sed 's/a/b/' fichier</code></td><td>Remplace uniquement la 1ère occurrence par ligne</td><td><span class="recap-cat rc-sed">sed</span></td></tr>
-      <tr data-cat="sed"><td><code>sed 's/a/b/gI' fichier</code></td><td>Substitution globale insensible à la casse</td><td><span class="recap-cat rc-sed">sed</span></td></tr>
-      <tr data-cat="sed"><td><code>sed -i 's/a/b/g' fichier</code></td><td>Modifie le fichier directement (in place)</td><td><span class="recap-cat rc-sed">sed</span></td></tr>
-      <tr data-cat="sed"><td><code>sed -i.bak 's/a/b/g' fichier</code></td><td>Idem avec sauvegarde <code>.bak</code></td><td><span class="recap-cat rc-sed">sed</span></td></tr>
-      <tr data-cat="sed"><td><code>sed '/motif/d' fichier</code></td><td>Supprime les lignes contenant le motif</td><td><span class="recap-cat rc-sed">sed</span></td></tr>
-      <tr data-cat="sed"><td><code>sed '/^#/d' fichier</code></td><td>Supprime les commentaires (lignes commençant par #)</td><td><span class="recap-cat rc-sed">sed</span></td></tr>
-      <tr data-cat="sed"><td><code>sed '/^$/d' fichier</code></td><td>Supprime les lignes vides</td><td><span class="recap-cat rc-sed">sed</span></td></tr>
-      <tr data-cat="sed"><td><code>sed -e '/^#/d' -e '/^$/d'</code></td><td>Plusieurs expressions en une commande</td><td><span class="recap-cat rc-sed">sed</span></td></tr>
-      <tr data-cat="sed"><td><code>sed -n '/motif/p' fichier</code></td><td>Affiche seulement les lignes contenant le motif</td><td><span class="recap-cat rc-sed">sed</span></td></tr>
-      <tr data-cat="sed"><td><code>sed -n '5,10p' fichier</code></td><td>Affiche les lignes 5 à 10</td><td><span class="recap-cat rc-sed">sed</span></td></tr>
-      <tr data-cat="sed"><td><code>sed '1d' fichier</code></td><td>Supprime la première ligne</td><td><span class="recap-cat rc-sed">sed</span></td></tr>
-      <tr data-cat="awk"><td><code>awk '{print $1}' fichier</code></td><td>Affiche le 1er champ (séparateur = espace)</td><td><span class="recap-cat rc-awk">awk</span></td></tr>
-      <tr data-cat="awk"><td><code>awk -F: '{print $1}' fichier</code></td><td>Idem avec <code>:</code> comme séparateur</td><td><span class="recap-cat rc-awk">awk</span></td></tr>
-      <tr data-cat="awk"><td><code>awk '{print $NF}'</code></td><td>Affiche le dernier champ</td><td><span class="recap-cat rc-awk">awk</span></td></tr>
-      <tr data-cat="awk"><td><code>awk '{print NR, $0}'</code></td><td>Numérote et affiche chaque ligne</td><td><span class="recap-cat rc-awk">awk</span></td></tr>
-      <tr data-cat="awk"><td><code>awk 'NR==5'</code></td><td>Affiche uniquement la ligne 5</td><td><span class="recap-cat rc-awk">awk</span></td></tr>
-      <tr data-cat="awk"><td><code>awk '$3 &gt; 100'</code></td><td>Affiche les lignes où le 3e champ &gt; 100</td><td><span class="recap-cat rc-awk">awk</span></td></tr>
-      <tr data-cat="awk"><td><code>awk '/motif/ {print}'</code></td><td>Filtre les lignes correspondant au motif</td><td><span class="recap-cat rc-awk">awk</span></td></tr>
-      <tr data-cat="awk"><td><code>awk '{s+=$1} END{print s}'</code></td><td>Calcule la somme du 1er champ</td><td><span class="recap-cat rc-awk">awk</span></td></tr>
-      <tr data-cat="awk"><td><code>awk 'BEGIN{} {} END{}'</code></td><td>Structure complète : initialisation, traitement, bilan</td><td><span class="recap-cat rc-awk">awk</span></td></tr>
-      <tr data-cat="pipe"><td><code>grep motif f | awk '{print $1}'</code></td><td>Filtre avec grep puis extrait un champ avec awk</td><td><span class="recap-cat rc-pipe">combiné</span></td></tr>
-      <tr data-cat="pipe"><td><code>sed '/^#/d' f | awk -F, '{s+=$4} END{print s}'</code></td><td>Nettoie un CSV puis calcule une somme</td><td><span class="recap-cat rc-pipe">combiné</span></td></tr>
-      <tr data-cat="pipe"><td><code>ps aux | sort -k3 -rn | awk 'NR&lt;=5'</code></td><td>Top 5 processus CPU</td><td><span class="recap-cat rc-pipe">combiné</span></td></tr>
-    </tbody>
-  </table>
-</div>
-
-
-<!-- ══════════════ QUIZ ══════════════ -->
-<div class="section" id="tab-quiz">
-  <h2 class="section-title"><span>#</span> Quiz de révision</h2>
-  <p style="color:var(--text-dim); margin-bottom:1.5rem; font-size:.88rem;">Testez vos connaissances — cliquez sur la bonne réponse.</p>
-
-  <div class="quiz-wrap" id="quiz-wrap">
-
-    <div class="quiz-q" data-answer="b">
-      <div class="quiz-question">1. Que fait sed 's/http/https/' (sans le flag g) ?</div>
-      <div class="quiz-options">
-        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>Remplace toutes les occurrences de "http" sur chaque ligne</button>
-        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>Remplace uniquement la 1ère occurrence de "http" sur chaque ligne</button>
-        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>Ne remplace rien — le flag g est obligatoire</button>
-        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>Supprime les lignes contenant "http"</button>
-      </div>
-      <div class="quiz-feedback">
-        Sans <code>g</code>, sed remplace la <strong>première occurrence par ligne</strong>.
-        Avec <code>g</code> (<em>global</em>), il remplace toutes les occurrences sur chaque ligne.
-        Si une ligne contient <code>http://a et http://b</code>, seul le premier <code>http</code> sera remplacé sans <code>g</code>.
-      </div>
-    </div>
-
-    <div class="quiz-q" data-answer="c">
-      <div class="quiz-question">2. Comment modifier un fichier directement avec sed (sans créer un nouveau fichier) ?</div>
-      <div class="quiz-options">
-        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>sed -w 's/a/b/g' fichier</button>
-        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>sed --overwrite 's/a/b/g' fichier</button>
-        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>sed -i 's/a/b/g' fichier</button>
-        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>sed 's/a/b/g' fichier &gt; fichier</button>
-      </div>
-      <div class="quiz-feedback">
-        <strong>sed -i</strong> (<em>in-place</em>) modifie le fichier directement.
-        <code>sed -i.bak</code> crée une sauvegarde avant modification.
-        La redirection <code>sed … f &gt; f</code> vide le fichier avant que sed ne le lise — c'est un piège classique.
-      </div>
-    </div>
-
-    <div class="quiz-q" data-answer="d">
-      <div class="quiz-question">3. Que fait sed '/^$/d' ?</div>
-      <div class="quiz-options">
-        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>Supprime la première ligne du fichier</button>
-        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>Supprime les lignes commençant par $</button>
-        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>Supprime la dernière ligne du fichier</button>
-        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>Supprime les lignes vides</button>
-      </div>
-      <div class="quiz-feedback">
-        <code>/^$/</code> est une expression régulière : <code>^</code> = début de ligne, <code>$</code> = fin de ligne.
-        <code>^$</code> = une ligne où le début est immédiatement suivi de la fin → <strong>ligne vide</strong>.
-        Le <code>d</code> supprime ces lignes.
-      </div>
-    </div>
-
-    <div class="quiz-q" data-answer="a">
-      <div class="quiz-question">4. Dans awk -F: '{print $NF}' /etc/passwd — que contient $NF ?</div>
-      <div class="quiz-options">
-        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>Le dernier champ de chaque ligne (le shell, ici /bin/bash)</button>
-        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>Le nombre de champs de la ligne</button>
-        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>Le premier champ de chaque ligne</button>
-        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>Une erreur — NF n'est pas un numéro de champ valide</button>
-      </div>
-      <div class="quiz-feedback">
-        <code>NF</code> est le nombre de champs de la ligne. <code>$NF</code> utilise cette valeur comme indice de champ,
-        ce qui donne le <strong>dernier champ</strong>, quel que soit leur nombre.
-        Dans <code>/etc/passwd</code> (7 champs séparés par <code>:</code>), <code>$NF</code> = <code>$7</code> = le shell.
-      </div>
-    </div>
-
-    <div class="quiz-q" data-answer="c">
-      <div class="quiz-question">5. Quelle variable awk contient le numéro de la ligne en cours de traitement ?</div>
-      <div class="quiz-options">
-        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>$0</button>
-        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>NF</button>
-        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>NR</button>
-        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>FS</button>
-      </div>
-      <div class="quiz-feedback">
-        <strong>NR</strong> (<em>Number of Records</em>) contient le numéro de la ligne en cours.
-        <code>$0</code> = la ligne entière, <code>NF</code> = nombre de champs, <code>FS</code> = séparateur de champs.
-        Exemple : <code>awk 'NR==1'</code> affiche uniquement la première ligne.
-      </div>
-    </div>
-
-    <div class="quiz-q" data-answer="b">
-      <div class="quiz-question">6. Quand s'exécute le bloc BEGIN dans awk ?</div>
-      <div class="quiz-options">
-        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>Après avoir traité toutes les lignes</button>
-        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>Avant de lire la première ligne du fichier</button>
-        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>Uniquement si le fichier est vide</button>
-        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>Pour chaque ligne qui commence par B</button>
-      </div>
-      <div class="quiz-feedback">
-        <strong>BEGIN</strong> s'exécute <strong>avant</strong> de lire le fichier — utile pour afficher un en-tête, initialiser des variables, ou définir le séparateur <code>FS</code>.
-        <code>END</code> s'exécute après la dernière ligne — utile pour afficher des totaux.
-      </div>
-    </div>
-
-    <div class="quiz-q" data-answer="d">
-      <div class="quiz-question">7. Tu veux extraire la 3e colonne d'un fichier CSV (séparé par des virgules). Quelle commande utiliser ?</div>
-      <div class="quiz-options">
-        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>sed 's/.*,\(.*\),.*/\1/' fichier.csv</button>
-        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>grep -o ',[^,]*,' fichier.csv</button>
-        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>awk '{print $3}' fichier.csv</button>
-        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>awk -F, '{print $3}' fichier.csv</button>
-      </div>
-      <div class="quiz-feedback">
-        <strong>awk -F, '{print $3}'</strong> est la bonne réponse. <code>-F,</code> définit la virgule comme séparateur de champs.
-        Sans <code>-F</code>, awk utilise l'espace/tabulation comme séparateur — <code>$3</code> serait le 3e mot, pas la 3e colonne CSV.
-        <code>cut -d, -f3</code> est une alternative simple pour ce cas précis.
-      </div>
-    </div>
-
-  </div>
-
-  <div class="quiz-score" id="quiz-score">
-    <div class="score-number" id="score-n">—</div>
-    <div class="score-max">/ <span id="score-total"></span></div>
-    <div class="score-label" id="score-label"></div>
-    <button class="quiz-reset-btn" onclick="resetQuiz()">Recommencer</button>
-  </div>
-</div>
-
-</main>
-
-<script>
-// ── TABS ──
-function showTab(id) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + id).classList.add('active');
-  event.currentTarget.classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// ── COPY ──
-function copyCode(btn) {
-  const block = btn.parentElement;
-  let text = '';
-  block.childNodes.forEach(n => {
-    if (n.nodeType === 3) text += n.textContent;
-    else if (n.tagName !== 'BUTTON') text += n.textContent;
-  });
-  navigator.clipboard.writeText(text.trim()).then(() => {
-    btn.textContent = '✓ copié'; btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = '⎘ copier'; btn.classList.remove('copied'); }, 1600);
-  });
-}
-
-// ── SED ANATOMY ──
-const sedInfo = {
-  cmd:  { label: 'sed', text: '<strong style="color:#56cfb2;">sed</strong> — Stream EDitor. Lit le fichier ligne par ligne et applique des transformations. Par défaut, n\'écrit pas dans le fichier.' },
-  s:    { label: 's — substitute', text: '<strong style="color:#f472b6;">s</strong> — la commande de <strong>substitution</strong>. C\'est la plus utilisée de sed. Elle cherche un motif et le remplace.' },
-  sep1: { label: '/ séparateur', text: 'Le <strong>séparateur</strong> entre les parties de la commande. Par convention c\'est <code>/</code>, mais on peut utiliser n\'importe quel caractère : <code>s|a|b|g</code> ou <code>s#a#b#g</code> — utile quand le motif contient des <code>/</code>.' },
-  old:  { label: 'motif à chercher', text: '<strong style="color:#f0a500;">ancien</strong> — le motif à rechercher. Peut être une chaîne simple ou une expression régulière POSIX. Exemple : <code>^Port 22$</code> pour une ligne exacte.' },
-  sep2: { label: '/ séparateur', text: 'Séparateur entre le motif et le remplacement.' },
-  new:  { label: 'remplacement', text: '<strong style="color:#56cfb2;">nouveau</strong> — le texte de remplacement. Peut contenir des références arrière : <code>\\1</code>, <code>\\2</code>… pour réutiliser des groupes capturés du motif. Pour supprimer, laisser vide.' },
-  sep3: { label: '/ séparateur', text: 'Séparateur avant les flags.' },
-  g:    { label: 'g — global', text: '<strong style="color:#a3e635;">g</strong> — flag <em>global</em> : remplace <strong>toutes</strong> les occurrences sur chaque ligne. Sans <code>g</code>, seule la première occurrence par ligne est remplacée. Autres flags : <code>I</code> (insensible à la casse), <code>2</code> (2e occurrence seulement).' },
-  file: { label: 'fichier source', text: '<strong style="color:#7ec8e3;">fichier.txt</strong> — le fichier à traiter. On peut aussi passer le texte via un pipe : <code>echo "texte" | sed \'s/a/b/g\'</code>.' }
-};
-function clickSed(part) {
-  document.querySelectorAll('.sed-part').forEach(p => p.classList.remove('active'));
-  part.classList.add('active');
-  const info = sedInfo[part.dataset.id];
-  document.getElementById('sed-detail').innerHTML = `<strong style="color:var(--accent);">${info.label}</strong> — ${info.text}`;
-}
-
-// ── SED COMMANDS ──
-function toggleCmd(card) {
-  const isOpen = card.classList.contains('active');
-  document.querySelectorAll('.cmd-card.active').forEach(c => c.classList.remove('active'));
-  if (!isOpen) card.classList.add('active');
-}
-
-// ── SED SIMULATOR ──
-function runSim() {
-  const oldVal  = document.getElementById('sim-old').value;
-  const newVal  = document.getElementById('sim-new').value;
-  const isGlobal = document.getElementById('sim-global').checked;
-  const isIcase  = document.getElementById('sim-icase').checked;
-  const input   = document.getElementById('sim-input').value;
-
-  const flags = (isGlobal ? 'g' : '') + (isIcase ? 'i' : '');
-  const cmdStr = `sed 's/${oldVal}/${newVal}/${flags}' fichier.txt`;
-  document.getElementById('sim-cmd').textContent = '$ ' + cmdStr;
-
-  if (!oldVal) { document.getElementById('sim-output').textContent = input; return; }
-  try {
-    const re = new RegExp(oldVal, isGlobal ? (isIcase ? 'gi' : 'g') : (isIcase ? 'i' : ''));
-    const lines = input.split('\n').map(line => {
-      return line.replace(re, match => `<span class="highlight">${newVal}</span>`);
-    });
-    document.getElementById('sim-output').innerHTML = lines.join('\n');
-  } catch(e) {
-    document.getElementById('sim-output').textContent = '⚠ Expression régulière invalide : ' + e.message;
-  }
-}
-
-// ── AWK FIELD ──
-const fieldInfo = {
-  '1': { var: '$1', val: 'samuel', desc: 'Nom de login — 1er champ' },
-  '2': { var: '$2', val: 'x', desc: 'Mot de passe (x = stocké dans /etc/shadow)' },
-  '3': { var: '$3', val: '1000', desc: 'UID — identifiant numérique de l\'utilisateur' },
-  '4': { var: '$4', val: '1000', desc: 'GID — identifiant numérique du groupe principal' },
-  '5': { var: '$5', val: 'Samuel Guillard', desc: 'Informations (GECOS) — nom complet, commentaire' },
-  '6': { var: '$6', val: '/home/samuel', desc: 'Répertoire personnel (home directory)' },
-  '7': { var: '$7', val: '/bin/bash', desc: 'Shell de connexion — aussi $NF (dernier champ)' }
-};
-function clickField(el) {
-  document.querySelectorAll('.awk-field').forEach(f => f.classList.remove('active'));
-  el.classList.add('active');
-  const f = fieldInfo[el.dataset.f];
-  document.getElementById('awk-info').innerHTML =
-    `<span style="color:var(--accent);font-family:'Consolas',monospace;font-size:.95rem;">${f.var}</span>` +
-    ` = <span style="color:#56cfb2;font-family:'Consolas',monospace;">"${f.val}"</span>` +
-    ` — <span style="color:var(--text-dim);">${f.desc}</span>` +
-    `<br><span style="color:var(--text-dim);font-size:.8rem;margin-top:.3rem;display:block;">` +
-    `awk -F: '{print ${f.var}}' /etc/passwd</span>`;
-}
-
-// ── AWK FEATURES ──
-function showFeature(id, btn) {
-  document.querySelectorAll('.feature-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.feature-tab').forEach(b => b.classList.remove('active'));
-  document.getElementById('feat-' + id).classList.add('active');
-  btn.classList.add('active');
-}
-
-// ── RECAP ──
-function filterRecap(cat, btn) {
-  btn.closest('.filter-bar').querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelectorAll('#recap-table tbody tr').forEach(row => {
-    row.style.display = (cat === 'all' || row.dataset.cat === cat) ? '' : 'none';
-  });
-}
-
-// ── QUIZ ──
-let score = 0, answered = 0;
-function answer(btn) {
-  const q = btn.closest('.quiz-q');
-  if (q.classList.contains('correct') || q.classList.contains('wrong')) return;
-  const correct = q.dataset.answer, chosen = btn.dataset.val;
-  const fb = q.querySelector('.quiz-feedback');
-  q.querySelectorAll('.quiz-opt').forEach(b => {
-    b.disabled = true;
-    if (b.dataset.val === correct) { b.classList.add('correct'); b.querySelector('.opt-icon').textContent = '✓'; }
-  });
-  if (chosen === correct) {
-    q.classList.add('correct'); btn.querySelector('.opt-icon').textContent = '✓'; fb.classList.add('show','ok'); score++;
-  } else {
-    q.classList.add('wrong'); btn.classList.add('wrong'); btn.querySelector('.opt-icon').textContent = '✗'; fb.classList.add('show','ko');
-  }
-  answered++;
-  if (answered === document.querySelectorAll('.quiz-q').length) showScore();
-}
-function showScore() {
-  const total = document.querySelectorAll('.quiz-q').length;
-  const pct = Math.round(score / total * 100);
-  const label = pct >= 85 ? 'Excellent !' : pct >= 60 ? 'Bien joué — quelques révisions utiles.' : 'Revois le cours avant de continuer.';
-  document.getElementById('score-n').textContent = score;
-  document.getElementById('score-n').style.color = pct >= 85 ? 'var(--success)' : pct >= 60 ? 'var(--warn)' : 'var(--danger)';
-  document.getElementById('score-total').textContent = total;
-  document.getElementById('score-label').textContent = label;
-  document.getElementById('quiz-score').classList.add('show');
-}
-function resetQuiz() {
-  score = 0; answered = 0;
-  document.querySelectorAll('.quiz-q').forEach(q => {
-    q.classList.remove('correct','wrong');
-    q.querySelectorAll('.quiz-opt').forEach(b => { b.disabled = false; b.classList.remove('correct','wrong'); b.querySelector('.opt-icon').textContent = ''; });
-    q.querySelector('.quiz-feedback').classList.remove('show','ok','ko');
-  });
-  document.getElementById('quiz-score').classList.remove('show');
-}
-
-// Init simulator
-runSim();
-</script>
-</body>
-</html>
+</details><h1 id="chapitre-06-traiter-du-texte-avec-sed-et-awk">Chapitre 06 — Traiter du texte avec sed et awk</h1>
+<aside class="note">
+<p><strong>Objectif</strong></p>
+<p>Transformer un fichier texte, sélectionner des colonnes et calculer un total, sans modifier l'original par erreur.</p>
+</aside>
+<h2 id="a-connaitre-sed-sg-sed-n-awk-f-1-nr-end"><strong>À connaître :</strong> <code>sed 's/.../.../g'</code>, <code>sed -n</code>, <code>awk -F</code>, <code>$1</code>, <code>NR</code>, <code>END</code>.</h2>
+<h2 id="1-choisir-loutil-selon-la-tache">1. Choisir l'outil selon la tâche</h2>
+<table>
+<thead>
+<tr>
+<th>Besoin</th>
+<th>Outil</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Garder des lignes contenant un mot</td>
+<td><code>grep</code></td>
+</tr>
+<tr>
+<td>Remplacer un mot ou sélectionner des lignes</td>
+<td><code>sed</code></td>
+</tr>
+<tr>
+<td>Lire des champs et calculer</td>
+<td><code>awk</code></td>
+</tr>
+</tbody>
+</table>
+<p>Les trois outils lisent le texte. <strong>Par défaut, ils ne changent pas le fichier lu.</strong> Ils envoient un résultat sur leur sortie standard.</p>
+<h2 id="2-preparer-un-petit-inventaire">2. Préparer un petit inventaire</h2>
+<p>Dans Bash sur Debian, colle le bloc complet jusqu'à <code>EOF</code> :</p>
+<pre><code class="language-bash">mkdir -p ~/atelier-bash/texte
+cd ~/atelier-bash/texte
+cat &gt; stock.csv &lt;&lt;'EOF'
+produit;categorie;quantite;prix
+clavier;informatique;8;25
+souris;informatique;12;15
+cahier;papeterie;20;3
+ecran;informatique;4;180
+stylo;papeterie;30;2
+EOF
+</code></pre>
+<p><code>&lt;&lt;'EOF'</code> fournit les lignes suivantes à <code>cat</code>, sans interpréter leur contenu. <code>&gt;</code> écrit le résultat dans <code>stock.csv</code>. La dernière ligne <code>EOF</code> doit être seule.</p>
+<p>Ce fichier utilise <code>;</code> pour séparer quatre champs. La première ligne est un en-tête. C'est un format simple : aucun champ ne contient de point-virgule ni de saut de ligne. Le <code>awk</code> de ce cours ne remplace pas un lecteur CSV capable de traiter tous les cas de champs entre guillemets.</p>
+<p><img alt="Une ligne découpée en quatre champs" src="https://kayasam.github.io/linux-initiation/bash/images/bash-06-colonnes.svg" /></p>
+<h2 id="3-remplacer-du-texte-avec-sed">3. Remplacer du texte avec sed</h2>
+<pre><code class="language-bash">sed 's/informatique/materiel/g' stock.csv
+</code></pre>
+<p>Lis l'expression de gauche à droite :</p>
+<table>
+<thead>
+<tr>
+<th>Partie</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>s</code></td>
+<td>Substitution</td>
+</tr>
+<tr>
+<td><code>informatique</code></td>
+<td>Texte recherché dans cet exemple</td>
+</tr>
+<tr>
+<td><code>materiel</code></td>
+<td>Texte de remplacement</td>
+</tr>
+<tr>
+<td><code>g</code></td>
+<td>Toutes les occurrences sur chaque ligne</td>
+</tr>
+</tbody>
+</table>
+<p>Les guillemets simples protègent l'expression du shell. La recherche de <code>sed</code> utilise des expressions régulières ; ici, nous cherchons un mot sans caractère spécial.</p>
+<p>Pour conserver le résultat :</p>
+<pre><code class="language-bash">sed 's/informatique/materiel/g' stock.csv &gt; stock-corrige.csv
+cat stock-corrige.csv
+cat stock.csv
+</code></pre>
+<p>Le nouveau fichier contient <code>materiel</code>. L'original contient toujours <code>informatique</code>.</p>
+<aside class="warning">
+<p><strong>Deux noms de fichiers différents</strong></p>
+<p>N'écris jamais <code>sed ... stock.csv &gt; stock.csv</code>. Le shell viderait le fichier de destination avant que <code>sed</code> puisse le lire.</p>
+</aside>
+<h2 id="4-choisir-ou-retirer-des-lignes">4. Choisir ou retirer des lignes</h2>
+<pre><code class="language-bash">sed -n '2,4p' stock.csv
+</code></pre>
+<p><code>-n</code> coupe l'affichage automatique ; <code>2,4p</code> affiche les lignes 2 à 4 incluses. Tu obtiens clavier, souris et cahier.</p>
+<pre><code class="language-bash">sed '1d' stock.csv
+</code></pre>
+<p><code>1d</code> retire la première ligne de la <strong>sortie</strong>. Le fichier n'est pas modifié.</p>
+<pre><code class="language-bash">sed '/papeterie/d' stock.csv
+</code></pre>
+<p>Ce dernier exemple retire de la sortie les lignes contenant <code>papeterie</code>.</p>
+<h2 id="5-lire-les-champs-avec-awk">5. Lire les champs avec awk</h2>
+<pre><code class="language-bash">awk -F ';' 'NR &gt; 1 { print $1, $3 }' stock.csv
+</code></pre>
+<ul>
+<li><code>-F ';'</code> fixe le séparateur de champs.</li>
+<li><code>NR</code> est le numéro de la ligne en cours.</li>
+<li><code>NR &gt; 1</code> saute l'en-tête.</li>
+<li><code>$1</code> est le produit, <code>$3</code> sa quantité.</li>
+<li><code>{ print ... }</code> est l'action exécutée pour les lignes sélectionnées.</li>
+</ul>
+<p>Résultat :</p>
+<pre><code class="language-text">clavier 8
+souris 12
+cahier 20
+ecran 4
+stylo 30
+</code></pre>
+<p>Les <code>$1</code> et <code>$3</code> appartiennent ici à <strong>awk</strong>, pas à Bash : les guillemets simples empêchent Bash de les remplacer.</p>
+<h2 id="6-filtrer-avec-une-condition">6. Filtrer avec une condition</h2>
+<pre><code class="language-bash">awk -F ';' 'NR &gt; 1 &amp;&amp; $3 &lt; 10 { print $1, $3 }' stock.csv
+</code></pre>
+<p>La ligne doit être après l'en-tête <strong>et</strong> sa quantité doit être inférieure à 10. Résultat : <code>clavier 8</code>, puis <code>ecran 4</code>.</p>
+<h2 id="7-calculer-un-total">7. Calculer un total</h2>
+<pre><code class="language-bash">awk -F ';' 'NR &gt; 1 { total += $3 } END { print total }' stock.csv
+</code></pre>
+<p>À chaque produit, <code>total += $3</code> ajoute sa quantité. Après la dernière ligne, <code>END</code> affiche la somme. Résultat : <strong>74 articles</strong>.</p>
+<p>Pour calculer la valeur de l'inventaire :</p>
+<pre><code class="language-bash">awk -F ';' 'NR &gt; 1 { total += $3 * $4 } END { print total }' stock.csv
+</code></pre>
+<p>Chaque quantité est multipliée par son prix unitaire. Résultat : <strong>1220</strong>.</p>
+<p>Le <code>END</code> de <code>awk</code> n'est pas le <code>done</code> d'une boucle Bash : nous utilisons deux langages différents, chacun avec sa syntaxe.</p>
+<h2 id="8-relier-deux-outils">8. Relier deux outils</h2>
+<pre><code class="language-bash">sed '1d' stock.csv | awk -F ';' '{ total += $3 } END { print total }'
+</code></pre>
+<p><code>sed</code> retire l'en-tête, puis le tube transmet les produits à <code>awk</code>. On retrouve 74. C'est une autre façon de faire ; le <code>awk</code> précédent suffit quand il sait filtrer lui-même l'en-tête.</p>
+<h2 id="pour-aller-plus-loin-modifier-avec-une-sauvegarde">Pour aller plus loin : modifier avec une sauvegarde</h2>
+<p>Travaille d'abord sur une copie :</p>
+<pre><code class="language-bash">cp stock.csv stock-test.csv
+sed -i.bak 's/informatique/materiel/g' stock-test.csv
+cat stock-test.csv
+cat stock-test.csv.bak
+</code></pre>
+<p>Sur Debian, <code>-i.bak</code> modifie <code>stock-test.csv</code> et conserve l'ancienne version dans <code>stock-test.csv.bak</code>. Ce comportement est celui de GNU sed ; ne suppose pas que les options sont identiques sur tous les systèmes.</p>
+<h2 id="a-retenir">À retenir</h2>
+<ul>
+<li><code>sed</code> transforme ou sélectionne du texte ; <code>awk</code> travaille bien avec des champs.</li>
+<li>Identifie le séparateur et l'en-tête avant de calculer.</li>
+<li>Regarde d'abord le résultat, puis écris dans un nouveau fichier.</li>
+</ul>
+<p><strong>À toi :</strong> que désigne <code>$4</code> dans notre inventaire ? Pourquoi utilisons-nous <code>NR &gt; 1</code> ? Pourquoi des guillemets simples autour du programme <code>awk</code> ?</p>
+<p><a href="https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp">Passer au TP</a></p><nav class="lesson-nav" aria-label="Parcours"><a href="https://kayasam.github.io/linux-initiation/bash/cours/05-boucles-interactif.html">← Chapitre précédent</a><a href="https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/">Cours Markdown</a><span>Fin du parcours</span></nav></main></body></html>

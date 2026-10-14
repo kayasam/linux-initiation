@@ -1,416 +1,197 @@
 ---
-title: "04. Tests et conditions"
+title: "04. Les tests et les conditions"
 ---
 
-# Chapitre 04 — Tests et conditions
+# Chapitre 04 — Les tests et les conditions
 
 > [!TIP] Ressources du chapitre
-> - [Version HTML interactive](https://kayasam.github.io/linux-initiation/bash/cours/04-tests-et-conditions-interactif.html)
+> - [Version HTML](https://kayasam.github.io/linux-initiation/bash/cours/04-tests-et-conditions-interactif.html)
 > - <a href="https://kayasam.github.io/linux-initiation/telechargements/bash/cours/04-tests-et-conditions.md" download>Télécharger le cours en Markdown</a>
 > - [Passer au TP](https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/tp)
 
 
+> [!NOTE] Objectif
+> Faire prendre une décision à ton script : continuer, choisir une action ou expliquer pourquoi il s'arrête.
+
+**À connaître :** `if`, `then`, `else`, `elif`, `fi`, `[[ ... ]]`, `case`, `exit`.
 ---
 
-## 1. Les tests
+## 1. Une question avec deux chemins
 
-La commande `test` permet d'effectuer des tests logiques dans un script. Elle retourne un **code de retour** :
-- `0` → le test est **vrai**
-- `1` → le test est **faux**
+![Un test choisit entre deux actions](https://kayasam.github.io/linux-initiation/bash/images/bash-04-condition.svg)
 
-> [!WARNING]
-> En bash, le `0` signifie VRAI et tout autre valeur signifie FAUX — c'est l'inverse de ce qu'on trouve dans la plupart des langages de programmation.
-### Les trois syntaxes
+Un test a un résultat : vrai ou faux. `if` exécute le premier bloc lorsque le test réussit ; sinon, il peut exécuter le bloc `else`.
 
 ```bash
-test -d /etc          # syntaxe longue
-[ -d /etc ]           # syntaxe courte — équivalente à test
-[[ -d /etc ]]         # syntaxe bash étendue — recommandée
+energie=30
+if [[ "$energie" -ge 20 ]]; then
+    printf 'Depart autorise\n'
+else
+    printf 'Recharge necessaire\n'
+fi
 ```
+
+Résultat : `Depart autorise`. Avec `energie=10`, tu prendrais l'autre chemin.
+
+Dans ce cours, nous utilisons `[[ ... ]]`, une syntaxe de **Bash**. Garde les espaces après `[[` et avant `]]`. `then` ouvre le bloc et `fi` ferme le `if`. L'indentation de quatre espaces rend les branches visibles.
+
+## 2. Comparer du texte
 
 ```bash
-[ -d /etc ] ; echo $?    # 0 ← vrai, /etc est bien un dossier
-[ -f /etc ] ; echo $?    # 1 ← faux, /etc n'est pas un fichier
+destination="Orion"
+if [[ "$destination" == "Orion" ]]; then
+    printf 'Bonne destination\n'
+else
+    printf 'Verifier le billet\n'
+fi
 ```
 
----
+| Test | Question posée |
+|---|---|
+| `[[ "$nom" == "Mila" ]]` | La valeur est-elle exactement `Mila` ? |
+| `[[ "$nom" != "Mila" ]]` | Est-elle différente de `Mila` ? |
+| `[[ -z "$nom" ]]` | La chaîne est-elle vide ? |
+| `[[ -n "$nom" ]]` | Contient-elle au moins un caractère ? |
 
-> [!TIP]
-> **Bonne pratique** : utiliser `[[ ]]` dans les scripts bash. Réserver `[ ]` pour les scripts POSIX portables (`sh`).
----
+Le signe `=` d'une affectation n'est pas un test. `nom="Mila"` change la variable ; le test vérifie sa valeur.
 
-## 2. Tests sur les chaînes
-
-```bash
-[ -z "$chaine" ]     # vrai si la chaîne est vide (zero)
-[ -n "$chaine" ]     # vrai si la chaîne n'est pas vide (non-zero)
-[ "$a" = "$b" ]      # vrai si les deux chaînes sont identiques
-[ "$a" != "$b" ]     # vrai si les deux chaînes sont différentes
-```
-
-> [!DANGER]
-> Toujours mettre les variables entre guillemets doubles dans les tests. Sans guillemets, si la variable est vide, bash génère une erreur de syntaxe.
-> 
-> ```bash
-> a=
-> [ $a = "test" ]     # ERREUR : bash voit [ = "test" ] → opérateur manquant
-> [ "$a" = "test" ]   # CORRECT
-> ```
-Exemples :
-
-```bash
-a=
-[ -z "$a" ] ; echo $?    # 0 ← vrai, a est vide
-
-a=Jules
-[ -n "$a" ] ; echo $?    # 0 ← vrai, a n'est pas vide
-[ "$a" = "Jules" ] ; echo $?   # 0 ← vrai
-[ "$a" = "alice" ] ; echo $?   # 1 ← faux
-```
-
----
-
-## 3. Tests sur les valeurs numériques
-
-Pour les comparaisons numériques on utilise des opérateurs dédiés (les `=` et `<` de chaînes ne fonctionnent pas pour les nombres) :
-
-| Opérateur | Signification | Exemple |
-|-----------|--------------|---------|
-| `-eq` | égal (*equal*) | `[ "$a" -eq "$b" ]` |
-| `-ne` | différent (*not equal*) | `[ "$a" -ne "$b" ]` |
-| `-lt` | inférieur (*less than*) | `[ "$a" -lt "$b" ]` |
-| `-gt` | supérieur (*greater than*) | `[ "$a" -gt "$b" ]` |
-| `-le` | inférieur ou égal (*less or equal*) | `[ "$a" -le "$b" ]` |
-| `-ge` | supérieur ou égal (*greater or equal*) | `[ "$a" -ge "$b" ]` |
-
-```bash
-a=10
-b=20
-
-[ "$a" -ne "$b" ] ; echo $?    # 0 ← vrai, 10 ≠ 20
-[ "$a" -ge "$b" ] ; echo $?    # 1 ← faux, 10 n'est pas ≥ 20
-[ "$a" -lt "$b" ] ; echo $?    # 0 ← vrai, 10 < 20
-```
-
----
-
-## 4. Tests sur les fichiers
-
-| Opérateur | Vrai si… |
-|-----------|---------|
-| `-e fichier` | le fichier ou dossier **existe** |
-| `-f fichier` | c'est un **fichier** ordinaire |
-| `-d fichier` | c'est un **dossier** (*directory*) |
-| `-r fichier` | le fichier est **lisible** |
-| `-w fichier` | le fichier est **modifiable** (*writable*) |
-| `-x fichier` | le fichier est **exécutable** |
-| `-s fichier` | le fichier est **non vide** (*size > 0*) |
-| `-L fichier` | c'est un **lien symbolique** |
-
-```bash
-[ -f /etc/hosts ] ; echo $?    # 0 ← c'est bien un fichier
-[ -d /etc ]       ; echo $?    # 0 ← c'est bien un dossier
-[ -d /etc/hosts ] ; echo $?    # 1 ← /etc/hosts n'est pas un dossier
-[ -x /bin/bash ]  ; echo $?    # 0 ← bash est exécutable
-[ -s /etc/hosts ] ; echo $?    # 0 ← le fichier n'est pas vide
-```
-
----
-
-## 5. Tests combinés — opérateurs logiques
-
-On peut combiner plusieurs tests avec des opérateurs logiques.
-
-Dans `[[ ]]` (recommandé) :
+## 3. Comparer des entiers
 
 | Opérateur | Signification |
-|-----------|--------------|
-| `&&` | ET logique — les deux tests doivent être vrais |
-| `\|\|` | OU logique — au moins un test doit être vrai |
-| `!` | NON logique — inverse le résultat |
+|---|---|
+| `-eq`, `-ne` | Égal, différent |
+| `-lt`, `-le` | Inférieur, inférieur ou égal |
+| `-gt`, `-ge` | Supérieur, supérieur ou égal |
+
+On peut distinguer plusieurs situations avec `elif` :
 
 ```bash
-# Vrai si le dossier existe ET est accessible en écriture
-[[ -d "$rep" && -w "$rep" ]] && echo "$rep : dossier, droit en écriture"
-
-# Vrai si le fichier n'existe pas
-[[ ! -e "$fichier" ]] && echo "le fichier n'existe pas"
-```
-
-Dans `[ ]` (POSIX) on utilise à la place `-a` (ET) et `-o` (OU) :
-
-```bash
-[ -d "$rep" -a -w "$rep" ] && echo "$rep : dossier, droit en écriture"
-```
-
----
-
-## 6. La condition if
-
-https://learning.lpi.org/fr/learning-materials/102-500/105/105.2/105.2_01/#:~:text=commande%20interne%20if
-
-La commande `if` exécute des commandes uniquement si une condition est vraie (code retour = 0).
-
-### Syntaxe
-
-```bash
-if commande_ou_test ; then
-    # commandes si vrai
-elif autre_test ; then
-    # commandes si le premier était faux mais celui-ci est vrai
+energie=15
+if [[ "$energie" -ge 50 ]]; then
+    printf 'Grande mission\n'
+elif [[ "$energie" -ge 20 ]]; then
+    printf 'Petite mission\n'
 else
-    # commandes si tout était faux
+    printf 'Recharge\n'
 fi
 ```
 
-### Exemple — tester l'existence d'un dossier
+Bash s'arrête à la première branche qui réussit. Ici, il affiche `Recharge`. Les valeurs de cet exemple sont des entiers fixés dans le programme ; une saisie utilisateur doit être vérifiée avant un test numérique.
 
-`verif-dossier.sh` :
+## 4. Tester un fichier
+
 ```bash
-#!/usr/bin/env bash
+mkdir -p ~/atelier-bash/conditions
+cd ~/atelier-bash/conditions
+printf 'ORION-OK\n' > billet.txt
 
-set -euo pipefail
-
-repertoire="$1"
-
-if [[ -d "$repertoire" ]] ; then
-    echo "Le dossier $repertoire existe."
+if [[ -f "billet.txt" ]]; then
+    printf 'Billet trouve\n'
 else
-    echo "Le dossier $repertoire n'existe pas."
+    printf 'Billet absent\n'
 fi
 ```
 
-```bash
-./verif-dossier.sh /etc       # Le dossier /etc existe.
-./verif-dossier.sh /inexistant # Le dossier /inexistant n'existe pas.
-```
+| Test | Vérification |
+|---|---|
+| `-e` | Le chemin existe |
+| `-f` | C'est un fichier ordinaire |
+| `-d` | C'est un dossier |
+| `-r` | Le fichier est lisible pour le processus |
+| `-s` | Le fichier existe et sa taille dépasse zéro |
 
-### Exemple — tester le nombre d'arguments
+Un dossier n'est pas un fichier ordinaire. Choisis le test adapté plutôt que de tout vérifier avec `-e`.
 
-```bash
-#!/usr/bin/env bash
+## 5. Réagir au résultat d'une commande
 
-set -euo pipefail
-
-if [[ $# -ne 1 ]] ; then
-    echo "Usage : $0 <nom>"
-    exit 1
-fi
-
-echo "Bonjour, $1 !"
-```
-
-### Exemple — tester si une commande est disponible
-
-https://unix.stackexchange.com/questions/85249/why-not-use-which-what-to-use-then/85250#85250
+On peut placer une commande directement après `if` : son code de retour sert de test.
 
 ```bash
-if command -v curl > /dev/null ; then
-    echo "curl est installé"
+if grep -qx 'ORION-OK' billet.txt; then
+    printf 'Billet accepte\n'
 else
-    echo "curl n'est pas installé"
+    printf 'Billet refuse\n'
 fi
 ```
 
-Voir aussi https://www.it-connect.fr/script-bash-utiliser-conditions-if-else-et-elif/
+`grep -q` n'affiche pas les lignes trouvées. `-x` exige une correspondance sur une ligne entière. Le code `0` de `grep` sélectionne le premier bloc.
 
----
+Cet exemple vérifie qu'au moins une ligne est exactement `ORION-OK`. Ce n'est pas une vérification de signature ni un vrai système d'accès.
 
-## 7. La structure case
+## 6. Vérifier les arguments avant de les utiliser
 
-`case` est utilisé pour simplifier les conditions à choix multiples — équivalent d'une série de `if/elif` sur la même variable.
+Contenu de `controle.sh` :
 
-https://ftp.traduc.org/doc-vf/guides/Bash-Beginners-Guide/Bash-Beginners-Guide.html#sect_07_03
-
-### Syntaxe
-
-```bash
-case "$variable" in
-    motif1)
-        commandes
-        ;;
-    motif2 | motif3)      # plusieurs motifs séparés par |
-        commandes
-        ;;
-    *)                    # cas par défaut (optionnel)
-        commandes
-        ;;
-esac
-```
-
-Détails :
-- `;;` termine chaque bloc — obligatoire
-- `|` sépare les motifs alternatifs pour un même bloc
-- `*` correspond à tout ce qui n'a pas été capturé avant (cas par défaut)
-- Les motifs peuvent contenir des jokers (`*`, `?`)
-
-### Exemple — format de paquets selon la distribution
-
+<!-- fichier: controle.sh -->
 ```bash
 #!/usr/bin/env bash
 
-set -euo pipefail
+if [[ "$#" -ne 1 ]]; then
+    printf 'Usage : %s fichier\n' "$0" >&2
+    exit 2
+fi
 
-distro="$1"
+fichier="$1"
+if [[ ! -f "$fichier" ]]; then
+    printf 'Fichier absent : %s\n' "$fichier" >&2
+    exit 2
+fi
 
-case "$distro" in
-    debian | ubuntu | mint)
-        echo "$distro utilise le format DEB"
-        ;;
-    centos | fedora | opensuse)
-        echo "$distro utilise le format RPM"
-        ;;
-    *)
-        echo "Distribution $distro inconnue"
-        ;;
-esac
+printf 'Fichier disponible : %s\n' "$fichier"
+exit 0
 ```
 
-### Exemple — menu interactif
+- `$#` vérifie le nombre d'arguments **avant** la lecture de `$1`.
+- `!` inverse un test.
+- `>&2` dirige un message vers la sortie d'erreur.
+- `exit` termine ce script avec le code choisi.
 
 ```bash
-#!/usr/bin/env bash
+bash -n controle.sh
+bash controle.sh billet.txt
+bash controle.sh introuvable.txt
+printf 'Code du dernier essai : %s\n' "$?"
+```
 
-set -euo pipefail
+Le premier essai réussit. Le second affiche une erreur et le code **2**. Ces valeurs sont une convention choisie pour ce programme ; d'autres commandes peuvent en utiliser d'autres.
 
-echo "Que voulez-vous faire ?"
-echo "  1) Afficher la date"
-echo "  2) Afficher l'espace disque"
-echo "  3) Quitter"
-read -p "Votre choix : " choix
+## 7. Choisir parmi plusieurs mots avec case
 
+```bash
+choix="radio"
 case "$choix" in
-    1)
-        date
+    radio)
+        printf 'Canal radio ouvert\n'
         ;;
-    2)
-        df -h /
-        ;;
-    3)
-        echo "Au revoir !"
-        exit 0
+    reserve)
+        printf 'Reserve disponible\n'
         ;;
     *)
-        echo "Choix invalide : $choix"
-        exit 1
+        printf 'Choix inconnu\n'
         ;;
 esac
 ```
 
-### Insensibilité à la casse avec nocasematch
+Chaque choix se termine par `)`. `;;` termine sa branche. `*` récupère les autres cas. `esac` ferme la structure.
+
+## 8. Combiner deux vérifications
 
 ```bash
-shopt -s nocasematch    # active la correspondance insensible à la casse
-
-case "$reponse" in
-    oui | o | yes | y)
-        echo "Vous avez répondu oui"
-        ;;
-    non | n | no)
-        echo "Vous avez répondu non"
-        ;;
-esac
-
-shopt -u nocasematch    # désactive
+if [[ -f "billet.txt" && -r "billet.txt" ]]; then
+    printf 'Le billet est un fichier lisible\n'
+fi
 ```
 
----
+`&&` signifie « et ». `||` signifie « ou ». Commence par des tests courts ; si la condition devient difficile à lire, sépare les vérifications et explique chaque erreur.
 
-## 8. Exercices — conditions
+## À retenir
 
-**Exercice 1** : écrire un script `verif-fichier.sh` qui prend un chemin en argument et affiche si c'est :
-- un fichier ordinaire
-- un dossier
-- ni l'un ni l'autre (ou inexistant)
+- Un test choisit un chemin ; il ne modifie pas la valeur testée.
+- Vérifie les arguments et les fichiers avant leur utilisation.
+- Prévois aussi un message et un code de retour pour les cas invalides.
 
-> [!TIP]
-> **Solution**
-> 
-> ```bash
-> #!/usr/bin/env bash
-> 
-> set -euo pipefail
-> 
-> cible="$1"
-> 
-> if [[ -f "$cible" ]] ; then
->     echo "$cible est un fichier ordinaire"
-> elif [[ -d "$cible" ]] ; then
->     echo "$cible est un dossier"
-> else
->     echo "$cible n'existe pas ou n'est ni un fichier ni un dossier"
-> fi
-> ```
-**Exercice 2** : écrire un script `comparaison.sh` qui prend deux nombres en argument et affiche si le premier est supérieur, inférieur ou égal au second.
+**À toi :** quel test différencie un dossier d'un fichier ? Quelle branche exécute `case` pour un mot inconnu ?
 
-> [!TIP]
-> **Solution**
-> 
-> ```bash
-> #!/usr/bin/env bash
-> 
-> set -euo pipefail
-> 
-> a="$1"
-> b="$2"
-> 
-> if [[ "$a" -gt "$b" ]] ; then
->     echo "$a est supérieur à $b"
-> elif [[ "$a" -lt "$b" ]] ; then
->     echo "$a est inférieur à $b"
-> else
->     echo "$a est égal à $b"
-> fi
-> ```
----
-
-## Récapitulatif des commandes
-
-| Commande / Syntaxe | Description |
-|-------------------|-------------|
-| `test expression` | Évalue un test (retourne 0 si vrai, 1 si faux) |
-| `[ expression ]` | Équivalent à `test` — syntaxe POSIX |
-| `[[ expression ]]` | Test bash étendu — recommandé |
-| `echo $?` | Affiche le résultat du dernier test |
-| `-z "$var"` | Vrai si la variable est vide |
-| `-n "$var"` | Vrai si la variable n'est pas vide |
-| `"$a" = "$b"` | Vrai si les deux chaînes sont égales |
-| `"$a" != "$b"` | Vrai si les deux chaînes sont différentes |
-| `-eq`, `-ne` | Égal / différent (numérique) |
-| `-lt`, `-gt` | Inférieur / supérieur (numérique) |
-| `-le`, `-ge` | Inférieur ou égal / supérieur ou égal (numérique) |
-| `-e fichier` | Vrai si le fichier ou dossier existe |
-| `-f fichier` | Vrai si c'est un fichier ordinaire |
-| `-d fichier` | Vrai si c'est un dossier |
-| `-r / -w / -x` | Vrai si lisible / modifiable / exécutable |
-| `-s fichier` | Vrai si le fichier est non vide |
-| `&&` | ET logique (dans `[[ ]]`) |
-| `\|\|` | OU logique (dans `[[ ]]`) |
-| `!` | NON logique |
-| `if ... ; then ... fi` | Condition simple |
-| `if ... ; then ... elif ... ; then ... else ... fi` | Condition avec alternatives |
-| `case "$var" in ... esac` | Choix multiples |
-| `command -v nom` | Vérifie si une commande est disponible |
-| `shopt -s nocasematch` | Active la correspondance insensible à la casse |
-| `exit 1` | Quitte le script avec un code d'erreur |
-
----
-
-> [!NOTE]
-> ### À retenir
-> 
-> - Un test retourne `0` si **vrai**, `1` si **faux** — l'inverse de la plupart des langages.
-> - Préférer `[[ ]]` à `[ ]` dans les scripts bash : plus sûr, supporte `&&`, `||` et les motifs.
-> - Toujours mettre les variables entre guillemets doubles dans les tests pour éviter les erreurs sur variable vide.
-> - Tests chaînes : `-z` (vide), `-n` (non vide), `=` (égal), `!=` (différent).
-> - Tests numériques : `-eq`, `-ne`, `-lt`, `-gt`, `-le`, `-ge`.
-> - Tests fichiers : `-e` (existe), `-f` (fichier), `-d` (dossier), `-r/-w/-x` (droits), `-s` (non vide).
-> - `if ... ; then ... elif ... ; then ... else ... fi` — se termine toujours par `fi`.
-> - `case "$var" in motif) ... ;; esac` — plus lisible qu'une série de `if/elif` sur la même variable.
-> - `command -v nom` vérifie si une commande est disponible sur le système.
----
-
-> [!TIP]
-> **TP associé** → [tp-04-tests-et-conditions.md](https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/tp)
+[Passer au TP](https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/tp)
 
 [← Parcours Bash](https://kayasam.github.io/linux-initiation/#bash) · [Tous les TP Bash](https://kayasam.github.io/linux-initiation/bash/tp/)

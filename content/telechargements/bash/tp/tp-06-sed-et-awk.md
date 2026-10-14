@@ -1,20 +1,18 @@
-# TP 06 — La boutique du terminal : sed et awk
+# TP 06 — Préparer le ravitaillement d'Orion
 
 > Chapitre associé : [06 — sed et awk](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/)
 
----
-
 ## Mission
 
-Une boutique te confie son inventaire. Tu dois corriger des libellés, filtrer les produits et calculer les stocks avec `sed` et `awk`. Toutes les commandes s'exécutent dans Bash sur ta VM Debian.
+Le cargo de ravitaillement arrive. Corrige l'inventaire, repère les stocks faibles et annonce sa valeur totale. Les données sont fictives et tous les calculs utilisent des entiers.
 
-## Partie A — Préparer les données
+## Partie A — Recevoir l'inventaire
 
-**A1.** Crée ton espace de travail et colle tout ce bloc :
+**A1.** Colle le bloc complet :
 
 ```bash
-mkdir -p ~/scripting/tp06
-cd ~/scripting/tp06
+mkdir -p ~/atelier-bash/06-stock
+cd ~/atelier-bash/06-stock
 cat > stock.csv <<'EOF'
 produit;categorie;quantite;prix
 clavier;informatique;8;25
@@ -25,44 +23,38 @@ stylo;papeterie;30;2
 EOF
 ```
 
-**A2.** Affiche le fichier et identifie le séparateur, l'en-tête et les quatre colonnes. Combien y a-t-il de produits ?
+**A2.** Affiche le fichier. Repère le séparateur, l'en-tête et les cinq produits. Quel champ contient le prix ?
 
-## Partie B — Transformer avec sed
+## Partie B — Corriger les étiquettes
 
-**B1.** Affiche l'inventaire en remplaçant toutes les occurrences de `informatique` par `materiel`. Le fichier original doit rester intact.
+**B1.** Avec `sed`, affiche une version où `informatique` devient `materiel`.
 
-> Indice : `sed 's/ancien/nouveau/g' fichier`
+**B2.** Conserve ce résultat dans `stock-corrige.csv`. Vérifie que `stock.csv` contient encore `informatique`.
 
-**B2.** Sauvegarde ce résultat dans un nouveau fichier `stock-corrige.csv`. Vérifie les deux fichiers pour prouver que l'original n'a pas changé.
+**B3.** Affiche uniquement les lignes 2 à 4 avec `sed`. Attendu : clavier, souris, cahier.
 
-**B3.** Avec `sed`, affiche uniquement les lignes 2 à 4 de `stock.csv`.
+> Indice : option `-n`, expression `2,4p`.
 
-> Indice : `-n` masque l'affichage automatique ; `2,4p` affiche la plage demandée.
+## Partie C — Faire les comptes
 
-## Partie C — Analyser avec awk
+**C1.** Avec `awk`, affiche le nom et la quantité des produits, sans l'en-tête.
 
-**C1.** Affiche le nom et la quantité de chaque produit, sans l'en-tête.
+**C2.** Garde seulement les quantités inférieures à 10. Attendu : **clavier 8** et **ecran 4**.
 
-> Indices : `-F ';'` choisit le séparateur, `NR > 1` ignore l'en-tête, `$1` désigne la première colonne.
+**C3.** Calcule le nombre d'articles. Attendu : **74**.
 
-**C2.** Affiche uniquement les produits dont la quantité est strictement inférieure à 10.
+**C4.** Calcule la valeur totale : somme de `quantité × prix`. Attendu : **1220**.
 
-**C3.** Calcule le nombre total d'articles en additionnant les quantités. Attendu : **74**.
-
-> Indice : accumule avec `total += $3`, puis affiche dans `END`.
-
-**C4.** Calcule la valeur totale du stock : somme de `quantité × prix`. Attendu : **1220**.
+> Indices : `-F ';'` pour les champs, `NR > 1` pour les produits, une variable de total, puis `END`.
 
 ## Bonus — Le rapport du responsable
 
-Produis un fichier `rapport.txt` contenant le nom et la valeur du stock pour chaque produit, puis une dernière ligne donnant le total. Utilise `awk` et une redirection.
+Crée `rapport.txt` avec une ligne par produit donnant son nom et la valeur de son stock. Ajoute une dernière ligne `TOTAL 1220`. Tu peux tout produire avec un seul programme `awk` et une redirection.
 
-## Contrôle de mission
+**Défi supplémentaire :** sur une copie nommée `stock-test.csv`, utilise `sed -i.bak`. Montre la version corrigée et sa sauvegarde, sans toucher à l'original.
 
-- Explique la différence entre afficher une transformation et modifier le fichier d'origine.
-- Montre le filtre des stocks faibles et les deux totaux.
-- Explique le rôle de `-F`, `NR`, `$3` et `END`.
+## Mission accomplie si…
 
-Tu peux conserver les fichiers de cet exercice dans `~/scripting/tp06`.
+Les totaux sont exacts, les deux stocks faibles sont identifiés et l'inventaire original est conservé. Explique le rôle de `NR` et de `END` avec tes mots.
 
 [← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/)

@@ -2,80 +2,70 @@
 title: "TP 05"
 ---
 
-# TP 05 — Les boucles
+# TP 05 — Programmer le robot copieur
 
-> Chapitre associé : `05-boucles.md`
-> Durée estimée : 1h
+> Chapitre associé : [05 — Les boucles](https://kayasam.github.io/linux-initiation/bash/05-boucles/)
 
----
+## Mission
 
-## Objectifs
+Le robot doit copier les messages `.txt` d'Orion, compter ses copies et laisser les originaux en place. Un fichier au nom composé et un faux dossier essaieront de le piéger.
 
-- Utiliser `for` pour itérer sur une liste, une plage, des fichiers
-- Utiliser `while` avec un compteur et pour lire un fichier
-- Combiner boucles, tests et variables dans un script complet
-- Utiliser `break` et `continue`
+## Partie A — Préparer les messages
 
----
+**A1.** Colle ce bloc :
 
-## Partie A — Boucle for (20 min)
-
-**A1.** Écris une boucle `for` qui affiche les jours de la semaine (du lundi au vendredi), un par ligne.
-
-**A2.** Écris une boucle `for` qui affiche les nombres de 1 à 10.
-
-**A3.** Écris une boucle `for` qui affiche uniquement les nombres pairs entre 2 et 20.
-> Indice : utiliser `{2..20..2}`
-
-**A4.** Écris un script `creer-fichiers.sh` qui prend un dossier en argument et crée à l'intérieur 5 fichiers nommés `fichier1.txt` à `fichier5.txt`. Le script doit vérifier que le dossier existe avant de commencer.
-
-**A5.** Écris un script qui affiche pour chaque fichier `.sh` dans `~/scripting` :
-- Son nom
-- S'il est exécutable ou non
-
----
-
-## Partie B — Arithmétique et while (20 min)
-
-**B1.** Écris un script `decollage.sh` qui compte à rebours de 10 à 1 avec une seconde d'attente entre chaque nombre, puis affiche `Décollage !`.
-
-**B2.** Écris un script `somme.sh` qui calcule et affiche la somme des nombres de 1 à 100 en utilisant une boucle `while`.
-
-**B3.** Écris un script qui affiche la table de multiplication du nombre passé en argument (de 1 à 10).
-Exemple pour `./table.sh 7` :
-```
-7 x 1 = 7
-7 x 2 = 14
-...
-7 x 10 = 70
+```bash
+mkdir -p ~/atelier-bash/05-copieur/messages/faux.txt
+cd ~/atelier-bash/05-copieur
+printf 'Poste ouvert\n' > messages/accueil.txt
+printf 'Canal 7\n' > "messages/journal radio.txt"
+printf 'Reserve complete\n' > messages/reserve.txt
+printf 'Image fictive\n' > messages/photo.png
+mkdir -p vide
 ```
 
-**B4.** Écris un script qui demande à l'utilisateur de deviner un nombre entre 1 et 10 (fixé à l'avance dans une variable). La boucle continue jusqu'à ce qu'il trouve la bonne réponse. Afficher si la tentative est trop haute, trop basse ou correcte.
+**A2.** Liste le dossier `messages` avec `ls -l`. Identifie les trois fichiers texte, le fichier image et le dossier dont le nom finit par `.txt`.
 
----
+## Partie B — Construire le robot
 
-## Partie C — Lire des fichiers et break/continue (20 min)
+Crée `copieur.sh` en t'aidant de l'exemple du cours.
 
-**C1.** Écris un script qui lit `/etc/passwd` ligne par ligne et affiche uniquement le nom d'utilisateur (premier champ, séparateur `:`) pour chaque ligne.
+**B1.** Accepte zéro ou un argument. Sans argument, utilise `messages`. Si le dossier n'existe pas, affiche une erreur et termine avec le code 2.
 
-**C2.** Améliore le script précédent pour n'afficher que les utilisateurs dont le shell est `/bin/bash`.
+**B2.** Crée un dossier `copies` à l'intérieur du dossier choisi. Prévois un message et un code 1 si cette création échoue.
 
-**C3.** Écris un script qui affiche les nombres de 1 à 20 mais :
-- Saute (ignore) les multiples de 3 avec `continue`
-- S'arrête complètement si le nombre est supérieur à 15 avec `break`
+**B3.** Initialise le compteur à 0, puis parcours `"$source"/*.txt`.
 
-**C4.** Écris un script `chercher.sh` qui parcourt tous les fichiers `.log` dans `/var/log` et affiche ceux qui contiennent le mot `error` (insensible à la casse).
+**B4.** Pour chaque élément :
 
----
+1. S'il n'est pas un fichier ordinaire, passe au suivant.
+2. Copie-le dans `copies`, en conservant les guillemets.
+3. En cas d'échec de la copie, affiche une erreur et termine avec le code 1.
+4. Sinon, augmente le compteur.
 
-## Questions de vérification
+**B5.** Affiche `Copies realisees : N`, avec le vrai nombre, puis vérifie la syntaxe.
 
-- [ ] Quelle syntaxe permet d'itérer sur une plage de nombres avec un pas de 2 ?
-- [ ] Quelle est la différence entre `while` et `until` ?
-- [ ] Comment lire un fichier ligne par ligne en bash ?
-- [ ] Que fait `break` dans une boucle ? Et `continue` ?
-- [ ] Comment calculer `5 * 3` en bash ?
-- [ ] Pourquoi faut-il utiliser `read -r` et pas juste `read` pour lire un fichier ?
+## Partie C — Les essais pièges
+
+**C1.** Lance le robot sur `messages`. Attendu : **3 copies**. Vérifie les contenus des copies et la présence des originaux.
+
+**C2.** Relance-le : il remplace les copies de même nom, sans créer de doublon. Le résultat reste 3.
+
+**C3.** Lance-le sur `vide`. Attendu : **0 copie**, pas une erreur.
+
+**C4.** Lance-le sur un dossier inexistant. Attendu : message d'erreur, code 2.
+
+**C5.** Explique pourquoi le dossier `faux.txt` et le fichier `photo.png` ne sont pas copiés.
+
+## Bonus — L'appel de l'équipage
+
+Crée un fichier `equipe.txt` contenant `Mila Vega` et `Noe`, une personne par ligne. Parcours-le avec `while IFS= read -r personne` et affiche une ligne d'accueil par personne.
+
+**Défi supplémentaire :** essaie une dernière ligne sans retour à la ligne. Pour la conserver, utilise cette condition : `while IFS= read -r personne || [[ -n "$personne" ]]; do`. Explique pourquoi le deuxième test permet de traiter la valeur encore présente.
+
+## Mission accomplie si…
+
+Tu obtiens les nombres **3, 3 et 0**, les noms composés restent intacts et l'erreur de dossier renvoie 2.
 
 [← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/05-boucles/)
 

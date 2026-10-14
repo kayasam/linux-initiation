@@ -1,1008 +1,176 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bases du scripting — Scripting Bash</title>
-<style>
-  :root {
-    --bg: #0f1117;
-    --surface: #1a1d27;
-    --surface2: #232635;
-    --border: #2e3148;
-    --accent: #e8944a;
-    --accent2: #f5c26b;
-    --warn: #f0a500;
-    --danger: #e05c5c;
-    --success: #4caf82;
-    --text: #d4d8f0;
-    --text-dim: #7880a0;
-    --code-bg: #12141f;
-    --radius: 10px;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; min-height: 100vh; }
-
-  header {
-    background: linear-gradient(135deg, #1a1208 0%, #1e1a0a 100%);
-    border-bottom: 1px solid var(--border);
-    padding: 2.5rem 2rem 1.5rem;
-    text-align: center; position: relative; overflow: hidden;
-  }
-  header::before {
-    content: ''; position: absolute;
-    top: -60px; left: 50%; transform: translateX(-50%);
-    width: 400px; height: 200px;
-    background: radial-gradient(ellipse, rgba(232,148,74,.22) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .badge {
-    display: inline-block;
-    background: rgba(232,148,74,.12); border: 1px solid rgba(232,148,74,.35);
-    color: var(--accent); font-size: .75rem; letter-spacing: .08em;
-    text-transform: uppercase; padding: .25rem .75rem; border-radius: 20px; margin-bottom: .75rem;
-  }
-  h1 {
-    font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700;
-    background: linear-gradient(135deg, #e8944a, #f5c26b);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    margin-bottom: .4rem;
-  }
-  .subtitle { color: var(--text-dim); font-size: 1rem; }
-
-  nav {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(15,17,23,.95); backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-    display: flex; justify-content: center; gap: .25rem; padding: .5rem 1rem; flex-wrap: wrap;
-  }
-  .tab-btn {
-    background: none; border: 1px solid transparent; color: var(--text-dim);
-    cursor: pointer; padding: .45rem 1.1rem; border-radius: 6px;
-    font-size: .88rem; font-family: inherit; transition: all .2s;
-  }
-  .tab-btn:hover { color: var(--text); background: var(--surface); }
-  .tab-btn.active { color: var(--accent); background: rgba(232,148,74,.1); border-color: rgba(232,148,74,.35); }
-
-  main { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
-  .section { display: none; }
-  .section.active { display: block; }
-  .section-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; padding-bottom: .5rem; border-bottom: 2px solid var(--border); }
-  .section-title span { color: var(--accent); }
-  h3 { font-size: 1.05rem; margin: 1.75rem 0 .75rem; }
-
-  /* CALLOUTS */
-  .callout { border-left: 3px solid; padding: .9rem 1.1rem; border-radius: 0 var(--radius) var(--radius) 0; margin: 1.25rem 0; font-size: .9rem; }
-  .callout.note   { border-color: #7c6af7; background: rgba(124,106,247,.08); }
-  .callout.warn   { border-color: var(--warn); background: rgba(240,165,0,.08); }
-  .callout.tip    { border-color: var(--success); background: rgba(76,175,130,.08); }
-  .callout.danger { border-color: var(--danger); background: rgba(224,92,92,.08); }
-  .callout-label { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .3rem; }
-  .callout.note   .callout-label { color: #a89ef8; }
-  .callout.warn   .callout-label { color: var(--warn); }
-  .callout.tip    .callout-label { color: var(--success); }
-  .callout.danger .callout-label { color: var(--danger); }
-
-  /* CODE */
-  .code-block {
-    background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 1rem 1.25rem; font-family: 'Consolas', 'Cascadia Code', monospace;
-    font-size: .85rem; overflow-x: auto; margin: 1rem 0; position: relative; line-height: 1.75; white-space: pre;
-  }
-  .code-block .comment { color: #5a6090; }
-  .code-block .cmd  { color: #56cfb2; }
-  .code-block .flag { color: #f0a500; }
-  .code-block .arg  { color: #a89ef8; }
-  .code-block .path { color: #7ec8e3; }
-  .code-block .op   { color: #e05c5c; }
-  .code-block .val  { color: #f0a500; }
-  .code-block .str  { color: #56cfb2; }
-  .code-block .shb  { color: #e8944a; }
-  .code-block .ok   { color: #4caf82; }
-  .code-block .err  { color: #e05c5c; }
-  .copy-btn {
-    position: absolute; top: .6rem; right: .6rem;
-    background: var(--surface2); border: 1px solid var(--border);
-    color: var(--text-dim); cursor: pointer; padding: .25rem .6rem;
-    border-radius: 5px; font-size: .72rem; transition: all .2s;
-  }
-  .copy-btn:hover { color: var(--text); border-color: var(--accent); }
-  .copy-btn.copied { color: var(--success); border-color: var(--success); }
-  code { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: .1em .4em; font-family: 'Consolas', monospace; font-size: .85em; color: #a89ef8; }
-
-  /* TABLES */
-  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .88rem; }
-  th { background: var(--surface2); color: var(--text-dim); font-weight: 600; font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; padding: .6rem 1rem; text-align: left; border-bottom: 2px solid var(--border); }
-  td { padding: .6rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: rgba(255,255,255,.02); }
-  td code { font-size: .82em; }
-
-  /* SCRIPT ANATOMY */
-  .anatomy-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin: 1.25rem 0; }
-  .anatomy-line {
-    display: flex; align-items: stretch; cursor: pointer;
-    border-bottom: 1px solid var(--border); transition: background .15s;
-  }
-  .anatomy-line:last-child { border-bottom: none; }
-  .anatomy-line:hover, .anatomy-line.active { background: rgba(232,148,74,.06); }
-  .anatomy-line.active { border-left: 3px solid var(--accent); }
-  .anatomy-num { width: 2.8rem; text-align: right; padding: .7rem .6rem; color: var(--text-dim); font-family: 'Consolas', monospace; font-size: .82rem; flex-shrink: 0; border-right: 1px solid var(--border); user-select: none; }
-  .anatomy-code { flex: 1; padding: .7rem 1rem; font-family: 'Consolas', monospace; font-size: .85rem; line-height: 1.5; }
-  .anatomy-detail {
-    display: none; background: rgba(232,148,74,.05);
-    border-top: 1px solid var(--border); padding: .75rem 1.25rem;
-    font-size: .85rem; color: var(--text-dim); line-height: 1.6;
-  }
-  .anatomy-line.active + .anatomy-detail { display: block; }
-  .anatomy-hint { text-align: center; color: var(--text-dim); font-size: .8rem; padding: .6rem; border-top: 1px solid var(--border); }
-
-  /* EXEC METHOD TOGGLE */
-  .method-wrap { margin: 1.25rem 0; }
-  .method-tabs { display: flex; gap: .4rem; }
-  .method-tab {
-    background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim);
-    cursor: pointer; padding: .45rem 1.1rem; border-radius: 6px 6px 0 0;
-    font-family: inherit; font-size: .88rem; transition: all .2s; border-bottom: none;
-  }
-  .method-tab.active { background: var(--code-bg); border-color: var(--accent); color: var(--accent); }
-  .method-panel { display: none; border: 1px solid var(--border); border-radius: 0 var(--radius) var(--radius) var(--radius); background: var(--surface); padding: 1.25rem; }
-  .method-panel.active { display: block; }
-  .method-pros { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .9rem; }
-  .method-tag { font-size: .75rem; padding: .2rem .6rem; border-radius: 4px; }
-  .tag-ok  { background: rgba(76,175,130,.12);  color: var(--success); }
-  .tag-ko  { background: rgba(224,92,92,.12);   color: var(--danger); }
-  .tag-neu { background: rgba(232,148,74,.12);  color: var(--accent); }
-
-  /* SOUS-SHELL DIAGRAM */
-  .shell-box { border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: .75rem; }
-  .shell-box-header { background: var(--surface2); padding: .4rem .9rem; font-size: .78rem; color: var(--text-dim); display: flex; align-items: center; gap: .5rem; }
-  .shell-dot { width: 7px; height: 7px; border-radius: 50%; }
-  .shell-box-body { padding: .75rem 1rem; font-family: 'Consolas', monospace; font-size: .83rem; line-height: 1.8; }
-
-  /* SET OPTIONS CARDS */
-  .set-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .85rem; margin: 1.25rem 0; }
-  @media (max-width: 600px) { .set-grid { grid-template-columns: 1fr; } }
-  .set-card {
-    background: var(--surface); border: 1.5px solid var(--border);
-    border-radius: var(--radius); padding: 1rem 1.1rem; cursor: pointer;
-    transition: border-color .2s, background .2s;
-  }
-  .set-card:hover { border-color: var(--accent); background: rgba(232,148,74,.04); }
-  .set-card.active { border-color: var(--accent); background: rgba(232,148,74,.07); }
-  .set-flag { font-family: 'Consolas', monospace; font-size: 1rem; color: var(--accent); font-weight: 700; }
-  .set-name { font-size: .78rem; color: var(--text-dim); margin: .15rem 0 .5rem; }
-  .set-short { font-size: .85rem; color: var(--text); }
-  .set-detail { display: none; margin-top: .75rem; font-size: .83rem; color: var(--text-dim); line-height: 1.6; border-top: 1px solid var(--border); padding-top: .6rem; }
-  .set-card.active .set-detail { display: block; }
-
-  /* $? CODE RETOUR */
-  .rc-row { display: flex; gap: .5rem; align-items: center; margin: .5rem 0; font-family: 'Consolas', monospace; font-size: .88rem; }
-  .rc-code { width: 2.5rem; text-align: center; font-weight: 700; padding: .25rem .5rem; border-radius: 5px; flex-shrink: 0; }
-  .rc-ok   { background: rgba(76,175,130,.15); color: var(--success); }
-  .rc-ko   { background: rgba(224,92,92,.15);  color: var(--danger); }
-  .rc-text { color: var(--text-dim); font-size: .85rem; }
-
-  /* VARS SPÉCIALES */
-  .var-row { display: flex; align-items: flex-start; gap: 1rem; padding: .65rem .9rem; border-bottom: 1px solid var(--border); }
-  .var-row:last-child { border-bottom: none; }
-  .var-row:hover { background: rgba(255,255,255,.02); }
-  .var-name { font-family: 'Consolas', monospace; font-size: .88rem; color: var(--accent); min-width: 5rem; flex-shrink: 0; }
-  .var-desc { font-size: .87rem; color: var(--text-dim); flex: 1; }
-
-  /* MINI-TP */
-  .tp-box { background: rgba(76,175,130,.05); border: 1px solid rgba(76,175,130,.25); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
-  .tp-box h4 { color: var(--success); font-size: .95rem; margin-bottom: .9rem; display: flex; align-items: center; gap: .5rem; }
-  .tp-step { display: flex; gap: .75rem; margin: .6rem 0; font-size: .88rem; }
-  .tp-n { background: rgba(76,175,130,.15); color: var(--success); font-weight: 700; font-size: .78rem; width: 1.5rem; height: 1.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: .1rem; }
-
-  /* FILTER & RECAP */
-  .filter-bar { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
-  .filter-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; padding: .35rem .9rem; border-radius: 20px; font-size: .82rem; font-family: inherit; transition: all .2s; }
-  .filter-btn:hover { color: var(--text); }
-  .filter-btn.active { background: rgba(232,148,74,.12); border-color: rgba(232,148,74,.45); color: var(--accent); }
-  .recap-cat { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: .3rem .6rem; border-radius: 4px; white-space: nowrap; }
-  .rc-struct { background: rgba(232,148,74,.12); color: var(--accent); }
-  .rc-exec   { background: rgba(124,106,247,.12); color: #a89ef8; }
-  .rc-sec    { background: rgba(224,92,92,.12);   color: var(--danger); }
-  .rc-args   { background: rgba(86,207,178,.12);  color: #56cfb2; }
-
-  /* QUIZ */
-  .quiz-wrap { display: flex; flex-direction: column; gap: 1.5rem; }
-  .quiz-q { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; transition: border-color .3s; }
-  .quiz-q.correct { border-color: var(--success); }
-  .quiz-q.wrong   { border-color: var(--danger); }
-  .quiz-question  { font-weight: 600; margin-bottom: .9rem; }
-  .quiz-options   { display: flex; flex-direction: column; gap: .5rem; }
-  .quiz-opt { background: var(--surface2); border: 1px solid var(--border); border-radius: 7px; padding: .6rem .9rem; cursor: pointer; font-size: .88rem; transition: all .2s; display: flex; align-items: center; gap: .6rem; font-family: inherit; color: var(--text); text-align: left; width: 100%; }
-  .quiz-opt:hover:not(:disabled) { border-color: var(--accent); background: rgba(232,148,74,.07); }
-  .quiz-opt:disabled { cursor: default; }
-  .quiz-opt.correct { border-color: var(--success); background: rgba(76,175,130,.1); color: #6de0a8; }
-  .quiz-opt.wrong   { border-color: var(--danger);  background: rgba(224,92,92,.1);  color: #e88080; }
-  .quiz-opt .opt-icon { font-size: .95rem; width: 1.2rem; text-align: center; flex-shrink: 0; }
-  .quiz-feedback { margin-top: .75rem; font-size: .84rem; display: none; padding: .5rem .75rem; border-radius: 6px; border-left: 3px solid; }
-  .quiz-feedback.show { display: block; }
-  .quiz-feedback.ok  { border-color: var(--success); background: rgba(76,175,130,.08); color: #6de0a8; }
-  .quiz-feedback.ko  { border-color: var(--danger);  background: rgba(224,92,92,.08);  color: #e88080; }
-  .quiz-score { text-align: center; padding: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); display: none; }
-  .quiz-score.show { display: block; }
-  .score-number { font-size: 2.5rem; font-weight: 700; }
-  .score-max    { color: var(--text-dim); font-size: 1.1rem; }
-  .score-label  { margin-top: .4rem; color: var(--text-dim); }
-  .quiz-reset-btn { display: inline-block; margin-top: 1rem; background: rgba(232,148,74,.12); border: 1px solid rgba(232,148,74,.4); color: var(--accent); cursor: pointer; padding: .5rem 1.2rem; border-radius: 6px; font-family: inherit; font-size: .9rem; transition: all .2s; }
-  .quiz-reset-btn:hover { background: rgba(232,148,74,.25); }
-
-  /* MISC */
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-  p + p { margin-top: .6rem; }
-  p { margin-top: .5rem; }
-  strong { color: var(--text); }
-  .intro-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; font-size: .95rem; line-height: 1.7; }
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
-  @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Chapitre 03 — Écrire son premier script — Bash débutant</title><style>
+:root{color-scheme:light;--bg:#f4f7fa;--surface:#fff;--text:#172c3c;--text-dim:#455c6d;--accent:#176e78;--border:#c7d6df;--code-bg:#edf3f7;--ink:var(--text);--muted:var(--text-dim);--line:var(--border);--code:var(--code-bg)}
+@media(prefers-color-scheme:dark){:root{color-scheme:dark;--bg:#0e1921;--surface:#172630;--text:#edf6fc;--text-dim:#b9cdd9;--accent:#81d9d9;--border:#405864;--code-bg:#10202a}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.75 'Segoe UI',system-ui,sans-serif}main{max-width:920px;margin:auto;padding:30px 34px 70px;background:var(--surface)}a{color:var(--accent);text-underline-offset:3px}h1{font-size:2.2rem;line-height:1.2;margin:.5em 0 1em}h2{margin:2.3em 0 .7em;padding-top:.5em;border-top:1px solid var(--line);font-size:1.45rem;line-height:1.35}h3{font-size:1.15rem}p,ul,ol{margin:.8em 0}li{margin:.3em 0}code{font-family:'Cascadia Code',Consolas,monospace;font-size:.94em;background:var(--code);padding:.12em .3em;border-radius:4px}pre{padding:18px 20px;background:var(--code);border:1px solid var(--line);border-radius:10px;overflow-x:auto;line-height:1.6}pre code{padding:0;background:transparent;white-space:pre}table{display:block;overflow:auto;border-collapse:collapse;width:100%;margin:1em 0;font-size:.94em}th,td{text-align:left;padding:10px 13px;border-bottom:1px solid var(--line)}th{background:var(--code)}img{display:block;max-width:100%;height:auto;margin:1.4em auto;border-radius:12px}aside{border-left:4px solid var(--accent);padding:12px 18px;background:var(--code);border-radius:0 8px 8px 0;margin:1.2em 0}aside.warning{border-color:#b87913}aside p{margin:.3em 0}.lesson-nav{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;padding:12px 0 22px;font-size:.9rem}.lesson-nav a{font-weight:650}.chapter-label{color:var(--muted);font-size:.83rem;font-weight:700;letter-spacing:.06em}summary{cursor:pointer;font-weight:650}details.toc{border:1px solid var(--line);border-radius:8px;padding:12px 18px;margin-bottom:25px}details.toc ul{margin:.4em 0}hr{border:0;border-top:1px solid var(--line);margin:2em 0}.table-wrap{overflow:auto}@media(max-width:620px){body{font-size:17px}main{padding:20px 18px 45px}h1{font-size:1.8rem}pre{padding:12px}}
 .bash-site-nav{display:flex;justify-content:space-between;gap:1rem;padding:1rem;flex-wrap:wrap}.bash-site-nav a{color:var(--accent);font-weight:700}
-</style>
-<link rel="stylesheet" href="../../assets/themes/theme.css">
+</style><link rel="stylesheet" href="../../assets/themes/theme.css">
 <script src="../../assets/themes/theme.js"></script>
-</head>
-<body><nav class="bash-site-nav"><a href="https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/">← Cours Markdown</a><a href="https://kayasam.github.io/linux-initiation/#bash">Parcours Bash →</a></nav>
-
-<header>
-  <div class="badge">Scripting Shell en Bash</div>
-  <h1>Bases du scripting</h1>
-  <p class="subtitle">Chapitre 03 — structure, exécution, sécurité, arguments</p>
-</header>
-
-<nav>
-  <button class="tab-btn active" onclick="showTab('structure')">Structure</button>
-  <button class="tab-btn" onclick="showTab('execution')">Exécution</button>
-  <button class="tab-btn" onclick="showTab('securite')">Sécurité</button>
-  <button class="tab-btn" onclick="showTab('arguments')">Arguments</button>
-  <button class="tab-btn" onclick="showTab('recap')">Récapitulatif</button>
-  <button class="tab-btn" onclick="showTab('quiz')">Quiz</button>
-</nav>
-
-<main>
-
-<!-- ══════════════ STRUCTURE ══════════════ -->
-<div class="section active" id="tab-structure">
-  <h2 class="section-title"><span>#</span> Structure d'un script</h2>
-
-  <div class="intro-box">
-    Un script bash est simplement un <strong>fichier texte</strong> contenant des commandes, exécutées
-    <strong>ligne par ligne, du début à la fin</strong>, sans compilation ni installation.
-    Écrire un script, c'est automatiser ce qu'on ferait à la main dans un terminal.
-  </div>
-
-  <p>Les qualités d'un bon script :</p>
-  <table>
-    <thead><tr><th>Qualité</th><th>Ce que ça signifie</th></tr></thead>
-    <tbody>
-      <tr><td><strong>Fiable</strong></td><td>Fonctionne même en cas de mauvaise utilisation ou d'erreur imprévue</td></tr>
-      <tr><td><strong>Commenté</strong></td><td>Le code est annoté pour faciliter la relecture et les évolutions</td></tr>
-      <tr><td><strong>Lisible</strong></td><td>Le code est indenté, les commandes sont aérées</td></tr>
-      <tr><td><strong>Portable</strong></td><td>Fonctionne sur tout système Linux</td></tr>
-    </tbody>
-  </table>
-
-  <h3>Anatomie d'un script — cliquez sur chaque ligne</h3>
-  <p style="color:var(--text-dim); font-size:.88rem; margin-bottom:.75rem;">Chaque ligne a un rôle. Cliquez pour en savoir plus.</p>
-
-  <div class="anatomy-wrap">
-    <div class="anatomy-line" onclick="toggleAnatomy(this)">
-      <div class="anatomy-num">1</div>
-      <div class="anatomy-code"><span class="shb">#!/usr/bin/env bash</span></div>
-    </div>
-    <div class="anatomy-detail">
-      <strong style="color:var(--accent);">Le shebang</strong> — ligne obligatoire, toujours en première position.
-      Indique à l'OS quel programme doit interpréter ce fichier.
-      <code>#!/usr/bin/env bash</code> cherche <code>bash</code> dans le <code>$PATH</code>, ce qui le rend compatible quel que soit son emplacement sur le système.
-    </div>
-
-    <div class="anatomy-line" onclick="toggleAnatomy(this)">
-      <div class="anatomy-num">2</div>
-      <div class="anatomy-code"></div>
-    </div>
-    <div class="anatomy-detail">
-      <strong>Ligne vide</strong> — sépare visuellement le shebang du reste. Non obligatoire, mais recommandée pour la lisibilité.
-    </div>
-
-    <div class="anatomy-line" onclick="toggleAnatomy(this)">
-      <div class="anatomy-num">3</div>
-      <div class="anatomy-code"><span class="comment"># Ce script affiche la date et le nom de la machine</span></div>
-    </div>
-    <div class="anatomy-detail">
-      <strong style="color:#5a6090;">Commentaire</strong> — tout ce qui suit <code>#</code> sur une ligne est ignoré à l'exécution.
-      Les commentaires servent à expliquer le <em>pourquoi</em>, pas le <em>quoi</em>.
-      Le shebang lui-même (<code>#!</code>) est un commentaire spécial interprété par le noyau, pas par bash.
-    </div>
-
-    <div class="anatomy-line" onclick="toggleAnatomy(this)">
-      <div class="anatomy-num">4</div>
-      <div class="anatomy-code"></div>
-    </div>
-    <div class="anatomy-detail">Ligne vide de séparation — aère le code.</div>
-
-    <div class="anatomy-line" onclick="toggleAnatomy(this)">
-      <div class="anatomy-num">5</div>
-      <div class="anatomy-code"><span class="cmd">set</span> <span class="flag">-euo pipefail</span></div>
-    </div>
-    <div class="anatomy-detail">
-      <strong style="color:var(--danger);">Options de sécurité</strong> — arrête le script sur la moindre erreur.
-      Détails dans l'onglet <strong>Sécurité</strong>. À mettre systématiquement juste après le shebang.
-    </div>
-
-    <div class="anatomy-line" onclick="toggleAnatomy(this)">
-      <div class="anatomy-num">6</div>
-      <div class="anatomy-code"></div>
-    </div>
-    <div class="anatomy-detail">Ligne vide.</div>
-
-    <div class="anatomy-line" onclick="toggleAnatomy(this)">
-      <div class="anatomy-num">7</div>
-      <div class="anatomy-code"><span class="cmd">echo</span> <span class="str">"Date : $(<span class="cmd">date</span> <span class="flag">+%F</span>)"</span></div>
-    </div>
-    <div class="anatomy-detail">
-      <strong style="color:var(--success);">Commande</strong> — le corps du script. Les commandes s'écrivent une par ligne, ou séparées par <code>;</code>.
-      Ici, <code>$(date +%F)</code> est une substitution de commande : son résultat est inséré dans la chaîne.
-    </div>
-
-    <div class="anatomy-line" onclick="toggleAnatomy(this)">
-      <div class="anatomy-num">8</div>
-      <div class="anatomy-code"><span class="cmd">echo</span> <span class="str">"Machine : $(<span class="cmd">hostname</span>)"</span></div>
-    </div>
-    <div class="anatomy-detail">
-      <strong style="color:var(--success);">Commande</strong> — bash exécute les commandes dans l'ordre, de haut en bas.
-      L'indentation n'a d'importance que dans les blocs <code>if</code>, <code>for</code>, etc.
-    </div>
-
-    <div class="anatomy-hint">↑ Cliquez sur une ligne pour voir son rôle</div>
-  </div>
-
-  <h3>Le shebang en détail</h3>
-
-  <div class="code-block"><span class="shb">#!/usr/bin/env bash</span>    <span class="comment">← recommandé (portable)</span>
-<span class="shb">#!/bin/bash</span>            <span class="comment">← fonctionne, mais suppose que bash est dans /bin</span>
-<span class="shb">#!/usr/bin/sh</span>          <span class="comment">← POSIX strict (pas de fonctions bash étendues)</span></div>
-
-  <div class="callout tip">
-    <div class="callout-label">Bonne pratique</div>
-    Toujours utiliser <code>#!/usr/bin/env bash</code>. La commande <code>env</code> cherche bash dans le <code>$PATH</code>
-    et le trouve quel que soit son emplacement. Sur certains systèmes, bash n'est pas dans <code>/bin</code>.
-  </div>
-
-  <div class="callout note">
-    <div class="callout-label">Note</div>
-    Le shebang n'est lu que si le script est <strong>exécuté directement</strong> (<code>./script.sh</code>).
-    Si on passe le script en argument à bash (<code>bash script.sh</code>), le shebang est ignoré —
-    c'est bash lui-même qui interprète le fichier.
-  </div>
-</div><!-- /tab-structure -->
-
-
-<!-- ══════════════ EXÉCUTION ══════════════ -->
-<div class="section" id="tab-execution">
-  <h2 class="section-title"><span>#</span> Exécution d'un script</h2>
-
-  <h3>Deux méthodes d'exécution</h3>
-
-  <div class="method-wrap">
-    <div class="method-tabs">
-      <button class="method-tab active" onclick="showMethod('bash', this)">bash script.sh</button>
-      <button class="method-tab" onclick="showMethod('chmod', this)">chmod +x → ./script.sh</button>
-    </div>
-
-    <div class="method-panel active" id="m-bash">
-      <div class="code-block" style="margin:0 0 1rem;"><span class="cmd">bash</span> <span class="path">monscript.sh</span></div>
-      <p>Passe le fichier directement à bash comme argument. Bash l'interprète sans tenir compte des permissions du fichier.</p>
-      <div class="method-pros">
-        <span class="method-tag tag-ok">Ne nécessite pas chmod</span>
-        <span class="method-tag tag-ok">Utile pour tester rapidement</span>
-        <span class="method-tag tag-ko">Le shebang est ignoré</span>
-        <span class="method-tag tag-ko">Moins "propre" en production</span>
-      </div>
-    </div>
-
-    <div class="method-panel" id="m-chmod">
-      <div class="code-block" style="margin:0 0 1rem;"><span class="cmd">chmod</span> <span class="flag">+x</span> <span class="path">monscript.sh</span>   <span class="comment"># une seule fois</span>
-<span class="op">./</span><span class="path">monscript.sh</span>            <span class="comment"># exécution</span></div>
-      <p>Donne le droit d'exécution au fichier, puis l'exécute comme un programme. Le shebang est lu et c'est l'interpréteur désigné qui est utilisé.</p>
-      <div class="method-pros">
-        <span class="method-tag tag-ok">Méthode standard en production</span>
-        <span class="method-tag tag-ok">Le shebang est respecté</span>
-        <span class="method-tag tag-neu">chmod +x à faire une seule fois</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="callout warn">
-    <div class="callout-label">Attention — le ./ est obligatoire</div>
-    Sans le <code>./</code>, bash cherche le script dans les dossiers du <code>$PATH</code> — et ne le trouve pas.
-    Le dossier courant n'est jamais dans le <code>$PATH</code> par défaut (pour des raisons de sécurité).
-    <div class="code-block" style="margin-top:.75rem;"><span class="err">monscript.sh</span>    <span class="comment"># ERREUR : command not found</span>
-<span class="ok">./monscript.sh</span>  <span class="comment"># CORRECT : cherche dans le dossier courant</span></div>
-  </div>
-
-  <h3>Le script s'exécute dans un sous-shell</h3>
-  <p>Quand un script est lancé, bash crée un <strong>processus enfant</strong> séparé. Ce sous-shell a son propre environnement.</p>
-
-  <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; margin:1.25rem 0;">
-    <div class="shell-box">
-      <div class="shell-box-header">
-        <div class="shell-dot" style="background:var(--accent);"></div>
-        Shell courant (terminal)
-      </div>
-      <div class="shell-box-body">
-        <span style="color:#f0a500;">ville</span>=<span style="color:#56cfb2;">"Paris"</span>
-        <br><span style="color:#56cfb2;">export</span> <span style="color:#f0a500;">PAYS</span>=<span style="color:#56cfb2;">"France"</span>
-        <br><span style="color:#5a6090;">./monscript.sh</span>   <span style="color:#5a6090;"># lance le sous-shell ↓</span>
-      </div>
-    </div>
-    <div class="shell-box" style="margin-left:2rem;">
-      <div class="shell-box-header">
-        <div class="shell-dot" style="background:var(--text-dim);"></div>
-        Sous-shell (monscript.sh)
-      </div>
-      <div class="shell-box-body">
-        <span style="color:#56cfb2;">echo</span> <span style="color:#a89ef8;">$ville</span>   <span style="color:#e05c5c;"># (vide) — variable locale non transmise</span>
-        <br><span style="color:#56cfb2;">echo</span> <span style="color:#a89ef8;">$PAYS</span>    <span style="color:#4caf82;"># France — variable exportée ✓</span>
-        <br><span style="color:#56cfb2;">cd</span> <span style="color:#7ec8e3;">/tmp</span>     <span style="color:#5a6090;"># ne change PAS le dossier du terminal</span>
-        <br><span style="color:#5a6090;"># .bashrc n'est PAS chargé</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="callout note">
-    <div class="callout-label">Conséquences du sous-shell</div>
-    <ul style="padding-left:1.2rem; margin-top:.4rem; line-height:1.8; font-size:.9rem;">
-      <li>Les <strong>variables locales</strong> du terminal ne sont pas disponibles dans le script (sauf si <code>export</code>)</li>
-      <li>Les <strong>modifications</strong> du script (variables, <code>cd</code>…) n'affectent pas le terminal</li>
-      <li>Le script ne charge <strong>pas</strong> <code>.bashrc</code> — il n'a pas d'environnement interactif</li>
-    </ul>
-  </div>
-
-  <div class="tp-box">
-    <h4>Mini-TP — Premier script</h4>
-    <div class="tp-step"><div class="tp-n">1</div><div>Créer le dossier de travail :<br>
-      <div class="code-block" style="margin:.4rem 0;"><span class="cmd">mkdir</span> <span class="flag">-p</span> <span class="path">~/scripting</span></div></div></div>
-    <div class="tp-step"><div class="tp-n">2</div><div>Créer le script :<br>
-      <div class="code-block" style="margin:.4rem 0;"><span class="cmd">nano</span> <span class="path">~/scripting/d.sh</span></div></div></div>
-    <div class="tp-step"><div class="tp-n">3</div><div>Contenu du script :<br>
-      <div class="code-block" style="margin:.4rem 0;"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="shb">#!/usr/bin/env bash</span>
-
-<span class="cmd">set</span> <span class="flag">-euo pipefail</span>
-
-<span class="cmd">date</span> <span class="flag">+%F</span>   <span class="comment"># affiche la date au format AAAA-MM-JJ</span></div></div></div>
-    <div class="tp-step"><div class="tp-n">4</div><div>Rendre exécutable et lancer :<br>
-      <div class="code-block" style="margin:.4rem 0;"><span class="cmd">chmod</span> <span class="flag">+x</span> <span class="path">~/scripting/d.sh</span>
-<span class="path">~/scripting/d.sh</span>
-<span class="comment"># 2026-05-13</span></div></div></div>
-  </div>
-
-  <div class="callout note">
-    <div class="callout-label">Note — date +%F</div>
-    <code>date +%F</code> est un raccourci ISO 8601 équivalent à <code>date +%Y-%m-%d</code>.
-  </div>
-</div><!-- /tab-execution -->
-
-
-<!-- ══════════════ SÉCURITÉ ══════════════ -->
-<div class="section" id="tab-securite">
-  <h2 class="section-title"><span>#</span> Sécuriser un script</h2>
-
-  <p>Par défaut, bash <strong>continue l'exécution même si une commande échoue</strong>. C'est dangereux dans un script :
-  une suppression de fichier ratée, une variable non définie, un pipe cassé — tout peut passer inaperçu.</p>
-
-  <p>On active des options de sécurité en début de script avec <code>set</code>. Cliquez sur chaque option pour les détails :</p>
-
-  <div class="set-grid">
-    <div class="set-card" onclick="toggleSet(this)">
-      <div class="set-flag">set -e</div>
-      <div class="set-name">errexit</div>
-      <div class="set-short">Arrête le script si une commande échoue</div>
-      <div class="set-detail">
-        Dès qu'une commande retourne un code de sortie non nul (≠ 0), le script s'arrête immédiatement.
-        Sans cette option, bash continue et exécute les commandes suivantes même si la précédente a raté.
-        <div class="code-block" style="margin-top:.6rem; font-size:.8rem;"><span class="cmd">rm</span> <span class="path">/fichier-inexistant</span>   <span class="comment"># code retour 1</span>
-<span class="cmd">echo</span> <span class="str">"Cette ligne ne s'exécute pas"</span>  <span class="comment">← arrêt ici</span></div>
-      </div>
-    </div>
-
-    <div class="set-card" onclick="toggleSet(this)">
-      <div class="set-flag">set -u</div>
-      <div class="set-name">nounset</div>
-      <div class="set-short">Arrête si une variable non définie est utilisée</div>
-      <div class="set-detail">
-        Sans cette option, utiliser <code>$variable_inexistante</code> donne simplement une chaîne vide — silencieusement.
-        Avec <code>-u</code>, bash s'arrête avec un message d'erreur explicite.
-        <div class="code-block" style="margin-top:.6rem; font-size:.8rem;"><span class="cmd">echo</span> <span class="arg">$nom_mal_ecrit</span>
-<span class="comment"># bash: nom_mal_ecrit: unbound variable → arrêt</span></div>
-      </div>
-    </div>
-
-    <div class="set-card" onclick="toggleSet(this)">
-      <div class="set-flag">set -o pipefail</div>
-      <div class="set-name">pipefail</div>
-      <div class="set-short">Propage les erreurs dans les tubes</div>
-      <div class="set-detail">
-        Sans cette option, le code de retour d'un tube (<code>cmd1 | cmd2</code>) est celui de la <em>dernière</em> commande,
-        même si une commande précédente a échoué. Avec <code>pipefail</code>, toute erreur dans le tube est détectée.
-        <div class="code-block" style="margin-top:.6rem; font-size:.8rem;"><span class="cmd">cat</span> <span class="path">/fichier-inexistant</span> <span class="op">|</span> <span class="cmd">grep</span> motif
-<span class="comment"># sans pipefail : $? = 0 (grep a "réussi")
-# avec pipefail  : $? = 1 (cat a échoué)</span></div>
-      </div>
-    </div>
-
-    <div class="set-card" onclick="toggleSet(this)">
-      <div class="set-flag">set -x</div>
-      <div class="set-name">xtrace</div>
-      <div class="set-short">Debug : affiche chaque commande avant exécution</div>
-      <div class="set-detail">
-        Bash affiche chaque commande précédée de <code>+</code> au moment où elle est exécutée.
-        Indispensable pour déboguer. À <strong>désactiver en production</strong> — la sortie devient très verbeuse.
-        <div class="code-block" style="margin-top:.6rem; font-size:.8rem;"><span class="comment">+ echo "Bonjour"</span>
-<span class="ok">Bonjour</span>
-<span class="comment">+ date +%F</span>
-<span class="ok">2026-05-13</span></div>
-      </div>
-    </div>
-  </div>
-
-  <h3>La combinaison standard</h3>
-
-  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="shb">#!/usr/bin/env bash</span>
-
-<span class="cmd">set</span> <span class="flag">-euo pipefail</span>   <span class="comment"># à mettre dans tout script sérieux</span>
-
-<span class="comment"># suite du script...</span></div>
-
-  <div class="callout tip">
-    <div class="callout-label">Bonne pratique</div>
-    Commencer tout script avec <code>set -euo pipefail</code>. Les erreurs silencieuses deviennent des arrêts explicites — les bugs sont bien plus faciles à trouver.
-  </div>
-
-  <h3>Désactiver temporairement une option</h3>
-  <p>Quand une commande est connue pour échouer sans que ce soit un problème, on désactive <code>-e</code> le temps de son exécution :</p>
-
-  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="cmd">set</span> <span class="flag">+e</span>   <span class="comment"># désactive -e (le + inverse le -)</span>
-<span class="cmd">grep</span> <span class="arg">"motif"</span> <span class="path">fichier.txt</span>   <span class="comment"># peut retourner 1 si rien trouvé</span>
-<span class="cmd">set</span> <span class="flag">-e</span>   <span class="comment"># réactive -e</span></div>
-
-  <div class="callout warn">
-    <div class="callout-label">Attention — set -x en production</div>
-    <code>set -x</code> est très utile pour déboguer mais produit une sortie massive.
-    Ne l'activer que pendant la mise au point. En production, utiliser plutôt <code>bash -x script.sh</code> ponctuellement.
-  </div>
-
-  <h3>Code de retour — <code>$?</code></h3>
-  <p>Toute commande Linux retourne un <strong>code de retour</strong> à la fin de son exécution :</p>
-
-  <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.1rem 1.25rem; margin:1rem 0;">
-    <div class="rc-row"><div class="rc-code rc-ok">0</div><div class="rc-text">Succès — la commande s'est exécutée sans erreur</div></div>
-    <div class="rc-row"><div class="rc-code rc-ko">1</div><div class="rc-text">Erreur générale</div></div>
-    <div class="rc-row"><div class="rc-code rc-ko">2</div><div class="rc-text">Mauvaise utilisation (ex : dossier introuvable pour <code>ls</code>)</div></div>
-    <div class="rc-row"><div class="rc-code rc-ko">126</div><div class="rc-text">Fichier non exécutable</div></div>
-    <div class="rc-row"><div class="rc-code rc-ko">127</div><div class="rc-text">Commande introuvable</div></div>
-    <div class="rc-row"><div class="rc-code rc-ko">128+N</div><div class="rc-text">Arrêt par signal N (ex : 130 = Ctrl+C, 137 = SIGKILL)</div></div>
-  </div>
-
-  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="cmd">ls</span> <span class="path">/etc</span>
-<span class="cmd">echo</span> <span class="arg">$?</span>    <span class="comment"># 0 ← succès</span>
-
-<span class="cmd">ls</span> <span class="path">/dossier-inexistant</span>
-<span class="cmd">echo</span> <span class="arg">$?</span>    <span class="comment"># 2 ← échec</span></div>
-
-  <div class="callout warn">
-    <div class="callout-label">Attention</div>
-    <code>$?</code> ne contient que le code de la <strong>dernière commande exécutée</strong>.
-    Si tu exécutes une autre commande entre les deux (même un <code>echo</code>), tu perds la valeur.
-    Stocker <code>$?</code> dans une variable si tu en as besoin plus tard : <code>code=$?</code>
-  </div>
-</div><!-- /tab-securite -->
-
-
-<!-- ══════════════ ARGUMENTS ══════════════ -->
-<div class="section" id="tab-arguments">
-  <h2 class="section-title"><span>#</span> Variables spéciales &amp; Arguments</h2>
-
-  <div class="intro-box">
-    Bash définit automatiquement des <strong>variables spéciales</strong> qu'on ne peut que lire, pas modifier.
-    Les plus importantes permettent de récupérer les arguments passés au script.
-  </div>
-
-  <h3>Tableau des variables spéciales</h3>
-
-  <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; margin:1rem 0;">
-    <div class="var-row">
-      <div class="var-name">$0</div>
-      <div class="var-desc">Nom du script (tel qu'il a été appelé : <code>./monscript.sh</code> ou chemin complet)</div>
-    </div>
-    <div class="var-row">
-      <div class="var-name">$1 … $9</div>
-      <div class="var-desc">Arguments passés au script — 1er, 2e… 9e argument</div>
-    </div>
-    <div class="var-row">
-      <div class="var-name">${10} …</div>
-      <div class="var-desc">Arguments au-delà du 9e — les accolades sont <strong>obligatoires</strong></div>
-    </div>
-    <div class="var-row">
-      <div class="var-name">$#</div>
-      <div class="var-desc">Nombre d'arguments passés au script (sans compter <code>$0</code>)</div>
-    </div>
-    <div class="var-row">
-      <div class="var-name">"$@"</div>
-      <div class="var-desc">Tous les arguments, chacun cité séparément — à utiliser dans les boucles et pour passer des arguments à une autre commande</div>
-    </div>
-    <div class="var-row">
-      <div class="var-name">"$*"</div>
-      <div class="var-desc">Tous les arguments en un seul mot (séparés par le 1er caractère de <code>$IFS</code>) — rarement utile</div>
-    </div>
-    <div class="var-row">
-      <div class="var-name">$?</div>
-      <div class="var-desc">Code de retour de la dernière commande exécutée (<code>0</code> = succès)</div>
-    </div>
-    <div class="var-row">
-      <div class="var-name">$$</div>
-      <div class="var-desc">PID du shell courant — utile pour créer des fichiers temporaires uniques : <code>/tmp/mon_script_$$.tmp</code></div>
-    </div>
-    <div class="var-row">
-      <div class="var-name">$!</div>
-      <div class="var-desc">PID du dernier processus lancé en arrière-plan (<code>commande &amp;</code>)</div>
-    </div>
-  </div>
-
-  <h3>Exemple concret — <code>salutation.sh</code></h3>
-
-  <div class="two-col">
-    <div>
-      <p style="font-size:.85rem; color:var(--text-dim); margin-bottom:.5rem;">Contenu du script :</p>
-      <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="shb">#!/usr/bin/env bash</span>
-
-<span class="cmd">set</span> <span class="flag">-euo pipefail</span>
-
-<span class="cmd">echo</span> <span class="str">"Script  : <span class="arg">$0</span>"</span>
-<span class="cmd">echo</span> <span class="str">"Arg 1   : <span class="arg">$1</span>"</span>
-<span class="cmd">echo</span> <span class="str">"Arg 2   : <span class="arg">$2</span>"</span>
-<span class="cmd">echo</span> <span class="str">"Nb args : <span class="arg">$#</span>"</span>
-<span class="cmd">echo</span> <span class="str">"Tous    : <span class="arg">$@</span>"</span></div>
-    </div>
-    <div>
-      <p style="font-size:.85rem; color:var(--text-dim); margin-bottom:.5rem;">Appel et résultat :</p>
-      <div class="code-block"><span class="op">./</span><span class="path">salutation.sh</span> Alice Bob Charlie
-
-<span class="comment">Script  : ./salutation.sh
-Arg 1   : Alice
-Arg 2   : Bob
-Nb args : 3
-Tous    : Alice Bob Charlie</span></div>
-    </div>
-  </div>
-
-  <h3>Valider les arguments — bonne pratique</h3>
-  <p>On contrôle toujours le nombre d'arguments en début de script pour donner un message d'erreur utile :</p>
-
-  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="shb">#!/usr/bin/env bash</span>
-
-<span class="cmd">set</span> <span class="flag">-euo pipefail</span>
-
-<span class="comment"># Vérifier qu'on a bien reçu exactement 1 argument</span>
-<span class="cmd">if</span> [[ <span class="arg">$#</span> <span class="op">-ne</span> 1 ]]; <span class="cmd">then</span>
-    <span class="cmd">echo</span> <span class="str">"Usage : $0 &lt;prénom&gt;"</span> <span class="op">&gt;&amp;2</span>
-    <span class="cmd">exit</span> 1
-<span class="cmd">fi</span>
-
-<span class="cmd">echo</span> <span class="str">"Bonjour, <span class="arg">$1</span> !"</span></div>
-
-  <div class="callout tip">
-    <div class="callout-label">Bonne pratique</div>
-    Les messages d'erreur s'envoient sur <code>stderr</code> avec <code>&gt;&amp;2</code>.
-    Ainsi, ils restent visibles même si la sortie standard est redirigée vers un fichier.
-  </div>
-
-  <h3><code>$@</code> vs <code>$*</code> — la différence</h3>
-
-  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">⎘ copier</button><span class="comment"># Appel : ./script.sh "Alice Dupont" Bob</span>
-
-<span class="comment"># "$@" — deux arguments séparés, espaces préservés</span>
-<span class="cmd">for</span> <span class="val">arg</span> <span class="cmd">in</span> <span class="arg">"$@"</span>; <span class="cmd">do</span>
-    <span class="cmd">echo</span> <span class="arg">$arg</span>
-<span class="cmd">done</span>
-<span class="comment"># Alice Dupont
-# Bob</span>
-
-<span class="comment"># "$*" — un seul mot fusionné (rarement ce qu'on veut)</span>
-<span class="cmd">for</span> <span class="val">arg</span> <span class="cmd">in</span> <span class="arg">"$*"</span>; <span class="cmd">do</span>
-    <span class="cmd">echo</span> <span class="arg">$arg</span>
-<span class="cmd">done</span>
-<span class="comment"># Alice Dupont Bob</span></div>
-
-  <div class="callout tip">
-    <div class="callout-label">Règle simple</div>
-    Utiliser toujours <strong><code>"$@"</code></strong> (avec guillemets). C'est presque toujours ce qu'on veut.
-    <code>"$*"</code> n'a des cas d'usage que très spécifiques.
-  </div>
-</div><!-- /tab-arguments -->
-
-
-<!-- ══════════════ RÉCAPITULATIF ══════════════ -->
-<div class="section" id="tab-recap">
-  <h2 class="section-title"><span>#</span> Récapitulatif des commandes</h2>
-
-  <div class="filter-bar">
-    <button class="filter-btn active" onclick="filterRecap('all', this)">Toutes</button>
-    <button class="filter-btn" onclick="filterRecap('struct', this)">Structure</button>
-    <button class="filter-btn" onclick="filterRecap('exec', this)">Exécution</button>
-    <button class="filter-btn" onclick="filterRecap('sec', this)">Sécurité</button>
-    <button class="filter-btn" onclick="filterRecap('args', this)">Arguments</button>
-  </div>
-
-  <table id="recap-table">
-    <thead>
-      <tr><th>Commande / Syntaxe</th><th>Description</th><th>Catégorie</th></tr>
-    </thead>
-    <tbody>
-      <tr data-cat="struct"><td><code>#!/usr/bin/env bash</code></td><td>Shebang — ligne 1 obligatoire, désigne l'interpréteur</td><td><span class="recap-cat rc-struct">structure</span></td></tr>
-      <tr data-cat="struct"><td><code># commentaire</code></td><td>Commentaire — ignoré à l'exécution</td><td><span class="recap-cat rc-struct">structure</span></td></tr>
-      <tr data-cat="exec"><td><code>bash script.sh</code></td><td>Exécute un script sans droit d'exécution (shebang ignoré)</td><td><span class="recap-cat rc-exec">exécution</span></td></tr>
-      <tr data-cat="exec"><td><code>chmod +x script.sh</code></td><td>Donne le droit d'exécution à un script (une seule fois)</td><td><span class="recap-cat rc-exec">exécution</span></td></tr>
-      <tr data-cat="exec"><td><code>./script.sh</code></td><td>Exécute le script du dossier courant (le ./ est obligatoire)</td><td><span class="recap-cat rc-exec">exécution</span></td></tr>
-      <tr data-cat="exec"><td><code>bash -x script.sh</code></td><td>Exécute en mode debug (affiche les commandes) sans modifier le script</td><td><span class="recap-cat rc-exec">exécution</span></td></tr>
-      <tr data-cat="exec"><td><code>date +%F</code></td><td>Affiche la date au format AAAA-MM-JJ (raccourci ISO 8601)</td><td><span class="recap-cat rc-exec">exécution</span></td></tr>
-      <tr data-cat="sec"><td><code>set -e</code></td><td>Arrête le script si une commande échoue (errexit)</td><td><span class="recap-cat rc-sec">sécurité</span></td></tr>
-      <tr data-cat="sec"><td><code>set -u</code></td><td>Arrête si une variable non définie est utilisée (nounset)</td><td><span class="recap-cat rc-sec">sécurité</span></td></tr>
-      <tr data-cat="sec"><td><code>set -o pipefail</code></td><td>Propage les erreurs dans les tubes</td><td><span class="recap-cat rc-sec">sécurité</span></td></tr>
-      <tr data-cat="sec"><td><code>set -x</code></td><td>Mode debug : affiche chaque commande avant exécution</td><td><span class="recap-cat rc-sec">sécurité</span></td></tr>
-      <tr data-cat="sec"><td><code>set -euo pipefail</code></td><td>Les trois options de sécurité en une ligne</td><td><span class="recap-cat rc-sec">sécurité</span></td></tr>
-      <tr data-cat="sec"><td><code>set +e</code></td><td>Désactive l'option -e (le + inverse le -)</td><td><span class="recap-cat rc-sec">sécurité</span></td></tr>
-      <tr data-cat="sec"><td><code>echo $?</code></td><td>Affiche le code de retour de la dernière commande (0 = succès)</td><td><span class="recap-cat rc-sec">sécurité</span></td></tr>
-      <tr data-cat="args"><td><code>$0</code></td><td>Nom du script</td><td><span class="recap-cat rc-args">arguments</span></td></tr>
-      <tr data-cat="args"><td><code>$1 … $9</code></td><td>Arguments positionnels (1er au 9e)</td><td><span class="recap-cat rc-args">arguments</span></td></tr>
-      <tr data-cat="args"><td><code>${10}, ${11}…</code></td><td>Arguments au-delà du 9e (accolades obligatoires)</td><td><span class="recap-cat rc-args">arguments</span></td></tr>
-      <tr data-cat="args"><td><code>$#</code></td><td>Nombre d'arguments passés au script</td><td><span class="recap-cat rc-args">arguments</span></td></tr>
-      <tr data-cat="args"><td><code>"$@"</code></td><td>Tous les arguments, chacun cité séparément (à préférer)</td><td><span class="recap-cat rc-args">arguments</span></td></tr>
-      <tr data-cat="args"><td><code>"$*"</code></td><td>Tous les arguments en un seul mot fusionné</td><td><span class="recap-cat rc-args">arguments</span></td></tr>
-      <tr data-cat="args"><td><code>$$</code></td><td>PID du shell courant</td><td><span class="recap-cat rc-args">arguments</span></td></tr>
-      <tr data-cat="args"><td><code>$!</code></td><td>PID du dernier processus lancé en arrière-plan</td><td><span class="recap-cat rc-args">arguments</span></td></tr>
-      <tr data-cat="exec"><td><code>echo "msg" &gt;&amp;2</code></td><td>Envoie un message sur stderr (pour les erreurs)</td><td><span class="recap-cat rc-exec">exécution</span></td></tr>
-      <tr data-cat="exec"><td><code>exit 1</code></td><td>Termine le script avec un code de retour 1 (erreur)</td><td><span class="recap-cat rc-exec">exécution</span></td></tr>
-    </tbody>
-  </table>
-</div><!-- /tab-recap -->
-
-
-<!-- ══════════════ QUIZ ══════════════ -->
-<div class="section" id="tab-quiz">
-  <h2 class="section-title"><span>#</span> Quiz de révision</h2>
-  <p style="color:var(--text-dim); margin-bottom:1.5rem; font-size:.88rem;">Testez vos connaissances — cliquez sur la bonne réponse.</p>
-
-  <div class="quiz-wrap" id="quiz-wrap">
-
-    <div class="quiz-q" data-answer="b">
-      <div class="quiz-question">1. Quelle est la première ligne obligatoire d'un script bash ?</div>
-      <div class="quiz-options">
-        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span># !/bin/bash</button>
-        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>#!/usr/bin/env bash</button>
-        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>#!/usr/bin/bash</button>
-        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>// bash script</button>
-      </div>
-      <div class="quiz-feedback">
-        <strong>#!/usr/bin/env bash</strong> est la forme recommandée. Le shebang (<code>#!</code>) doit être en première position,
-        sans espace. <code>env</code> cherche bash dans le <code>$PATH</code>, ce qui le rend portable sur tous les systèmes.
-      </div>
-    </div>
-
-    <div class="quiz-q" data-answer="c">
-      <div class="quiz-question">2. Tu lances ./monscript.sh depuis ton terminal. Dans quel shell la variable $ville définie dans le terminal est-elle visible ?</div>
-      <div class="quiz-options">
-        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>Dans les deux (terminal et script)</button>
-        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>Uniquement dans le script</button>
-        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>Uniquement dans le terminal (sauf si exportée)</button>
-        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>Nulle part, les variables sont remises à zéro</button>
-      </div>
-      <div class="quiz-feedback">
-        Un script s'exécute dans un <strong>sous-shell</strong>. Les variables locales du terminal ne sont pas transmises.
-        Seules les variables <strong>exportées</strong> (<code>export ville</code>) sont visibles dans le script.
-      </div>
-    </div>
-
-    <div class="quiz-q" data-answer="a">
-      <div class="quiz-question">3. Quelle option de set arrête le script dès qu'une commande échoue ?</div>
-      <div class="quiz-options">
-        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>set -e</button>
-        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>set -u</button>
-        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>set -x</button>
-        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>set -o pipefail</button>
-      </div>
-      <div class="quiz-feedback">
-        <strong>set -e</strong> (errexit) arrête le script dès qu'une commande retourne un code non nul.
-        <code>-u</code> gère les variables non définies, <code>-x</code> est le mode debug, <code>pipefail</code> gère les erreurs dans les tubes.
-      </div>
-    </div>
-
-    <div class="quiz-q" data-answer="d">
-      <div class="quiz-question">4. Pourquoi le ./ est-il obligatoire devant ./script.sh ?</div>
-      <div class="quiz-options">
-        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>Pour indiquer que c'est un script bash</button>
-        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>Pour donner les droits d'exécution</button>
-        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>Pour éviter les conflits de noms</button>
-        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>Parce que le dossier courant n'est pas dans le $PATH</button>
-      </div>
-      <div class="quiz-feedback">
-        Bash cherche les commandes dans les dossiers listés dans <code>$PATH</code>.
-        Le dossier courant (<code>.</code>) n'y figure pas par défaut pour des raisons de sécurité.
-        Le <code>./</code> dit explicitement "ce fichier, dans le dossier courant".
-      </div>
-    </div>
-
-    <div class="quiz-q" data-answer="b">
-      <div class="quiz-question">5. Tu appelles ./salutation.sh Alice Bob Charlie. Que contient $# ?</div>
-      <div class="quiz-options">
-        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>4 (le script + 3 arguments)</button>
-        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>3</button>
-        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>Alice Bob Charlie</button>
-        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>1 (premier argument seulement)</button>
-      </div>
-      <div class="quiz-feedback">
-        <strong>$#</strong> contient le nombre d'arguments passés au script, <strong>sans</strong> compter <code>$0</code> (le nom du script).
-        Ici 3 arguments : Alice, Bob, Charlie.
-      </div>
-    </div>
-
-    <div class="quiz-q" data-answer="a">
-      <div class="quiz-question">6. Que vaut $? après une commande qui s'est exécutée avec succès ?</div>
-      <div class="quiz-options">
-        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>0</button>
-        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>1</button>
-        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>true</button>
-        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>OK</button>
-      </div>
-      <div class="quiz-feedback">
-        Par convention Unix, <strong>0</strong> signifie le succès. Tout autre valeur (1 à 255) indique une erreur.
-        C'est ce code que <code>set -e</code> surveille : dès qu'il est ≠ 0, le script s'arrête.
-      </div>
-    </div>
-
-    <div class="quiz-q" data-answer="c">
-      <div class="quiz-question">7. Tu appelles ./script.sh "Alice Dupont" Bob. Quelle variable itère correctement sur les deux arguments en préservant l'espace ?</div>
-      <div class="quiz-options">
-        <button class="quiz-opt" data-val="a" onclick="answer(this)"><span class="opt-icon"></span>for arg in $@</button>
-        <button class="quiz-opt" data-val="b" onclick="answer(this)"><span class="opt-icon"></span>for arg in "$*"</button>
-        <button class="quiz-opt" data-val="c" onclick="answer(this)"><span class="opt-icon"></span>for arg in "$@"</button>
-        <button class="quiz-opt" data-val="d" onclick="answer(this)"><span class="opt-icon"></span>for arg in $1 $2</button>
-      </div>
-      <div class="quiz-feedback">
-        <strong>"$@"</strong> (avec guillemets) préserve chaque argument comme une entité séparée, espaces inclus.
-        Sans guillemets, <code>$@</code> est découpé sur les espaces : "Alice Dupont" deviendrait deux arguments.
-        <code>"$*"</code> fusionne tout en un seul mot.
-      </div>
-    </div>
-
-  </div><!-- /quiz-wrap -->
-
-  <div class="quiz-score" id="quiz-score">
-    <div class="score-number" id="score-n">—</div>
-    <div class="score-max">/ <span id="score-total"></span></div>
-    <div class="score-label" id="score-label"></div>
-    <button class="quiz-reset-btn" onclick="resetQuiz()">Recommencer</button>
-  </div>
-
-</div><!-- /tab-quiz -->
-
-</main>
-
-<script>
-// ── TABS ──
-function showTab(id) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + id).classList.add('active');
-  event.currentTarget.classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// ── COPY ──
-function copyCode(btn) {
-  const block = btn.parentElement;
-  let text = '';
-  block.childNodes.forEach(n => {
-    if (n.nodeType === 3) text += n.textContent;
-    else if (n.tagName !== 'BUTTON') text += n.textContent;
-  });
-  navigator.clipboard.writeText(text.trim()).then(() => {
-    btn.textContent = '✓ copié';
-    btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = '⎘ copier'; btn.classList.remove('copied'); }, 1600);
-  });
-}
-
-// ── ANATOMY ──
-function toggleAnatomy(line) {
-  const isActive = line.classList.contains('active');
-  document.querySelectorAll('.anatomy-line.active').forEach(l => l.classList.remove('active'));
-  if (!isActive) line.classList.add('active');
-}
-
-// ── METHOD TABS ──
-function showMethod(id, btn) {
-  document.querySelectorAll('.method-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.method-tab').forEach(b => b.classList.remove('active'));
-  document.getElementById('m-' + id).classList.add('active');
-  btn.classList.add('active');
-}
-
-// ── SET CARDS ──
-function toggleSet(card) {
-  const isActive = card.classList.contains('active');
-  document.querySelectorAll('.set-card.active').forEach(c => c.classList.remove('active'));
-  if (!isActive) card.classList.add('active');
-}
-
-// ── RECAP FILTER ──
-function filterRecap(cat, btn) {
-  btn.closest('.filter-bar').querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelectorAll('#recap-table tbody tr').forEach(row => {
-    row.style.display = (cat === 'all' || row.dataset.cat === cat) ? '' : 'none';
-  });
-}
-
-// ── QUIZ ──
-let score = 0, answered = 0;
-
-function answer(btn) {
-  const qBlock = btn.closest('.quiz-q');
-  if (qBlock.classList.contains('correct') || qBlock.classList.contains('wrong')) return;
-  const correct = qBlock.dataset.answer;
-  const chosen  = btn.dataset.val;
-  const feedback = qBlock.querySelector('.quiz-feedback');
-
-  qBlock.querySelectorAll('.quiz-opt').forEach(b => {
-    b.disabled = true;
-    if (b.dataset.val === correct) { b.classList.add('correct'); b.querySelector('.opt-icon').textContent = '✓'; }
-  });
-  if (chosen === correct) {
-    qBlock.classList.add('correct');
-    btn.querySelector('.opt-icon').textContent = '✓';
-    feedback.classList.add('show', 'ok');
-    score++;
-  } else {
-    qBlock.classList.add('wrong');
-    btn.classList.add('wrong');
-    btn.querySelector('.opt-icon').textContent = '✗';
-    feedback.classList.add('show', 'ko');
-  }
-  answered++;
-  if (answered === document.querySelectorAll('.quiz-q').length) showScore();
-}
-
-function showScore() {
-  const total = document.querySelectorAll('.quiz-q').length;
-  const pct   = Math.round(score / total * 100);
-  const label = pct >= 85 ? 'Excellent !' : pct >= 60 ? 'Bien joué — quelques révisions utiles.' : 'Revois le cours avant de continuer.';
-  document.getElementById('score-n').textContent = score;
-  document.getElementById('score-n').style.color = pct >= 85 ? 'var(--success)' : pct >= 60 ? 'var(--warn)' : 'var(--danger)';
-  document.getElementById('score-total').textContent = total;
-  document.getElementById('score-label').textContent = label;
-  document.getElementById('quiz-score').classList.add('show');
-}
-
-function resetQuiz() {
-  score = 0; answered = 0;
-  document.querySelectorAll('.quiz-q').forEach(q => {
-    q.classList.remove('correct', 'wrong');
-    q.querySelectorAll('.quiz-opt').forEach(b => {
-      b.disabled = false;
-      b.classList.remove('correct', 'wrong');
-      b.querySelector('.opt-icon').textContent = '';
-    });
-    q.querySelector('.quiz-feedback').classList.remove('show', 'ok', 'ko');
-  });
-  document.getElementById('quiz-score').classList.remove('show');
-}
-</script>
-
-</body>
-</html>
+</head><body><nav class="bash-site-nav"><a href="https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/">← Cours Markdown</a><a href="https://kayasam.github.io/linux-initiation/#bash">Parcours Bash →</a></nav><main><nav class="lesson-nav" aria-label="Parcours"><a href="https://kayasam.github.io/linux-initiation/bash/cours/02-variables-interactif.html">← Chapitre précédent</a><a href="https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/">Cours Markdown</a><a href="https://kayasam.github.io/linux-initiation/bash/cours/04-tests-et-conditions-interactif.html">Chapitre suivant →</a></nav><p class="chapter-label">BASH · CHAPITRE 03 / 06</p><details class="toc"><summary>Sommaire du chapitre</summary><div class="toc">
+<ul>
+<li><a href="#chapitre-03-ecrire-son-premier-script">Chapitre 03 — Écrire son premier script</a><ul>
+<li><a href="#a-connaitre-shebang-nano-bash-chmod-x-1">À connaître : shebang, nano, bash, chmod +x, ./, $1, $#, "$@", $?.</a></li>
+<li><a href="#1-un-script-est-un-fichier-texte">1. Un script est un fichier texte</a></li>
+<li><a href="#2-creer-le-fichier-avec-nano">2. Créer le fichier avec nano</a></li>
+<li><a href="#3-verifier-avant-de-lancer">3. Vérifier avant de lancer</a></li>
+<li><a href="#4-executer-directement-le-script">4. Exécuter directement le script</a></li>
+<li><a href="#5-les-arguments-des-valeurs-fournies-au-depart">5. Les arguments : des valeurs fournies au départ</a></li>
+<li><a href="#6-le-code-de-retour">6. Le code de retour</a></li>
+<li><a href="#7-comprendre-un-comportement-inattendu">7. Comprendre un comportement inattendu</a></li>
+<li><a href="#a-retenir">À retenir</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</details><h1 id="chapitre-03-ecrire-son-premier-script">Chapitre 03 — Écrire son premier script</h1>
+<aside class="note">
+<p><strong>Objectif</strong></p>
+<p>Transformer quelques commandes en un programme que tu peux relancer, lire et vérifier.</p>
+</aside>
+<h2 id="a-connaitre-shebang-nano-bash-chmod-x-1"><strong>À connaître :</strong> shebang, <code>nano</code>, <code>bash</code>, <code>chmod +x</code>, <code>./</code>, <code>$1</code>, <code>$#</code>, <code>"$@"</code>, <code>$?</code>.</h2>
+<h2 id="1-un-script-est-un-fichier-texte">1. Un script est un fichier texte</h2>
+<p>Un script Bash contient les commandes que tu aurais pu taper dans le terminal. Bash les lit dans l'ordre. Tu peux ainsi refaire la même tâche sans recopier les commandes.</p>
+<p><img alt="Écrire, vérifier puis exécuter" src="https://kayasam.github.io/linux-initiation/bash/images/bash-03-script.svg" /></p>
+<p>Commence dans un dossier de travail :</p>
+<pre><code class="language-bash">mkdir -p ~/atelier-bash/scripts
+cd ~/atelier-bash/scripts
+</code></pre>
+<h2 id="2-creer-le-fichier-avec-nano">2. Créer le fichier avec nano</h2>
+<p>Ouvre l'éditeur :</p>
+<!-- interactif: editeur -->
+
+<pre><code class="language-bash">nano accueil.sh
+</code></pre>
+<p>Dans l'éditeur, saisis le contenu suivant. Ne recopie pas les marques de bloc de code.</p>
+<!-- fichier: accueil.sh -->
+
+<pre><code class="language-bash">#!/usr/bin/env bash
+
+# Un nom peut etre fourni au lancement.
+prenom=&quot;${1:-visiteur}&quot;
+station=&quot;Orion&quot;
+
+printf 'Bienvenue %s sur %s.\n' &quot;$prenom&quot; &quot;$station&quot;
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Ligne</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>#!/usr/bin/env bash</code></td>
+<td>Demande d'utiliser Bash pour l'exécution directe</td>
+</tr>
+<tr>
+<td><code># Un nom…</code></td>
+<td>Commentaire destiné à la personne qui lit le fichier</td>
+</tr>
+<tr>
+<td><code>prenom=...</code></td>
+<td>Prépare une valeur</td>
+</tr>
+<tr>
+<td><code>printf ...</code></td>
+<td>Produit le message</td>
+</tr>
+</tbody>
+</table>
+<p>Dans nano : <strong>Ctrl+O</strong>, puis <strong>Entrée</strong> pour enregistrer ; <strong>Ctrl+X</strong> pour quitter. Les indications <code>^O</code> et <code>^X</code> de nano signifient « Ctrl+O » et « Ctrl+X ».</p>
+<h2 id="3-verifier-avant-de-lancer">3. Vérifier avant de lancer</h2>
+<pre><code class="language-bash">bash -n accueil.sh
+</code></pre>
+<p><code>-n</code> vérifie la syntaxe <strong>sans exécuter</strong> les commandes. Si rien ne s'affiche et que la commande réussit, Bash n'a pas trouvé d'erreur de syntaxe. Cela ne garantit pas que le programme fait ce que tu souhaites : il faut aussi le tester.</p>
+<p>Lance-le ensuite en indiquant l'interpréteur :</p>
+<pre><code class="language-bash">bash accueil.sh Mila
+</code></pre>
+<p>Résultat : <code>Bienvenue Mila sur Orion.</code>. Dans ce mode, le fichier n'a pas besoin d'être exécutable.</p>
+<h2 id="4-executer-directement-le-script">4. Exécuter directement le script</h2>
+<pre><code class="language-bash">chmod +x accueil.sh
+./accueil.sh Mila
+</code></pre>
+<ul>
+<li><code>chmod +x</code> ajoute le droit d'exécution.</li>
+<li><code>./accueil.sh</code> désigne le fichier dans le dossier courant.</li>
+<li><code>Mila</code> est un argument transmis au script.</li>
+</ul>
+<p>Le <code>./</code> n'est pas décoratif : le dossier courant n'est généralement pas dans <code>PATH</code>. Pour un script stocké ailleurs, indique son chemin.</p>
+<h2 id="5-les-arguments-des-valeurs-fournies-au-depart">5. Les arguments : des valeurs fournies au départ</h2>
+<p>Dans le script, <code>$1</code> est le premier argument. <code>${1:-visiteur}</code> donne une valeur par défaut si ce premier argument est absent ou vide.</p>
+<pre><code class="language-bash">./accueil.sh
+./accueil.sh &quot;Mila Vega&quot;
+</code></pre>
+<p>Résultats :</p>
+<pre><code class="language-text">Bienvenue visiteur sur Orion.
+Bienvenue Mila Vega sur Orion.
+</code></pre>
+<p>Les guillemets autour de <code>Mila Vega</code> conservent un seul argument.</p>
+<table>
+<thead>
+<tr>
+<th>Variable spéciale</th>
+<th>Signification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$0</code></td>
+<td>Nom utilisé pour lancer le script</td>
+</tr>
+<tr>
+<td><code>$1</code>, <code>$2</code></td>
+<td>Premier et deuxième arguments</td>
+</tr>
+<tr>
+<td><code>$#</code></td>
+<td>Nombre d'arguments</td>
+</tr>
+<tr>
+<td><code>"$@"</code></td>
+<td>Tous les arguments, en conservant leurs limites</td>
+</tr>
+</tbody>
+</table>
+<p>Pour observer les arguments, crée un second fichier :</p>
+<!-- fichier: arguments.sh -->
+
+<pre><code class="language-bash">#!/usr/bin/env bash
+printf 'Nombre : %s\n' &quot;$#&quot;
+printf 'Argument : %s\n' &quot;$@&quot;
+</code></pre>
+<pre><code class="language-bash">bash arguments.sh &quot;Mila Vega&quot; pilote
+</code></pre>
+<p>Tu obtiens un nombre de <strong>2</strong>, puis une ligne par argument. <code>"$@"</code> ne recoupe pas <code>Mila Vega</code> en deux mots.</p>
+<h2 id="6-le-code-de-retour">6. Le code de retour</h2>
+<p>Une commande fournit un <strong>code de retour</strong>. <code>0</code> signifie qu'elle a réussi selon ses propres règles. Une valeur différente de zéro indique un autre résultat : erreur, absence de correspondance pour <code>grep</code>, etc.</p>
+<pre><code class="language-bash">bash accueil.sh Mila
+code=$?
+printf 'Code : %s\n' &quot;$code&quot;
+</code></pre>
+<p><code>$?</code> donne le code de la <strong>dernière commande</strong>. Ici, le script réussit et le code est <code>0</code>. Il faut le lire tout de suite, avant qu'une autre commande le remplace.</p>
+<p>Observe un échec sans créer de fichier :</p>
+<pre><code class="language-bash">ls dossier-inexistant-orion 2&gt;/dev/null
+code=$?
+printf 'Code apres echec : %s\n' &quot;$code&quot;
+</code></pre>
+<p>Le code est différent de zéro. <code>2&gt;/dev/null</code> masque le message d'erreur ; il ne transforme pas l'échec en réussite. Nous verrons comment réagir au résultat dans le chapitre suivant.</p>
+<h2 id="7-comprendre-un-comportement-inattendu">7. Comprendre un comportement inattendu</h2>
+<pre><code class="language-bash">bash -x accueil.sh Mila
+</code></pre>
+<p><code>-x</code> affiche les commandes après les expansions. Cela aide à comprendre les valeurs réellement utilisées. Les lignes de trace et le résultat normal peuvent apparaître ensemble.</p>
+<aside class="warning">
+<p><strong>Trace et données personnelles</strong></p>
+<p>Une trace peut afficher les valeurs des variables. Utilise les données fictives du cours avant de partager une capture.</p>
+</aside>
+<p>Si tu crées un fichier sous Windows et vois une erreur liée à <code>bash\r</code>, vérifie les fins de ligne : le script doit être enregistré en <strong>LF</strong>, sans retours Windows CRLF. En travaillant avec nano dans Debian, tu évites ce problème.</p>
+<h2 id="a-retenir">À retenir</h2>
+<ul>
+<li>Le shebang choisit l'interpréteur lors de l'exécution directe.</li>
+<li><code>bash -n</code> vérifie la syntaxe ; les essais vérifient le comportement.</li>
+<li>Protège les arguments avec des guillemets.</li>
+<li>Un script n'a pas besoin de <code>sudo</code> pour travailler dans ton dossier personnel.</li>
+</ul>
+<p><strong>À toi :</strong> combien d'arguments reçoit <code>bash arguments.sh "poste radio" Orion</code> ? Pourquoi <code>chmod +x</code> ne suffit-il pas à lancer un fichier ?</p>
+<p><a href="https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/tp">Passer au TP</a></p><nav class="lesson-nav" aria-label="Parcours"><a href="https://kayasam.github.io/linux-initiation/bash/cours/02-variables-interactif.html">← Chapitre précédent</a><a href="https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/">Cours Markdown</a><a href="https://kayasam.github.io/linux-initiation/bash/cours/04-tests-et-conditions-interactif.html">Chapitre suivant →</a></nav></main></body></html>

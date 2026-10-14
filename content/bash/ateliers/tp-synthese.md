@@ -1,177 +1,88 @@
 ---
-title: "TP Synthèse — Script d'audit système"
+title: "TP de synthèse — Le rapport de mission Orion"
 ---
 
-# TP Synthèse — Script d'audit système
+# TP de synthèse — Le rapport de mission Orion
 
-> Durée estimée : 1h30
+## Mission
 
----
+La relève arrive. Ton programme doit préparer un rapport avec l'équipage, l'inventaire et les stocks faibles. Tu vas réutiliser les six chapitres, sans commande d'administration ni accès à des fichiers système.
 
-## Objectifs
+Travaille dans Bash sur Debian. Pour chaque étape : écris une petite partie, vérifie avec `bash -n`, puis teste le résultat.
 
-Construire un script complet et fonctionnel en partant de zéro. Chaque étape ajoute des fonctionnalités en réutilisant tout ce qui a été vu pendant la formation :
+## Partie A — Préparer les données
 
-- Structure d'un script (shebang, options de sécurité)
-- Variables et substitution de commande
-- Arguments et variables spéciales
-- Tests sur fichiers, chaînes et nombres
-- Conditions `if/elif/else`
-- Boucles `for`
-
----
-
-## Contexte
-
-Tu vas écrire `audit-systeme.sh`, un script qui collecte des informations sur une machine Linux et génère un rapport lisible. Ce type de script est très courant en administration système.
-
-À la fin, le script devra afficher quelque chose comme :
-
-```
-========================================
-   RAPPORT D'AUDIT — monserveur
-   2026-04-27 14:32:05
-========================================
-
---- Informations système ---
-Hostname    : monserveur
-OS          : Debian GNU/Linux 13
-Noyau       : 6.1.0-21-amd64
-Uptime      : up 3 days, 4 hours
-
---- Espace disque ---
-/          : 45% utilisé
-/home      : 12% utilisé
-
---- Fichiers critiques ---
-[OK]  /etc/passwd    existe et lisible
-[OK]  /etc/hosts     existe et lisible
-[OK]  /etc/fstab     existe et lisible
-[MANQUANT]  /etc/motd
-
---- Utilisateurs avec bash ---
-root
-samuel
-
---- Commandes disponibles ---
-[OK]  curl
-[OK]  git
-[ABSENT]  ansible
-[OK]  vim
-
-========================================
-   Fin du rapport
-========================================
-```
-
----
-
-## Étape 1 — Structure de base et informations système (30 min)
-
-**Crée le fichier** `~/scripting/audit-systeme.sh` avec le contenu suivant comme point de départ :
+**A1.** Colle le bloc complet :
 
 ```bash
-#!/usr/bin/env bash
-
-set -euo pipefail
-
-# Variables
-HOSTNAME_MACHINE=$(hostname)
-DATE_RAPPORT=$(date '+%Y-%m-%d %H:%M:%S')
+mkdir -p ~/atelier-bash/synthese/donnees
+cd ~/atelier-bash/synthese
+printf 'Mila Vega\nNoe\nSami\n' > donnees/equipe.txt
+cat > donnees/stock.csv <<'EOF'
+produit;categorie;quantite;prix
+clavier;informatique;8;25
+souris;informatique;12;15
+cahier;papeterie;20;3
+ecran;informatique;4;180
+stylo;papeterie;30;2
+EOF
 ```
 
-**1.1** Ajoute l'affichage de l'en-tête du rapport avec les séparateurs `===`, le nom de la machine et la date. Utilise des variables.
+**A2.** Vérifie les deux fichiers. Tu dois retrouver trois personnes et cinq produits, plus l'en-tête de l'inventaire.
 
-**1.2** Ajoute une section `--- Informations système ---` qui affiche :
-- Le hostname
-- Le nom de l'OS (contenu de `/etc/os-release`, variable `PRETTY_NAME`)
-  > Indice : `source /etc/os-release` charge les variables du fichier, dont `$PRETTY_NAME`
-- La version du noyau (`uname -r`)
-- L'uptime (`uptime -p`)
+## Partie B — Le début du programme
 
-**1.3** Rends le script exécutable et teste-le :
-```bash
-chmod +x ~/scripting/audit-systeme.sh
-~/scripting/audit-systeme.sh
-```
+Crée `mission.sh` dans nano.
 
----
+**B1.** Ajoute le shebang. Le script accepte zéro ou un argument : le nom de la mission, avec `Orion` par défaut. Refuse plus d'un argument avec un message d'utilisation et le code 2.
 
-## Étape 2 — Boucles et tests (40 min)
+**B2.** Vérifie séparément que `donnees/equipe.txt` et `donnees/stock.csv` sont des fichiers lisibles. Si un fichier manque, explique lequel et termine avec le code 2.
 
-**2.1 — Espace disque**
+**B3.** Crée le dossier `rapports`. Si la création échoue, termine avec le code 1.
 
-Ajoute une section `--- Espace disque ---` qui affiche le pourcentage d'utilisation de chaque partition montée.
+**Point de contrôle :** vérifie la syntaxe. Ne produis pas encore le rapport tant que ces gardes ne sont pas en place.
 
-> Indice : `df -h --output=target,pcent` affiche les points de montage et leur utilisation. Utilise une boucle `while read` pour traiter chaque ligne.
+## Partie C — Construire le rapport
 
-**2.2 — Vérification de fichiers critiques**
+Le rapport sera écrit dans `rapports/mission.txt`. Il remplace le rapport précédent ; les données d'entrée restent dans un autre dossier.
 
-Définis une liste de fichiers à vérifier :
-```bash
-fichiers_critiques=(
-    /etc/passwd
-    /etc/hosts
-    /etc/fstab
-    /etc/motd
-    /etc/ssh/sshd_config
-)
-```
+**C1.** Écris un titre contenant le nom de la mission et la date obtenue avec `date +%F`.
 
-Ajoute une section `--- Fichiers critiques ---` avec une boucle `for` qui affiche pour chaque fichier :
-- `[OK]  <chemin>    existe et lisible` s'il existe et est lisible
-- `[MANQUANT]  <chemin>` s'il n'existe pas
+**C2.** Parcours l'équipage avec une boucle de lecture. Affiche une ligne par personne et compte les personnes. Ne découpe pas `Mila Vega`.
 
-**2.3 — Utilisateurs avec bash**
+**C3.** Avec `awk`, calcule les quantités et la valeur totale de l'inventaire, sans l'en-tête.
 
-Ajoute une section `--- Utilisateurs avec bash ---` qui lit `/etc/passwd` et affiche uniquement les utilisateurs dont le shell est `/bin/bash`.
+**C4.** Ajoute les produits dont la quantité est inférieure à 10.
 
-> Indice : `while read -r ligne` + test sur `*"/bin/bash"` + `cut -d: -f1`
+> Indice : tu peux regrouper plusieurs commandes entre `{` et `}` puis rediriger tout leur résultat. Dans le cours, tu as aussi vu comment initialiser avec `>` puis ajouter avec `>>` : cette solution est acceptée.
 
----
+**C5.** En cas de réussite, affiche le chemin du rapport, puis son contenu.
 
-## Étape 3 — Argument et commandes disponibles (20 min)
+## Partie D — La recette de livraison
 
-**3.1 — Argument optionnel**
+**D1.** Lance le programme depuis `~/atelier-bash/synthese`, sans argument, puis avec `"Orion Nord"`.
 
-Modifie le script pour qu'il accepte un argument optionnel : le nom d'un fichier de sortie.
+**D2.** Vérifie dans le rapport :
 
-- Si aucun argument n'est passé → affiche sur le terminal (comportement actuel)
-- Si un argument est passé → redirige toute la sortie vers ce fichier
+| Information | Résultat attendu |
+|---|---|
+| Équipage | Mila Vega, Noe, Sami |
+| Personnes | 3 |
+| Articles | 74 |
+| Valeur | 1220 |
+| Stocks faibles | clavier 8 ; ecran 4 |
 
-> Indice : utilise `$#` pour tester si un argument existe. Si oui, redirige avec `exec > "$1"`.
+**D3.** Pour tester l'erreur de fichier, renomme temporairement **dans cet atelier** `donnees/equipe.txt` en `donnees/equipe-attente.txt`. Lance le script : il doit renvoyer 2. Remets immédiatement le nom initial, puis relance le cas valide.
 
-**3.2 — Commandes disponibles**
+**D4.** Vérifie que les deux fichiers de données contiennent toujours leur contenu original.
 
-Définis une liste de commandes à vérifier :
-```bash
-commandes=(curl git vim ansible python3 rsync)
-```
+## Bonus — Éviter de répéter les titres
 
-Ajoute une section `--- Commandes disponibles ---` avec une boucle `for` qui affiche pour chaque commande :
-- `[OK]  <commande>` si elle est installée
-- `[ABSENT]  <commande>` si elle ne l'est pas
+Crée une fonction `titre` qui affiche un titre de section. Réutilise-la pour l'équipage et l'inventaire. Le rapport final doit garder les mêmes informations.
 
-> Indice : `command -v nom > /dev/null`
+## Livraison
 
-**3.3** Ajoute le pied de page `=== Fin du rapport ===`.
-
-Teste le script avec et sans argument :
-```bash
-./audit-systeme.sh                        # affiche dans le terminal
-./audit-systeme.sh /tmp/rapport.txt       # écrit dans un fichier
-cat /tmp/rapport.txt                      # vérifie le fichier
-```
-
----
-
-## Questions de vérification
-
-- [ ] À quoi sert `set -euo pipefail` dans ce script ?
-- [ ] Comment récupère-t-on la valeur d'une variable depuis un fichier externe (`/etc/os-release`) ?
-- [ ] Pourquoi utilise-t-on `while read -r` plutôt que `for` pour lire un fichier ligne par ligne ?
-- [ ] Comment tester si une commande est disponible sur le système ?
-- [ ] Que fait `exec > "$1"` ?
+Montre le script, le rapport et les essais au formateur. Explique une variable, une condition, une boucle et le programme `awk` de ton choix.
 
 [← Parcours Bash](https://kayasam.github.io/linux-initiation/#bash)
 

@@ -2,97 +2,73 @@
 title: "TP 04"
 ---
 
-# TP 04 — Tests et conditions
+# TP 04 — Contrôler le sas de la station
 
-> Chapitre associé : `04-tests-et-conditions.md`
-> Durée estimée : 1h
+> Chapitre associé : [04 — Tests et conditions](https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/)
 
----
+## Mission
 
-## Objectifs
+Le sas d'Orion est une simulation locale. Ton programme lit un fichier billet et choisit d'accepter ou de refuser l'entrée. Il doit aussi expliquer les erreurs d'utilisation.
 
-- Écrire des tests sur des fichiers, des chaînes et des nombres
-- Utiliser `if/elif/else` dans un script
-- Utiliser `case` pour gérer des choix multiples
-- Combiner les acquis des chapitres précédents (arguments, variables, code retour)
+## Partie A — Préparer les billets
 
----
+**A1.** Crée ton atelier et deux billets :
 
-## Partie A — Tests en ligne de commande (10 min)
+```bash
+mkdir -p ~/atelier-bash/04-sas
+cd ~/atelier-bash/04-sas
+printf 'ORION-OK\n' > billet-valide.txt
+printf 'AUTRE-STATION\n' > billet-refuse.txt
+```
 
-Sans écrire de script, exécute les tests suivants directement dans le terminal et observe le code de retour avec `echo $?`.
+**A2.** Affiche leurs contenus et vérifie qu'ils sont différents.
 
-**A1.** Teste si `/etc` est un dossier.
+## Partie B — Programmer le contrôleur
 
-**A2.** Teste si `/etc/hosts` est un fichier ordinaire.
+Crée `sas.sh` dans nano, avec son shebang.
 
-**A3.** Teste si `/etc/hosts` est non vide.
+**B1.** Le programme attend exactement un argument. Si `$#` ne vaut pas 1, affiche une ligne d'utilisation sur la sortie d'erreur et termine avec `exit 2`.
 
-**A4.** Teste si tu as le droit d'écriture sur `/etc/hosts`.
+**B2.** Range le premier argument dans `billet`. Vérifie qu'il désigne un fichier ordinaire lisible. Sinon, affiche une erreur et termine avec le code 2.
 
-**A5.** Teste si la chaîne `"bonjour"` est égale à `"Bonjour"`. Puis teste si elles sont différentes.
+**B3.** Cherche une ligne exactement égale à `ORION-OK` avec `grep -qx`.
 
-**A6.** Crée une variable `age=25`. Teste si elle est supérieure à 18, puis si elle est inférieure à 30.
+- Si la recherche réussit : affiche `SAS OUVERT`, puis termine avec le code 0.
+- Sinon : affiche `SAS FERME`, puis termine avec le code 1.
 
----
+> Indice : une commande placée après `if` sert elle-même de test.
 
-## Partie B — if/elif/else (20 min)
+**B4.** Vérifie la syntaxe et ajoute le droit d'exécution.
 
-**B1.** Écris un script `verif-argument.sh` qui :
-- Vérifie qu'il reçoit exactement 1 argument
-- Si non, affiche le message d'usage et quitte avec le code 1
-- Si oui, affiche `Argument reçu : <valeur>`
+## Partie C — La tournée des essais
 
-**B2.** Écris un script `verif-fichier.sh` qui prend un chemin en argument et affiche :
-- `<chemin> est un fichier` si c'est un fichier ordinaire
-- `<chemin> est un dossier` si c'est un répertoire
-- `<chemin> n'existe pas` sinon
+**C1.** Teste les situations ci-dessous. Après **chaque** lancement, utilise immédiatement `printf 'Code : %s\n' "$?"`.
 
-**B3.** Écris un script `age.sh` qui prend un âge en argument et affiche :
-- `Mineur` si l'âge est strictement inférieur à 18
-- `Majeur` si l'âge est entre 18 et 64 (inclus)
-- `Senior` si l'âge est supérieur ou égal à 65
+| Lancement | Résultat attendu | Code |
+|---|---|---|
+| `./sas.sh billet-valide.txt` | SAS ouvert | 0 |
+| `./sas.sh billet-refuse.txt` | SAS fermé | 1 |
+| `./sas.sh absent.txt` | Erreur de fichier | 2 |
+| `./sas.sh` | Aide d'utilisation | 2 |
+| `./sas.sh .` | Erreur de fichier : `.` est un dossier | 2 |
 
-**B4.** Améliore `verif-fichier.sh` pour qu'il affiche aussi si le fichier est lisible et exécutable.
+**C2.** Copie le billet valide vers un fichier nommé `billet equipe.txt`, puis teste ce nom composé. Il doit être accepté quand tu utilises les guillemets.
 
----
+**C3.** Explique pourquoi le script vérifie le nombre d'arguments avant de lire `$1`.
 
-## Partie C — case (20 min)
+## Bonus — Le menu de la station
 
-**C1.** Écris un script `extension.sh` qui prend un nom de fichier en argument et affiche son type selon son extension :
-- `.sh` → Script bash
-- `.txt` → Fichier texte
-- `.log` → Fichier journal
-- `.conf` ou `.cfg` → Fichier de configuration
-- Autre → Extension inconnue
+Crée `menu.sh`. Il demande un choix avec `read -r -p`, puis utilise `case` :
 
-> Indice : utilise `case "$1" in` avec des motifs comme `*.sh)`
+- `1` affiche `Radio disponible`.
+- `2` affiche `Reserve disponible`.
+- Toute autre réponse affiche `Choix inconnu` et termine avec le code 2.
 
-**C2.** Écris un script `menu.sh` qui affiche un menu avec 3 options et exécute l'action correspondante :
-- `1` → afficher la date et l'heure
-- `2` → afficher l'espace disque sur `/`
-- `3` → afficher les 5 dernières lignes de `/var/log/syslog`
-- Autre → afficher `Option invalide` et quitter avec le code 1
+Ce menu fait un seul choix puis se termine. Une boucle pour le répéter sera vue au prochain chapitre.
 
----
+## Mission accomplie si…
 
-## Bonus
-
-**B+1.** Modifie `menu.sh` pour qu'il accepte aussi les réponses en lettres : `d` pour date, `e` pour espace disque, `l` pour logs.
-
-**B+2.** Écris un script `verif-commande.sh` qui prend un nom de commande en argument et affiche si elle est installée sur le système ou non.
-> Indice : `command -v nom > /dev/null`
-
----
-
-## Questions de vérification
-
-- [ ] Quelle est la différence entre `[ ]` et `[[ ]]` ?
-- [ ] Pourquoi faut-il mettre les variables entre guillemets dans un test ?
-- [ ] Quelle valeur retourne un test vrai ? Un test faux ?
-- [ ] Quel opérateur compare deux nombres pour savoir si le premier est supérieur ?
-- [ ] Comment tester si un fichier existe et est non vide en une seule ligne ?
-- [ ] Quel mot-clé termine un bloc `if` ? Un bloc `case` ?
+Les cinq cas du tableau donnent les résultats et codes attendus, et le billet au nom composé fonctionne.
 
 [← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/)
 

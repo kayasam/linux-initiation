@@ -2,93 +2,80 @@
 title: "TP 01"
 ---
 
-# TP 01 — Personnaliser son environnement Bash
+# TP 01 — Installer la station Orion
 
-> Chapitre associé : `01-shell-et-environnement.md`
-> Durée estimée : 45 min
+> Chapitre associé : [01 — Le shell et son environnement](https://kayasam.github.io/linux-initiation/bash/01-shell-et-environnement/)
 
----
+## Mission
 
-## Objectifs
+Tu arrives à la station Orion. Prépare ton poste, crée le journal de bord et trouve le message radio. Tu travailles dans **Bash sur Debian**, après ta connexion SSH.
 
-- Savoir où se trouvent les fichiers de configuration Bash
-- Comprendre la différence entre alias et fonction
-- Créer des alias utiles dans `.bashrc`
-- Écrire une fonction shell avec arguments
-- Recharger la configuration sans redémarrer le terminal
+## Partie A — Trouver ton poste
 
----
+**A1.** Affiche ton compte, le nom de la machine et ton dossier courant. Note les trois résultats.
 
-## Partie A — Explorer l'environnement existant (10 min)
+> Indice : les trois commandes sont au début du cours.
 
-**A1.** Affiche le shell configuré pour ton utilisateur, et le shell du processus courant. Sont-ils identiques ?
+**A2.** Prépare ce dossier de mission :
 
-**A2.** Vérifie si ton shell courant est un login shell ou non.
+```bash
+mkdir -p ~/atelier-bash/01-orion/messages
+cd ~/atelier-bash/01-orion
+pwd
+```
 
-**A3.** Affiche le contenu de ton `.bashrc` actuel. Repère les sections déjà présentes.
+Explique `~`, `-p` et le résultat de `pwd`.
 
-**A4.** Affiche tous les alias déjà définis dans ton environnement.
+**A3.** Entre dans `messages`, vérifie où tu es, puis reviens au dossier `01-orion`. Utilise `cd`, `pwd` et `..`.
 
-**A5.** Affiche la liste des shells disponibles sur le système.
+**Point de contrôle :** tu es revenu dans `~/atelier-bash/01-orion`.
 
----
+## Partie B — Ouvrir le journal de bord
 
-## Partie B — Redirections et tubes (15 min)
+**B1.** Crée le journal :
 
-**B1.** Sauvegarde la liste du contenu de `/etc` dans un fichier `/tmp/liste_etc.txt`.
+```bash
+printf 'ORION : poste ouvert\n' > journal.txt
+```
 
-**B2.** Affiche le nombre total de lignes de ce fichier.
+**B2.** Avec `>>`, ajoute deux lignes : `Radio : OK` et `Reserve : OK`.
 
-**B3.** Affiche uniquement les lignes contenant le mot `conf`, puis compte combien il y en a (deux commandes séparées).
+**B3.** Affiche le journal. Il doit contenir exactement :
 
-**B4.** Tente de lister un dossier inexistant (`/dossier-inexistant`). Redirige uniquement le message d'erreur vers un fichier `/tmp/erreurs.txt`, puis affiche son contenu.
+```text
+ORION : poste ouvert
+Radio : OK
+Reserve : OK
+```
 
-**B5.** Refais la même commande mais cette fois, jette l'erreur sans la sauvegarder nulle part. Vérifie qu'il ne s'affiche rien à l'écran.
+**B4.** Liste les fichiers avec les détails. Quel caractère de la commande `ls -l` demande cet affichage ?
 
----
+## Partie C — Recevoir un message
 
-## Partie C — Alias et fonctions (20 min)
+**C1.** Crée le fichier radio :
 
-**C1.** Ouvre ton `.bashrc` dans un éditeur de texte.
+```bash
+printf 'INFO : depart a 09h\nSECRET : suivre Vega\nINFO : ciel degage\n' > messages/radio.txt
+```
 
-**C2.** Ajoute les alias suivants à la fin du fichier :
+**C2.** Affiche seulement la ligne contenant `SECRET`, avec `grep`.
 
-| Alias | Commande |
-|-------|---------|
-| `ll` | `ls -lh` |
-| `la` | `ls -lha` |
-| `..` | `cd ..` |
-| `ports` | `ss -tulnp` |
-| `myip` | `ip -br a` |
-| `maj` | `sudo apt update && sudo apt upgrade` |
+**C3.** Refais le même filtre avec deux commandes reliées par un tube. Explique le rôle du tube.
 
-**C3.** Toujours dans `.bashrc`, ajoute une fonction `mkcd` qui crée un dossier et s'y déplace directement (en une seule commande).
+**C4.** Vérifie que les trois lignes du fichier radio sont toujours présentes.
 
-**C4.** Sauvegarde le fichier et recharge la configuration **sans fermer le terminal**.
+## Bonus — Le dossier au nom piégeux
 
-**C5.** Teste chacun des alias que tu as créés.
+Crée un dossier nommé `journal de bord` puis entre dedans. Il faut le considérer comme **un seul nom** : entoure-le de guillemets doubles. Reviens ensuite à `01-orion`.
 
-**C6.** Teste la fonction `mkcd` en créant le dossier `/tmp/mon-test`, et vérifie ensuite dans quel dossier tu te trouves.
+## Mission accomplie si…
 
----
+- Tu retrouves ton dossier sans fermer la connexion.
+- Ton journal contient les trois lignes attendues.
+- Tu as trouvé le message secret sans modifier le fichier radio.
+- Tu expliques la différence entre `>` et `>>`.
 
-## Bonus
-
-**B+1.** Écris une fonction `compter` qui affiche le nombre d'éléments dans le dossier passé en argument. Teste-la sur `/etc` et `/tmp`.
-
-**B+2.** Que se passe-t-il si tu précèdes une commande aliasée par un `\` (ex: `\rm`) ? Explique pourquoi.
-
----
-
-## Questions de vérification
-
-À la fin du TP, tu dois être capable de répondre sans regarder le cours :
-
-- [ ] Quel fichier de config est chargé à chaque ouverture de terminal (non-login) ?
-- [ ] Quelle commande recharge `.bashrc` dans le shell courant ?
-- [ ] Quelle est la différence principale entre un alias et une fonction ?
-- [ ] Comment redirige-t-on uniquement les erreurs d'une commande vers un fichier ?
-- [ ] Quel opérateur connecte la sortie d'une commande à l'entrée de la suivante ?
+Conserve tes fichiers : aucune suppression n'est demandée.
 
 [← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/01-shell-et-environnement/)
 

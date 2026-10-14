@@ -1,271 +1,166 @@
-# Chapitre 03 — Bases du scripting
+# Chapitre 03 — Écrire son premier script
 
+> [!NOTE] Objectif
+> Transformer quelques commandes en un programme que tu peux relancer, lire et vérifier.
+
+**À connaître :** shebang, `nano`, `bash`, `chmod +x`, `./`, `$1`, `$#`, `"$@"`, `$?`.
 ---
 
-## 1. Qu'est-ce qu'un script ?
+## 1. Un script est un fichier texte
 
-[Formatux](https://www.formatux.fr/formatux-bash/develop/module-010-niveau1/index.html) :
+Un script Bash contient les commandes que tu aurais pu taper dans le terminal. Bash les lit dans l'ordre. Tu peux ainsi refaire la même tâche sans recopier les commandes.
 
-> Les scripts en shell ont l'avantage d'être réalisables **rapidement** et de manière **fiable**, **sans compilation** ni installation de commandes supplémentaires. Un script shell n'est qu'un fichier texte sans enluminures.
->
-> Pour écrire un script shell, il suffit de réunir dans un même fichier texte toutes les commandes nécessaires. En rendant ce fichier exécutable, le shell le lira **séquentiellement** et exécutera une à une les commandes le comportant.
+![Écrire, vérifier puis exécuter](https://kayasam.github.io/linux-initiation/bash/images/bash-03-script.svg)
 
-Un bon script est :
-- **Fiable** : son fonctionnement est irréprochable même en cas de mauvaise utilisation
-- **Commenté** : son code est annoté pour faciliter la relecture et les évolutions
-- **Lisible** : le code est indenté, les commandes sont aérées
-- **Portable** : le code fonctionne sur tout système Linux
-
----
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/XGxtbcAzk-g?si=YZyolW6VCyvwFE7I" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-
-## 2. Structure d'un script
-
-Un script bash est un fichier texte qui contient des commandes. Il s'exécute **ligne par ligne, du début à la fin**.
+Commence dans un dossier de travail :
 
 ```bash
-#!/usr/bin/env bash        ← ligne 1 obligatoire : le shebang
-
-# Ceci est un commentaire  ← tout ce qui suit # est ignoré
-
-echo "Bonjour !"           ← commandes, une par ligne
-date +%Y-%m-%d
+mkdir -p ~/atelier-bash/scripts
+cd ~/atelier-bash/scripts
 ```
 
-Les quatre éléments d'un script :
+## 2. Créer le fichier avec nano
 
-| Élément | Rôle |
-|---------|------|
-| **Shebang** (ligne 1) | Indique à l'OS quel interpréteur utiliser |
-| **Commentaires** (`#`) | Annotations ignorées à l'exécution |
-| **Commandes** | Le contenu du script, une par ligne |
-| **Indentation** | Non obligatoire, mais indispensable pour la lisibilité |
+Ouvre l'éditeur :
 
----
-
-## 3. Le shebang
-
-https://abs.traduc.org/abs-fr/ch02.html#magnumref :
-
-> Le *sha-bang* (`#!`) en tête de fichier indique à votre système que ce fichier est un ensemble de commandes pour l'interpréteur indiqué. Tout de suite après le *sha-bang* se trouve le chemin vers le programme qui interprète les commandes de ce script.
-
+<!-- interactif: editeur -->
 ```bash
-#!/usr/bin/env bash    ← recommandé (compatible tous les systèmes)
-#!/bin/bash            ← fonctionne aussi mais moins portable
-#!/usr/bin/sh          ← interpréteur POSIX minimal (pas de fonctions bash)
+nano accueil.sh
 ```
 
-> [!TIP]
-> Toujours utiliser `#!/usr/bin/env bash` plutôt que `#!/bin/bash`. `env` cherche bash dans le `PATH` et le trouve quel que soit son emplacement sur le système.
-> [!NOTE]
-> Le shebang n'est lu que si le script est exécuté directement (`./script.sh`). Si on passe le script en argument à bash (`bash script.sh`), le shebang est ignoré.
----
+Dans l'éditeur, saisis le contenu suivant. Ne recopie pas les marques de bloc de code.
 
-## 4. Exécution d'un script
-
-https://learning.lpi.org/fr/learning-materials/102-500/105/105.2/105.2_01/
-
-Il existe deux façons d'exécuter un script :
-
-### Méthode 1 — passer le script à bash
-
-```bash
-bash monscript.sh
-```
-
-Simple, ne nécessite pas de droits d'exécution sur le fichier.
-
-### Méthode 2 — rendre le script exécutable
-
-```bash
-chmod +x monscript.sh    # donner le droit d'exécution (une seule fois)
-./monscript.sh           # exécuter
-```
-
-> [!WARNING]
-> Le `./` devant le nom du script est obligatoire si le dossier courant n'est pas dans le `PATH`. Sans lui, bash cherche la commande dans les dossiers du `PATH` et ne trouve pas le script.
-### Environnement d'exécution
-
-Quand un script est exécuté, il tourne dans un **sous-shell** — un processus enfant du shell courant. Conséquences :
-- Les variables locales du shell courant ne sont **pas** disponibles dans le script (sauf si exportées)
-- Les modifications faites dans le script (variables, `cd`…) n'affectent **pas** le shell courant
-- Le script ne charge **pas** `.bashrc` — il n'a pas d'environnement interactif
-
----
-
-## 5. Options de shell — sécuriser un script
-
-Par défaut, bash continue l'exécution même si une commande échoue. C'est dangereux dans un script. On active des options de sécurité en début de script avec `set` :
-
+<!-- fichier: accueil.sh -->
 ```bash
 #!/usr/bin/env bash
 
-set -e              # arrête le script si une commande échoue
-set -u              # arrête le script si une variable non définie est utilisée
-set -o pipefail     # arrête si une commande dans un tube échoue
-set -x              # affiche chaque commande avant de l'exécuter (debug)
+# Un nom peut etre fourni au lancement.
+prenom="${1:-visiteur}"
+station="Orion"
+
+printf 'Bienvenue %s sur %s.\n' "$prenom" "$station"
 ```
 
-Version condensée — les trois premières ensemble :
+| Ligne | Rôle |
+|---|---|
+| `#!/usr/bin/env bash` | Demande d'utiliser Bash pour l'exécution directe |
+| `# Un nom…` | Commentaire destiné à la personne qui lit le fichier |
+| `prenom=...` | Prépare une valeur |
+| `printf ...` | Produit le message |
+
+Dans nano : **Ctrl+O**, puis **Entrée** pour enregistrer ; **Ctrl+X** pour quitter. Les indications `^O` et `^X` de nano signifient « Ctrl+O » et « Ctrl+X ».
+
+## 3. Vérifier avant de lancer
 
 ```bash
-set -euo pipefail
+bash -n accueil.sh
 ```
 
-| Option | Signification | Utilité |
-|--------|--------------|---------|
-| `-e` | *errexit* | Arrête immédiatement si une commande renvoie une erreur |
-| `-u` | *nounset* | Traite les variables non définies comme des erreurs |
-| `-o pipefail` | — | Propage les erreurs dans les tubes (`\|`) |
-| `-x` | *xtrace* | Affiche les commandes au moment de leur exécution (debug) |
+`-n` vérifie la syntaxe **sans exécuter** les commandes. Si rien ne s'affiche et que la commande réussit, Bash n'a pas trouvé d'erreur de syntaxe. Cela ne garantit pas que le programme fait ce que tu souhaites : il faut aussi le tester.
 
-> [!TIP]
-> **Bonne pratique** : commencer tout script avec `set -euo pipefail`. Cela transforme les erreurs silencieuses en arrêts explicites, ce qui rend les bugs bien plus faciles à trouver.
-> [!WARNING]
-> `set -x` est très utile pour déboguer mais produit beaucoup de sortie. L'activer uniquement pendant la mise au point, pas en production.
-Pour désactiver une option ponctuellement :
+Lance-le ensuite en indiquant l'interpréteur :
 
 ```bash
-set +e   # désactive -e
-commande_qui_peut_echouer
-set -e   # réactive -e
+bash accueil.sh Mila
 ```
 
----
+Résultat : `Bienvenue Mila sur Orion.`. Dans ce mode, le fichier n'a pas besoin d'être exécutable.
 
-## 6. Code retour d'une commande
-
-Toute commande Linux retourne un **code de retour** à la fin de son exécution :
-- `0` → succès
-- Toute autre valeur (1 à 255) → échec ou erreur
-
-Ce code est accessible immédiatement après l'exécution via `$?` :
+## 4. Exécuter directement le script
 
 ```bash
-ls /etc
-echo $?    # 0  ← succès
-
-ls /dossier-inexistant
-echo $?    # 2  ← échec (dossier introuvable)
+chmod +x accueil.sh
+./accueil.sh Mila
 ```
 
-> [!WARNING]
-> `$?` ne contient que le code de la **dernière** commande exécutée. Si tu exécutes une autre commande entre les deux, tu perds la valeur.
-C'est ce code que `set -e` surveille : dès qu'une commande renvoie autre chose que 0, le script s'arrête.
+- `chmod +x` ajoute le droit d'exécution.
+- `./accueil.sh` désigne le fichier dans le dossier courant.
+- `Mila` est un argument transmis au script.
 
----
+Le `./` n'est pas décoratif : le dossier courant n'est généralement pas dans `PATH`. Pour un script stocké ailleurs, indique son chemin.
 
-## 7. Variables spéciales et paramètres positionnels
+## 5. Les arguments : des valeurs fournies au départ
 
-https://learning.lpi.org/fr/learning-materials/102-500/105/105.2/105.2_01/#:~:text=variables%20sp%C3%A9ciales
+Dans le script, `$1` est le premier argument. `${1:-visiteur}` donne une valeur par défaut si ce premier argument est absent ou vide.
 
-Ces variables sont définies automatiquement par bash. On ne peut que les lire, pas les modifier.
+```bash
+./accueil.sh
+./accueil.sh "Mila Vega"
+```
 
-| Variable | Contenu |
-|----------|---------|
-| `$0` | Nom du script |
-| `$1`, `$2`… `$9` | Arguments passés au script (1er, 2e… 9e) |
-| `${10}`, `${11}`… | Arguments au-delà du 9e (accolades obligatoires) |
-| `$#` | Nombre d'arguments passés au script |
-| `$@` | Tous les arguments (chacun entre guillemets si `"$@"`) |
-| `$*` | Tous les arguments (un seul mot si `"$*"`) |
-| `$?` | Code de retour de la dernière commande |
-| `$$` | PID du shell courant |
-| `$!` | PID du dernier processus lancé en arrière-plan |
+Résultats :
 
-> Différence entre `$@` et `$*` : https://unix.stackexchange.com/questions/129072/whats-the-difference-between-and
+```text
+Bienvenue visiteur sur Orion.
+Bienvenue Mila Vega sur Orion.
+```
 
-### Exemple concret
+Les guillemets autour de `Mila Vega` conservent un seul argument.
 
-`salutation.sh` :
+| Variable spéciale | Signification |
+|---|---|
+| `$0` | Nom utilisé pour lancer le script |
+| `$1`, `$2` | Premier et deuxième arguments |
+| `$#` | Nombre d'arguments |
+| `"$@"` | Tous les arguments, en conservant leurs limites |
+
+Pour observer les arguments, crée un second fichier :
+
+<!-- fichier: arguments.sh -->
 ```bash
 #!/usr/bin/env bash
-
-set -euo pipefail
-
-echo "Nom du script  : $0"
-echo "1er argument   : $1"
-echo "Nb d'arguments : $#"
-echo "Tous les args  : $@"
+printf 'Nombre : %s\n' "$#"
+printf 'Argument : %s\n' "$@"
 ```
 
 ```bash
-./salutation.sh Alice Bob Charlie
-# Nom du script  : ./salutation.sh
-# 1er argument   : Alice
-# Nb d'arguments : 3
-# Tous les args  : Alice Bob Charlie
+bash arguments.sh "Mila Vega" pilote
 ```
 
----
+Tu obtiens un nombre de **2**, puis une ligne par argument. `"$@"` ne recoupe pas `Mila Vega` en deux mots.
 
-## 8. Micro-TP — Premier script
+## 6. Le code de retour
 
-Créer un script `d.sh` dans le répertoire `~/scripting` qui affiche la date au format `AAAA-MM-JJ`.
+Une commande fournit un **code de retour**. `0` signifie qu'elle a réussi selon ses propres règles. Une valeur différente de zéro indique un autre résultat : erreur, absence de correspondance pour `grep`, etc.
 
 ```bash
-mkdir -p ~/scripting
-nano ~/scripting/d.sh
+bash accueil.sh Mila
+code=$?
+printf 'Code : %s\n' "$code"
 ```
 
-Contenu du script :
+`$?` donne le code de la **dernière commande**. Ici, le script réussit et le code est `0`. Il faut le lire tout de suite, avant qu'une autre commande le remplace.
+
+Observe un échec sans créer de fichier :
+
 ```bash
-#!/usr/bin/env bash
-
-set -euo pipefail
-
-date +%F
+ls dossier-inexistant-orion 2>/dev/null
+code=$?
+printf 'Code apres echec : %s\n' "$code"
 ```
 
-Exécution :
+Le code est différent de zéro. `2>/dev/null` masque le message d'erreur ; il ne transforme pas l'échec en réussite. Nous verrons comment réagir au résultat dans le chapitre suivant.
+
+## 7. Comprendre un comportement inattendu
+
 ```bash
-chmod +x ~/scripting/d.sh
-~/scripting/d.sh
-# 2026-04-27
+bash -x accueil.sh Mila
 ```
 
-> [!NOTE]
-> `date +%F` est équivalent à `date +%Y-%m-%d`. Le format `%F` est un raccourci ISO 8601.
----
+`-x` affiche les commandes après les expansions. Cela aide à comprendre les valeurs réellement utilisées. Les lignes de trace et le résultat normal peuvent apparaître ensemble.
 
-## Récapitulatif des commandes
+> [!WARNING] Trace et données personnelles
+> Une trace peut afficher les valeurs des variables. Utilise les données fictives du cours avant de partager une capture.
 
-| Commande | Description |
-|----------|-------------|
-| `bash script.sh` | Exécute un script sans droit d'exécution |
-| `chmod +x script.sh` | Donne le droit d'exécution à un script |
-| `./script.sh` | Exécute un script dans le répertoire courant |
-| `set -e` | Arrête le script si une commande échoue |
-| `set -u` | Arrête si une variable non définie est utilisée |
-| `set -o pipefail` | Propage les erreurs dans les tubes |
-| `set -x` | Mode debug : affiche chaque commande avant exécution |
-| `set -euo pipefail` | Les trois options de sécurité en une ligne |
-| `set +e` | Désactive l'option `-e` |
-| `echo $?` | Affiche le code de retour de la dernière commande |
-| `$0` | Nom du script |
-| `$1` … `$9` | Arguments positionnels (1er au 9e) |
-| `$#` | Nombre d'arguments passés au script |
-| `$@` | Tous les arguments |
-| `$$` | PID du shell courant |
-| `type -t commande` | Indique si une commande est interne ou externe |
-| `date +%F` | Affiche la date au format AAAA-MM-JJ |
-| `date +%Y-%m-%d` | Idem, format explicite |
+Si tu crées un fichier sous Windows et vois une erreur liée à `bash\r`, vérifie les fins de ligne : le script doit être enregistré en **LF**, sans retours Windows CRLF. En travaillant avec nano dans Debian, tu évites ce problème.
 
----
+## À retenir
 
-> [!NOTE]
-> ### À retenir
-> 
-> - Un script bash est un fichier texte exécuté **ligne par ligne, du début à la fin**.
-> - La **première ligne** est toujours le shebang : `#!/usr/bin/env bash`.
-> - Deux façons d'exécuter : `bash script.sh` (sans droit d'exécution) ou `chmod +x` + `./script.sh`.
-> - Le `./` est obligatoire — bash ne cherche pas dans le dossier courant par défaut.
-> - Commencer tout script avec `set -euo pipefail` : arrêt immédiat sur erreur, variable non définie ou échec dans un tube.
-> - `$?` contient le code de retour de la dernière commande : `0` = succès, autre = erreur.
-> - Les **variables spéciales** : `$0` nom du script, `$1`…`$9` arguments, `$#` nombre d'arguments, `$@` tous les arguments.
-> - Un script s'exécute dans un **sous-shell** — il ne modifie pas le shell courant et ne charge pas `.bashrc`.
----
+- Le shebang choisit l'interpréteur lors de l'exécution directe.
+- `bash -n` vérifie la syntaxe ; les essais vérifient le comportement.
+- Protège les arguments avec des guillemets.
+- Un script n'a pas besoin de `sudo` pour travailler dans ton dossier personnel.
 
-> [!TIP]
-> **TP associé** → [tp-03-bases-du-scripting.md](https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/tp)
+**À toi :** combien d'arguments reçoit `bash arguments.sh "poste radio" Orion` ? Pourquoi `chmod +x` ne suffit-il pas à lancer un fichier ?
+
+[Passer au TP](https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/tp)
