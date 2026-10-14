@@ -7,7 +7,7 @@ title: "05. Les boucles"
 > [!TIP] Ressources du chapitre
 > - [Version HTML interactive](https://kayasam.github.io/linux-initiation/bash/cours/05-boucles-interactif.html)
 > - <a href="https://kayasam.github.io/linux-initiation/telechargements/bash/cours/05-boucles.md" download>Télécharger le cours en Markdown</a>
-> - [Passer au TP](https://kayasam.github.io/linux-initiation/bash/tp/tp-05-boucles)
+> - [Passer au TP](https://kayasam.github.io/linux-initiation/bash/05-boucles/tp)
 
 
 ---
@@ -543,6 +543,6 @@ done
 ---
 
 > [!TIP]
-> **TP associé** → `tp-05-boucles.md`
+> **TP associé** → [tp-05-boucles.md](https://kayasam.github.io/linux-initiation/bash/05-boucles/tp)
 
 [← Parcours Bash](https://kayasam.github.io/linux-initiation/#bash) · [Tous les TP Bash](https://kayasam.github.io/linux-initiation/bash/tp/)

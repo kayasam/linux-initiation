@@ -72,3 +72,5 @@ Exemple pour `./table.sh 7` :
 - [ ] Que fait `break` dans une boucle ? Et `continue` ?
 - [ ] Comment calculer `5 * 3` en bash ?
 - [ ] Pourquoi faut-il utiliser `read -r` et pas juste `read` pour lire un fichier ?
+
+[← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/05-boucles/)

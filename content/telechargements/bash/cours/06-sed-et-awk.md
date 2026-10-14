@@ -272,4 +272,4 @@ awk '/ERROR/ {print $3}' app.log | sort | uniq -c | sort -rn
 ---
 
 > [!TIP]
-> **TP associé** → `tp-06-sed-et-awk.md`
+> **TP associé** → [tp-06-sed-et-awk.md](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp)

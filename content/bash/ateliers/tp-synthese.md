@@ -1,5 +1,5 @@
 ---
-title: "Bash — TP Synthèse — Script d'audit système"
+title: "TP Synthèse — Script d'audit système"
 ---
 
 # TP Synthèse — Script d'audit système

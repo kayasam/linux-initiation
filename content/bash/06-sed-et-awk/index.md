@@ -7,6 +7,7 @@ title: "06. sed et awk"
 > [!TIP] Ressources du chapitre
 > - [Version HTML interactive](https://kayasam.github.io/linux-initiation/bash/cours/06-sed-et-awk-interactif.html)
 > - <a href="https://kayasam.github.io/linux-initiation/telechargements/bash/cours/06-sed-et-awk.md" download>Télécharger le cours en Markdown</a>
+> - [Passer au TP](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp)
 
 
 > [name=Samuel GUILLARD <sguillard@jehann.fr>]
@@ -281,6 +282,6 @@ awk '/ERROR/ {print $3}' app.log | sort | uniq -c | sort -rn
 ---
 
 > [!TIP]
-> **TP associé** → `tp-06-sed-et-awk.md`
+> **TP associé** → [tp-06-sed-et-awk.md](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp)
 
 [← Parcours Bash](https://kayasam.github.io/linux-initiation/#bash) · [Tous les TP Bash](https://kayasam.github.io/linux-initiation/bash/tp/)

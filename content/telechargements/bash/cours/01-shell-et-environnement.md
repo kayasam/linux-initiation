@@ -459,4 +459,4 @@ saluer "tout le monde" # affiche : Bonjour, tout le monde !
 ---
 
 > [!TIP]
-> **TP associé** → `tp-01-environnement.md`
+> **TP associé** → [tp-01-environnement.md](https://kayasam.github.io/linux-initiation/bash/01-shell-et-environnement/tp)

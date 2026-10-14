@@ -81,3 +81,5 @@ echo $PATH | tr ':' '\n' | wc -l
 - [ ] Comment rendre une variable accessible à un processus enfant (sous-shell) ?
 - [ ] Quelle commande supprime une variable ?
 - [ ] Quelle syntaxe permet de stocker le résultat d'une commande dans une variable ?
+
+[← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/02-variables/)

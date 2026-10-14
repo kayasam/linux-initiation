@@ -85,3 +85,5 @@
 - [ ] Quelle est la différence principale entre un alias et une fonction ?
 - [ ] Comment redirige-t-on uniquement les erreurs d'une commande vers un fichier ?
 - [ ] Quel opérateur connecte la sortie d'une commande à l'entrée de la suivante ?
+
+[← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/01-shell-et-environnement/)

@@ -533,4 +533,4 @@ done
 ---
 
 > [!TIP]
-> **TP associé** → `tp-05-boucles.md`
+> **TP associé** → [tp-05-boucles.md](https://kayasam.github.io/linux-initiation/bash/05-boucles/tp)

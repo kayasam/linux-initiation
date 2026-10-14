@@ -1,5 +1,5 @@
 ---
-title: "Bash — Bases du scripting"
+title: "TP 03"
 ---
 
 # TP 03 — Bases du scripting
@@ -95,6 +95,8 @@ Le script doit utiliser le shebang correct et les options de sécurité.
 - [ ] Comment récupère-t-on le premier argument passé à un script ?
 
 ---
+
+[← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/)
 
 [← Parcours Bash](https://kayasam.github.io/linux-initiation/#bash)
 

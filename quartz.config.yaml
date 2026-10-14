@@ -176,6 +176,7 @@ plugins:
             }
           }
           if (node.slug === "bash/index") node.displayName = "Bash";
+          if (node.slug === "bash/index") node.children = node.children.filter(child => child.slug !== "bash/tp/index");
         }
       sortFn: >-
         function(a, b) {

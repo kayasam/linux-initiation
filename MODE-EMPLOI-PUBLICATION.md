@@ -1,6 +1,8 @@
 # Publier Linux initiation & Bash
 
-L'accueil propose deux parcours comme le site GLPI/ITIL. Les URL Linux existantes sont conservées ; Bash est publié sous `/bash/` sur le même site. Le script `prepare-linux.py` appelle `prepare-bash.py` pour intégrer les six cours Bash, leurs versions HTML et les sept énoncés de TP depuis `Formations/linux-scripting-bash`. Toutes les corrections Bash restent exclues du site et de son ZIP. Chaque formation possède son archive Obsidian.
+L'accueil propose deux parcours comme le site GLPI/ITIL. Les URL Linux existantes sont conservées ; Bash est publié sous `/bash/` sur le même site. Le script `prepare-linux.py` appelle `prepare-bash.py` pour intégrer les six cours Bash et les huit énoncés de TP depuis `Formations/linux-scripting-bash`.
+
+Dans le coffre Bash, chaque chapitre est rangé dans `cours/<chapitre>/` avec son Markdown, son HTML et un sous-dossier `tp/` contenant l'énoncé et la correction privée. Les TP transversaux sont dans `tp/synthese/` et `tp/bonus/`. Les notes de session restent dans `sessions/`. Sur le site, chaque TP de chapitre est publié à `/bash/<chapitre>/tp`, comme pour Linux initiation. Les anciennes URL des TP Bash redirigent vers leur nouvel emplacement. Toutes les corrections Bash restent exclues du site et de son ZIP. L'archive Bash conserve la même arborescence par chapitre que le coffre.
 
 Les modifications des cours se font dans `Formations/linux-initiation` du coffre Obsidian. Les dix chapitres sont conservés dans leur ordre d’origine, chacun dans `cours/NN-sujet/`, avec le Markdown, le HTML, le quiz et son sous-dossier `tp/`. Les notes de session restent dans `sessions/`.
 

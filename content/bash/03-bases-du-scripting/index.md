@@ -7,7 +7,7 @@ title: "03. Bases du scripting"
 > [!TIP] Ressources du chapitre
 > - [Version HTML interactive](https://kayasam.github.io/linux-initiation/bash/cours/03-bases-du-scripting-interactif.html)
 > - <a href="https://kayasam.github.io/linux-initiation/telechargements/bash/cours/03-bases-du-scripting.md" download>Télécharger le cours en Markdown</a>
-> - [Passer au TP](https://kayasam.github.io/linux-initiation/bash/tp/tp-03-bases-du-scripting)
+> - [Passer au TP](https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/tp)
 
 
 ---
@@ -278,6 +278,6 @@ chmod +x ~/scripting/d.sh
 ---
 
 > [!TIP]
-> **TP associé** → `tp-03-bases-du-scripting.md`
+> **TP associé** → [tp-03-bases-du-scripting.md](https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/tp)
 
 [← Parcours Bash](https://kayasam.github.io/linux-initiation/#bash) · [Tous les TP Bash](https://kayasam.github.io/linux-initiation/bash/tp/)

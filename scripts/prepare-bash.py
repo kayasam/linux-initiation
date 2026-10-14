@@ -43,19 +43,23 @@ def track(key, title, description, cards, first, icon):
 
 def populate(destination, chapters):
     shutil.copytree(ROOT / 'site-content/assets/brands', destination / 'assets/brands', dirs_exist_ok=True)
-    courses = sorted((SOURCE / 'cours').glob('[0-9][0-9]-*.md'))
+    courses = sorted(p for p in (SOURCE / 'cours').glob('[0-9][0-9]-*/*.md') if p.stem == p.parent.name)
     assert len(courses) == 6, 'Six cours Bash attendus'
-    tps = sorted(p for p in (SOURCE / 'sessions/2026-05').glob('tp-*.md') if not re.search(r'correction|corrig', p.name, re.I))
+    candidates = list((SOURCE / 'cours').glob('*/tp/tp-*.md')) + list((SOURCE / 'tp').glob('*/tp-*.md'))
+    tps = sorted(p for p in candidates if not re.search(r'correction|corrig', p.name, re.I))
+    routes = {p: (f'bash/{p.parent.parent.name}/tp' if p.is_relative_to(SOURCE / 'cours') else f'bash/ateliers/{p.stem}') for p in tps}
     export = {}
     bash_cards = []
     for course in courses:
         slug, title = course.stem, title_of(course)
-        body = normalize(course.read_text(encoding='utf-8-sig'))
+        offline_body = normalize(course.read_text(encoding='utf-8-sig'))
+        body = re.sub(r'\n\n<!-- ressources-locales -->\n(?:>[^\n]*\n)+', '', offline_body)
         html_name = f'{slug}-interactif.html'
         links = f'\n\n> [!TIP] Ressources du chapitre\n> - [Version HTML interactive]({BASE}/bash/cours/{html_name})\n> - <a href="{BASE}/telechargements/bash/cours/{course.name}" download>Télécharger le cours en Markdown</a>\n'
-        matching = [p for p in tps if p.name.startswith(f'tp-{slug[:2]}-')]
+        matching = [p for p in tps if p.parent == course.parent / 'tp']
         if matching:
-            links += f'> - [Passer au TP]({BASE}/bash/tp/{matching[0].stem})\n'
+            links += f'> - [Passer au TP]({BASE}/{routes[matching[0]]})\n'
+            body = body.replace(f'](tp/{matching[0].name})', f']({BASE}/{routes[matching[0]]})')
         site_body = re.sub(r'^(# .+)$', lambda m: m[0] + links, body, count=1, flags=re.M)
         site_body += f'\n[← Parcours Bash]({BASE}/#bash) · [Tous les TP Bash]({BASE}/bash/tp/)\n'
         write(destination / 'bash' / slug / 'index.md', metadata(f'{slug[:2]}. {title}', site_body))
@@ -68,20 +72,30 @@ def populate(destination, chapters):
         interactive = interactive.replace('<body>', '<body>' + nav, 1)
         interactive = interactive.replace('</style>', '.bash-site-nav{display:flex;justify-content:space-between;gap:1rem;padding:1rem;flex-wrap:wrap}.bash-site-nav a{color:var(--accent);font-weight:700}\n</style>', 1)
         write(destination / 'bash/cours' / html_name, interactive)
-        export['cours/' + course.name] = body
-        export['cours/' + course.with_suffix('.html').name] = offline
+        export[course.relative_to(SOURCE).as_posix()] = offline_body
+        export[course.with_suffix('.html').relative_to(SOURCE).as_posix()] = offline
         bash_cards.append(card(slug[:2], title, f'./bash/{slug}/'))
     tp_links = []
     for tp in tps:
-        body = normalize(tp.read_text(encoding='utf-8-sig'))
+        offline_body = normalize(tp.read_text(encoding='utf-8-sig'))
+        body = offline_body
+        if tp.is_relative_to(SOURCE / 'cours'):
+            slug = tp.parent.parent.name
+            body = body.replace(f'](../{slug}.md)', f']({BASE}/bash/{slug}/)')
+            body += f'\n[← Revenir au cours]({BASE}/bash/{slug}/)\n'
         links = f'\n[← Parcours Bash]({BASE}/#bash)\n\n<a href="{BASE}/telechargements/bash/tp/{tp.name}" download>Télécharger le TP en Markdown</a>\n'
-        write(destination / 'bash/tp' / tp.name, metadata('Bash — ' + title_of(tp), body + links))
+        write(destination / (routes[tp] + '.md'), metadata(f'TP {tp.parent.parent.name[:2]}' if tp.is_relative_to(SOURCE / 'cours') else title_of(tp), body + links))
         write(destination / 'telechargements/bash/tp' / tp.name, body)
-        export['tp/' + tp.name] = body
-        tp_links.append(f'- [{title_of(tp)}]({BASE}/bash/tp/{tp.stem})')
+        export[tp.relative_to(SOURCE).as_posix()] = offline_body
+        tp_links.append(f'- [{title_of(tp)}]({BASE}/{routes[tp]})')
+        # Preserve previously published URLs without duplicating TP in the explorer.
+        target = f'{BASE}/{routes[tp]}'
+        write(destination / 'bash/tp' / (tp.stem + '.html'), f'<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url={target}"><link rel="canonical" href="{target}"><title>TP Bash</title></head><body><a href="{target}">Ouvrir le TP</a></body></html>')
     write(destination / 'bash/tp/index.md', metadata('Travaux pratiques', '# Travaux pratiques Bash\n\n' + '\n'.join(tp_links) + f'\n\n[← Parcours Bash]({BASE}/#bash)\n'))
+    workshops = [p for p in tps if not p.is_relative_to(SOURCE / 'cours')]
+    write(destination / 'bash/ateliers/index.md', metadata('Synthèse et bonus', '# Synthèse et bonus\n\n' + '\n'.join(f'- [{title_of(p)}]({BASE}/{routes[p]})' for p in workshops) + '\n'))
     write(destination / 'bash/index.md', metadata('Bash — Le parcours', '# Scripting Bash\n\n' + '\n'.join(f'- [{title_of(c)}]({BASE}/bash/{c.stem}/)' for c in courses) + f'\n\n[Travaux pratiques]({BASE}/bash/tp/)\n'))
-    export['README.md'] = '# Scripting Bash\n\nOuvrez ce dossier dans Obsidian. Les six cours sont dans `cours/` et les exercices dans `tp/`. Les versions HTML sont autonomes et se consultent dans un navigateur.\n'
+    export['README.md'] = '# Scripting Bash\n\nOuvrez ce dossier dans Obsidian. Chaque chapitre est dans `cours/<chapitre>/` avec son cours Markdown, sa version HTML et son dossier `tp/`. Les exercices transversaux sont dans `tp/synthese/` et `tp/bonus/`. Les corrections sont exclues.\n'
     with zipfile.ZipFile(destination / 'linux-scripting-bash-obsidian.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
         for name, body in export.items():
             archive.writestr('Linux-scripting-bash/' + name, body)

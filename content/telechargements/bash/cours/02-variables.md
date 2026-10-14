@@ -336,4 +336,4 @@ echo ${nom:?Variable non définie}    # erreur + message → arrêt du script
 ---
 
 > [!TIP]
-> **TP associé** → `tp-02-variables.md`
+> **TP associé** → [tp-02-variables.md](https://kayasam.github.io/linux-initiation/bash/02-variables/tp)

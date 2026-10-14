@@ -7,7 +7,7 @@ title: "04. Tests et conditions"
 > [!TIP] Ressources du chapitre
 > - [Version HTML interactive](https://kayasam.github.io/linux-initiation/bash/cours/04-tests-et-conditions-interactif.html)
 > - <a href="https://kayasam.github.io/linux-initiation/telechargements/bash/cours/04-tests-et-conditions.md" download>Télécharger le cours en Markdown</a>
-> - [Passer au TP](https://kayasam.github.io/linux-initiation/bash/tp/tp-04-tests-et-conditions)
+> - [Passer au TP](https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/tp)
 
 
 ---
@@ -411,6 +411,6 @@ shopt -u nocasematch    # désactive
 ---
 
 > [!TIP]
-> **TP associé** → `tp-04-tests-et-conditions.md`
+> **TP associé** → [tp-04-tests-et-conditions.md](https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/tp)
 
 [← Parcours Bash](https://kayasam.github.io/linux-initiation/#bash) · [Tous les TP Bash](https://kayasam.github.io/linux-initiation/bash/tp/)

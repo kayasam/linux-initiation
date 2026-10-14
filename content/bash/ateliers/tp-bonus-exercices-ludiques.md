@@ -1,5 +1,5 @@
 ---
-title: "Bash — TP Bonus — Exercices ludiques"
+title: "TP Bonus — Exercices ludiques"
 ---
 
 # TP Bonus — Exercices ludiques

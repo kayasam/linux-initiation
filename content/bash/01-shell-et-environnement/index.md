@@ -7,7 +7,7 @@ title: "01. Le shell et son environnement"
 > [!TIP] Ressources du chapitre
 > - [Version HTML interactive](https://kayasam.github.io/linux-initiation/bash/cours/01-shell-et-environnement-interactif.html)
 > - <a href="https://kayasam.github.io/linux-initiation/telechargements/bash/cours/01-shell-et-environnement.md" download>Télécharger le cours en Markdown</a>
-> - [Passer au TP](https://kayasam.github.io/linux-initiation/bash/tp/tp-01-environnement)
+> - [Passer au TP](https://kayasam.github.io/linux-initiation/bash/01-shell-et-environnement/tp)
 
 
 > [name=Samuel GUILLARD <sguillard@jehann.fr>]
@@ -469,6 +469,6 @@ saluer "tout le monde" # affiche : Bonjour, tout le monde !
 ---
 
 > [!TIP]
-> **TP associé** → `tp-01-environnement.md`
+> **TP associé** → [tp-01-environnement.md](https://kayasam.github.io/linux-initiation/bash/01-shell-et-environnement/tp)
 
 [← Parcours Bash](https://kayasam.github.io/linux-initiation/#bash) · [Tous les TP Bash](https://kayasam.github.io/linux-initiation/bash/tp/)

@@ -401,4 +401,4 @@ shopt -u nocasematch    # désactive
 ---
 
 > [!TIP]
-> **TP associé** → `tp-04-tests-et-conditions.md`
+> **TP associé** → [tp-04-tests-et-conditions.md](https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/tp)

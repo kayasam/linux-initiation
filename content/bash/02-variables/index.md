@@ -7,7 +7,7 @@ title: "02. Les variables"
 > [!TIP] Ressources du chapitre
 > - [Version HTML interactive](https://kayasam.github.io/linux-initiation/bash/cours/02-variables-interactif.html)
 > - <a href="https://kayasam.github.io/linux-initiation/telechargements/bash/cours/02-variables.md" download>Télécharger le cours en Markdown</a>
-> - [Passer au TP](https://kayasam.github.io/linux-initiation/bash/tp/tp-02-variables)
+> - [Passer au TP](https://kayasam.github.io/linux-initiation/bash/02-variables/tp)
 
 
 ---
@@ -346,6 +346,6 @@ echo ${nom:?Variable non définie}    # erreur + message → arrêt du script
 ---
 
 > [!TIP]
-> **TP associé** → `tp-02-variables.md`
+> **TP associé** → [tp-02-variables.md](https://kayasam.github.io/linux-initiation/bash/02-variables/tp)
 
 [← Parcours Bash](https://kayasam.github.io/linux-initiation/#bash) · [Tous les TP Bash](https://kayasam.github.io/linux-initiation/bash/tp/)

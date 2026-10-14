@@ -1,5 +1,5 @@
 ---
-title: "Bash — Tests et conditions"
+title: "TP 04"
 ---
 
 # TP 04 — Tests et conditions
@@ -93,6 +93,8 @@ Sans écrire de script, exécute les tests suivants directement dans le terminal
 - [ ] Quel opérateur compare deux nombres pour savoir si le premier est supérieur ?
 - [ ] Comment tester si un fichier existe et est non vide en une seule ligne ?
 - [ ] Quel mot-clé termine un bloc `if` ? Un bloc `case` ?
+
+[← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/)
 
 [← Parcours Bash](https://kayasam.github.io/linux-initiation/#bash)
 

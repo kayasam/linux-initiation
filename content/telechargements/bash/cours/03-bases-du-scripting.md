@@ -268,4 +268,4 @@ chmod +x ~/scripting/d.sh
 ---
 
 > [!TIP]
-> **TP associé** → `tp-03-bases-du-scripting.md`
+> **TP associé** → [tp-03-bases-du-scripting.md](https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/tp)
