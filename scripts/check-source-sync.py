@@ -87,7 +87,7 @@ def local_audit():
             equal(body, (CONTENT / 'telechargements/bash/tp' / tp.name).read_bytes(), tp.name + ' (téléchargement Bash)')
             tp_count += 1
         assert not any(re.search(r'correction|corrig', name, re.I) for name in archive.namelist())
-    assert tp_count == 16
+    assert tp_count == 17
     banks = json.loads((CONTENT / 'assets/quiz/quiz-banks.js').read_text(encoding='utf-8-sig').split('=', 1)[1])
     source_banks = json.loads((linux_source / 'assets/quiz/quiz-banks.js').read_text(encoding='utf-8-sig').split('=', 1)[1])
     assert source_banks == {slug: {**bank, 'chapterLink': slug + '.html'} for slug, bank in banks.items()}
@@ -100,7 +100,7 @@ def local_audit():
             if asset.name == 'quiz-banks.js' or not asset.is_file(): continue
             if folder == 'assets/quiz' and asset.name not in {'quiz.css', 'quiz-engine.js'}: continue
             equal(asset.read_text(encoding='utf-8-sig'), (linux_source / folder / asset.name).read_bytes(), str(asset.relative_to(CONTENT)) + ' (coffre)')
-    print('Coffre → contenus : 10 cours Linux + 6 cours Bash, 16 TP, ZIP et téléchargements conformes.')
+    print('Coffre → contenus : 10 cours Linux + 6 cours Bash, 17 TP, ZIP et téléchargements conformes.')
     print('Quiz et thèmes du coffre : dix quiz de vingt questions et ressources communes conformes.')
 
 

@@ -29,7 +29,7 @@ for course in sorted(p for p in (SOURCE / 'cours').glob('*/*.md') if p.stem == p
     correction = tp.with_name(tp.stem + '-correction.md')
     cases.append({'label': 'solution-' + number, 'blocks': blocks(correction), 'target': number})
     cases.append({'label': 'enonce-' + number, 'blocks': blocks(correction) + blocks(tp), 'target': ''})
-for kind, name in [('synthese', 'tp-synthese'), ('bonus', 'tp-bonus-exercices-ludiques')]:
+for kind, name in [('synthese', 'tp-synthese'), ('bonus', 'tp-bonus-exercices-ludiques'), ('final', 'tp-final-bip-42')]:
     correction = SOURCE / 'tp' / kind / (name + '-correction.md')
     tp = SOURCE / 'tp' / kind / (name + '.md')
     cases.append({'label': 'solution-' + kind, 'blocks': blocks(correction), 'target': kind})
@@ -169,6 +169,57 @@ try:
             output=folder/'rapports/mission.txt';saved=output.with_suffix('.attente');output.rename(saved);output.mkdir()
             scenario('mission.sh',code=1,contains=['Ecriture du rapport impossible'])
             output.rmdir();saved.rename(output)
+        elif target=='final':
+            scenario('jeu-v1.sh',stdin='1\n',contains=['Trop petit !'])
+            scenario('jeu-v1.sh',stdin='9\n',contains=['Trop grand !'])
+            scenario('jeu-v1.sh',stdin='6\n',contains=['BINGO !'])
+            scenario('jeu-v1.sh',stdin='banane\n',code=2)
+            scenario('jeu-v1.sh',stdin='',code=2,contains=['Saisie interrompue'])
+            scenario('jeu-v2.sh',stdin='1\n9\nbanane\n6\n',contains=['en 3 essais'])
+            scenario('jeu-v2.sh',stdin='1\n'*5,code=1,contains=['PERDU !','code etait 6'])
+            scenario('jeu-v2.sh',stdin='',code=2)
+            folder=locate('jeu.sh').parent
+            scores=folder/'scores.csv'
+            scenario('jeu.sh',['Mila Vega','entrainement'],stdin='1\n9\n6\n',contains=['Mila Vega','en 3 essais','BIP-42 : Qui ose'])
+            demand('Mila Vega;3;' in scores.read_text(),'Pseudo composé ou score incorrect')
+            scenario('jeu.sh',['Noe','entrainement'],stdin='banane\n\n10\n08\n-1\n999999999999999999999\n6\n',contains=['en 1 essai.'])
+            before=scores.read_bytes()
+            scenario('jeu.sh',['Noe','entrainement'],stdin='1\n'*5,code=1,contains=['PERDU !'])
+            scenario('jeu.sh',['Noe','entrainement'],stdin='',code=2)
+            scenario('jeu.sh',['Noe','turbo'],code=2,contains=['Usage'])
+            scenario('jeu.sh',['a','normal','extra'],code=2)
+            for pseudo in ['Mila;Vega','Mila\nVega','Mila\rVega']:
+                scenario('jeu.sh',[pseudo,'entrainement'],code=2,contains=['Pseudo interdit'])
+            demand(scores.read_bytes()==before,'Un échec ou une saisie invalide a enregistré un score')
+            scenario('statistiques.sh',contains=['Meilleur resultat : 1 essai(s)'])
+            robot=folder/'robot.txt';hold=folder/'robot.attente';robot.rename(hold)
+            scenario('jeu.sh',['Noe','entrainement'],stdin='6\n',code=2,contains=['Message du robot absent'])
+            hold.rename(robot)
+            robot.chmod(0)
+            scenario('jeu.sh',['Noe','entrainement'],stdin='6\n',code=2)
+            robot.chmod(0o600)
+            demand(robot.read_text()=='ROBOT : Qui ose toucher a mon chocolat ?\n','sed a modifié le fichier source')
+            scores.chmod(0o400)
+            scenario('jeu.sh',['Noe','entrainement'],stdin='6\n',code=1,contains=['scores inutilisable'])
+            scores.chmod(0o600)
+            saved=folder/'scores.attente';scores.rename(saved);scores.mkdir()
+            scenario('jeu.sh',['Noe','entrainement'],stdin='6\n',code=1)
+            scores.rmdir()
+            scenario('statistiques.sh',code=2,contains=['Pas encore de scores'])
+            scores.write_text('joueur;essais;date\n')
+            scenario('statistiques.sh',contains=['Aucune victoire'])
+            scores.unlink();saved.rename(scores)
+            # Random mode: either a victory at 5 or a revealed losing secret in 1..9.
+            for trial in range(10):
+                r=run(['bash','jeu.sh','Test hasard'],folder,env,'5\n'*5)
+                demand(r.returncode in (0,1),'Mode normal invalide '+r.stderr)
+                if r.returncode==0:
+                    demand('en 1 essai.' in r.stdout,'Victoire aléatoire incohérente')
+                else:
+                    demand(re.search(r'code etait [1-9]\.',r.stdout) is not None,'Secret aléatoire hors limites')
+                report['scenarios']+=1
+            scenario('arcade.sh',stdin='x\n2\n3\n',contains=["Ce bouton n'existe pas",'Victoires :','Enfin seul'])
+            scenario('arcade.sh',stdin='',code=2)
         elif target=='bonus':
             scenario('depart.sh',contains=['3\n2\n1\nDecollage !'])
             scenario('quiz.sh',stdin='Bash\nawk\n0\n',contains=['Score : 3/3'])
@@ -198,6 +249,8 @@ backup.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='ut
 note = SOURCE / 'Ressources/validation-debian.md'
 if note.exists():
     content = note.read_text(encoding='utf-8')
+    tp_total = (len(report['documents']) - 6) // 2
+    content = re.sub(r'\d+ documents parcourus : six cours, .*? corrections\.', f"{len(report['documents'])} documents parcourus : six cours, {tp_total} énoncés et {tp_total} corrections.", content)
     content = re.sub(r'\d+ exécutions de blocs', f"{report['blocks']} exécutions de blocs", content)
     content = re.sub(r'\d+ scénarios de comportement', f"{report['scenarios']} scénarios de comportement", content)
     note.write_text(content, encoding='utf-8')

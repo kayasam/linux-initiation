@@ -105,9 +105,9 @@ def populate(destination, chapters):
         write(destination / 'bash/tp' / (tp.stem + '.html'), f'<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url={target}"><link rel="canonical" href="{target}"><title>TP Bash</title></head><body><a href="{target}">Ouvrir le TP</a></body></html>')
     write(destination / 'bash/tp/index.md', metadata('Travaux pratiques', '# Travaux pratiques Bash\n\n' + '\n'.join(tp_links) + f'\n\n[← Parcours Bash]({BASE}/#bash)\n'))
     workshops = [p for p in tps if not p.is_relative_to(SOURCE / 'cours')]
-    write(destination / 'bash/ateliers/index.md', metadata('Synthèse et bonus', '# Synthèse et bonus\n\n' + '\n'.join(f'- [{title_of(p)}]({BASE}/{routes[p]})' for p in workshops) + '\n'))
+    write(destination / 'bash/ateliers/index.md', metadata('Ateliers et jeu final', '# Ateliers et jeu final\n\n' + '\n'.join(f'- [{title_of(p)}]({BASE}/{routes[p]})' for p in workshops) + '\n'))
     write(destination / 'bash/index.md', metadata('Bash — Le parcours', '# Scripting Bash\n\n' + '\n'.join(f'- [{title_of(c)}]({BASE}/bash/{c.stem}/)' for c in courses) + f'\n\n[Travaux pratiques]({BASE}/bash/tp/)\n'))
-    export['README.md'] = '# Scripting Bash\n\nOuvrez ce dossier dans Obsidian. Chaque chapitre est dans `cours/<chapitre>/` avec son cours Markdown, sa version HTML et son dossier `tp/`. Les exercices transversaux sont dans `tp/synthese/` et `tp/bonus/`. Les corrections sont exclues.\n'
+    export['README.md'] = '# Scripting Bash\n\nOuvrez ce dossier dans Obsidian. Chaque chapitre est dans `cours/<chapitre>/` avec son cours Markdown, sa version HTML et son dossier `tp/`. Les exercices transversaux sont dans `tp/synthese/`, `tp/final/` et `tp/bonus/`. Les corrections sont exclues.\n'
     export['cours/README.md'] = (SOURCE / 'cours/README.md').read_text(encoding='utf-8-sig')
     memo = (SOURCE / 'Résumé.md').read_text(encoding='utf-8-sig')
     export['Résumé.md'] = memo
