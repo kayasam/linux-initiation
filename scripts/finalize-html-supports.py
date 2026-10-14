@@ -43,7 +43,11 @@ if args.sync_source:
     for slug in banks:
         file = source / 'cours' / slug / (slug + '.html') if nested else source / 'cours' / (slug + '.html')
         body = file.read_text(encoding='utf-8')
-        file.write_text(themed_html(body, slug), encoding='utf-8')
+        themed = themed_html(body, slug)
+        if nested:
+            themed = themed.replace('href="assets/themes/', 'href="../../assets/themes/')
+            themed = themed.replace('src="assets/themes/', 'src="../../assets/themes/')
+        file.write_text(themed, encoding='utf-8')
     for relative, data in files.items():
         if nested:
             if relative.startswith('cours/assets/'): continue

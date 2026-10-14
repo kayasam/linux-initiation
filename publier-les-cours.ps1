@@ -8,7 +8,7 @@ try {
   if ($LASTEXITCODE) { throw 'Échec de préparation des cours.' }
   & node scripts/prepare-quizzes.mjs
   if ($LASTEXITCODE) { throw 'Échec de préparation des quiz.' }
-  & python scripts/finalize-html-supports.py
+  & python scripts/finalize-html-supports.py --sync-source 'C:/Users/kayaw/Nextcloud/Obsidian/CoffreSam/Formations/linux-initiation'
   if ($LASTEXITCODE) { throw 'Échec de préparation des supports HTML hors ligne.' }
   & python scripts/check-source-sync.py
   if ($LASTEXITCODE) { throw 'Échec de synchronisation avec le coffre Obsidian.' }
