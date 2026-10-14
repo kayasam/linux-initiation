@@ -89,18 +89,24 @@ echo &quot;De retour dans le shell parent&quot;
 </code></pre>
 <p>Le shell enfant est un processus distinct. Il ne peut pas changer le dossier courant de son parent.</p>
 <p>Les parenthèses permettent aussi d'exécuter un groupe de commandes dans un <strong>sous-shell</strong>, avec une copie de l'environnement du shell courant :</p>
-<pre><code class="language-bash">pwd
+<p>Imagine une cabine qui reçoit une copie de ton poste de travail. Elle peut changer son propre dossier sans déplacer ton poste. <strong>Le parent attend pendant que la cabine travaille, puis reprend quand elle se ferme.</strong> On reste sur la même VM : aucune nouvelle connexion SSH n'est ouverte.</p>
+<p><img alt="Avant, pendant et après : le sous-shell change son dossier vers /tmp, le parent conserve son dossier personnel" src="https://kayasam.github.io/linux-initiation/bash/images/bash-01-sous-shell.svg" /></p>
+<p><strong>Prédis avant de lancer :</strong> le dernier <code>pwd</code> affichera-t-il <code>/tmp</code> ou ton dossier personnel ? Dans cet exemple, <code>cd ~</code> place d'abord le parent dans ton dossier personnel.</p>
+<pre><code class="language-bash">cd ~
+pwd
 (
     cd /tmp
     pwd
 )
 pwd
 </code></pre>
-<p>Le <code>pwd</code> du milieu affiche <code>/tmp</code>. Le dernier affiche à nouveau ton dossier de départ : le <code>cd</code> a agi seulement dans le sous-shell.</p>
-<pre><code class="language-text">Shell parent : dossier de départ
-    └── Sous-shell : cd /tmp → dossier /tmp → fin
-Shell parent : toujours dans le dossier de départ
+<p><strong>Vérifie les trois résultats :</strong></p>
+<pre><code class="language-text">/home/stagiaire
+/tmp
+/home/stagiaire
 </code></pre>
+<p>Sur notre VM, le dossier personnel est <code>/home/stagiaire</code> ; adapte ce nom si tu utilises un autre compte. Le premier et le dernier résultat sont identiques. Le <code>cd /tmp</code> a agi seulement dans le sous-shell.</p>
+<p><strong>À ton tour :</strong> remplace <code>/tmp</code> par <code>/etc</code> dans le groupe. Prédis les trois lignes, puis teste. Seule la ligne du milieu doit changer.</p>
 <p>Les variables suivront une logique similaire : nous verrons leur transmission avec <code>export</code> au chapitre 02.</p>
 <h2 id="4-une-commande-ses-options-et-ses-arguments">4. Une commande, ses options et ses arguments</h2>
 <pre><code class="language-bash">ls -l /tmp

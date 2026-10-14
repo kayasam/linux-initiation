@@ -72,7 +72,14 @@ Le shell enfant est un processus distinct. Il ne peut pas changer le dossier cou
 
 Les parenthèses permettent aussi d'exécuter un groupe de commandes dans un **sous-shell**, avec une copie de l'environnement du shell courant :
 
+Imagine une cabine qui reçoit une copie de ton poste de travail. Elle peut changer son propre dossier sans déplacer ton poste. **Le parent attend pendant que la cabine travaille, puis reprend quand elle se ferme.** On reste sur la même VM : aucune nouvelle connexion SSH n'est ouverte.
+
+![Avant, pendant et après : le sous-shell change son dossier vers /tmp, le parent conserve son dossier personnel](https://kayasam.github.io/linux-initiation/bash/images/bash-01-sous-shell.svg)
+
+**Prédis avant de lancer :** le dernier `pwd` affichera-t-il `/tmp` ou ton dossier personnel ? Dans cet exemple, `cd ~` place d'abord le parent dans ton dossier personnel.
+
 ```bash
+cd ~
 pwd
 (
     cd /tmp
@@ -81,13 +88,17 @@ pwd
 pwd
 ```
 
-Le `pwd` du milieu affiche `/tmp`. Le dernier affiche à nouveau ton dossier de départ : le `cd` a agi seulement dans le sous-shell.
+**Vérifie les trois résultats :**
 
 ```text
-Shell parent : dossier de départ
-    └── Sous-shell : cd /tmp → dossier /tmp → fin
-Shell parent : toujours dans le dossier de départ
+/home/stagiaire
+/tmp
+/home/stagiaire
 ```
+
+Sur notre VM, le dossier personnel est `/home/stagiaire` ; adapte ce nom si tu utilises un autre compte. Le premier et le dernier résultat sont identiques. Le `cd /tmp` a agi seulement dans le sous-shell.
+
+**À ton tour :** remplace `/tmp` par `/etc` dans le groupe. Prédis les trois lignes, puis teste. Seule la ligne du milieu doit changer.
 
 Les variables suivront une logique similaire : nous verrons leur transmission avec `export` au chapitre 02.
 
