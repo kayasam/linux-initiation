@@ -98,7 +98,9 @@ def populate(destination, chapters):
     export['README.md'] = '# Scripting Bash\n\nOuvrez ce dossier dans Obsidian. Chaque chapitre est dans `cours/<chapitre>/` avec son cours Markdown, sa version HTML et son dossier `tp/`. Les exercices transversaux sont dans `tp/synthese/` et `tp/bonus/`. Les corrections sont exclues.\n'
     with zipfile.ZipFile(destination / 'linux-scripting-bash-obsidian.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
         for name, body in export.items():
-            archive.writestr('Linux-scripting-bash/' + name, body)
+            entry = zipfile.ZipInfo('Linux-scripting-bash/' + name, date_time=(2020, 1, 1, 0, 0, 0))
+            entry.compress_type = zipfile.ZIP_DEFLATED
+            archive.writestr(entry, body)
     linux_cards = ''.join(card(c['slug'][:2], c['title'], f'./{c["slug"]}/') for c in chapters)
     linux_overview = '# Linux initiation\n\n' + '\n'.join(f'- [{c["slug"][:2]}. {c["title"]}]({BASE}/{c["slug"]}/)' for c in chapters)
     linux_overview += f'\n\n[Programme et objectifs]({BASE}/ressources/)\n\n[Télécharger le coffre Obsidian]({BASE}/linux-initiation-obsidian.zip)\n'

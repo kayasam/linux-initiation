@@ -30,7 +30,10 @@ with zipfile.ZipFile(archive) as old, zipfile.ZipFile(temp, 'w', zipfile.ZIP_DEF
     for entry in old.infolist():
         relative = entry.filename.removeprefix('Linux-initiation/')
         if relative not in files: new.writestr(entry, old.read(entry.filename))
-    for relative, data in files.items(): new.writestr('Linux-initiation/' + relative, data)
+    for relative, data in sorted(files.items()):
+        entry = zipfile.ZipInfo('Linux-initiation/' + relative, date_time=(2020, 1, 1, 0, 0, 0))
+        entry.compress_type = zipfile.ZIP_DEFLATED
+        new.writestr(entry, data)
 temp.replace(archive)
 if args.sync_source:
     source = args.sync_source.resolve()

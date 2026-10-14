@@ -152,7 +152,10 @@ def prepare(source):
     archive = stage / 'linux-initiation-obsidian.zip'
     with zipfile.ZipFile(archive, 'w', zipfile.ZIP_DEFLATED) as z:
         for file in sorted(vault.rglob('*')):
-            if file.is_file(): z.write(file, file.relative_to(vault.parent))
+            if file.is_file():
+                entry = zipfile.ZipInfo(file.relative_to(vault.parent).as_posix(), date_time=(2020, 1, 1, 0, 0, 0))
+                entry.compress_type = zipfile.ZIP_DEFLATED
+                z.writestr(entry, file.read_bytes())
     shutil.rmtree(vault)
     # Keep the shared home and Bash course in every normal publication.
     import runpy

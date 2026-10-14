@@ -1,5 +1,7 @@
 param([string]$Message, [switch]$PrepareOnly)
 $ErrorActionPreference = 'Stop'
+$previousPythonUtf8 = $env:PYTHONUTF8
+$env:PYTHONUTF8 = '1'
 Push-Location $PSScriptRoot
 try {
   & python scripts/prepare-linux.py
@@ -8,6 +10,8 @@ try {
   if ($LASTEXITCODE) { throw 'Échec de préparation des quiz.' }
   & python scripts/finalize-html-supports.py
   if ($LASTEXITCODE) { throw 'Échec de préparation des supports HTML hors ligne.' }
+  & python scripts/check-source-sync.py
+  if ($LASTEXITCODE) { throw 'Échec de synchronisation avec le coffre Obsidian.' }
   & node scripts/check-learning-ui.mjs
   if ($LASTEXITCODE) { throw 'Échec de vérification des quiz ou des contrastes.' }
   & node scripts/check-introduction.mjs
@@ -20,15 +24,16 @@ try {
   if ($LASTEXITCODE) { throw 'Échec du build Quartz.' }
   & python scripts/publish-assets.py
   if ($LASTEXITCODE) { throw 'Échec de vérification du site.' }
-  if ($PrepareOnly) { Write-Host 'Préparation et vérifications terminées.' -ForegroundColor Green; exit 0 }
-  if (-not (git status --porcelain)) { Write-Host 'Aucune modification.'; exit 0 }
+  if ($PrepareOnly) { Write-Host 'Préparation et vérifications terminées.' -ForegroundColor Green; return }
+  $publicationPaths = @('content', 'site-content', 'chapters.json', 'publication-policy.json')
+  if (-not (git status --porcelain -- @publicationPaths)) { Write-Host 'Aucune modification des supports à publier.'; return }
   if (-not $Message) { $Message = Read-Host 'Message de publication' }
-  if (-not $Message) { $Message = 'Mise à jour de la formation Linux' }
-  if ((Read-Host 'Publier sur GitHub ? [o/N]') -notmatch '^(o|oui|y|yes)$') { exit 0 }
-  & git add -A
+  if (-not $Message) { $Message = 'Mise à jour des formations Linux et Bash' }
+  if ((Read-Host 'Publier sur GitHub ? [o/N]') -notmatch '^(o|oui|y|yes)$') { return }
+  & git add -- @publicationPaths
   if ($LASTEXITCODE) { throw 'Échec git add.' }
-  & git commit -m $Message
+  & git commit --only -m $Message -- @publicationPaths
   if ($LASTEXITCODE) { throw 'Échec du commit.' }
   & git push -u origin main
   if ($LASTEXITCODE) { throw 'Échec de publication GitHub.' }
-} finally { Pop-Location }
+} finally { Pop-Location; $env:PYTHONUTF8 = $previousPythonUtf8 }

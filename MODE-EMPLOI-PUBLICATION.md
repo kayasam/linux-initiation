@@ -6,11 +6,15 @@ Dans le coffre Bash, chaque chapitre est rangé dans `cours/<chapitre>/` avec so
 
 Les modifications des cours se font dans `Formations/linux-initiation` du coffre Obsidian. Les dix chapitres sont conservés dans leur ordre d’origine, chacun dans `cours/NN-sujet/`, avec le Markdown, le HTML, le quiz et son sous-dossier `tp/`. Les notes de session restent dans `sessions/`.
 
-Les six corrections existantes possèdent la propriété `publier: false` (case décochée). Elles sont exclues du site et du ZIP. Pour en diffuser une plus tard, cocher cette propriété (`publier: true`) puis lancer la publication. Le contrôle de l’archive utilise la liste des corrections explicitement autorisées dans `publication-policy.json`, régénérée depuis le coffre à chaque préparation. Une propriété absente n’autorise pas la publication d’une correction.
+Les sept corrections Linux possèdent la propriété `publier: false` (case décochée). Elles sont exclues du site et du ZIP. Pour en diffuser une plus tard, cocher cette propriété (`publier: true`) puis lancer la publication. Le contrôle de l’archive utilise la liste des corrections explicitement autorisées dans `publication-policy.json`, régénérée depuis le coffre à chaque préparation. Une propriété absente n’autorise pas la publication d’une correction. Les huit corrections Bash restent également privées.
 
 Double-cliquer sur **Publier les cours.cmd**, puis saisir un message et confirmer la publication. Le script prépare les cours, les quiz, les téléchargements et l’archive, construit Quartz, vérifie les liens et propose l’envoi vers GitHub.
 
 Pour vérifier sans publier : `./publier-les-cours.ps1 -PrepareOnly`.
+
+La préparation vérifie aussi la correspondance entre les cours/TP du coffre, les téléchargements et les deux ZIP. Les ZIP sont reproductibles : une seconde exécution sans modification ne change pas les fichiers publiables. La publication ne sélectionne que `content`, `site-content`, `chapters.json` et `publication-policy.json` ; les autres fichiers de travail ne sont pas ajoutés automatiquement au commit.
+
+Après déploiement, vérifier les fichiers réellement servis en ligne avec `python scripts/check-source-sync.py --live`. Ce contrôle compare les 16 cours Markdown, les 16 TP, les 16 versions HTML, les quiz, les logos et les deux ZIP aux contenus préparés depuis le coffre. L'ancien lanceur dans `D:/Projet-git/linux-scripting-bash-web` délègue au même script commun.
 
 Le dossier `content` est régénéré : ne pas y faire de modifications durables. Les quiz comprennent 20 questions chacun. Les questions de départ sont dans `site-content/assets/quiz/quiz-questions.json`, les compléments dans `questions-complementaires.txt`. Chaque ligne complémentaire contient la question, quatre réponses (la première est correcte) et l’explication, séparées par `§`.
 
