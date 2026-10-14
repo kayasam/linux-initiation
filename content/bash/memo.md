@@ -9,7 +9,10 @@ title: "Bash — Mémo"
 | Savoir où je suis | `pwd` |
 | Changer de dossier | `cd` |
 | Lire un fichier | `cat` |
-| Afficher du texte | `printf` |
+| Afficher une phrase simple | `echo "Bonjour"` |
+| Formater une sortie | `printf '%s\n' "$nom"` |
+| Identifier le shell actuel | `ps -p $$ -o comm=` |
+| Grouper dans un sous-shell | `( commandes )` |
 | Remplacer / ajouter dans un fichier | `>` / `>>` |
 | Relier deux commandes | le tube `\|` |
 | Affecter / lire une variable | `nom="Mila"` / `"$nom"` |

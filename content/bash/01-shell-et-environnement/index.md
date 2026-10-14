@@ -11,9 +11,9 @@ title: "01. Le shell et son environnement"
 
 
 > [!NOTE] Objectif
-> Te repérer dans le terminal, lancer une commande et créer ton espace de travail. Tu n'as encore aucun script à écrire.
+> Te repérer dans le terminal, lancer une commande et créer ton espace de travail. Distinguer les principaux shells et observer un sous-shell. Tu n'as encore aucun script à écrire.
 
-**À connaître :** `pwd`, `ls`, `cd`, `mkdir`, `cat`, `printf`, `>`, `>>`, `|`.
+**À connaître :** `pwd`, `ls`, `cd`, `mkdir`, `cat`, `echo`, `bash`, `sh`, `>`, `>>`, `|`.
 ---
 
 ## 1. Où taper les commandes ?
@@ -38,7 +38,70 @@ Ne recopie pas cette invite ni le signe `$` : tape seulement la commande.
 
 Le **terminal** est la fenêtre. Le **shell** est le programme qui interprète tes commandes. Ici, ce shell est **Bash**. SSH transporte tes échanges avec la VM.
 
-## 2. Une commande, ses options et ses arguments
+## 2. Plusieurs shells, un même rôle
+
+Linux peut utiliser plusieurs interpréteurs de commandes :
+
+| Nom | Repère pour débuter |
+|---|---|
+| `sh` | Nom historique et interface de référence pour les scripts portables. Sur notre Debian, `/bin/sh` lance **dash**. |
+| `bash` | Shell utilisé dans cette formation. Il propose des fonctions supplémentaires, comme les tests `[[ ... ]]`. |
+| `zsh`, `fish` | Autres shells, avec leurs propres fonctions et réglages. Ils ne sont pas nécessaires pour ce parcours. |
+
+Vérifie les shells déclarés sur la VM, le programme utilisé pour `sh` et ton shell actuel :
+
+```bash
+cat /etc/shells
+readlink -f /bin/sh
+ps -p $$ -o comm=
+```
+
+- `/etc/shells` liste les shells de connexion déclarés ; la liste varie selon la machine.
+- `readlink -f` suit le lien jusqu'au programme réel. Ici, le résultat est `/usr/bin/dash`.
+- `ps` affiche un processus ; `-p $$` sélectionne le shell actuel, et `-o comm=` affiche son nom sans en-tête. Ici : `bash`.
+
+La variable `$SHELL` indique normalement ton shell de connexion configuré. Elle ne permet pas de savoir avec certitude quel interpréteur exécute la commande actuelle : lancer `sh` depuis Bash ne la met pas automatiquement à jour.
+
+Un shell est **interactif** quand il attend tes commandes, comme après notre connexion SSH. Il est **non interactif** quand il exécute un script ou une commande fournie avec `-c`. Un shell **de connexion** initialise aussi l'environnement de la session : c'est une autre distinction. Pour l'instant, retiens seulement que ces modes peuvent lire des fichiers de configuration différents ; `~/.bashrc` sert notamment aux réglages des sessions Bash interactives.
+
+> [!TIP] `sh` et Bash ne sont pas interchangeables
+> Nos futurs scripts utiliseront Bash. Les lancer avec `sh script.sh` peut échouer s'ils emploient des fonctions propres à Bash. Nous apprendrons à choisir l'interpréteur avec le **shebang**, au chapitre 03.
+
+## 3. Un shell peut en lancer un autre
+
+Après SSH, tu travailles dans un shell. Si tu tapes `bash`, il démarre un **nouveau Bash enfant**. La commande `exit` termine ce Bash et te ramène dans le parent. Un nouvel `exit` dans le parent ferme alors la connexion SSH.
+
+Pour une seule commande, `bash -c 'commande'` démarre un Bash enfant, exécute le texte fourni puis se termine :
+
+```bash
+bash -c 'echo "Bonjour depuis le Bash enfant"'
+echo "De retour dans le shell parent"
+```
+
+Le shell enfant est un processus distinct. Il ne peut pas changer le dossier courant de son parent.
+
+Les parenthèses permettent aussi d'exécuter un groupe de commandes dans un **sous-shell**, avec une copie de l'environnement du shell courant :
+
+```bash
+pwd
+(
+    cd /tmp
+    pwd
+)
+pwd
+```
+
+Le `pwd` du milieu affiche `/tmp`. Le dernier affiche à nouveau ton dossier de départ : le `cd` a agi seulement dans le sous-shell.
+
+```text
+Shell parent : dossier de départ
+    └── Sous-shell : cd /tmp → dossier /tmp → fin
+Shell parent : toujours dans le dossier de départ
+```
+
+Les variables suivront une logique similaire : nous verrons leur transmission avec `export` au chapitre 02.
+
+## 4. Une commande, ses options et ses arguments
 
 ```bash
 ls -l /tmp
@@ -52,7 +115,7 @@ ls -l /tmp
 
 Une commande se termine quand tu appuies sur **Entrée**. Bash distingue les majuscules et les minuscules : `ls` et `LS` sont deux noms différents.
 
-## 3. Se repérer avant d'agir
+## 5. Se repérer avant d'agir
 
 ```bash
 whoami
@@ -90,10 +153,10 @@ cd decouverte
 
 Tu reviens maintenant dans `~/atelier-bash/decouverte`.
 
-## 4. Écrire puis lire un fichier
+## 6. Écrire puis lire un fichier
 
 ```bash
-printf 'Station Orion ouverte\n' > journal.txt
+echo "Station Orion ouverte" > journal.txt
 cat journal.txt
 ```
 
@@ -103,12 +166,12 @@ Résultat :
 Station Orion ouverte
 ```
 
-`printf` affiche du texte. `\n` demande un retour à la ligne. Le signe `>` dirige ce texte vers un fichier : **il crée le fichier ou remplace son contenu**.
+`echo` affiche le texte puis ajoute automatiquement un retour à la ligne. Le signe `>` dirige ce texte vers un fichier : **il crée le fichier ou remplace son contenu**.
 
 Pour ajouter une ligne :
 
 ```bash
-printf 'Radio disponible\n' >> journal.txt
+echo "Radio disponible" >> journal.txt
 cat journal.txt
 ```
 
@@ -117,7 +180,7 @@ cat journal.txt
 > [!WARNING] Avant d'utiliser `>`
 > Vérifie le nom du fichier et ton dossier avec `pwd`. Dans le cours, nous écrivons seulement dans notre espace de travail.
 
-## 5. Passer un résultat à une autre commande
+## 7. Passer un résultat à une autre commande
 
 ```bash
 cat journal.txt | grep Radio
@@ -133,7 +196,7 @@ grep Radio journal.txt
 
 Ces deux exemples affichent `Radio disponible`. Le premier montre comment relier deux commandes ; le second est plus court pour ce besoin précis.
 
-## 6. Les raccourcis utiles
+## 8. Les raccourcis utiles
 
 | Geste | Effet |
 |---|---|
@@ -145,7 +208,7 @@ Ces deux exemples affichent `Radio disponible`. Le premier montre comment relier
 
 L'aide de `ls` se consulte avec `ls --help`. Pour une commande intégrée à Bash, comme `cd`, utilise `help cd`. Le lecteur `man ls` se quitte avec **q**.
 
-## 7. Pour aller plus loin : un alias temporaire
+## 9. Pour aller plus loin : un alias temporaire
 
 Un alias donne un raccourci à une commande. Cet exemple agit seulement dans ton shell actuel :
 
@@ -160,10 +223,12 @@ Nous ne modifions pas encore les fichiers de configuration du shell. Plus tard, 
 ## À retenir
 
 - Tu tapes dans un terminal ; Bash interprète les commandes sur Debian.
+- Sur cette VM, `sh` lance dash ; nos scripts seront écrits pour Bash.
+- Le `cd` effectué dans un sous-shell ne change pas le dossier du parent.
 - `pwd` permet de vérifier où tu es avant d'écrire un fichier.
 - `>` remplace ; `>>` ajoute ; `|` transmet un résultat.
 
-**À toi :** quelle différence entre `cd ..` et `cd ~` ? Que contient le journal après deux ajouts ?
+**À toi :** quelle différence entre `cd ..` et `cd ~` ? Que contient le journal après deux ajouts ? Pourquoi le `cd /tmp` entre parenthèses ne te déplace-t-il pas définitivement ?
 
 [Passer au TP](https://kayasam.github.io/linux-initiation/bash/01-shell-et-environnement/tp)
 

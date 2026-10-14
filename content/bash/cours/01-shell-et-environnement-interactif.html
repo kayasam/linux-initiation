@@ -9,14 +9,16 @@
 </head><body><nav class="bash-site-nav"><a href="https://kayasam.github.io/linux-initiation/bash/01-shell-et-environnement/">← Cours Markdown</a><a href="https://kayasam.github.io/linux-initiation/#bash">Parcours Bash →</a></nav><main><nav class="lesson-nav" aria-label="Parcours"><span>Début du parcours</span><a href="https://kayasam.github.io/linux-initiation/bash/01-shell-et-environnement/">Cours Markdown</a><a href="https://kayasam.github.io/linux-initiation/bash/cours/02-variables-interactif.html">Chapitre suivant →</a></nav><p class="chapter-label">BASH · CHAPITRE 01 / 06</p><details class="toc"><summary>Sommaire du chapitre</summary><div class="toc">
 <ul>
 <li><a href="#chapitre-01-le-shell-et-son-environnement">Chapitre 01 — Le shell et son environnement</a><ul>
-<li><a href="#a-connaitre-pwd-ls-cd-mkdir-cat-printf">À connaître : pwd, ls, cd, mkdir, cat, printf, &gt;, &gt;&gt;, |.</a></li>
+<li><a href="#a-connaitre-pwd-ls-cd-mkdir-cat-echo-bash-sh">À connaître : pwd, ls, cd, mkdir, cat, echo, bash, sh, &gt;, &gt;&gt;, |.</a></li>
 <li><a href="#1-ou-taper-les-commandes">1. Où taper les commandes ?</a></li>
-<li><a href="#2-une-commande-ses-options-et-ses-arguments">2. Une commande, ses options et ses arguments</a></li>
-<li><a href="#3-se-reperer-avant-dagir">3. Se repérer avant d'agir</a></li>
-<li><a href="#4-ecrire-puis-lire-un-fichier">4. Écrire puis lire un fichier</a></li>
-<li><a href="#5-passer-un-resultat-a-une-autre-commande">5. Passer un résultat à une autre commande</a></li>
-<li><a href="#6-les-raccourcis-utiles">6. Les raccourcis utiles</a></li>
-<li><a href="#7-pour-aller-plus-loin-un-alias-temporaire">7. Pour aller plus loin : un alias temporaire</a></li>
+<li><a href="#2-plusieurs-shells-un-meme-role">2. Plusieurs shells, un même rôle</a></li>
+<li><a href="#3-un-shell-peut-en-lancer-un-autre">3. Un shell peut en lancer un autre</a></li>
+<li><a href="#4-une-commande-ses-options-et-ses-arguments">4. Une commande, ses options et ses arguments</a></li>
+<li><a href="#5-se-reperer-avant-dagir">5. Se repérer avant d'agir</a></li>
+<li><a href="#6-ecrire-puis-lire-un-fichier">6. Écrire puis lire un fichier</a></li>
+<li><a href="#7-passer-un-resultat-a-une-autre-commande">7. Passer un résultat à une autre commande</a></li>
+<li><a href="#8-les-raccourcis-utiles">8. Les raccourcis utiles</a></li>
+<li><a href="#9-pour-aller-plus-loin-un-alias-temporaire">9. Pour aller plus loin : un alias temporaire</a></li>
 <li><a href="#a-retenir">À retenir</a></li>
 </ul>
 </li>
@@ -25,9 +27,9 @@
 </details><h1 id="chapitre-01-le-shell-et-son-environnement">Chapitre 01 — Le shell et son environnement</h1>
 <aside class="note">
 <p><strong>Objectif</strong></p>
-<p>Te repérer dans le terminal, lancer une commande et créer ton espace de travail. Tu n'as encore aucun script à écrire.</p>
+<p>Te repérer dans le terminal, lancer une commande et créer ton espace de travail. Distinguer les principaux shells et observer un sous-shell. Tu n'as encore aucun script à écrire.</p>
 </aside>
-<h2 id="a-connaitre-pwd-ls-cd-mkdir-cat-printf"><strong>À connaître :</strong> <code>pwd</code>, <code>ls</code>, <code>cd</code>, <code>mkdir</code>, <code>cat</code>, <code>printf</code>, <code>&gt;</code>, <code>&gt;&gt;</code>, <code>|</code>.</h2>
+<h2 id="a-connaitre-pwd-ls-cd-mkdir-cat-echo-bash-sh"><strong>À connaître :</strong> <code>pwd</code>, <code>ls</code>, <code>cd</code>, <code>mkdir</code>, <code>cat</code>, <code>echo</code>, <code>bash</code>, <code>sh</code>, <code>&gt;</code>, <code>&gt;&gt;</code>, <code>|</code>.</h2>
 <h2 id="1-ou-taper-les-commandes">1. Où taper les commandes ?</h2>
 <p>Depuis <strong>PowerShell sur Windows</strong>, connecte-toi à ta VM :</p>
 <pre><code class="language-powershell">ssh stagiaire@192.168.84.10
@@ -39,7 +41,68 @@
 <p>Ne recopie pas cette invite ni le signe <code>$</code> : tape seulement la commande.</p>
 <p><img alt="Du terminal à la commande exécutée" src="https://kayasam.github.io/linux-initiation/bash/images/bash-01-terminal.svg" /></p>
 <p>Le <strong>terminal</strong> est la fenêtre. Le <strong>shell</strong> est le programme qui interprète tes commandes. Ici, ce shell est <strong>Bash</strong>. SSH transporte tes échanges avec la VM.</p>
-<h2 id="2-une-commande-ses-options-et-ses-arguments">2. Une commande, ses options et ses arguments</h2>
+<h2 id="2-plusieurs-shells-un-meme-role">2. Plusieurs shells, un même rôle</h2>
+<p>Linux peut utiliser plusieurs interpréteurs de commandes :</p>
+<table>
+<thead>
+<tr>
+<th>Nom</th>
+<th>Repère pour débuter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sh</code></td>
+<td>Nom historique et interface de référence pour les scripts portables. Sur notre Debian, <code>/bin/sh</code> lance <strong>dash</strong>.</td>
+</tr>
+<tr>
+<td><code>bash</code></td>
+<td>Shell utilisé dans cette formation. Il propose des fonctions supplémentaires, comme les tests <code>[[ ... ]]</code>.</td>
+</tr>
+<tr>
+<td><code>zsh</code>, <code>fish</code></td>
+<td>Autres shells, avec leurs propres fonctions et réglages. Ils ne sont pas nécessaires pour ce parcours.</td>
+</tr>
+</tbody>
+</table>
+<p>Vérifie les shells déclarés sur la VM, le programme utilisé pour <code>sh</code> et ton shell actuel :</p>
+<pre><code class="language-bash">cat /etc/shells
+readlink -f /bin/sh
+ps -p $$ -o comm=
+</code></pre>
+<ul>
+<li><code>/etc/shells</code> liste les shells de connexion déclarés ; la liste varie selon la machine.</li>
+<li><code>readlink -f</code> suit le lien jusqu'au programme réel. Ici, le résultat est <code>/usr/bin/dash</code>.</li>
+<li><code>ps</code> affiche un processus ; <code>-p $$</code> sélectionne le shell actuel, et <code>-o comm=</code> affiche son nom sans en-tête. Ici : <code>bash</code>.</li>
+</ul>
+<p>La variable <code>$SHELL</code> indique normalement ton shell de connexion configuré. Elle ne permet pas de savoir avec certitude quel interpréteur exécute la commande actuelle : lancer <code>sh</code> depuis Bash ne la met pas automatiquement à jour.</p>
+<p>Un shell est <strong>interactif</strong> quand il attend tes commandes, comme après notre connexion SSH. Il est <strong>non interactif</strong> quand il exécute un script ou une commande fournie avec <code>-c</code>. Un shell <strong>de connexion</strong> initialise aussi l'environnement de la session : c'est une autre distinction. Pour l'instant, retiens seulement que ces modes peuvent lire des fichiers de configuration différents ; <code>~/.bashrc</code> sert notamment aux réglages des sessions Bash interactives.</p>
+<aside class="tip">
+<p><strong><code>sh</code> et Bash ne sont pas interchangeables</strong></p>
+<p>Nos futurs scripts utiliseront Bash. Les lancer avec <code>sh script.sh</code> peut échouer s'ils emploient des fonctions propres à Bash. Nous apprendrons à choisir l'interpréteur avec le <strong>shebang</strong>, au chapitre 03.</p>
+</aside>
+<h2 id="3-un-shell-peut-en-lancer-un-autre">3. Un shell peut en lancer un autre</h2>
+<p>Après SSH, tu travailles dans un shell. Si tu tapes <code>bash</code>, il démarre un <strong>nouveau Bash enfant</strong>. La commande <code>exit</code> termine ce Bash et te ramène dans le parent. Un nouvel <code>exit</code> dans le parent ferme alors la connexion SSH.</p>
+<p>Pour une seule commande, <code>bash -c 'commande'</code> démarre un Bash enfant, exécute le texte fourni puis se termine :</p>
+<pre><code class="language-bash">bash -c 'echo &quot;Bonjour depuis le Bash enfant&quot;'
+echo &quot;De retour dans le shell parent&quot;
+</code></pre>
+<p>Le shell enfant est un processus distinct. Il ne peut pas changer le dossier courant de son parent.</p>
+<p>Les parenthèses permettent aussi d'exécuter un groupe de commandes dans un <strong>sous-shell</strong>, avec une copie de l'environnement du shell courant :</p>
+<pre><code class="language-bash">pwd
+(
+    cd /tmp
+    pwd
+)
+pwd
+</code></pre>
+<p>Le <code>pwd</code> du milieu affiche <code>/tmp</code>. Le dernier affiche à nouveau ton dossier de départ : le <code>cd</code> a agi seulement dans le sous-shell.</p>
+<pre><code class="language-text">Shell parent : dossier de départ
+    └── Sous-shell : cd /tmp → dossier /tmp → fin
+Shell parent : toujours dans le dossier de départ
+</code></pre>
+<p>Les variables suivront une logique similaire : nous verrons leur transmission avec <code>export</code> au chapitre 02.</p>
+<h2 id="4-une-commande-ses-options-et-ses-arguments">4. Une commande, ses options et ses arguments</h2>
 <pre><code class="language-bash">ls -l /tmp
 </code></pre>
 <table>
@@ -65,7 +128,7 @@
 </tbody>
 </table>
 <p>Une commande se termine quand tu appuies sur <strong>Entrée</strong>. Bash distingue les majuscules et les minuscules : <code>ls</code> et <code>LS</code> sont deux noms différents.</p>
-<h2 id="3-se-reperer-avant-dagir">3. Se repérer avant d'agir</h2>
+<h2 id="5-se-reperer-avant-dagir">5. Se repérer avant d'agir</h2>
 <pre><code class="language-bash">whoami
 hostname
 pwd
@@ -116,16 +179,16 @@ pwd
 cd decouverte
 </code></pre>
 <p>Tu reviens maintenant dans <code>~/atelier-bash/decouverte</code>.</p>
-<h2 id="4-ecrire-puis-lire-un-fichier">4. Écrire puis lire un fichier</h2>
-<pre><code class="language-bash">printf 'Station Orion ouverte\n' &gt; journal.txt
+<h2 id="6-ecrire-puis-lire-un-fichier">6. Écrire puis lire un fichier</h2>
+<pre><code class="language-bash">echo &quot;Station Orion ouverte&quot; &gt; journal.txt
 cat journal.txt
 </code></pre>
 <p>Résultat :</p>
 <pre><code class="language-text">Station Orion ouverte
 </code></pre>
-<p><code>printf</code> affiche du texte. <code>\n</code> demande un retour à la ligne. Le signe <code>&gt;</code> dirige ce texte vers un fichier : <strong>il crée le fichier ou remplace son contenu</strong>.</p>
+<p><code>echo</code> affiche le texte puis ajoute automatiquement un retour à la ligne. Le signe <code>&gt;</code> dirige ce texte vers un fichier : <strong>il crée le fichier ou remplace son contenu</strong>.</p>
 <p>Pour ajouter une ligne :</p>
-<pre><code class="language-bash">printf 'Radio disponible\n' &gt;&gt; journal.txt
+<pre><code class="language-bash">echo &quot;Radio disponible&quot; &gt;&gt; journal.txt
 cat journal.txt
 </code></pre>
 <p><code>&gt;&gt;</code> ajoute à la fin. Il ne remplace pas les lignes déjà présentes.</p>
@@ -133,7 +196,7 @@ cat journal.txt
 <p><strong>Avant d'utiliser <code>&gt;</code></strong></p>
 <p>Vérifie le nom du fichier et ton dossier avec <code>pwd</code>. Dans le cours, nous écrivons seulement dans notre espace de travail.</p>
 </aside>
-<h2 id="5-passer-un-resultat-a-une-autre-commande">5. Passer un résultat à une autre commande</h2>
+<h2 id="7-passer-un-resultat-a-une-autre-commande">7. Passer un résultat à une autre commande</h2>
 <pre><code class="language-bash">cat journal.txt | grep Radio
 </code></pre>
 <p>Le tube <code>|</code> transmet la sortie de <code>cat</code> à <code>grep</code>. <code>grep</code> garde les lignes contenant <code>Radio</code>. Le fichier d'origine reste intact.</p>
@@ -141,7 +204,7 @@ cat journal.txt
 <pre><code class="language-bash">grep Radio journal.txt
 </code></pre>
 <p>Ces deux exemples affichent <code>Radio disponible</code>. Le premier montre comment relier deux commandes ; le second est plus court pour ce besoin précis.</p>
-<h2 id="6-les-raccourcis-utiles">6. Les raccourcis utiles</h2>
+<h2 id="8-les-raccourcis-utiles">8. Les raccourcis utiles</h2>
 <table>
 <thead>
 <tr>
@@ -173,7 +236,7 @@ cat journal.txt
 </tbody>
 </table>
 <p>L'aide de <code>ls</code> se consulte avec <code>ls --help</code>. Pour une commande intégrée à Bash, comme <code>cd</code>, utilise <code>help cd</code>. Le lecteur <code>man ls</code> se quitte avec <strong>q</strong>.</p>
-<h2 id="7-pour-aller-plus-loin-un-alias-temporaire">7. Pour aller plus loin : un alias temporaire</h2>
+<h2 id="9-pour-aller-plus-loin-un-alias-temporaire">9. Pour aller plus loin : un alias temporaire</h2>
 <p>Un alias donne un raccourci à une commande. Cet exemple agit seulement dans ton shell actuel :</p>
 <pre><code class="language-bash">alias ll='ls -l'
 ll
@@ -183,8 +246,10 @@ unalias ll
 <h2 id="a-retenir">À retenir</h2>
 <ul>
 <li>Tu tapes dans un terminal ; Bash interprète les commandes sur Debian.</li>
+<li>Sur cette VM, <code>sh</code> lance dash ; nos scripts seront écrits pour Bash.</li>
+<li>Le <code>cd</code> effectué dans un sous-shell ne change pas le dossier du parent.</li>
 <li><code>pwd</code> permet de vérifier où tu es avant d'écrire un fichier.</li>
 <li><code>&gt;</code> remplace ; <code>&gt;&gt;</code> ajoute ; <code>|</code> transmet un résultat.</li>
 </ul>
-<p><strong>À toi :</strong> quelle différence entre <code>cd ..</code> et <code>cd ~</code> ? Que contient le journal après deux ajouts ?</p>
+<p><strong>À toi :</strong> quelle différence entre <code>cd ..</code> et <code>cd ~</code> ? Que contient le journal après deux ajouts ? Pourquoi le <code>cd /tmp</code> entre parenthèses ne te déplace-t-il pas définitivement ?</p>
 <p><a href="https://kayasam.github.io/linux-initiation/bash/01-shell-et-environnement/tp">Passer au TP</a></p><nav class="lesson-nav" aria-label="Parcours"><span>Début du parcours</span><a href="https://kayasam.github.io/linux-initiation/bash/01-shell-et-environnement/">Cours Markdown</a><a href="https://kayasam.github.io/linux-initiation/bash/cours/02-variables-interactif.html">Chapitre suivant →</a></nav></main></body></html>

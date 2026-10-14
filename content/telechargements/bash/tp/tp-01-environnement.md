@@ -31,7 +31,7 @@ Explique `~`, `-p` et le résultat de `pwd`.
 **B1.** Crée le journal :
 
 ```bash
-printf 'ORION : poste ouvert\n' > journal.txt
+echo "ORION : poste ouvert" > journal.txt
 ```
 
 **B2.** Avec `>>`, ajoute deux lignes : `Radio : OK` et `Reserve : OK`.
@@ -51,7 +51,9 @@ Reserve : OK
 **C1.** Crée le fichier radio :
 
 ```bash
-printf 'INFO : depart a 09h\nSECRET : suivre Vega\nINFO : ciel degage\n' > messages/radio.txt
+echo "INFO : depart a 09h" > messages/radio.txt
+echo "SECRET : suivre Vega" >> messages/radio.txt
+echo "INFO : ciel degage" >> messages/radio.txt
 ```
 
 **C2.** Affiche seulement la ligne contenant `SECRET`, avec `grep`.
@@ -59,6 +61,16 @@ printf 'INFO : depart a 09h\nSECRET : suivre Vega\nINFO : ciel degage\n' > messa
 **C3.** Refais le même filtre avec deux commandes reliées par un tube. Explique le rôle du tube.
 
 **C4.** Vérifie que les trois lignes du fichier radio sont toujours présentes.
+
+## Partie D — La cabine du sous-shell
+
+**D1.** Vérifie quel programme se cache derrière `/bin/sh`, puis affiche le nom de ton shell actuel. Utilise les commandes du cours : sont-ils identiques sur cette VM ?
+
+**D2.** Depuis `01-orion`, affiche ton dossier. Exécute ensuite `cd messages` et `pwd` dans un groupe entre parenthèses, comme au cours.
+
+**D3.** Une fois le groupe terminé, relance `pwd`. Es-tu resté dans `messages` ? Explique pourquoi.
+
+**Point de contrôle :** tu es toujours dans `01-orion` ; seule la cabine du sous-shell s'est déplacée.
 
 ## Bonus — Le dossier au nom piégeux
 

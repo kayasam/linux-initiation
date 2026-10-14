@@ -29,7 +29,7 @@ cd ~/atelier-bash/02-badge
 Mila rejoint Orion Nord comme pilote.
 ```
 
-> Indice : utilise trois `%s` dans `printf`, puis trois arguments entre guillemets doubles.
+> Indice : utilise `echo` et une phrase entre guillemets doubles contenant tes trois variables.
 
 ## Partie B — Conserver le badge
 

@@ -20,12 +20,12 @@ title: "02. Les variables"
 
 ```bash
 prenom="Mila"
-printf 'Bonjour %s\n' "$prenom"
+echo "Bonjour $prenom"
 ```
 
 Résultat : `Bonjour Mila`.
 
-La première ligne **affecte** une valeur. La seconde **lit** cette valeur avec `$prenom`. Dans `printf`, `%s` est l'emplacement où sera inséré le texte fourni ensuite.
+La première ligne **affecte** une valeur. La seconde **lit** cette valeur avec `$prenom`. `echo` affiche la phrase après le remplacement de `$prenom` par sa valeur.
 
 ![Affecter une valeur puis la lire](https://kayasam.github.io/linux-initiation/bash/images/bash-02-variables.svg)
 
@@ -43,14 +43,14 @@ Choisis des noms lisibles : `prenom`, `nom_station`, `nombre_messages`. Un nom n
 
 ```bash
 station="Orion Nord"
-printf 'Destination : %s\n' "$station"
+echo "Destination : $station"
 ```
 
 Les guillemets doubles gardent les mots ensemble, tout en laissant Bash lire la variable.
 
 ```bash
-printf '%s\n' '$station'
-printf '%s\n' "$station"
+echo '$station'
+echo "$station"
 ```
 
 Résultats, dans cet ordre :
@@ -71,7 +71,7 @@ Orion Nord
 ```bash
 mission="orion"
 fichier="${mission}_rapport.txt"
-printf '%s\n' "$fichier"
+echo "$fichier"
 ```
 
 Résultat : `orion_rapport.txt`. Les accolades montrent que le nom de variable s'arrête avant `_rapport.txt`.
@@ -80,7 +80,7 @@ Résultat : `orion_rapport.txt`. Les accolades montrent que le nom de variable s
 
 ```bash
 read -r -p 'Ton prenom : ' prenom
-printf 'Bienvenue %s\n' "$prenom"
+echo "Bienvenue $prenom"
 ```
 
 - `read` attend une ligne et la range dans `prenom`.
@@ -96,7 +96,7 @@ Ces lignes s'exécutent dans ton terminal Bash. Le programme attend réellement 
 ```bash
 machine=$(hostname)
 jour=$(date +%F)
-printf 'Machine : %s — date : %s\n' "$machine" "$jour"
+echo "Machine : $machine — date : $jour"
 ```
 
 `$(...)` exécute la commande et récupère sa sortie. Ici, Bash garde le nom de la machine et la date au format année-mois-jour. La valeur de la date dépend du jour où tu exécutes l'exemple.
@@ -109,7 +109,7 @@ Ne confonds pas : `"$machine"` lit une variable, `$(hostname)` lance une command
 batteries=4
 energie_par_batterie=25
 energie_totale=$((batteries * energie_par_batterie))
-printf 'Energie disponible : %s unites\n' "$energie_totale"
+echo "Energie disponible : $energie_totale unites"
 ```
 
 Résultat : `Energie disponible : 100 unites`.
@@ -130,8 +130,8 @@ Nous utilisons ici des valeurs fixées dans le cours. Avant de calculer avec une
 Certaines variables sont déjà définies :
 
 ```bash
-printf 'Dossier personnel : %s\n' "$HOME"
-printf 'Recherche des commandes : %s\n' "$PATH"
+echo "Dossier personnel : $HOME"
+echo "Recherche des commandes : $PATH"
 ```
 
 `HOME` désigne ton dossier personnel. `PATH` liste les dossiers où le shell recherche les commandes quand leur nom ne contient pas de `/`.
@@ -140,19 +140,36 @@ printf 'Recherche des commandes : %s\n' "$PATH"
 
 ```bash
 export NOM_STATION="Orion"
-bash -c 'printf "Station recue : %s\n" "$NOM_STATION"'
+bash -c 'echo "Station recue : $NOM_STATION"'
 ```
 
-Le second Bash reçoit `NOM_STATION`. Cet exemple ne modifie aucun fichier de configuration. Les variables disparaissent à la fin du processus qui les contient ; un nouveau script ne peut pas modifier les variables de ton shell parent.
+Le second Bash est un processus enfant, comme au chapitre 01. Il reçoit `NOM_STATION` grâce à `export`. Une variable ordinaire non exportée n'est pas transmise à ce nouveau Bash. Cet exemple ne modifie aucun fichier de configuration. Les variables disparaissent à la fin du processus qui les contient ; un nouveau script ne peut pas modifier les variables de ton shell parent.
 
 ## 8. Une valeur par défaut
 
 ```bash
 surnom=""
-printf 'Nom affiche : %s\n' "${surnom:-visiteur}"
+echo "Nom affiche : ${surnom:-visiteur}"
 ```
 
 Résultat : `Nom affiche : visiteur`. `${surnom:-visiteur}` fournit `visiteur` si `surnom` est vide ou absente. Cela ne remplit pas automatiquement la variable `surnom`.
+
+## 9. Quand utiliser printf ?
+
+Pour les messages simples de nos premiers exercices, `echo "Bonjour $prenom"` suffit. `printf` devient utile quand on veut maîtriser le format d'une sortie :
+
+```bash
+printf 'Bonjour %s\n' "$prenom"
+```
+
+- Le premier argument est le **format** : `Bonjour %s\n`.
+- `%s` reçoit le texte de l'argument suivant, ici `"$prenom"`.
+- `\n` ajoute un retour à la ligne. `printf` ne l'ajoute pas automatiquement.
+
+Cette commande donne ici la même phrase qu'avec `echo`. Pour afficher une valeur quelconque, `printf '%s\n' "$variable"` permet aussi de traiter comme du texte une valeur telle que `-n` ou contenant des antislashs, sans la confondre avec une option ou un échappement de `echo`.
+
+> [!TIP] Un repère pour la suite
+> Utilise `echo` pour une phrase simple. Utilise `printf` pour un format précis, plusieurs lignes ou des données dont tu ne maîtrises pas le contenu. Garde le format fixe et passe les variables dans les arguments suivants.
 
 ## À retenir
 
