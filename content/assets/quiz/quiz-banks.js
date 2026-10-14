@@ -2261,7 +2261,7 @@ window.linuxQuizBanks = {
   "10-reseau-et-services": {
     "slug": "10-reseau-et-services",
     "title": "Réseau et services",
-    "tp": null,
+    "tp": "tp-10-reseau-et-services.md",
     "id": "10-reseau-et-services",
     "chapter": "Chapitre 10",
     "intro": "Vérifiez les notions du cours. Chaque réponse est expliquée.",
