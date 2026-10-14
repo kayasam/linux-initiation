@@ -46,7 +46,7 @@ title: "Programme et objectifs"
 | 12h30 – 13h30 | *Pause déjeuner* | |
 | 13h30 – 15h00 | 08 — Gestion des paquets | APT : installer, mettre à jour, supprimer + TP |
 | 15h00 – 16h00 | 09 — Redirections et tubes | >, >>, \|, grep + TP |
-| 16h00 – 17h00 | 10 — Réseau et services | ip, ping, ssh, systemctl |
+| 16h00 – 17h00 | 10 — Réseau et services | ip, ping, ssh, systemctl + TP (bonus en autonomie) |
 
 ---
 

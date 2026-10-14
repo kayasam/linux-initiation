@@ -45,6 +45,7 @@ assert not errors, '\n'.join(errors[:60])
 with zipfile.ZipFile(public/'linux-initiation-obsidian.zip') as z:
     names=z.namelist()
     assert len([n for n in names if re.search(r'/cours/\d\d-.*\.md$',n)])==10
-    assert len([n for n in names if re.search(r'/tp/tp-.*\.md$',n) and not re.search(r'correction|corrig', n, re.I)])==7
+    tp_count = sum(chapter['tp'] is not None for chapter in json.loads((ROOT/'chapters.json').read_text(encoding='utf-8')))
+    assert len([n for n in names if re.search(r'/tp/tp-.*\.md$',n) and not re.search(r'correction|corrig', n, re.I)])==tp_count
     assert not any(re.search(r'correction|corrig', n, re.I) and Path(n).name not in allowed_corrections for n in names)
-print(f'Liens locaux vérifiés : {checked}. Archive : 10 cours et 7 TP ; {len(allowed_corrections)} correction(s) autorisée(s).')
+print(f'Liens locaux vérifiés : {checked}. Archive : 10 cours et {tp_count} TP ; {len(allowed_corrections)} correction(s) autorisée(s).')

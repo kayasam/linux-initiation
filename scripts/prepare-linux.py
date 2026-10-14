@@ -118,7 +118,8 @@ def prepare(source):
                 write(stage / 'telechargements/tp' / correction.name, correction_body)
                 write(vault / 'tp' / correction.name, normalize(correction.read_text(encoding='utf-8')))
                 tpbody += f'\n[Correction du TP]({BASE}/{slug}/{correction.stem})\n'
-            write(vault / 'tp' / tp.name, tpbody)
+            write(vault / 'tp' / tp.name, tpbody.replace(f'](../{slug}.md)', f'](../cours/{slug}.md)'))
+            tpbody = tpbody.replace(f'](../{slug}.md)', f']({BASE}/{slug}/)')
             write(stage / 'telechargements' / 'tp' / tp.name, tpbody)
             write(stage / slug / 'tp.md', metadata(f'TP {number} — {title}', tpbody + f'\n[← Revenir au cours]({BASE}/{slug}/)\n\n<a href="{BASE}/telechargements/tp/{tp.name}" download>Télécharger ce TP en Markdown</a>\n'))
         body = re.sub(r'^(# .+)$', lambda m: m[0] + links, body, count=1, flags=re.M)
@@ -141,6 +142,8 @@ def prepare(source):
     home = '''<header class="home-header"><h1>Linux — Initiation</h1><p>Comprendre Linux, installer Debian et prendre en main le terminal.</p></header>
 <section class="home-track" aria-labelledby="parcours"><div class="home-track__head"><div class="home-track__logo"><span aria-hidden="true" style="font-size:2.4rem">&gt;_</span></div><div class="home-track__heading"><h2 id="parcours">Vos 10 chapitres</h2><p>Deux jours pour découvrir Linux pas à pas, avec des exemples, des quiz et sept travaux pratiques.</p></div><a class="home-track__start" href="./01-comprendre-linux/">Commencer au chapitre 01 →</a></div><div class="home-chapter-grid">''' + cards + '''</div></section>
 <section class="home-downloads"><h2>Supports hors ligne</h2><div class="home-downloads__grid"><a href="./linux-initiation-obsidian.zip" download><strong>Le cours pour Obsidian</strong><span>Les 10 cours Markdown, les 10 versions interactives et les 7 TP.</span><em>Télécharger le ZIP →</em></a><a href="./ressources/"><strong>Préparer la formation</strong><span>Programme, objectifs et déroulement des deux journées.</span><em>Consulter le programme →</em></a></div></section>'''
+    tp_count = sum(c['tp'] is not None for c in chapters)
+    home = home.replace('sept travaux pratiques', f'{tp_count} travaux pratiques').replace('les 7 TP', f'les {tp_count} TP')
     write(stage / 'index.md', metadata('Linux — Initiation', home))
     program = normalize((source / 'programme.md').read_text(encoding='utf-8'))
     program = program.split('## Fichiers cours')[0]
@@ -160,7 +163,7 @@ def prepare(source):
     stage.rename(content)
     write(ROOT / 'chapters.json', json.dumps(chapters, ensure_ascii=False, indent=2) + '\n')
     write(ROOT / 'publication-policy.json', json.dumps({'corrections': sorted(published_corrections)}, ensure_ascii=False, indent=2) + '\n')
-    print(f'Préparation : 10 cours, 10 versions interactives, 7 TP, archive Obsidian. {len(published_corrections)} correction(s) explicitement publiée(s).')
+    print(f'Préparation : 10 cours, 10 versions interactives, {tp_count} TP, archive Obsidian. {len(published_corrections)} correction(s) explicitement publiée(s).')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

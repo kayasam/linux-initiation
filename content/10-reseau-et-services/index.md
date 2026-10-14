@@ -8,6 +8,7 @@ title: "10. Réseau et services"
 > - [Ouvrir le chapitre interactif](https://kayasam.github.io/linux-initiation/cours/10-reseau-et-services-interactif.html)
 > - [Faire le quiz](https://kayasam.github.io/linux-initiation/cours/quiz/10-reseau-et-services.html)
 > - <a href="https://kayasam.github.io/linux-initiation/telechargements/cours/10-reseau-et-services.md" download>Télécharger ce cours en Markdown</a>
+> - [Passer au TP](https://kayasam.github.io/linux-initiation/10-reseau-et-services/tp)
 
 
 ---
