@@ -121,7 +121,7 @@ def live_audit():
             with urlopen(Request(BASE + '/' + relative, headers={'User-Agent': 'Course-sync-audit'}), timeout=30) as response:
                 remote = response.read()
             local = path.read_bytes()
-            same = text(local) == text(remote) if path.suffix in {'.md', '.html', '.js', '.json', '.svg', '.txt'} else local == remote
+            same = text(local) == text(remote) if path.suffix in {'.md', '.html', '.js', '.json', '.svg', '.txt', '.sha256'} else local == remote
             return None if same else relative
         except Exception as error:
             return relative + ': ' + str(error)
