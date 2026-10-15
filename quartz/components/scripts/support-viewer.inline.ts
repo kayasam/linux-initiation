@@ -1,9 +1,38 @@
+function setupFocusToggle(toggle: HTMLButtonElement) {
+  let focused = false
+  try { focused = sessionStorage.getItem("support-focus") === "true" } catch {}
+  function renderFocus() {
+    document.body.classList.toggle("support-focus", focused)
+    toggle.textContent = focused ? "Afficher les menus" : "Masquer les menus"
+    toggle.setAttribute("aria-pressed", String(focused))
+  }
+  function changeFocus() {
+    focused = !focused
+    renderFocus()
+    try { sessionStorage.setItem("support-focus", String(focused)) } catch {}
+  }
+  toggle.addEventListener("click", changeFocus)
+  renderFocus()
+
+  return () => {
+    toggle.removeEventListener("click", changeFocus)
+    document.body.classList.remove("support-focus")
+  }
+}
+
 let releaseSupportViewer: (() => void) | undefined
 
 function setupSupportViewer() {
   releaseSupportViewer?.()
   const viewer = document.querySelector<HTMLElement>(".support-viewer")
-  if (!viewer) return
+  if (!viewer) {
+    const toggle = document.querySelector<HTMLButtonElement>(".markdown-course-toolbar .support-focus-toggle")
+    if (toggle) {
+      releaseSupportViewer = setupFocusToggle(toggle)
+      window.addCleanup?.(releaseSupportViewer)
+    }
+    return
+  }
   const courseKey = viewer.dataset.courseKey!
   const frame = viewer.querySelector<HTMLIFrameElement>(".support-frame")!
   const toggle = viewer.querySelector<HTMLButtonElement>(".support-focus-toggle")!
@@ -39,20 +68,7 @@ function setupSupportViewer() {
   placeNavigation()
   document.body.classList.add("has-support-viewer")
 
-  let focused = false
-  try { focused = sessionStorage.getItem("support-focus") === "true" } catch {}
-  function renderFocus() {
-    document.body.classList.toggle("support-focus", focused)
-    toggle.textContent = focused ? "Afficher les menus" : "Masquer les menus"
-    toggle.setAttribute("aria-pressed", String(focused))
-  }
-  function changeFocus() {
-    focused = !focused
-    renderFocus()
-    try { sessionStorage.setItem("support-focus", String(focused)) } catch {}
-  }
-  toggle.addEventListener("click", changeFocus)
-  renderFocus()
+  const releaseFocus = setupFocusToggle(toggle)
 
   // Existing HTML/quiz links navigate the outer site, including inside an embedded quiz.
   const routes = new Map<string, string>()
@@ -160,7 +176,7 @@ function setupSupportViewer() {
   releaseSupportViewer = () => {
     resize?.disconnect(); mutations?.disconnect(); themeObserver.disconnect()
     frame.removeEventListener("load", mountFrame)
-    toggle.removeEventListener("click", changeFocus)
+    releaseFocus()
     cleanups.forEach((cleanup) => cleanup())
     desktop.removeEventListener("change", placeNavigation)
     panel.remove()

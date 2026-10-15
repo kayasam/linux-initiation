@@ -56,4 +56,5 @@ def render_resources(destination, base, key, slug, has_tp=False, title=None):
             f'<iframe class="support-frame" src="{source}" data-support-src="{frame_src}" title="{frame_title}"></iframe>'
             '<noscript><p>Pour afficher ce support avec les menus, activez JavaScript. '
             f'<a href="{source}">Ouvrir le support directement</a>.</p></noscript></section>\n', encoding='utf-8')
-    return bar
+    return bar + ('<div class="support-toolbar markdown-course-toolbar"><span>Cours Markdown</span>'
+                  '<button type="button" class="support-focus-toggle" aria-pressed="false">Masquer les menus</button></div>\n')

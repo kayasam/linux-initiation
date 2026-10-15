@@ -47,6 +47,6 @@ html body.support-focus .page { max-width: 1500px; padding-inline: 1rem; }
   .support-toolbar, .support-navigation { display: none !important; }
 }
 
-html body.support-focus .support-navigation { display: none; }
+html body.support-focus .course-toc { display: none; }
 
 html body .resource-buttons--explorer a.resource-button[aria-current="page"] { outline: 2px solid var(--resource-color); outline-offset: 1px; }
