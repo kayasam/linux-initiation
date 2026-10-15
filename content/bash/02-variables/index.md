@@ -13,8 +13,6 @@ title: "02. Les variables"
 
 > [!NOTE] Objectif
 > Mémoriser une valeur, l'afficher dans une phrase et demander une réponse à l'utilisateur.
-
-**À connaître :** `nom=valeur`, `"$nom"`, `${nom}`, `${nom:-defaut}`, `read -p`, `$(commande)`, `$((calcul))`, `export`.
 ---
 
 ## 1. Une variable donne un nom à une valeur

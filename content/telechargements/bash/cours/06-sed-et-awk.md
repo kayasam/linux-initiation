@@ -2,8 +2,6 @@
 
 > [!NOTE] Objectif
 > Transformer un fichier texte, sélectionner des colonnes et calculer un total, sans modifier l'original par erreur.
-
-**À connaître :** `cat > fichier <<'EOF'`, `sed 's/.../.../g'`, `sed -n '2,4p'`, `sed '1d'`, `sed '/motif/d'`, `awk -F`, `$1`, `NR`, `print`, `+=`, `END`, le tube, `sed -i.bak`.
 ---
 
 ## 1. Choisir l'outil selon la tâche

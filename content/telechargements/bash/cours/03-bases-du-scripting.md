@@ -2,8 +2,6 @@
 
 > [!NOTE] Objectif
 > Transformer quelques commandes en un programme que tu peux relancer, lire et vérifier.
-
-**À connaître :** shebang, commentaire `#`, `nano`, `bash -n`, `bash`, `chmod +x`, `./`, `$1`, `${1:-defaut}`, `$#`, `"$@"`, `$?`, `bash -x`.
 ---
 
 ## 1. Un script est un fichier texte

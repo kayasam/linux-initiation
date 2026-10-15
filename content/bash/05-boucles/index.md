@@ -13,8 +13,6 @@ title: "05. Les boucles"
 
 > [!NOTE] Objectif
 > Répéter une action sur une liste ou un groupe de fichiers, sans recopier les mêmes commandes.
-
-**À connaître :** `for`, `in`, `do`, `done`, la plage `{1..10}`, le motif `*.txt`, `while`, `IFS= read -r`, la redirection `<`, `break`, `continue`, `--`, une fonction et `local`.
 ---
 
 ## 1. Une action, plusieurs éléments

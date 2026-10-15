@@ -13,8 +13,6 @@ title: "01. Le shell et son environnement"
 
 > [!NOTE] Objectif
 > Te repérer dans le terminal, lancer une commande et créer ton espace de travail. Distinguer les principaux shells et observer un sous-shell. Tu n'as encore aucun script à écrire.
-
-**À connaître :** `pwd`, `ls`, `cd`, `mkdir`, `cat`, `echo`, `bash`, `sh`, `>`, `>>`, `|`.
 ---
 
 ## 1. Où taper les commandes ?

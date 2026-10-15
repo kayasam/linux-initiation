@@ -2,8 +2,6 @@
 
 > [!NOTE] Objectif
 > Faire prendre une décision à ton script : continuer, choisir une action ou expliquer pourquoi il s'arrête.
-
-**À connaître :** `if`, `then`, `elif`, `else`, `fi`, `[[ ... ]]`, `==` et `!=`, `-z` et `-n`, `-eq` et `-gt`, `-f` et `-d`, `$#`, `!`, `&&` et `||`, `case`, `>&2`, `exit`.
 ---
 
 ## 1. Une question avec deux chemins
