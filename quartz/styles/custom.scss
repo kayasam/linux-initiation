@@ -36,8 +36,8 @@ body[data-slug$="/index"] article .markdown-preview-view > h1:first-child {
   display: none;
 }
 
-article a[href$="-interactif.html"],
-article a[href*="/telechargements/"][href$=".md"] {
+article a[href$="-interactif.html"]:not(.resource-button),
+article a[href*="/telechargements/"][href$=".md"]:not(.resource-download) {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
@@ -48,18 +48,18 @@ article a[href*="/telechargements/"][href$=".md"] {
   text-decoration: none;
 }
 
-article a[href$="-interactif.html"] {
+article a[href$="-interactif.html"]:not(.resource-button) {
   border: 1px solid color-mix(in srgb, var(--secondary) 55%, transparent);
   background-color: var(--secondary);
 }
 
-article a[href*="/telechargements/"][href$=".md"] {
+article a[href*="/telechargements/"][href$=".md"]:not(.resource-download) {
   border: 1px solid color-mix(in srgb, #0d9668 55%, transparent);
   background-color: #0d9668;
 }
 
-article a[href$="-interactif.html"]:hover,
-article a[href*="/telechargements/"][href$=".md"]:hover {
+article a[href$="-interactif.html"]:not(.resource-button):hover,
+article a[href*="/telechargements/"][href$=".md"]:not(.resource-download):hover {
   color: #fff;
   filter: brightness(1.13);
 }
@@ -181,8 +181,8 @@ article a[href*="/telechargements/"][href$=".md"]:hover {
 }
 
 /* Controls must keep readable text when the dark palette uses a light accent. */
-:root[saved-theme="dark"] article a[href$="-interactif.html"],
-:root[saved-theme="dark"] article a[href*="/cours/quiz/"],
+:root[saved-theme="dark"] article a[href$="-interactif.html"]:not(.resource-button),
+:root[saved-theme="dark"] article a[href*="/cours/quiz/"]:not(.resource-button),
 :root[saved-theme="dark"] .home-track__start,
 :root[saved-theme="dark"] .obsidian-download__button {
   color: #102331;
@@ -190,7 +190,7 @@ article a[href*="/telechargements/"][href$=".md"]:hover {
 
 :root[saved-theme="dark"] .home-track__start:hover,
 :root[saved-theme="dark"] .obsidian-download__button:hover,
-:root[saved-theme="dark"] article a[href$="-interactif.html"]:hover {
+:root[saved-theme="dark"] article a[href$="-interactif.html"]:not(.resource-button):hover {
   color: #102331;
 }
 

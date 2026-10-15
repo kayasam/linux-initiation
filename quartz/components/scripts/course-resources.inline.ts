@@ -27,7 +27,6 @@ function setupChapterResources() {
         anchor.className = "resource-button resource-" + resource.kind
         anchor.dataset.resourceKind = resource.kind
         anchor.setAttribute("aria-label", resource.label + " — " + resource.detail)
-        if (resource.kind === "markdown") anchor.setAttribute("download", "")
         const icon = document.createElement("span")
         icon.className = "resource-icon"
         icon.setAttribute("aria-hidden", "true")

@@ -41,6 +41,15 @@ def local_audit():
         assert [r['kind'] for r in resources[:3]] == ['markdown', 'html', 'quiz'], key
         assert len(resources) in (3, 4), key
         if len(resources) == 4: assert resources[3]['kind'] == 'tp', key
+        # Viewing the course and downloading its source must never share an action.
+        assert resources[0]['href'] == BASE + '/' + key + '/', key
+        page = (CONTENT / key / 'index.md').read_text(encoding='utf-8')
+        assert 'class="resource-download"' in page and ' download>' in page, key
+        track = 'bash/' if key.startswith('bash/') else ''
+        slug = key.split('/')[-1]
+        companion = (CONTENT / track / 'cours' / (slug + '-interactif.html')).read_text(encoding='utf-8')
+        assert f'href="{BASE}/{key}/">← Le cours en Markdown</a>' in companion, key
+        assert f'href="{BASE}/telechargements/{track}cours/{slug}.md" download>' in companion, key
         for resource in resources:
             assert (CONTENT / 'assets/resource-icons' / (resource['kind'] + '.svg')).is_file()
     tp_count = 0

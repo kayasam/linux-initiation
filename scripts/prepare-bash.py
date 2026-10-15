@@ -111,9 +111,12 @@ def populate(destination, chapters):
         theme = '<link rel="stylesheet" href="../../assets/themes/theme.css">\n<script src="../../assets/themes/theme.js"></script>\n'
         if 'assets/themes/theme.css' not in interactive:
             interactive = interactive.replace('</head>', theme + '</head>', 1)
-        nav = f'<nav class="bash-site-nav"><a href="{BASE}/bash/{slug}/">← Cours Markdown</a><a href="{BASE}/#bash">Parcours Bash →</a></nav>'
-        interactive = interactive.replace('<body>', '<body>' + nav, 1)
-        interactive = interactive.replace('</style>', '.bash-site-nav{display:flex;justify-content:space-between;gap:1rem;padding:1rem;flex-wrap:wrap}.bash-site-nav a{color:var(--accent);font-weight:700}\n</style>', 1)
+        # A course link opens the rendered course; downloading is an explicit second action.
+        back = f'<a href="{BASE}/bash/{slug}/">← Le cours en Markdown</a>'
+        actions = back + f'<a class="companion-download" href="{BASE}/telechargements/bash/cours/{slug}.md" download>↓ Télécharger le .md</a>'
+        assert back in interactive, f'Lien retour du compagnon manquant : {slug}'
+        interactive = interactive.replace(back, actions, 1)
+        interactive = interactive.replace('</style>', '.toolbar .companion-download{border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text);font-size:.78rem;background:var(--surface)}\n</style>', 1)
         write(destination / 'bash/cours' / html_name, interactive)
         export[course.relative_to(SOURCE).as_posix()] = offline_body
         export[course.with_suffix('.html').relative_to(SOURCE).as_posix()] = offline

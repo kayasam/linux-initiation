@@ -99,9 +99,9 @@ def prepare(source):
         for linked in courses:
             interactive = interactive.replace(f'href="{linked.stem}.html"', f'href="{BASE}/{linked.stem}/"')
             interactive = interactive.replace(f'href="{linked.stem}.md"', f'href="{BASE}/{linked.stem}/"')
-        nav = f'<div class="course-site-nav"><a href="../{slug}/">← Chapitre {number}</a><a href="quiz/{slug}.html">Quiz du chapitre →</a></div>'
+        nav = f'<div class="course-site-nav"><a href="{BASE}/{slug}/">← Le cours en Markdown</a><a class="companion-download" href="{BASE}/telechargements/cours/{slug}.md" download>↓ Télécharger le .md</a><a href="quiz/{slug}.html">Quiz du chapitre →</a></div>'
         interactive = interactive.replace('<body>', '<body>\n' + nav, 1)
-        interactive = interactive.replace('</style>', '.course-site-nav { display:flex; justify-content:space-between; gap:1rem; padding:.8rem 1rem; background:#1a1d27; flex-wrap:wrap; } .course-site-nav a {color:#93c5fd; font-weight:600;}\n</style>', 1)
+        interactive = interactive.replace('</style>', '.course-site-nav { display:flex; justify-content:space-between; gap:1rem; padding:.8rem 1rem; background:#1a1d27; flex-wrap:wrap; } .course-site-nav a {color:#93c5fd; font-weight:600;} .course-site-nav .companion-download {border:1px solid currentColor;border-radius:8px;padding:4px 10px;font-size:.8rem;text-decoration:none;}\n</style>', 1)
         write(stage / 'cours' / f'{slug}-interactif.html', interactive)
         # Offline interactive pages keep a working return link and their own quiz.
         offline = flat_html(course.with_suffix('.html').read_text(encoding='utf-8'), slug)
