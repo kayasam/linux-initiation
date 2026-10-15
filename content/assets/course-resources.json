@@ -3,8 +3,8 @@
     {
       "kind": "markdown",
       "label": "Markdown",
-      "detail": "Télécharger le cours",
-      "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/01-comprendre-linux.md",
+      "detail": "Lire le cours",
+      "href": "https://kayasam.github.io/linux-initiation/01-comprendre-linux/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
     },
     {
@@ -26,8 +26,8 @@
     {
       "kind": "markdown",
       "label": "Markdown",
-      "detail": "Télécharger le cours",
-      "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/02-installer-la-vm.md",
+      "detail": "Lire le cours",
+      "href": "https://kayasam.github.io/linux-initiation/02-installer-la-vm/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
     },
     {
@@ -56,8 +56,8 @@
     {
       "kind": "markdown",
       "label": "Markdown",
-      "detail": "Télécharger le cours",
-      "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/03-interface-graphique.md",
+      "detail": "Lire le cours",
+      "href": "https://kayasam.github.io/linux-initiation/03-interface-graphique/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
     },
     {
@@ -79,8 +79,8 @@
     {
       "kind": "markdown",
       "label": "Markdown",
-      "detail": "Télécharger le cours",
-      "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/04-le-terminal.md",
+      "detail": "Lire le cours",
+      "href": "https://kayasam.github.io/linux-initiation/04-le-terminal/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
     },
     {
@@ -109,8 +109,8 @@
     {
       "kind": "markdown",
       "label": "Markdown",
-      "detail": "Télécharger le cours",
-      "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/05-fichiers-et-repertoires.md",
+      "detail": "Lire le cours",
+      "href": "https://kayasam.github.io/linux-initiation/05-fichiers-et-repertoires/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
     },
     {
@@ -139,8 +139,8 @@
     {
       "kind": "markdown",
       "label": "Markdown",
-      "detail": "Télécharger le cours",
-      "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/06-arborescence-linux.md",
+      "detail": "Lire le cours",
+      "href": "https://kayasam.github.io/linux-initiation/06-arborescence-linux/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
     },
     {
@@ -169,8 +169,8 @@
     {
       "kind": "markdown",
       "label": "Markdown",
-      "detail": "Télécharger le cours",
-      "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/07-utilisateurs-et-permissions.md",
+      "detail": "Lire le cours",
+      "href": "https://kayasam.github.io/linux-initiation/07-utilisateurs-et-permissions/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
     },
     {
@@ -199,8 +199,8 @@
     {
       "kind": "markdown",
       "label": "Markdown",
-      "detail": "Télécharger le cours",
-      "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/08-gestion-des-paquets.md",
+      "detail": "Lire le cours",
+      "href": "https://kayasam.github.io/linux-initiation/08-gestion-des-paquets/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
     },
     {
@@ -229,8 +229,8 @@
     {
       "kind": "markdown",
       "label": "Markdown",
-      "detail": "Télécharger le cours",
-      "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/09-redirections-et-tubes.md",
+      "detail": "Lire le cours",
+      "href": "https://kayasam.github.io/linux-initiation/09-redirections-et-tubes/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
     },
     {
@@ -259,8 +259,8 @@
     {
       "kind": "markdown",
       "label": "Markdown",
-      "detail": "Télécharger le cours",
-      "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/10-reseau-et-services.md",
+      "detail": "Lire le cours",
+      "href": "https://kayasam.github.io/linux-initiation/10-reseau-et-services/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
     },
     {
@@ -289,8 +289,8 @@
     {
       "kind": "markdown",
       "label": "Markdown",
-      "detail": "Télécharger le cours",
-      "href": "https://kayasam.github.io/linux-initiation/telechargements/bash/cours/01-shell-et-environnement.md",
+      "detail": "Lire le cours",
+      "href": "https://kayasam.github.io/linux-initiation/bash/01-shell-et-environnement/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
     },
     {
@@ -319,8 +319,8 @@
     {
       "kind": "markdown",
       "label": "Markdown",
-      "detail": "Télécharger le cours",
-      "href": "https://kayasam.github.io/linux-initiation/telechargements/bash/cours/02-variables.md",
+      "detail": "Lire le cours",
+      "href": "https://kayasam.github.io/linux-initiation/bash/02-variables/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
     },
     {
@@ -349,8 +349,8 @@
     {
       "kind": "markdown",
       "label": "Markdown",
-      "detail": "Télécharger le cours",
-      "href": "https://kayasam.github.io/linux-initiation/telechargements/bash/cours/03-bases-du-scripting.md",
+      "detail": "Lire le cours",
+      "href": "https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
     },
     {
@@ -379,8 +379,8 @@
     {
       "kind": "markdown",
       "label": "Markdown",
-      "detail": "Télécharger le cours",
-      "href": "https://kayasam.github.io/linux-initiation/telechargements/bash/cours/04-tests-et-conditions.md",
+      "detail": "Lire le cours",
+      "href": "https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
     },
     {
@@ -409,8 +409,8 @@
     {
       "kind": "markdown",
       "label": "Markdown",
-      "detail": "Télécharger le cours",
-      "href": "https://kayasam.github.io/linux-initiation/telechargements/bash/cours/05-boucles.md",
+      "detail": "Lire le cours",
+      "href": "https://kayasam.github.io/linux-initiation/bash/05-boucles/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
     },
     {
@@ -439,8 +439,8 @@
     {
       "kind": "markdown",
       "label": "Markdown",
-      "detail": "Télécharger le cours",
-      "href": "https://kayasam.github.io/linux-initiation/telechargements/bash/cours/06-sed-et-awk.md",
+      "detail": "Lire le cours",
+      "href": "https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
     },
     {
