@@ -28,6 +28,7 @@ function setupSupportViewer() {
   sections.className = "support-sections"
   const status = document.createElement("p")
   status.className = "support-status"
+  status.setAttribute("aria-live", "polite")
   panel.append(title, chapters, sections, status)
   const desktop = matchMedia("(min-width: 1201px)")
   function placeNavigation() {
@@ -68,6 +69,14 @@ function setupSupportViewer() {
   function wireLinks(doc: Document) {
     if (wired.has(doc)) return
     wired.add(doc)
+    // Reference sites often forbid iframes; open them beside the course instead.
+    doc.querySelectorAll<HTMLAnchorElement>("a[href]").forEach((anchor) => {
+      const url = new URL(anchor.href, doc.baseURI)
+      if (/^https?:$/.test(url.protocol) && url.origin !== location.origin) {
+        anchor.target = "_blank"
+        anchor.rel = "noopener noreferrer"
+      }
+    })
     const click = (event: MouseEvent) => {
       if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return
       const anchor = (event.target as Element)?.closest<HTMLAnchorElement>("a[href]")
