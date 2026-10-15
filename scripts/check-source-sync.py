@@ -94,7 +94,9 @@ def local_audit():
                 assert archive.read('Linux-scripting-bash/jeu/' + name) == expected, 'Jeu Orion dans le ZIP : ' + name
         game_archive = CONTENT / 'telechargements/bash/orion-academie.tar.gz'
         assert game_archive.with_suffix('.gz.sha256').read_text().strip() == hashlib.sha256(game_archive.read_bytes()).hexdigest() + '  ' + game_archive.name
-        equal((bash_source / 'Résumé.md').read_text(encoding='utf-8-sig'), archive.read('Linux-scripting-bash/Résumé.md'), 'Mémo Bash (ZIP)')
+        assert 'Linux-scripting-bash/Résumé.md' not in archive.namelist(), 'Le mémo Bash est retiré de la distribution'
+        assert not (CONTENT / 'bash/memo.md').exists()
+        assert not (CONTENT / 'telechargements/bash/memo.md').exists()
         for image in sorted((bash_source / 'Ressources/images').glob('bash-*.svg')):
             assert archive.read('Linux-scripting-bash/Ressources/images/' + image.name) == image.read_bytes()
             assert (CONTENT / 'bash/images' / image.name).read_bytes() == image.read_bytes()

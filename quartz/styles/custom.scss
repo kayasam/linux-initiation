@@ -199,3 +199,42 @@ article a[href*="/telechargements/"][href$=".md"]:hover {
   color: var(--dark);
   background-color: var(--lightgray);
 }
+
+/* Select the whole chapter card; its text must keep its normal geometry. */
+.explorer-content .folder-container:has(a:is(.active, .is-active, .course-current-page, [aria-current="page"])) {
+  border-color: var(--chapter-accent);
+  background: color-mix(in srgb, var(--chapter-accent) 12%, var(--light));
+}
+.explorer-content .folder-container a.folder-button,
+.explorer-content .folder-container a.folder-button:is(.active, .is-active, .course-current-page, [aria-current="page"]) {
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  margin: 0;
+  padding: 0;
+  color: var(--dark);
+  opacity: 1;
+}
+.explorer-content .folder-container .folder-title { background: transparent; }
+
+/* Appendices use a purple cue; chapter cards retain their course color. */
+.explorer-content .folder-container:is([data-folderpath^="bash/ateliers"], [data-folderpath^="bash/jeu"], [data-folderpath^="bash/tp"]) {
+  --chapter-accent: #71539a;
+  border-style: dashed;
+  border-left-style: solid;
+}
+:root[saved-theme="dark"] .explorer-content .folder-container:is([data-folderpath^="bash/ateliers"], [data-folderpath^="bash/jeu"], [data-folderpath^="bash/tp"]) {
+  --chapter-accent: #c9afe8;
+}
+.explorer-content .folder-container:is([data-folderpath^="bash/ateliers"], [data-folderpath^="bash/jeu"], [data-folderpath^="bash/tp"])::before {
+  background-image: none;
+  background-color: color-mix(in srgb, var(--chapter-accent) 13%, var(--light));
+  border-radius: .5rem;
+  color: var(--chapter-accent);
+  font: 750 .7rem var(--codeFont);
+  content: "TP";
+}
+.explorer-content .folder-container[data-folderpath^="bash/jeu"]::before { content: "JEU"; }
+
+/* The chapter already links to its TP: omit Quartz's duplicate folder listing. */
+body:has(article a[href$="-interactif.html"]) .page-listing { display: none; }

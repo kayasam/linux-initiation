@@ -142,10 +142,6 @@ def populate(destination, chapters):
     write(destination / 'bash/index.md', metadata('Bash — Le parcours', '# Scripting Bash\n\n' + '\n'.join(f'- [{title_of(c)}]({BASE}/bash/{c.stem}/)' for c in courses) + f'\n\n[Travaux pratiques]({BASE}/bash/tp/) · [Orion Académie — Le jeu]({BASE}/bash/jeu/)\n'))
     export['README.md'] = '# Scripting Bash\n\nOuvrez ce dossier dans Obsidian. Chaque chapitre est dans `cours/<chapitre>/` avec son cours Markdown, sa version HTML et son dossier `tp/`. Les exercices transversaux sont dans `tp/synthese/`, `tp/final/` et `tp/bonus/`. Les corrections sont exclues.\n'
     export['cours/README.md'] = (SOURCE / 'cours/README.md').read_text(encoding='utf-8-sig')
-    memo = (SOURCE / 'Résumé.md').read_text(encoding='utf-8-sig')
-    export['Résumé.md'] = memo
-    write(destination / 'bash/memo.md', metadata('Bash — Mémo', memo.replace('](cours/README.md)', f']({BASE}/#bash)')))
-    write(destination / 'telechargements/bash/memo.md', memo.replace('](cours/README.md)', f']({BASE}/#bash)'))
     with zipfile.ZipFile(destination / 'linux-scripting-bash-obsidian.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
         for name, body in export.items():
             entry = zipfile.ZipInfo('Linux-scripting-bash/' + name, date_time=(2020, 1, 1, 0, 0, 0))
