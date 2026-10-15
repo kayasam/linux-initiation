@@ -15,9 +15,9 @@ Un test a un résultat : vrai ou faux. `if` exécute le premier bloc lorsque le 
 ```bash
 energie=30
 if [[ "$energie" -ge 20 ]]; then
-    printf 'Depart autorise\n'
+    echo 'Depart autorise'
 else
-    printf 'Recharge necessaire\n'
+    echo 'Recharge necessaire'
 fi
 ```
 
@@ -30,9 +30,9 @@ Dans ce cours, nous utilisons `[[ ... ]]`, une syntaxe de **Bash**. Garde les es
 ```bash
 destination="Orion"
 if [[ "$destination" == "Orion" ]]; then
-    printf 'Bonne destination\n'
+    echo 'Bonne destination'
 else
-    printf 'Verifier le billet\n'
+    echo 'Verifier le billet'
 fi
 ```
 
@@ -47,22 +47,36 @@ Le signe `=` d'une affectation n'est pas un test. `nom="Mila"` change la variabl
 
 ## 3. Comparer des entiers
 
+Pourquoi un second jeu d'opérateurs ? Parce qu'une variable Bash contient toujours du **texte**. Il n'existe pas de variable « nombre » d'un côté et « texte » de l'autre : c'est l'**opérateur** qui décide comment cette valeur est lue.
+
 | Opérateur | Signification |
 |---|---|
 | `-eq`, `-ne` | Égal, différent |
 | `-lt`, `-le` | Inférieur, inférieur ou égal |
 | `-gt`, `-ge` | Supérieur, supérieur ou égal |
 
+> [!WARNING] Le bon opérateur pour la bonne lecture
+> Comparer des nombres avec les opérateurs de texte ne déclenche aucune erreur : seul le résultat change.
+>
+> ```bash
+> a=10
+> b=9
+> [[ "$a" -gt "$b" ]]   # VRAI : lus comme des nombres, 10 est plus grand que 9
+> [[ "$a" > "$b" ]]     # FAUX : lus comme du texte, « 1 » vient avant « 9 »
+> ```
+>
+> Retiens la règle : `==` et `!=` pour du texte, `-eq` et `-gt` pour des nombres.
+
 On peut distinguer plusieurs situations avec `elif` :
 
 ```bash
 energie=15
 if [[ "$energie" -ge 50 ]]; then
-    printf 'Grande mission\n'
+    echo 'Grande mission'
 elif [[ "$energie" -ge 20 ]]; then
-    printf 'Petite mission\n'
+    echo 'Petite mission'
 else
-    printf 'Recharge\n'
+    echo 'Recharge'
 fi
 ```
 
@@ -73,12 +87,12 @@ Bash s'arrête à la première branche qui réussit. Ici, il affiche `Recharge`.
 ```bash
 mkdir -p ~/atelier-bash/conditions
 cd ~/atelier-bash/conditions
-printf 'ORION-OK\n' > billet.txt
+echo 'ORION-OK' > billet.txt
 
 if [[ -f "billet.txt" ]]; then
-    printf 'Billet trouve\n'
+    echo 'Billet trouve'
 else
-    printf 'Billet absent\n'
+    echo 'Billet absent'
 fi
 ```
 
@@ -98,9 +112,9 @@ On peut placer une commande directement après `if` : son code de retour sert de
 
 ```bash
 if grep -qx 'ORION-OK' billet.txt; then
-    printf 'Billet accepte\n'
+    echo 'Billet accepte'
 else
-    printf 'Billet refuse\n'
+    echo 'Billet refuse'
 fi
 ```
 
@@ -117,17 +131,17 @@ Contenu de `controle.sh` :
 #!/usr/bin/env bash
 
 if [[ "$#" -ne 1 ]]; then
-    printf 'Usage : %s fichier\n' "$0" >&2
+    echo "Usage : $0 fichier" >&2
     exit 2
 fi
 
 fichier="$1"
 if [[ ! -f "$fichier" ]]; then
-    printf 'Fichier absent : %s\n' "$fichier" >&2
+    echo "Fichier absent : $fichier" >&2
     exit 2
 fi
 
-printf 'Fichier disponible : %s\n' "$fichier"
+echo "Fichier disponible : $fichier"
 exit 0
 ```
 
@@ -140,7 +154,7 @@ exit 0
 bash -n controle.sh
 bash controle.sh billet.txt
 bash controle.sh introuvable.txt
-printf 'Code du dernier essai : %s\n' "$?"
+echo "Code du dernier essai : $?"
 ```
 
 Le premier essai réussit. Le second affiche une erreur et le code **2**. Ces valeurs sont une convention choisie pour ce programme ; d'autres commandes peuvent en utiliser d'autres.
@@ -151,13 +165,13 @@ Le premier essai réussit. Le second affiche une erreur et le code **2**. Ces va
 choix="radio"
 case "$choix" in
     radio)
-        printf 'Canal radio ouvert\n'
+        echo 'Canal radio ouvert'
         ;;
     reserve)
-        printf 'Reserve disponible\n'
+        echo 'Reserve disponible'
         ;;
     *)
-        printf 'Choix inconnu\n'
+        echo 'Choix inconnu'
         ;;
 esac
 ```
@@ -168,7 +182,7 @@ Chaque choix se termine par `)`. `;;` termine sa branche. `*` récupère les aut
 
 ```bash
 if [[ -f "billet.txt" && -r "billet.txt" ]]; then
-    printf 'Le billet est un fichier lisible\n'
+    echo 'Le billet est un fichier lisible'
 fi
 ```
 
@@ -177,6 +191,7 @@ fi
 ## À retenir
 
 - Un test choisit un chemin ; il ne modifie pas la valeur testée.
+- Une valeur est toujours du texte : `==` et `!=` la comparent comme du texte, `-eq` et `-gt` comme un nombre.
 - Vérifie les arguments et les fichiers avant leur utilisation.
 - Prévois aussi un message et un code de retour pour les cas invalides.
 

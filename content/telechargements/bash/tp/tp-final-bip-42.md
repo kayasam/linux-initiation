@@ -54,7 +54,7 @@ Utilise `echo` et `>`. Lis le fichier avec `cat`.
 
 ## Partie B — Un nombre, une réponse
 
-**B1.** Dans `jeu-v1.sh`, définis `secret=6`. Demande une proposition avec `read -r -p`.
+**B1.** Dans `jeu-v1.sh`, définis `secret=6`. Demande une proposition avec `read -p`.
 
 **B2.** Vérifie la saisie **avant le calcul ou la comparaison numérique**. Seul un chiffre de `1` à `9` est accepté. Le motif `[1-9]` dans `case` correspond à exactement un caractère dans cet intervalle : `6` convient, `06`, `10`, une saisie vide ou `banane` ne conviennent pas.
 

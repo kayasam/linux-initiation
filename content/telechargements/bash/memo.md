@@ -12,9 +12,10 @@
 | Remplacer / ajouter dans un fichier | `>` / `>>` |
 | Relier deux commandes | le tube `\|` |
 | Affecter / lire une variable | `nom="Mila"` / `"$nom"` |
-| Demander une réponse | `read -r` |
+| Demander une réponse | `read -p 'Question : ' reponse` |
 | Récupérer une sortie | `$(commande)` |
 | Calculer avec des entiers | `$((calcul))` |
+| Lister les variables | `env` (exportées) / `set` (toutes) |
 | Vérifier la syntaxe | `bash -n script.sh` |
 | Exécuter directement | droit `+x`, puis `./script.sh` |
 | Arguments | `$1`, `$2`, `$#`, `"$@"` |

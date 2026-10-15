@@ -17,7 +17,7 @@ cd ~/atelier-bash/02-badge
 
 **A2.** Crée les variables `station`, contenant `Orion Nord`, et `role`, contenant `pilote`.
 
-**A3.** Demande le prénom avec `read -r -p`. Range-le dans `prenom`.
+**A3.** Demande le prénom avec `read -p`. Range-le dans `prenom`.
 
 **A4.** Affiche une phrase construite avec les trois variables. Si tu réponds `Mila`, elle doit donner :
 

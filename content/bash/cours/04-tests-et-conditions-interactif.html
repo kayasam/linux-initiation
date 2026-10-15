@@ -32,9 +32,9 @@
 <p>Un test a un résultat : vrai ou faux. <code>if</code> exécute le premier bloc lorsque le test réussit ; sinon, il peut exécuter le bloc <code>else</code>.</p>
 <pre><code class="language-bash">energie=30
 if [[ &quot;$energie&quot; -ge 20 ]]; then
-    printf 'Depart autorise\n'
+    echo 'Depart autorise'
 else
-    printf 'Recharge necessaire\n'
+    echo 'Recharge necessaire'
 fi
 </code></pre>
 <p>Résultat : <code>Depart autorise</code>. Avec <code>energie=10</code>, tu prendrais l'autre chemin.</p>
@@ -42,9 +42,9 @@ fi
 <h2 id="2-comparer-du-texte">2. Comparer du texte</h2>
 <pre><code class="language-bash">destination=&quot;Orion&quot;
 if [[ &quot;$destination&quot; == &quot;Orion&quot; ]]; then
-    printf 'Bonne destination\n'
+    echo 'Bonne destination'
 else
-    printf 'Verifier le billet\n'
+    echo 'Verifier le billet'
 fi
 </code></pre>
 <table>
@@ -75,6 +75,7 @@ fi
 </table>
 <p>Le signe <code>=</code> d'une affectation n'est pas un test. <code>nom="Mila"</code> change la variable ; le test vérifie sa valeur.</p>
 <h2 id="3-comparer-des-entiers">3. Comparer des entiers</h2>
+<p>Pourquoi un second jeu d'opérateurs ? Parce qu'une variable Bash contient toujours du <strong>texte</strong>. Il n'existe pas de variable « nombre » d'un côté et « texte » de l'autre : c'est l'<strong>opérateur</strong> qui décide comment cette valeur est lue.</p>
 <table>
 <thead>
 <tr>
@@ -97,26 +98,36 @@ fi
 </tr>
 </tbody>
 </table>
+<aside class="warning">
+<p><strong>Le bon opérateur pour la bonne lecture</strong></p>
+<p>Comparer des nombres avec les opérateurs de texte ne déclenche aucune erreur : seul le résultat change.</p>
+<pre><code class="language-bash">a=10
+b=9
+[[ &quot;$a&quot; -gt &quot;$b&quot; ]]   # VRAI : lus comme des nombres, 10 est plus grand que 9
+[[ &quot;$a&quot; &gt; &quot;$b&quot; ]]     # FAUX : lus comme du texte, « 1 » vient avant « 9 »
+</code></pre>
+<p>Retiens la règle : <code>==</code> et <code>!=</code> pour du texte, <code>-eq</code> et <code>-gt</code> pour des nombres.</p>
+</aside>
 <p>On peut distinguer plusieurs situations avec <code>elif</code> :</p>
 <pre><code class="language-bash">energie=15
 if [[ &quot;$energie&quot; -ge 50 ]]; then
-    printf 'Grande mission\n'
+    echo 'Grande mission'
 elif [[ &quot;$energie&quot; -ge 20 ]]; then
-    printf 'Petite mission\n'
+    echo 'Petite mission'
 else
-    printf 'Recharge\n'
+    echo 'Recharge'
 fi
 </code></pre>
 <p>Bash s'arrête à la première branche qui réussit. Ici, il affiche <code>Recharge</code>. Les valeurs de cet exemple sont des entiers fixés dans le programme ; une saisie utilisateur doit être vérifiée avant un test numérique.</p>
 <h2 id="4-tester-un-fichier">4. Tester un fichier</h2>
 <pre><code class="language-bash">mkdir -p ~/atelier-bash/conditions
 cd ~/atelier-bash/conditions
-printf 'ORION-OK\n' &gt; billet.txt
+echo 'ORION-OK' &gt; billet.txt
 
 if [[ -f &quot;billet.txt&quot; ]]; then
-    printf 'Billet trouve\n'
+    echo 'Billet trouve'
 else
-    printf 'Billet absent\n'
+    echo 'Billet absent'
 fi
 </code></pre>
 <table>
@@ -153,9 +164,9 @@ fi
 <h2 id="5-reagir-au-resultat-dune-commande">5. Réagir au résultat d'une commande</h2>
 <p>On peut placer une commande directement après <code>if</code> : son code de retour sert de test.</p>
 <pre><code class="language-bash">if grep -qx 'ORION-OK' billet.txt; then
-    printf 'Billet accepte\n'
+    echo 'Billet accepte'
 else
-    printf 'Billet refuse\n'
+    echo 'Billet refuse'
 fi
 </code></pre>
 <p><code>grep -q</code> n'affiche pas les lignes trouvées. <code>-x</code> exige une correspondance sur une ligne entière. Le code <code>0</code> de <code>grep</code> sélectionne le premier bloc.</p>
@@ -167,17 +178,17 @@ fi
 <pre><code class="language-bash">#!/usr/bin/env bash
 
 if [[ &quot;$#&quot; -ne 1 ]]; then
-    printf 'Usage : %s fichier\n' &quot;$0&quot; &gt;&amp;2
+    echo &quot;Usage : $0 fichier&quot; &gt;&amp;2
     exit 2
 fi
 
 fichier=&quot;$1&quot;
 if [[ ! -f &quot;$fichier&quot; ]]; then
-    printf 'Fichier absent : %s\n' &quot;$fichier&quot; &gt;&amp;2
+    echo &quot;Fichier absent : $fichier&quot; &gt;&amp;2
     exit 2
 fi
 
-printf 'Fichier disponible : %s\n' &quot;$fichier&quot;
+echo &quot;Fichier disponible : $fichier&quot;
 exit 0
 </code></pre>
 <ul>
@@ -189,33 +200,34 @@ exit 0
 <pre><code class="language-bash">bash -n controle.sh
 bash controle.sh billet.txt
 bash controle.sh introuvable.txt
-printf 'Code du dernier essai : %s\n' &quot;$?&quot;
+echo &quot;Code du dernier essai : $?&quot;
 </code></pre>
 <p>Le premier essai réussit. Le second affiche une erreur et le code <strong>2</strong>. Ces valeurs sont une convention choisie pour ce programme ; d'autres commandes peuvent en utiliser d'autres.</p>
 <h2 id="7-choisir-parmi-plusieurs-mots-avec-case">7. Choisir parmi plusieurs mots avec case</h2>
 <pre><code class="language-bash">choix=&quot;radio&quot;
 case &quot;$choix&quot; in
     radio)
-        printf 'Canal radio ouvert\n'
+        echo 'Canal radio ouvert'
         ;;
     reserve)
-        printf 'Reserve disponible\n'
+        echo 'Reserve disponible'
         ;;
     *)
-        printf 'Choix inconnu\n'
+        echo 'Choix inconnu'
         ;;
 esac
 </code></pre>
 <p>Chaque choix se termine par <code>)</code>. <code>;;</code> termine sa branche. <code>*</code> récupère les autres cas. <code>esac</code> ferme la structure.</p>
 <h2 id="8-combiner-deux-verifications">8. Combiner deux vérifications</h2>
 <pre><code class="language-bash">if [[ -f &quot;billet.txt&quot; &amp;&amp; -r &quot;billet.txt&quot; ]]; then
-    printf 'Le billet est un fichier lisible\n'
+    echo 'Le billet est un fichier lisible'
 fi
 </code></pre>
 <p><code>&amp;&amp;</code> signifie « et ». <code>||</code> signifie « ou ». Commence par des tests courts ; si la condition devient difficile à lire, sépare les vérifications et explique chaque erreur.</p>
 <h2 id="a-retenir">À retenir</h2>
 <ul>
 <li>Un test choisit un chemin ; il ne modifie pas la valeur testée.</li>
+<li>Une valeur est toujours du texte : <code>==</code> et <code>!=</code> la comparent comme du texte, <code>-eq</code> et <code>-gt</code> comme un nombre.</li>
 <li>Vérifie les arguments et les fichiers avant leur utilisation.</li>
 <li>Prévois aussi un message et un code de retour pour les cas invalides.</li>
 </ul>

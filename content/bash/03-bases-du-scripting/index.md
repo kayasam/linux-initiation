@@ -14,7 +14,7 @@ title: "03. Écrire son premier script"
 > [!NOTE] Objectif
 > Transformer quelques commandes en un programme que tu peux relancer, lire et vérifier.
 
-**À connaître :** shebang, `nano`, `bash`, `chmod +x`, `./`, `$1`, `$#`, `"$@"`, `$?`.
+**À connaître :** shebang, commentaire `#`, `nano`, `bash -n`, `bash`, `chmod +x`, `./`, `$1`, `${1:-defaut}`, `$#`, `"$@"`, `$?`, `bash -x`.
 ---
 
 ## 1. Un script est un fichier texte
@@ -49,17 +49,25 @@ Dans l'éditeur, saisis le contenu suivant. Ne recopie pas les marques de bloc d
 prenom="${1:-visiteur}"
 station="Orion"
 
-printf 'Bienvenue %s sur %s.\n' "$prenom" "$station"
+echo "Bienvenue $prenom sur $station."
 ```
 
 | Ligne | Rôle |
 |---|---|
 | `#!/usr/bin/env bash` | Demande d'utiliser Bash pour l'exécution directe |
-| `# Un nom…` | Commentaire destiné à la personne qui lit le fichier |
-| `prenom=...` | Prépare une valeur |
-| `printf ...` | Produit le message |
+| `# Un nom…` | Commentaire : Bash l'ignore, il s'adresse à qui lit le fichier |
+| `prenom="${1:-visiteur}"` | Prend le premier argument fourni au script, ou `visiteur` s'il n'y en a pas |
+| `station="Orion"` | Range une valeur fixe |
+| `echo ...` | Produit le message |
+
+La troisième ligne est la plus chargée : `$1` désigne le premier argument et `${1:-visiteur}` fournit une valeur de secours, comme le `${nom:-defaut}` du chapitre 02. Le §5 y revient en détail — pour l'instant, recopie-la telle quelle.
+
+La première ligne s'appelle le **shebang**. Nous écrivons `#!/usr/bin/env bash` plutôt que `#!/bin/bash` : `env` va chercher Bash là où il est réellement installé, ce qui rend le script utilisable sur des systèmes où le chemin diffère.
 
 Dans nano : **Ctrl+O**, puis **Entrée** pour enregistrer ; **Ctrl+X** pour quitter. Les indications `^O` et `^X` de nano signifient « Ctrl+O » et « Ctrl+X ».
+
+> [!WARNING] Fichier créé sous Windows
+> Si tu vois une erreur mentionnant `bash\r`, le fichier a été enregistré avec des fins de ligne Windows (CRLF). Un script Linux doit être enregistré en **LF**. En travaillant avec nano dans Debian, tu évites ce problème.
 
 ## 3. Vérifier avant de lancer
 
@@ -89,6 +97,8 @@ chmod +x accueil.sh
 - `Mila` est un argument transmis au script.
 
 Le `./` n'est pas décoratif : le dossier courant n'est généralement pas dans `PATH`. Pour un script stocké ailleurs, indique son chemin.
+
+Noter aussi ce qui **n'est pas** nécessaire : aucun `sudo` ici. Tu es propriétaire de ton dossier personnel, donc tu peux y créer un fichier, le rendre exécutable et le lancer sans droits administrateur. Un script qui réclame `sudo` pour travailler dans `~` est le signe qu'il se trompe de dossier.
 
 ## 5. Les arguments : des valeurs fournies au départ
 
@@ -120,7 +130,7 @@ Pour observer les arguments, crée un second fichier :
 <!-- fichier: arguments.sh -->
 ```bash
 #!/usr/bin/env bash
-printf 'Nombre : %s\n' "$#"
+echo "Nombre : $#"
 printf 'Argument : %s\n' "$@"
 ```
 
@@ -128,7 +138,15 @@ printf 'Argument : %s\n' "$@"
 bash arguments.sh "Mila Vega" pilote
 ```
 
-Tu obtiens un nombre de **2**, puis une ligne par argument. `"$@"` ne recoupe pas `Mila Vega` en deux mots.
+```text
+Nombre : 2
+Argument : Mila Vega
+Argument : pilote
+```
+
+`"$@"` ne recoupe pas `Mila Vega` en deux mots : c'est bien un seul argument.
+
+Une ligne de format, deux lignes affichées : `printf` **réapplique son format tant qu'il reste des arguments à consommer**. C'est le seul endroit de ce chapitre où `printf` rend un service qu'`echo` ne sait pas rendre — `echo "Argument : $@"` n'afficherait qu'une seule ligne, avec les deux valeurs à la suite. Partout ailleurs, `echo` suffit.
 
 ## 6. Le code de retour
 
@@ -137,7 +155,7 @@ Une commande fournit un **code de retour**. `0` signifie qu'elle a réussi selon
 ```bash
 bash accueil.sh Mila
 code=$?
-printf 'Code : %s\n' "$code"
+echo "Code : $code"
 ```
 
 `$?` donne le code de la **dernière commande**. Ici, le script réussit et le code est `0`. Il faut le lire tout de suite, avant qu'une autre commande le remplace.
@@ -147,7 +165,7 @@ Observe un échec sans créer de fichier :
 ```bash
 ls dossier-inexistant-orion 2>/dev/null
 code=$?
-printf 'Code apres echec : %s\n' "$code"
+echo "Code apres echec : $code"
 ```
 
 Le code est différent de zéro. `2>/dev/null` masque le message d'erreur ; il ne transforme pas l'échec en réussite. Nous verrons comment réagir au résultat dans le chapitre suivant.
@@ -163,16 +181,17 @@ bash -x accueil.sh Mila
 > [!WARNING] Trace et données personnelles
 > Une trace peut afficher les valeurs des variables. Utilise les données fictives du cours avant de partager une capture.
 
-Si tu crées un fichier sous Windows et vois une erreur liée à `bash\r`, vérifie les fins de ligne : le script doit être enregistré en **LF**, sans retours Windows CRLF. En travaillant avec nano dans Debian, tu évites ce problème.
-
 ## À retenir
 
-- Le shebang choisit l'interpréteur lors de l'exécution directe.
-- `bash -n` vérifie la syntaxe ; les essais vérifient le comportement.
+- Le shebang choisit l'interpréteur lors de l'exécution directe ; nous utilisons `#!/usr/bin/env bash`.
+- `bash -n` vérifie la syntaxe ; les essais vérifient le comportement ; `bash -x` montre les valeurs réellement utilisées.
+- `chmod +x` donne le droit d'exécution, `./` indique le fichier du dossier courant : les deux sont nécessaires.
+- Les arguments se lisent avec `$1`, `$#` et `"$@"` ; `${1:-defaut}` prévoit le cas où l'argument est absent.
 - Protège les arguments avec des guillemets.
+- `$?` donne le code de retour de la dernière commande : `0` pour une réussite, autre chose sinon. Lis-le tout de suite.
 - Un script n'a pas besoin de `sudo` pour travailler dans ton dossier personnel.
 
-**À toi :** combien d'arguments reçoit `bash arguments.sh "poste radio" Orion` ? Pourquoi `chmod +x` ne suffit-il pas à lancer un fichier ?
+**À toi :** combien d'arguments reçoit `bash arguments.sh "poste radio" Orion` ? Pourquoi `chmod +x` ne suffit-il pas à lancer un fichier ? Que vaut `$?` juste après une commande qui a échoué ?
 
 [Passer au TP](https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/tp)
 

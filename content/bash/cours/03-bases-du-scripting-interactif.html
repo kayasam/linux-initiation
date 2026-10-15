@@ -7,7 +7,7 @@
 </style><link rel="stylesheet" href="../../assets/themes/theme.css"><script src="../../assets/themes/theme.js"></script></head><body><nav class="bash-site-nav"><a href="https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/">← Cours Markdown</a><a href="https://kayasam.github.io/linux-initiation/#bash">Parcours Bash →</a></nav><main><nav class="lesson-nav" aria-label="Parcours"><a href="https://kayasam.github.io/linux-initiation/bash/cours/02-variables-interactif.html">← Chapitre précédent</a><a href="https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/">Cours Markdown</a><a href="https://kayasam.github.io/linux-initiation/bash/cours/quiz/03-bases-du-scripting.html">Quiz — 20 questions</a><a href="https://kayasam.github.io/linux-initiation/bash/cours/04-tests-et-conditions-interactif.html">Chapitre suivant →</a></nav><p class="chapter-label">BASH · CHAPITRE 03 / 06</p><details class="toc"><summary>Sommaire du chapitre</summary><div class="toc">
 <ul>
 <li><a href="#chapitre-03-ecrire-son-premier-script">Chapitre 03 — Écrire son premier script</a><ul>
-<li><a href="#a-connaitre-shebang-nano-bash-chmod-x-1">À connaître : shebang, nano, bash, chmod +x, ./, $1, $#, "$@", $?.</a></li>
+<li><a href="#a-connaitre-shebang-commentaire-nano-bash-n-bash-chmod-x-1-1-defaut-bash-x">À connaître : shebang, commentaire #, nano, bash -n, bash, chmod +x, ./, $1, ${1:-defaut}, $#, "$@", $?, bash -x.</a></li>
 <li><a href="#1-un-script-est-un-fichier-texte">1. Un script est un fichier texte</a></li>
 <li><a href="#2-creer-le-fichier-avec-nano">2. Créer le fichier avec nano</a></li>
 <li><a href="#3-verifier-avant-de-lancer">3. Vérifier avant de lancer</a></li>
@@ -25,7 +25,7 @@
 <p><strong>Objectif</strong></p>
 <p>Transformer quelques commandes en un programme que tu peux relancer, lire et vérifier.</p>
 </aside>
-<h2 id="a-connaitre-shebang-nano-bash-chmod-x-1"><strong>À connaître :</strong> shebang, <code>nano</code>, <code>bash</code>, <code>chmod +x</code>, <code>./</code>, <code>$1</code>, <code>$#</code>, <code>"$@"</code>, <code>$?</code>.</h2>
+<h2 id="a-connaitre-shebang-commentaire-nano-bash-n-bash-chmod-x-1-1-defaut-bash-x"><strong>À connaître :</strong> shebang, commentaire <code>#</code>, <code>nano</code>, <code>bash -n</code>, <code>bash</code>, <code>chmod +x</code>, <code>./</code>, <code>$1</code>, <code>${1:-defaut}</code>, <code>$#</code>, <code>"$@"</code>, <code>$?</code>, <code>bash -x</code>.</h2>
 <h2 id="1-un-script-est-un-fichier-texte">1. Un script est un fichier texte</h2>
 <p>Un script Bash contient les commandes que tu aurais pu taper dans le terminal. Bash les lit dans l'ordre. Tu peux ainsi refaire la même tâche sans recopier les commandes.</p>
 <p><img alt="Écrire, vérifier puis exécuter" src="https://kayasam.github.io/linux-initiation/bash/images/bash-03-script.svg" /></p>
@@ -48,7 +48,7 @@ cd ~/atelier-bash/scripts
 prenom=&quot;${1:-visiteur}&quot;
 station=&quot;Orion&quot;
 
-printf 'Bienvenue %s sur %s.\n' &quot;$prenom&quot; &quot;$station&quot;
+echo &quot;Bienvenue $prenom sur $station.&quot;
 </code></pre>
 <table>
 <thead>
@@ -64,19 +64,29 @@ printf 'Bienvenue %s sur %s.\n' &quot;$prenom&quot; &quot;$station&quot;
 </tr>
 <tr>
 <td><code># Un nom…</code></td>
-<td>Commentaire destiné à la personne qui lit le fichier</td>
+<td>Commentaire : Bash l'ignore, il s'adresse à qui lit le fichier</td>
 </tr>
 <tr>
-<td><code>prenom=...</code></td>
-<td>Prépare une valeur</td>
+<td><code>prenom="${1:-visiteur}"</code></td>
+<td>Prend le premier argument fourni au script, ou <code>visiteur</code> s'il n'y en a pas</td>
 </tr>
 <tr>
-<td><code>printf ...</code></td>
+<td><code>station="Orion"</code></td>
+<td>Range une valeur fixe</td>
+</tr>
+<tr>
+<td><code>echo ...</code></td>
 <td>Produit le message</td>
 </tr>
 </tbody>
 </table>
+<p>La troisième ligne est la plus chargée : <code>$1</code> désigne le premier argument et <code>${1:-visiteur}</code> fournit une valeur de secours, comme le <code>${nom:-defaut}</code> du chapitre 02. Le §5 y revient en détail — pour l'instant, recopie-la telle quelle.</p>
+<p>La première ligne s'appelle le <strong>shebang</strong>. Nous écrivons <code>#!/usr/bin/env bash</code> plutôt que <code>#!/bin/bash</code> : <code>env</code> va chercher Bash là où il est réellement installé, ce qui rend le script utilisable sur des systèmes où le chemin diffère.</p>
 <p>Dans nano : <strong>Ctrl+O</strong>, puis <strong>Entrée</strong> pour enregistrer ; <strong>Ctrl+X</strong> pour quitter. Les indications <code>^O</code> et <code>^X</code> de nano signifient « Ctrl+O » et « Ctrl+X ».</p>
+<aside class="warning">
+<p><strong>Fichier créé sous Windows</strong></p>
+<p>Si tu vois une erreur mentionnant <code>bash\r</code>, le fichier a été enregistré avec des fins de ligne Windows (CRLF). Un script Linux doit être enregistré en <strong>LF</strong>. En travaillant avec nano dans Debian, tu évites ce problème.</p>
+</aside>
 <h2 id="3-verifier-avant-de-lancer">3. Vérifier avant de lancer</h2>
 <pre><code class="language-bash">bash -n accueil.sh
 </code></pre>
@@ -95,6 +105,7 @@ printf 'Bienvenue %s sur %s.\n' &quot;$prenom&quot; &quot;$station&quot;
 <li><code>Mila</code> est un argument transmis au script.</li>
 </ul>
 <p>Le <code>./</code> n'est pas décoratif : le dossier courant n'est généralement pas dans <code>PATH</code>. Pour un script stocké ailleurs, indique son chemin.</p>
+<p>Noter aussi ce qui <strong>n'est pas</strong> nécessaire : aucun <code>sudo</code> ici. Tu es propriétaire de ton dossier personnel, donc tu peux y créer un fichier, le rendre exécutable et le lancer sans droits administrateur. Un script qui réclame <code>sudo</code> pour travailler dans <code>~</code> est le signe qu'il se trompe de dossier.</p>
 <h2 id="5-les-arguments-des-valeurs-fournies-au-depart">5. Les arguments : des valeurs fournies au départ</h2>
 <p>Dans le script, <code>$1</code> est le premier argument. <code>${1:-visiteur}</code> donne une valeur par défaut si ce premier argument est absent ou vide.</p>
 <pre><code class="language-bash">./accueil.sh
@@ -135,23 +146,28 @@ Bienvenue Mila Vega sur Orion.
 <!-- fichier: arguments.sh -->
 
 <pre><code class="language-bash">#!/usr/bin/env bash
-printf 'Nombre : %s\n' &quot;$#&quot;
+echo &quot;Nombre : $#&quot;
 printf 'Argument : %s\n' &quot;$@&quot;
 </code></pre>
 <pre><code class="language-bash">bash arguments.sh &quot;Mila Vega&quot; pilote
 </code></pre>
-<p>Tu obtiens un nombre de <strong>2</strong>, puis une ligne par argument. <code>"$@"</code> ne recoupe pas <code>Mila Vega</code> en deux mots.</p>
+<pre><code class="language-text">Nombre : 2
+Argument : Mila Vega
+Argument : pilote
+</code></pre>
+<p><code>"$@"</code> ne recoupe pas <code>Mila Vega</code> en deux mots : c'est bien un seul argument.</p>
+<p>Une ligne de format, deux lignes affichées : <code>printf</code> <strong>réapplique son format tant qu'il reste des arguments à consommer</strong>. C'est le seul endroit de ce chapitre où <code>printf</code> rend un service qu'<code>echo</code> ne sait pas rendre — <code>echo "Argument : $@"</code> n'afficherait qu'une seule ligne, avec les deux valeurs à la suite. Partout ailleurs, <code>echo</code> suffit.</p>
 <h2 id="6-le-code-de-retour">6. Le code de retour</h2>
 <p>Une commande fournit un <strong>code de retour</strong>. <code>0</code> signifie qu'elle a réussi selon ses propres règles. Une valeur différente de zéro indique un autre résultat : erreur, absence de correspondance pour <code>grep</code>, etc.</p>
 <pre><code class="language-bash">bash accueil.sh Mila
 code=$?
-printf 'Code : %s\n' &quot;$code&quot;
+echo &quot;Code : $code&quot;
 </code></pre>
 <p><code>$?</code> donne le code de la <strong>dernière commande</strong>. Ici, le script réussit et le code est <code>0</code>. Il faut le lire tout de suite, avant qu'une autre commande le remplace.</p>
 <p>Observe un échec sans créer de fichier :</p>
 <pre><code class="language-bash">ls dossier-inexistant-orion 2&gt;/dev/null
 code=$?
-printf 'Code apres echec : %s\n' &quot;$code&quot;
+echo &quot;Code apres echec : $code&quot;
 </code></pre>
 <p>Le code est différent de zéro. <code>2&gt;/dev/null</code> masque le message d'erreur ; il ne transforme pas l'échec en réussite. Nous verrons comment réagir au résultat dans le chapitre suivant.</p>
 <h2 id="7-comprendre-un-comportement-inattendu">7. Comprendre un comportement inattendu</h2>
@@ -162,13 +178,15 @@ printf 'Code apres echec : %s\n' &quot;$code&quot;
 <p><strong>Trace et données personnelles</strong></p>
 <p>Une trace peut afficher les valeurs des variables. Utilise les données fictives du cours avant de partager une capture.</p>
 </aside>
-<p>Si tu crées un fichier sous Windows et vois une erreur liée à <code>bash\r</code>, vérifie les fins de ligne : le script doit être enregistré en <strong>LF</strong>, sans retours Windows CRLF. En travaillant avec nano dans Debian, tu évites ce problème.</p>
 <h2 id="a-retenir">À retenir</h2>
 <ul>
-<li>Le shebang choisit l'interpréteur lors de l'exécution directe.</li>
-<li><code>bash -n</code> vérifie la syntaxe ; les essais vérifient le comportement.</li>
+<li>Le shebang choisit l'interpréteur lors de l'exécution directe ; nous utilisons <code>#!/usr/bin/env bash</code>.</li>
+<li><code>bash -n</code> vérifie la syntaxe ; les essais vérifient le comportement ; <code>bash -x</code> montre les valeurs réellement utilisées.</li>
+<li><code>chmod +x</code> donne le droit d'exécution, <code>./</code> indique le fichier du dossier courant : les deux sont nécessaires.</li>
+<li>Les arguments se lisent avec <code>$1</code>, <code>$#</code> et <code>"$@"</code> ; <code>${1:-defaut}</code> prévoit le cas où l'argument est absent.</li>
 <li>Protège les arguments avec des guillemets.</li>
+<li><code>$?</code> donne le code de retour de la dernière commande : <code>0</code> pour une réussite, autre chose sinon. Lis-le tout de suite.</li>
 <li>Un script n'a pas besoin de <code>sudo</code> pour travailler dans ton dossier personnel.</li>
 </ul>
-<p><strong>À toi :</strong> combien d'arguments reçoit <code>bash arguments.sh "poste radio" Orion</code> ? Pourquoi <code>chmod +x</code> ne suffit-il pas à lancer un fichier ?</p>
+<p><strong>À toi :</strong> combien d'arguments reçoit <code>bash arguments.sh "poste radio" Orion</code> ? Pourquoi <code>chmod +x</code> ne suffit-il pas à lancer un fichier ? Que vaut <code>$?</code> juste après une commande qui a échoué ?</p>
 <p><a href="https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/tp">Passer au TP</a></p><section aria-label="Quiz du chapitre"><h2>Quiz du chapitre — 20 questions</h2><p>Chaque réponse est expliquée. Tu peux recommencer avec un nouvel ordre des questions.</p><p><a href="https://kayasam.github.io/linux-initiation/bash/cours/quiz/03-bases-du-scripting.html">Ouvrir le quiz dans sa propre page →</a></p><iframe class="course-quiz-frame" src="https://kayasam.github.io/linux-initiation/bash/cours/quiz/03-bases-du-scripting.html" title="Quiz du chapitre 03" loading="lazy" style="width:100%;height:1100px;border:0;border-radius:12px"></iframe></section><nav class="lesson-nav" aria-label="Parcours"><a href="https://kayasam.github.io/linux-initiation/bash/cours/02-variables-interactif.html">← Chapitre précédent</a><a href="https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/">Cours Markdown</a><a href="https://kayasam.github.io/linux-initiation/bash/cours/quiz/03-bases-du-scripting.html">Quiz — 20 questions</a><a href="https://kayasam.github.io/linux-initiation/bash/cours/04-tests-et-conditions-interactif.html">Chapitre suivant →</a></nav></main></body></html>

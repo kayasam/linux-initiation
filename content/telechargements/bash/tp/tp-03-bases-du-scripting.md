@@ -27,7 +27,7 @@ cd ~/atelier-bash/03-robot
 Bonjour Mila, ton role sur Orion est pilote.
 ```
 
-Utilise `printf` et tes deux variables. Enregistre et quitte nano.
+Utilise `echo` et tes deux variables. Enregistre et quitte nano.
 
 ## Partie B — Les essais du robot
 

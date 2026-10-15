@@ -13,10 +13,10 @@ Le robot doit copier les messages `.txt` d'Orion, compter ses copies et laisser 
 ```bash
 mkdir -p ~/atelier-bash/05-copieur/messages/faux.txt
 cd ~/atelier-bash/05-copieur
-printf 'Poste ouvert\n' > messages/accueil.txt
-printf 'Canal 7\n' > "messages/journal radio.txt"
-printf 'Reserve complete\n' > messages/reserve.txt
-printf 'Image fictive\n' > messages/photo.png
+echo 'Poste ouvert' > messages/accueil.txt
+echo 'Canal 7' > "messages/journal radio.txt"
+echo 'Reserve complete' > messages/reserve.txt
+echo 'Image fictive' > messages/photo.png
 mkdir -p vide
 ```
 

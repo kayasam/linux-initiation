@@ -31,41 +31,41 @@
 <p><img alt="La même action pour chaque fichier" src="https://kayasam.github.io/linux-initiation/bash/images/bash-05-boucle.svg" /></p>
 <p>Une boucle <code>for</code> prend les éléments <strong>un par un</strong>. À chaque passage, une variable contient l'élément courant.</p>
 <pre><code class="language-bash">for personne in Mila Noe Vega; do
-    printf 'Bonjour %s\n' &quot;$personne&quot;
+    echo &quot;Bonjour $personne&quot;
 done
 </code></pre>
 <p>Résultat : trois lignes, une par personne. <code>do</code> ouvre le corps de la boucle ; <code>done</code> le ferme.</p>
 <p>Un élément peut contenir des espaces :</p>
 <pre><code class="language-bash">for poste in &quot;salle radio&quot; &quot;poste de pilotage&quot;; do
-    printf 'Controle : %s\n' &quot;$poste&quot;
+    echo &quot;Controle : $poste&quot;
 done
 </code></pre>
 <p>Les guillemets conservent ici <strong>deux éléments</strong>, pas six mots.</p>
 <h2 id="2-repeter-avec-un-compteur">2. Répéter avec un compteur</h2>
 <pre><code class="language-bash">for numero in 1 2 3; do
-    printf 'Test numero %s\n' &quot;$numero&quot;
+    echo &quot;Test numero $numero&quot;
 done
 </code></pre>
 <p>Pour compter des passages :</p>
 <pre><code class="language-bash">compteur=0
 for objet in radio casque batterie; do
     compteur=$((compteur + 1))
-    printf '%s : %s\n' &quot;$compteur&quot; &quot;$objet&quot;
+    echo &quot;$compteur : $objet&quot;
 done
-printf 'Objets controles : %s\n' &quot;$compteur&quot;
+echo &quot;Objets controles : $compteur&quot;
 </code></pre>
 <p>On initialise le compteur <strong>avant</strong> la boucle. On augmente sa valeur <strong>dans</strong> la boucle. Le résultat final est 3.</p>
 <h2 id="3-parcourir-des-fichiers">3. Parcourir des fichiers</h2>
 <p>Prépare quelques données :</p>
 <pre><code class="language-bash">mkdir -p ~/atelier-bash/boucles/messages
 cd ~/atelier-bash/boucles
-printf 'Bienvenue\n' &gt; messages/accueil.txt
-printf 'Radio active\n' &gt; &quot;messages/radio du jour.txt&quot;
-printf 'Image fictive\n' &gt; messages/image.png
+echo 'Bienvenue' &gt; messages/accueil.txt
+echo 'Radio active' &gt; &quot;messages/radio du jour.txt&quot;
+echo 'Image fictive' &gt; messages/image.png
 </code></pre>
 <pre><code class="language-bash">for fichier in messages/*.txt; do
     if [[ -f &quot;$fichier&quot; ]]; then
-        printf 'Lecture de %s\n' &quot;$fichier&quot;
+        echo &quot;Lecture de $fichier&quot;
         cat &quot;$fichier&quot;
     fi
 done
@@ -79,16 +79,16 @@ done
 <h2 id="4-une-boucle-while-repete-tant-que-le-test-reussit">4. Une boucle while répète tant que le test réussit</h2>
 <pre><code class="language-bash">compteur=3
 while [[ &quot;$compteur&quot; -gt 0 ]]; do
-    printf 'Depart dans %s\n' &quot;$compteur&quot;
+    echo &quot;Depart dans $compteur&quot;
     compteur=$((compteur - 1))
 done
-printf 'Decollage\n'
+echo 'Decollage'
 </code></pre>
 <p>La valeur descend de 3 à 1. Quand elle vaut 0, le test échoue et la boucle se termine. Si tu oublies la soustraction, la condition ne changera pas : <strong>Ctrl+C</strong> permet d'interrompre une boucle sans fin.</p>
 <h2 id="5-lire-un-fichier-ligne-par-ligne">5. Lire un fichier ligne par ligne</h2>
 <pre><code class="language-bash">printf 'Mila Vega\nNoe\n' &gt; equipe.txt
 while IFS= read -r personne; do
-    printf 'Equipier : %s\n' &quot;$personne&quot;
+    echo &quot;Equipier : $personne&quot;
 done &lt; equipe.txt
 </code></pre>
 <ul>
@@ -107,7 +107,7 @@ done &lt; equipe.txt
     if [[ &quot;$message&quot; == &quot;FIN&quot; ]]; then
         break
     fi
-    printf 'Message : %s\n' &quot;$message&quot;
+    echo &quot;Message : $message&quot;
 done
 </code></pre>
 <p>Résultat : <code>INFO</code> puis <code>ALERTE</code>. Commence par une boucle simple ; ajoute ces instructions seulement si elles rendent le parcours plus clair.</p>
@@ -118,19 +118,19 @@ done
 <pre><code class="language-bash">#!/usr/bin/env bash
 
 if [[ &quot;$#&quot; -gt 1 ]]; then
-    printf 'Usage : %s [dossier]\n' &quot;$0&quot; &gt;&amp;2
+    echo &quot;Usage : $0 [dossier]&quot; &gt;&amp;2
     exit 2
 fi
 
 source=&quot;${1:-messages}&quot;
 if [[ ! -d &quot;$source&quot; ]]; then
-    printf 'Dossier absent : %s\n' &quot;$source&quot; &gt;&amp;2
+    echo &quot;Dossier absent : $source&quot; &gt;&amp;2
     exit 2
 fi
 
 destination=&quot;$source/copies&quot;
 if ! mkdir -p -- &quot;$destination&quot;; then
-    printf 'Impossible de creer la destination\n' &gt;&amp;2
+    echo 'Impossible de creer la destination' &gt;&amp;2
     exit 1
 fi
 
@@ -140,13 +140,13 @@ for fichier in &quot;$source&quot;/*.txt; do
         continue
     fi
     if ! cp -- &quot;$fichier&quot; &quot;$destination/&quot;; then
-        printf 'Copie impossible : %s\n' &quot;$fichier&quot; &gt;&amp;2
+        echo &quot;Copie impossible : $fichier&quot; &gt;&amp;2
         exit 1
     fi
     compteur=$((compteur + 1))
 done
 
-printf 'Copies realisees : %s\n' &quot;$compteur&quot;
+echo &quot;Copies realisees : $compteur&quot;
 </code></pre>
 <p><code>--</code> marque la fin des options pour <code>mkdir</code> et <code>cp</code>. Un nom commençant par <code>-</code> ne sera donc pas pris pour une option. <code>cp</code> copie les fichiers sans supprimer les originaux.</p>
 <pre><code class="language-bash">bash -n copier.sh
@@ -158,7 +158,7 @@ ls messages/copies
 <p>Une fonction donne un nom à un groupe de commandes. Tu peux l'appeler plusieurs fois :</p>
 <pre><code class="language-bash">saluer() {
     local personne=&quot;${1:-equipier}&quot;
-    printf 'Bienvenue %s\n' &quot;$personne&quot;
+    echo &quot;Bienvenue $personne&quot;
 }
 saluer Mila
 saluer Vega

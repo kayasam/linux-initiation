@@ -25,7 +25,7 @@ cd ~/atelier-bash/bonus
 
 **B1.** Crée `quiz.sh`. Initialise `score=0`.
 
-**B2.** Pose trois questions avec `read -r -p` :
+**B2.** Pose trois questions avec `read -p` :
 
 1. Quel shell utilisons-nous ? Réponse : `Bash` ou `bash`.
 2. Quel outil du cours calcule une somme par colonnes ? Réponse : `awk`.

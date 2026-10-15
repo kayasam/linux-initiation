@@ -13,8 +13,8 @@ Le sas d'Orion est une simulation locale. Ton programme lit un fichier billet et
 ```bash
 mkdir -p ~/atelier-bash/04-sas
 cd ~/atelier-bash/04-sas
-printf 'ORION-OK\n' > billet-valide.txt
-printf 'AUTRE-STATION\n' > billet-refuse.txt
+echo 'ORION-OK' > billet-valide.txt
+echo 'AUTRE-STATION' > billet-refuse.txt
 ```
 
 **A2.** Affiche leurs contenus et vérifie qu'ils sont différents.
@@ -38,7 +38,7 @@ Crée `sas.sh` dans nano, avec son shebang.
 
 ## Partie C — La tournée des essais
 
-**C1.** Teste les situations ci-dessous. Après **chaque** lancement, utilise immédiatement `printf 'Code : %s\n' "$?"`.
+**C1.** Teste les situations ci-dessous. Après **chaque** lancement, utilise immédiatement `echo "Code : $?"`.
 
 | Lancement | Résultat attendu | Code |
 |---|---|---|
@@ -54,7 +54,7 @@ Crée `sas.sh` dans nano, avec son shebang.
 
 ## Bonus — Le menu de la station
 
-Crée `menu.sh`. Il demande un choix avec `read -r -p`, puis utilise `case` :
+Crée `menu.sh`. Il demande un choix avec `read -p`, puis utilise `case` :
 
 - `1` affiche `Radio disponible`.
 - `2` affiche `Reserve disponible`.

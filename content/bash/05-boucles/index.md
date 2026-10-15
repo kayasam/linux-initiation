@@ -25,7 +25,7 @@ Une boucle `for` prend les éléments **un par un**. À chaque passage, une vari
 
 ```bash
 for personne in Mila Noe Vega; do
-    printf 'Bonjour %s\n' "$personne"
+    echo "Bonjour $personne"
 done
 ```
 
@@ -35,7 +35,7 @@ Un élément peut contenir des espaces :
 
 ```bash
 for poste in "salle radio" "poste de pilotage"; do
-    printf 'Controle : %s\n' "$poste"
+    echo "Controle : $poste"
 done
 ```
 
@@ -45,7 +45,7 @@ Les guillemets conservent ici **deux éléments**, pas six mots.
 
 ```bash
 for numero in 1 2 3; do
-    printf 'Test numero %s\n' "$numero"
+    echo "Test numero $numero"
 done
 ```
 
@@ -55,9 +55,9 @@ Pour compter des passages :
 compteur=0
 for objet in radio casque batterie; do
     compteur=$((compteur + 1))
-    printf '%s : %s\n' "$compteur" "$objet"
+    echo "$compteur : $objet"
 done
-printf 'Objets controles : %s\n' "$compteur"
+echo "Objets controles : $compteur"
 ```
 
 On initialise le compteur **avant** la boucle. On augmente sa valeur **dans** la boucle. Le résultat final est 3.
@@ -69,15 +69,15 @@ Prépare quelques données :
 ```bash
 mkdir -p ~/atelier-bash/boucles/messages
 cd ~/atelier-bash/boucles
-printf 'Bienvenue\n' > messages/accueil.txt
-printf 'Radio active\n' > "messages/radio du jour.txt"
-printf 'Image fictive\n' > messages/image.png
+echo 'Bienvenue' > messages/accueil.txt
+echo 'Radio active' > "messages/radio du jour.txt"
+echo 'Image fictive' > messages/image.png
 ```
 
 ```bash
 for fichier in messages/*.txt; do
     if [[ -f "$fichier" ]]; then
-        printf 'Lecture de %s\n' "$fichier"
+        echo "Lecture de $fichier"
         cat "$fichier"
     fi
 done
@@ -95,10 +95,10 @@ Le test `-f` évite de traiter un dossier. Il gère aussi le cas où aucun nom n
 ```bash
 compteur=3
 while [[ "$compteur" -gt 0 ]]; do
-    printf 'Depart dans %s\n' "$compteur"
+    echo "Depart dans $compteur"
     compteur=$((compteur - 1))
 done
-printf 'Decollage\n'
+echo 'Decollage'
 ```
 
 La valeur descend de 3 à 1. Quand elle vaut 0, le test échoue et la boucle se termine. Si tu oublies la soustraction, la condition ne changera pas : **Ctrl+C** permet d'interrompre une boucle sans fin.
@@ -108,7 +108,7 @@ La valeur descend de 3 à 1. Quand elle vaut 0, le test échoue et la boucle se 
 ```bash
 printf 'Mila Vega\nNoe\n' > equipe.txt
 while IFS= read -r personne; do
-    printf 'Equipier : %s\n' "$personne"
+    echo "Equipier : $personne"
 done < equipe.txt
 ```
 
@@ -131,7 +131,7 @@ for message in INFO IGNORER ALERTE FIN; do
     if [[ "$message" == "FIN" ]]; then
         break
     fi
-    printf 'Message : %s\n' "$message"
+    echo "Message : $message"
 done
 ```
 
@@ -146,19 +146,19 @@ Dans le dossier `boucles`, crée `copier.sh` :
 #!/usr/bin/env bash
 
 if [[ "$#" -gt 1 ]]; then
-    printf 'Usage : %s [dossier]\n' "$0" >&2
+    echo "Usage : $0 [dossier]" >&2
     exit 2
 fi
 
 source="${1:-messages}"
 if [[ ! -d "$source" ]]; then
-    printf 'Dossier absent : %s\n' "$source" >&2
+    echo "Dossier absent : $source" >&2
     exit 2
 fi
 
 destination="$source/copies"
 if ! mkdir -p -- "$destination"; then
-    printf 'Impossible de creer la destination\n' >&2
+    echo 'Impossible de creer la destination' >&2
     exit 1
 fi
 
@@ -168,13 +168,13 @@ for fichier in "$source"/*.txt; do
         continue
     fi
     if ! cp -- "$fichier" "$destination/"; then
-        printf 'Copie impossible : %s\n' "$fichier" >&2
+        echo "Copie impossible : $fichier" >&2
         exit 1
     fi
     compteur=$((compteur + 1))
 done
 
-printf 'Copies realisees : %s\n' "$compteur"
+echo "Copies realisees : $compteur"
 ```
 
 `--` marque la fin des options pour `mkdir` et `cp`. Un nom commençant par `-` ne sera donc pas pris pour une option. `cp` copie les fichiers sans supprimer les originaux.
@@ -194,7 +194,7 @@ Une fonction donne un nom à un groupe de commandes. Tu peux l'appeler plusieurs
 ```bash
 saluer() {
     local personne="${1:-equipier}"
-    printf 'Bienvenue %s\n' "$personne"
+    echo "Bienvenue $personne"
 }
 saluer Mila
 saluer Vega
