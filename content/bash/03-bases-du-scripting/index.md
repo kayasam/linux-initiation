@@ -7,6 +7,7 @@ title: "03. Écrire son premier script"
 > [!TIP] Ressources du chapitre
 > - [Version HTML](https://kayasam.github.io/linux-initiation/bash/cours/03-bases-du-scripting-interactif.html)
 > - <a href="https://kayasam.github.io/linux-initiation/telechargements/bash/cours/03-bases-du-scripting.md" download>Télécharger le cours en Markdown</a>
+> - [Faire le quiz — 20 questions](https://kayasam.github.io/linux-initiation/bash/cours/quiz/03-bases-du-scripting.html)
 > - [Passer au TP](https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/tp)
 
 

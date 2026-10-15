@@ -7,6 +7,7 @@ title: "06. Traiter du texte avec sed et awk"
 > [!TIP] Ressources du chapitre
 > - [Version HTML](https://kayasam.github.io/linux-initiation/bash/cours/06-sed-et-awk-interactif.html)
 > - <a href="https://kayasam.github.io/linux-initiation/telechargements/bash/cours/06-sed-et-awk.md" download>Télécharger le cours en Markdown</a>
+> - [Faire le quiz — 20 questions](https://kayasam.github.io/linux-initiation/bash/cours/quiz/06-sed-et-awk.html)
 > - [Passer au TP](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp)
 
 

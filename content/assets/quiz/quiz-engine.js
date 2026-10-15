@@ -14,7 +14,7 @@
 
   const total = data.questions.length
   const objective = Math.ceil(total * 0.8)
-  document.title = data.title + " — Quiz Linux"
+  document.title = data.title + " — Quiz " + (data.track || "Linux")
   document.getElementById("quiz-kicker").textContent = data.chapter
   document.getElementById("quiz-title").textContent = data.title
   document.getElementById("quiz-intro").textContent = data.intro

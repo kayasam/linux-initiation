@@ -7,6 +7,7 @@ title: "02. Les variables"
 > [!TIP] Ressources du chapitre
 > - [Version HTML](https://kayasam.github.io/linux-initiation/bash/cours/02-variables-interactif.html)
 > - <a href="https://kayasam.github.io/linux-initiation/telechargements/bash/cours/02-variables.md" download>Télécharger le cours en Markdown</a>
+> - [Faire le quiz — 20 questions](https://kayasam.github.io/linux-initiation/bash/cours/quiz/02-variables.html)
 > - [Passer au TP](https://kayasam.github.io/linux-initiation/bash/02-variables/tp)
 
 

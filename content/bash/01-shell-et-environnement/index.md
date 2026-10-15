@@ -7,6 +7,7 @@ title: "01. Le shell et son environnement"
 > [!TIP] Ressources du chapitre
 > - [Version HTML](https://kayasam.github.io/linux-initiation/bash/cours/01-shell-et-environnement-interactif.html)
 > - <a href="https://kayasam.github.io/linux-initiation/telechargements/bash/cours/01-shell-et-environnement.md" download>Télécharger le cours en Markdown</a>
+> - [Faire le quiz — 20 questions](https://kayasam.github.io/linux-initiation/bash/cours/quiz/01-shell-et-environnement.html)
 > - [Passer au TP](https://kayasam.github.io/linux-initiation/bash/01-shell-et-environnement/tp)
 
 

@@ -53,6 +53,9 @@
       frame.addEventListener("load", () => apply(root.dataset.theme))
       quiz.replaceChildren(link, frame)
     }
+    document.querySelectorAll(".course-quiz-frame").forEach((frame) => {
+      frame.addEventListener("load", () => apply(root.dataset.theme))
+    })
     apply(root.dataset.theme)
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount)
