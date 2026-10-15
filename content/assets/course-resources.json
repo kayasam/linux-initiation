@@ -1,0 +1,468 @@
+{
+  "01-comprendre-linux": [
+    {
+      "kind": "markdown",
+      "label": "Markdown",
+      "detail": "Télécharger le cours",
+      "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/01-comprendre-linux.md",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
+    },
+    {
+      "kind": "html",
+      "label": "HTML",
+      "detail": "Explorer le chapitre",
+      "href": "https://kayasam.github.io/linux-initiation/cours/01-comprendre-linux-interactif.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg"
+    },
+    {
+      "kind": "quiz",
+      "label": "Quiz",
+      "detail": "20 questions",
+      "href": "https://kayasam.github.io/linux-initiation/cours/quiz/01-comprendre-linux.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg"
+    }
+  ],
+  "02-installer-la-vm": [
+    {
+      "kind": "markdown",
+      "label": "Markdown",
+      "detail": "Télécharger le cours",
+      "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/02-installer-la-vm.md",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
+    },
+    {
+      "kind": "html",
+      "label": "HTML",
+      "detail": "Explorer le chapitre",
+      "href": "https://kayasam.github.io/linux-initiation/cours/02-installer-la-vm-interactif.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg"
+    },
+    {
+      "kind": "quiz",
+      "label": "Quiz",
+      "detail": "20 questions",
+      "href": "https://kayasam.github.io/linux-initiation/cours/quiz/02-installer-la-vm.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg"
+    },
+    {
+      "kind": "tp",
+      "label": "TP",
+      "detail": "Mettre en pratique",
+      "href": "https://kayasam.github.io/linux-initiation/02-installer-la-vm/tp",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg"
+    }
+  ],
+  "03-interface-graphique": [
+    {
+      "kind": "markdown",
+      "label": "Markdown",
+      "detail": "Télécharger le cours",
+      "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/03-interface-graphique.md",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
+    },
+    {
+      "kind": "html",
+      "label": "HTML",
+      "detail": "Explorer le chapitre",
+      "href": "https://kayasam.github.io/linux-initiation/cours/03-interface-graphique-interactif.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg"
+    },
+    {
+      "kind": "quiz",
+      "label": "Quiz",
+      "detail": "20 questions",
+      "href": "https://kayasam.github.io/linux-initiation/cours/quiz/03-interface-graphique.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg"
+    }
+  ],
+  "04-le-terminal": [
+    {
+      "kind": "markdown",
+      "label": "Markdown",
+      "detail": "Télécharger le cours",
+      "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/04-le-terminal.md",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
+    },
+    {
+      "kind": "html",
+      "label": "HTML",
+      "detail": "Explorer le chapitre",
+      "href": "https://kayasam.github.io/linux-initiation/cours/04-le-terminal-interactif.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg"
+    },
+    {
+      "kind": "quiz",
+      "label": "Quiz",
+      "detail": "20 questions",
+      "href": "https://kayasam.github.io/linux-initiation/cours/quiz/04-le-terminal.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg"
+    },
+    {
+      "kind": "tp",
+      "label": "TP",
+      "detail": "Mettre en pratique",
+      "href": "https://kayasam.github.io/linux-initiation/04-le-terminal/tp",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg"
+    }
+  ],
+  "05-fichiers-et-repertoires": [
+    {
+      "kind": "markdown",
+      "label": "Markdown",
+      "detail": "Télécharger le cours",
+      "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/05-fichiers-et-repertoires.md",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
+    },
+    {
+      "kind": "html",
+      "label": "HTML",
+      "detail": "Explorer le chapitre",
+      "href": "https://kayasam.github.io/linux-initiation/cours/05-fichiers-et-repertoires-interactif.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg"
+    },
+    {
+      "kind": "quiz",
+      "label": "Quiz",
+      "detail": "20 questions",
+      "href": "https://kayasam.github.io/linux-initiation/cours/quiz/05-fichiers-et-repertoires.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg"
+    },
+    {
+      "kind": "tp",
+      "label": "TP",
+      "detail": "Mettre en pratique",
+      "href": "https://kayasam.github.io/linux-initiation/05-fichiers-et-repertoires/tp",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg"
+    }
+  ],
+  "06-arborescence-linux": [
+    {
+      "kind": "markdown",
+      "label": "Markdown",
+      "detail": "Télécharger le cours",
+      "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/06-arborescence-linux.md",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
+    },
+    {
+      "kind": "html",
+      "label": "HTML",
+      "detail": "Explorer le chapitre",
+      "href": "https://kayasam.github.io/linux-initiation/cours/06-arborescence-linux-interactif.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg"
+    },
+    {
+      "kind": "quiz",
+      "label": "Quiz",
+      "detail": "20 questions",
+      "href": "https://kayasam.github.io/linux-initiation/cours/quiz/06-arborescence-linux.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg"
+    },
+    {
+      "kind": "tp",
+      "label": "TP",
+      "detail": "Mettre en pratique",
+      "href": "https://kayasam.github.io/linux-initiation/06-arborescence-linux/tp",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg"
+    }
+  ],
+  "07-utilisateurs-et-permissions": [
+    {
+      "kind": "markdown",
+      "label": "Markdown",
+      "detail": "Télécharger le cours",
+      "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/07-utilisateurs-et-permissions.md",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
+    },
+    {
+      "kind": "html",
+      "label": "HTML",
+      "detail": "Explorer le chapitre",
+      "href": "https://kayasam.github.io/linux-initiation/cours/07-utilisateurs-et-permissions-interactif.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg"
+    },
+    {
+      "kind": "quiz",
+      "label": "Quiz",
+      "detail": "20 questions",
+      "href": "https://kayasam.github.io/linux-initiation/cours/quiz/07-utilisateurs-et-permissions.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg"
+    },
+    {
+      "kind": "tp",
+      "label": "TP",
+      "detail": "Mettre en pratique",
+      "href": "https://kayasam.github.io/linux-initiation/07-utilisateurs-et-permissions/tp",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg"
+    }
+  ],
+  "08-gestion-des-paquets": [
+    {
+      "kind": "markdown",
+      "label": "Markdown",
+      "detail": "Télécharger le cours",
+      "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/08-gestion-des-paquets.md",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
+    },
+    {
+      "kind": "html",
+      "label": "HTML",
+      "detail": "Explorer le chapitre",
+      "href": "https://kayasam.github.io/linux-initiation/cours/08-gestion-des-paquets-interactif.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg"
+    },
+    {
+      "kind": "quiz",
+      "label": "Quiz",
+      "detail": "20 questions",
+      "href": "https://kayasam.github.io/linux-initiation/cours/quiz/08-gestion-des-paquets.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg"
+    },
+    {
+      "kind": "tp",
+      "label": "TP",
+      "detail": "Mettre en pratique",
+      "href": "https://kayasam.github.io/linux-initiation/08-gestion-des-paquets/tp",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg"
+    }
+  ],
+  "09-redirections-et-tubes": [
+    {
+      "kind": "markdown",
+      "label": "Markdown",
+      "detail": "Télécharger le cours",
+      "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/09-redirections-et-tubes.md",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
+    },
+    {
+      "kind": "html",
+      "label": "HTML",
+      "detail": "Explorer le chapitre",
+      "href": "https://kayasam.github.io/linux-initiation/cours/09-redirections-et-tubes-interactif.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg"
+    },
+    {
+      "kind": "quiz",
+      "label": "Quiz",
+      "detail": "20 questions",
+      "href": "https://kayasam.github.io/linux-initiation/cours/quiz/09-redirections-et-tubes.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg"
+    },
+    {
+      "kind": "tp",
+      "label": "TP",
+      "detail": "Mettre en pratique",
+      "href": "https://kayasam.github.io/linux-initiation/09-redirections-et-tubes/tp",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg"
+    }
+  ],
+  "10-reseau-et-services": [
+    {
+      "kind": "markdown",
+      "label": "Markdown",
+      "detail": "Télécharger le cours",
+      "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/10-reseau-et-services.md",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
+    },
+    {
+      "kind": "html",
+      "label": "HTML",
+      "detail": "Explorer le chapitre",
+      "href": "https://kayasam.github.io/linux-initiation/cours/10-reseau-et-services-interactif.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg"
+    },
+    {
+      "kind": "quiz",
+      "label": "Quiz",
+      "detail": "20 questions",
+      "href": "https://kayasam.github.io/linux-initiation/cours/quiz/10-reseau-et-services.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg"
+    },
+    {
+      "kind": "tp",
+      "label": "TP",
+      "detail": "Mettre en pratique",
+      "href": "https://kayasam.github.io/linux-initiation/10-reseau-et-services/tp",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg"
+    }
+  ],
+  "bash/01-shell-et-environnement": [
+    {
+      "kind": "markdown",
+      "label": "Markdown",
+      "detail": "Télécharger le cours",
+      "href": "https://kayasam.github.io/linux-initiation/telechargements/bash/cours/01-shell-et-environnement.md",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
+    },
+    {
+      "kind": "html",
+      "label": "HTML",
+      "detail": "Explorer le chapitre",
+      "href": "https://kayasam.github.io/linux-initiation/bash/cours/01-shell-et-environnement-interactif.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg"
+    },
+    {
+      "kind": "quiz",
+      "label": "Quiz",
+      "detail": "20 questions",
+      "href": "https://kayasam.github.io/linux-initiation/bash/cours/quiz/01-shell-et-environnement.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg"
+    },
+    {
+      "kind": "tp",
+      "label": "TP",
+      "detail": "Mettre en pratique",
+      "href": "https://kayasam.github.io/linux-initiation/bash/01-shell-et-environnement/tp",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg"
+    }
+  ],
+  "bash/02-variables": [
+    {
+      "kind": "markdown",
+      "label": "Markdown",
+      "detail": "Télécharger le cours",
+      "href": "https://kayasam.github.io/linux-initiation/telechargements/bash/cours/02-variables.md",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
+    },
+    {
+      "kind": "html",
+      "label": "HTML",
+      "detail": "Explorer le chapitre",
+      "href": "https://kayasam.github.io/linux-initiation/bash/cours/02-variables-interactif.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg"
+    },
+    {
+      "kind": "quiz",
+      "label": "Quiz",
+      "detail": "20 questions",
+      "href": "https://kayasam.github.io/linux-initiation/bash/cours/quiz/02-variables.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg"
+    },
+    {
+      "kind": "tp",
+      "label": "TP",
+      "detail": "Mettre en pratique",
+      "href": "https://kayasam.github.io/linux-initiation/bash/02-variables/tp",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg"
+    }
+  ],
+  "bash/03-bases-du-scripting": [
+    {
+      "kind": "markdown",
+      "label": "Markdown",
+      "detail": "Télécharger le cours",
+      "href": "https://kayasam.github.io/linux-initiation/telechargements/bash/cours/03-bases-du-scripting.md",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
+    },
+    {
+      "kind": "html",
+      "label": "HTML",
+      "detail": "Explorer le chapitre",
+      "href": "https://kayasam.github.io/linux-initiation/bash/cours/03-bases-du-scripting-interactif.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg"
+    },
+    {
+      "kind": "quiz",
+      "label": "Quiz",
+      "detail": "20 questions",
+      "href": "https://kayasam.github.io/linux-initiation/bash/cours/quiz/03-bases-du-scripting.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg"
+    },
+    {
+      "kind": "tp",
+      "label": "TP",
+      "detail": "Mettre en pratique",
+      "href": "https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/tp",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg"
+    }
+  ],
+  "bash/04-tests-et-conditions": [
+    {
+      "kind": "markdown",
+      "label": "Markdown",
+      "detail": "Télécharger le cours",
+      "href": "https://kayasam.github.io/linux-initiation/telechargements/bash/cours/04-tests-et-conditions.md",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
+    },
+    {
+      "kind": "html",
+      "label": "HTML",
+      "detail": "Explorer le chapitre",
+      "href": "https://kayasam.github.io/linux-initiation/bash/cours/04-tests-et-conditions-interactif.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg"
+    },
+    {
+      "kind": "quiz",
+      "label": "Quiz",
+      "detail": "20 questions",
+      "href": "https://kayasam.github.io/linux-initiation/bash/cours/quiz/04-tests-et-conditions.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg"
+    },
+    {
+      "kind": "tp",
+      "label": "TP",
+      "detail": "Mettre en pratique",
+      "href": "https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/tp",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg"
+    }
+  ],
+  "bash/05-boucles": [
+    {
+      "kind": "markdown",
+      "label": "Markdown",
+      "detail": "Télécharger le cours",
+      "href": "https://kayasam.github.io/linux-initiation/telechargements/bash/cours/05-boucles.md",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
+    },
+    {
+      "kind": "html",
+      "label": "HTML",
+      "detail": "Explorer le chapitre",
+      "href": "https://kayasam.github.io/linux-initiation/bash/cours/05-boucles-interactif.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg"
+    },
+    {
+      "kind": "quiz",
+      "label": "Quiz",
+      "detail": "20 questions",
+      "href": "https://kayasam.github.io/linux-initiation/bash/cours/quiz/05-boucles.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg"
+    },
+    {
+      "kind": "tp",
+      "label": "TP",
+      "detail": "Mettre en pratique",
+      "href": "https://kayasam.github.io/linux-initiation/bash/05-boucles/tp",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg"
+    }
+  ],
+  "bash/06-sed-et-awk": [
+    {
+      "kind": "markdown",
+      "label": "Markdown",
+      "detail": "Télécharger le cours",
+      "href": "https://kayasam.github.io/linux-initiation/telechargements/bash/cours/06-sed-et-awk.md",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg"
+    },
+    {
+      "kind": "html",
+      "label": "HTML",
+      "detail": "Explorer le chapitre",
+      "href": "https://kayasam.github.io/linux-initiation/bash/cours/06-sed-et-awk-interactif.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg"
+    },
+    {
+      "kind": "quiz",
+      "label": "Quiz",
+      "detail": "20 questions",
+      "href": "https://kayasam.github.io/linux-initiation/bash/cours/quiz/06-sed-et-awk.html",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg"
+    },
+    {
+      "kind": "tp",
+      "label": "TP",
+      "detail": "Mettre en pratique",
+      "href": "https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp",
+      "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg"
+    }
+  ]
+}

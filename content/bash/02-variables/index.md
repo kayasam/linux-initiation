@@ -4,11 +4,7 @@ title: "02. Les variables"
 
 # Chapitre 02 — Les variables
 
-> [!TIP] Ressources du chapitre
-> - [Version HTML](https://kayasam.github.io/linux-initiation/bash/cours/02-variables-interactif.html)
-> - <a href="https://kayasam.github.io/linux-initiation/telechargements/bash/cours/02-variables.md" download>Télécharger le cours en Markdown</a>
-> - [Faire le quiz — 20 questions](https://kayasam.github.io/linux-initiation/bash/cours/quiz/02-variables.html)
-> - [Passer au TP](https://kayasam.github.io/linux-initiation/bash/02-variables/tp)
+<nav class="chapter-resources" aria-label="Ressources du chapitre" data-course-key="bash/02-variables" style="--resource-count:4"><span class="chapter-resources-title">Ressources du chapitre</span><div class="resource-buttons"><a class="resource-button resource-markdown" data-resource-kind="markdown" href="https://kayasam.github.io/linux-initiation/telechargements/bash/cours/02-variables.md" download><span class="resource-icon" aria-hidden="true"><img src="https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg" alt="" /></span><span class="resource-label">Markdown<small>Télécharger le cours</small></span></a><a class="resource-button resource-html" data-resource-kind="html" href="https://kayasam.github.io/linux-initiation/bash/cours/02-variables-interactif.html"><span class="resource-icon" aria-hidden="true"><img src="https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg" alt="" /></span><span class="resource-label">HTML<small>Explorer le chapitre</small></span></a><a class="resource-button resource-quiz" data-resource-kind="quiz" href="https://kayasam.github.io/linux-initiation/bash/cours/quiz/02-variables.html"><span class="resource-icon" aria-hidden="true"><img src="https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg" alt="" /></span><span class="resource-label">Quiz<small>20 questions</small></span></a><a class="resource-button resource-tp" data-resource-kind="tp" href="https://kayasam.github.io/linux-initiation/bash/02-variables/tp"><span class="resource-icon" aria-hidden="true"><img src="https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg" alt="" /></span><span class="resource-label">TP<small>Mettre en pratique</small></span></a></div></nav>
 
 
 > [!NOTE] Objectif

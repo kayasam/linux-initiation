@@ -4,11 +4,7 @@ title: "06. Traiter du texte avec sed et awk"
 
 # Chapitre 06 — Traiter du texte avec sed et awk
 
-> [!TIP] Ressources du chapitre
-> - [Version HTML](https://kayasam.github.io/linux-initiation/bash/cours/06-sed-et-awk-interactif.html)
-> - <a href="https://kayasam.github.io/linux-initiation/telechargements/bash/cours/06-sed-et-awk.md" download>Télécharger le cours en Markdown</a>
-> - [Faire le quiz — 20 questions](https://kayasam.github.io/linux-initiation/bash/cours/quiz/06-sed-et-awk.html)
-> - [Passer au TP](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp)
+<nav class="chapter-resources" aria-label="Ressources du chapitre" data-course-key="bash/06-sed-et-awk" style="--resource-count:4"><span class="chapter-resources-title">Ressources du chapitre</span><div class="resource-buttons"><a class="resource-button resource-markdown" data-resource-kind="markdown" href="https://kayasam.github.io/linux-initiation/telechargements/bash/cours/06-sed-et-awk.md" download><span class="resource-icon" aria-hidden="true"><img src="https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg" alt="" /></span><span class="resource-label">Markdown<small>Télécharger le cours</small></span></a><a class="resource-button resource-html" data-resource-kind="html" href="https://kayasam.github.io/linux-initiation/bash/cours/06-sed-et-awk-interactif.html"><span class="resource-icon" aria-hidden="true"><img src="https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg" alt="" /></span><span class="resource-label">HTML<small>Explorer le chapitre</small></span></a><a class="resource-button resource-quiz" data-resource-kind="quiz" href="https://kayasam.github.io/linux-initiation/bash/cours/quiz/06-sed-et-awk.html"><span class="resource-icon" aria-hidden="true"><img src="https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg" alt="" /></span><span class="resource-label">Quiz<small>20 questions</small></span></a><a class="resource-button resource-tp" data-resource-kind="tp" href="https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp"><span class="resource-icon" aria-hidden="true"><img src="https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg" alt="" /></span><span class="resource-label">TP<small>Mettre en pratique</small></span></a></div></nav>
 
 
 > [!NOTE] Objectif

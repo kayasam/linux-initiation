@@ -4,10 +4,7 @@ title: "03. L'interface graphique"
 
 # Chapitre 03 — L'interface graphique
 
-> [!TIP] Ressources du chapitre
-> - [Ouvrir le chapitre interactif](https://kayasam.github.io/linux-initiation/cours/03-interface-graphique-interactif.html)
-> - [Faire le quiz](https://kayasam.github.io/linux-initiation/cours/quiz/03-interface-graphique.html)
-> - <a href="https://kayasam.github.io/linux-initiation/telechargements/cours/03-interface-graphique.md" download>Télécharger ce cours en Markdown</a>
+<nav class="chapter-resources" aria-label="Ressources du chapitre" data-course-key="03-interface-graphique" style="--resource-count:3"><span class="chapter-resources-title">Ressources du chapitre</span><div class="resource-buttons"><a class="resource-button resource-markdown" data-resource-kind="markdown" href="https://kayasam.github.io/linux-initiation/telechargements/cours/03-interface-graphique.md" download><span class="resource-icon" aria-hidden="true"><img src="https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg" alt="" /></span><span class="resource-label">Markdown<small>Télécharger le cours</small></span></a><a class="resource-button resource-html" data-resource-kind="html" href="https://kayasam.github.io/linux-initiation/cours/03-interface-graphique-interactif.html"><span class="resource-icon" aria-hidden="true"><img src="https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg" alt="" /></span><span class="resource-label">HTML<small>Explorer le chapitre</small></span></a><a class="resource-button resource-quiz" data-resource-kind="quiz" href="https://kayasam.github.io/linux-initiation/cours/quiz/03-interface-graphique.html"><span class="resource-icon" aria-hidden="true"><img src="https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg" alt="" /></span><span class="resource-label">Quiz<small>20 questions</small></span></a></div></nav>
 
 
 ---

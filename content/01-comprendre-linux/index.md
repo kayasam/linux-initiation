@@ -4,10 +4,7 @@ title: "01. Comprendre Linux"
 
 # Chapitre 01 — Comprendre Linux
 
-> [!TIP] Ressources du chapitre
-> - [Ouvrir le chapitre interactif](https://kayasam.github.io/linux-initiation/cours/01-comprendre-linux-interactif.html)
-> - [Faire le quiz](https://kayasam.github.io/linux-initiation/cours/quiz/01-comprendre-linux.html)
-> - <a href="https://kayasam.github.io/linux-initiation/telechargements/cours/01-comprendre-linux.md" download>Télécharger ce cours en Markdown</a>
+<nav class="chapter-resources" aria-label="Ressources du chapitre" data-course-key="01-comprendre-linux" style="--resource-count:3"><span class="chapter-resources-title">Ressources du chapitre</span><div class="resource-buttons"><a class="resource-button resource-markdown" data-resource-kind="markdown" href="https://kayasam.github.io/linux-initiation/telechargements/cours/01-comprendre-linux.md" download><span class="resource-icon" aria-hidden="true"><img src="https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg" alt="" /></span><span class="resource-label">Markdown<small>Télécharger le cours</small></span></a><a class="resource-button resource-html" data-resource-kind="html" href="https://kayasam.github.io/linux-initiation/cours/01-comprendre-linux-interactif.html"><span class="resource-icon" aria-hidden="true"><img src="https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg" alt="" /></span><span class="resource-label">HTML<small>Explorer le chapitre</small></span></a><a class="resource-button resource-quiz" data-resource-kind="quiz" href="https://kayasam.github.io/linux-initiation/cours/quiz/01-comprendre-linux.html"><span class="resource-icon" aria-hidden="true"><img src="https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg" alt="" /></span><span class="resource-label">Quiz<small>20 questions</small></span></a></div></nav>
 
 Vous utilisez peut-être déjà Linux sans le savoir : un téléphone Android, une box Internet ou un serveur qui héberge un site peuvent s’appuyer sur son noyau. Avant d’installer Debian, découvrons ce que recouvrent **Linux**, **GNU**, **logiciel libre** et **distribution**.
 

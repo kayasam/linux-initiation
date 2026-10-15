@@ -4,11 +4,7 @@ title: "04. Le terminal"
 
 # Chapitre 04 — Le terminal
 
-> [!TIP] Ressources du chapitre
-> - [Ouvrir le chapitre interactif](https://kayasam.github.io/linux-initiation/cours/04-le-terminal-interactif.html)
-> - [Faire le quiz](https://kayasam.github.io/linux-initiation/cours/quiz/04-le-terminal.html)
-> - <a href="https://kayasam.github.io/linux-initiation/telechargements/cours/04-le-terminal.md" download>Télécharger ce cours en Markdown</a>
-> - [Passer au TP](https://kayasam.github.io/linux-initiation/04-le-terminal/tp)
+<nav class="chapter-resources" aria-label="Ressources du chapitre" data-course-key="04-le-terminal" style="--resource-count:4"><span class="chapter-resources-title">Ressources du chapitre</span><div class="resource-buttons"><a class="resource-button resource-markdown" data-resource-kind="markdown" href="https://kayasam.github.io/linux-initiation/telechargements/cours/04-le-terminal.md" download><span class="resource-icon" aria-hidden="true"><img src="https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg" alt="" /></span><span class="resource-label">Markdown<small>Télécharger le cours</small></span></a><a class="resource-button resource-html" data-resource-kind="html" href="https://kayasam.github.io/linux-initiation/cours/04-le-terminal-interactif.html"><span class="resource-icon" aria-hidden="true"><img src="https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg" alt="" /></span><span class="resource-label">HTML<small>Explorer le chapitre</small></span></a><a class="resource-button resource-quiz" data-resource-kind="quiz" href="https://kayasam.github.io/linux-initiation/cours/quiz/04-le-terminal.html"><span class="resource-icon" aria-hidden="true"><img src="https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg" alt="" /></span><span class="resource-label">Quiz<small>20 questions</small></span></a><a class="resource-button resource-tp" data-resource-kind="tp" href="https://kayasam.github.io/linux-initiation/04-le-terminal/tp"><span class="resource-icon" aria-hidden="true"><img src="https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg" alt="" /></span><span class="resource-label">TP<small>Mettre en pratique</small></span></a></div></nav>
 
 
 ---
