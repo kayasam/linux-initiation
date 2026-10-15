@@ -50,6 +50,7 @@ def populate(destination, chapters):
     tps = sorted(p for p in candidates if not re.search(r'correction|corrig', p.name, re.I))
     routes = {p: (f'bash/{p.parent.parent.name}/tp' if p.is_relative_to(SOURCE / 'cours') else f'bash/ateliers/{p.stem}') for p in tps}
     export = {}
+    export.update(runpy.run_path(str(ROOT / 'scripts/prepare-bash-quizzes.py'))['populate'](SOURCE,destination,courses))
     game = SOURCE / 'jeu'
     export.update(runpy.run_path(str(ROOT / 'scripts/package-orion.py'))['package'](game, destination))
     game_page = (game / 'README.md').read_text(encoding='utf-8')
@@ -68,6 +69,7 @@ def populate(destination, chapters):
         body = body.replace('../../Ressources/images/', BASE + '/bash/images/')
         html_name = f'{slug}-interactif.html'
         links = f'\n\n> [!TIP] Ressources du chapitre\n> - [Version HTML]({BASE}/bash/cours/{html_name})\n> - <a href="{BASE}/telechargements/bash/cours/{course.name}" download>Télécharger le cours en Markdown</a>\n'
+        links += f'> - [Faire le quiz — 20 questions]({BASE}/bash/cours/quiz/{slug}.html)\n'
         matching = [p for p in tps if p.parent == course.parent / 'tp']
         if matching:
             links += f'> - [Passer au TP]({BASE}/{routes[matching[0]]})\n'
@@ -82,10 +84,12 @@ def populate(destination, chapters):
         for linked in courses:
             interactive = interactive.replace(f'href="../{linked.stem}/{linked.stem}.html"', f'href="{BASE}/bash/cours/{linked.stem}-interactif.html"')
         interactive = interactive.replace(f'href="{course.name}"', f'href="{BASE}/bash/{slug}/"')
+        interactive = interactive.replace(f'href="{slug}-quiz.html"', f'href="{BASE}/bash/cours/quiz/{slug}.html"').replace(f'src="{slug}-quiz.html"', f'src="{BASE}/bash/cours/quiz/{slug}.html"')
         if matching:
             interactive = interactive.replace(f'href="tp/{matching[0].name}"', f'href="{BASE}/{routes[matching[0]]}"')
         theme = '<link rel="stylesheet" href="../../assets/themes/theme.css">\n<script src="../../assets/themes/theme.js"></script>\n'
-        interactive = interactive.replace('</head>', theme + '</head>', 1)
+        if 'assets/themes/theme.css' not in interactive:
+            interactive = interactive.replace('</head>', theme + '</head>', 1)
         nav = f'<nav class="bash-site-nav"><a href="{BASE}/bash/{slug}/">← Cours Markdown</a><a href="{BASE}/#bash">Parcours Bash →</a></nav>'
         interactive = interactive.replace('<body>', '<body>' + nav, 1)
         interactive = interactive.replace('</style>', '.bash-site-nav{display:flex;justify-content:space-between;gap:1rem;padding:1rem;flex-wrap:wrap}.bash-site-nav a{color:var(--accent);font-weight:700}\n</style>', 1)

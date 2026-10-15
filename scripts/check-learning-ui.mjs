@@ -43,6 +43,10 @@ const context = { window: {} }
 vm.runInNewContext(fs.readFileSync("content/assets/quiz/quiz-banks.js", "utf8"), context)
 const banks = context.window.linuxQuizBanks
 assert.equal(Object.keys(banks).length, 10)
+const bashContext = { window: {} }
+vm.runInNewContext(fs.readFileSync("content/bash/assets/quiz/quiz-banks.js", "utf8"), bashContext)
+assert.equal(Object.keys(bashContext.window.linuxQuizBanks).length, 6)
+Object.assign(banks, bashContext.window.linuxQuizBanks)
 let attempts = 0
 for (const [id, bank] of Object.entries(banks)) {
   assert.equal(bank.questions.length, 20)
@@ -150,7 +154,7 @@ for (const mode of ["light", "dark"]) {
   }
 }
 console.log(
-  `Validated: 200 questions, ${attempts} attempts with 5/5/5/5, randomized order, scoring and restart; ${comparisons} text contrast pairs >= 4.5:1.`,
+  `Validated: 320 questions, ${attempts} attempts with 5/5/5/5, randomized order, scoring and restart; ${comparisons} text contrast pairs >= 4.5:1.`,
 )
 
 // Test the theme switch itself: saved preference, system default, iframe sync and blocked storage.

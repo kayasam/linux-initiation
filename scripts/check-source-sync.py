@@ -4,6 +4,7 @@ from concurrent.futures import ThreadPoolExecutor
 import argparse
 import hashlib
 import json
+from html.parser import HTMLParser
 import re
 import runpy
 import sys
@@ -60,6 +61,32 @@ def local_audit():
                 assert (CONTENT / slug / 'tp.md').is_file()
                 tp_count += 1
     with zipfile.ZipFile(CONTENT / 'linux-scripting-bash-obsidian.zip') as archive:
+        public_banks=json.loads((CONTENT/'bash/assets/quiz/quiz-banks.js').read_text(encoding='utf-8').split('=',1)[1])
+        authored=json.loads((bash_source/'Ressources/quiz/bash-questions.json').read_text(encoding='utf-8'))
+        assert archive.read('Linux-scripting-bash/Ressources/quiz/bash-questions.json')==(bash_source/'Ressources/quiz/bash-questions.json').read_bytes()
+        offline_banks=json.loads((bash_source/'assets/quiz/quiz-banks.js').read_text(encoding='utf-8').split('=',1)[1])
+        assert len(public_banks)==len(offline_banks)==6
+        class QuizLinks(HTMLParser):
+            def handle_starttag(self,tag,attrs):
+                for key,value in attrs:
+                    if key in ('href','src') and value and not value.startswith(('#','http:','https:')):
+                        assert (self.folder/value).resolve().is_file(), 'Lien du quiz hors ligne absent : '+value
+        for course in bash_courses:
+            slug=course.stem;key='bash-'+slug
+            bank=public_banks[key]
+            assert len(bank['questions'])==20 and bank['questions']==offline_banks[key]['questions']
+            for question,original in zip(bank['questions'],authored[slug]):
+                assert question['question']==original['question'] and question['explanation']==original['explanation']
+                assert set(question['choices'])==set(original['choices']) and question['choices'][question['answer']]==original['choices'][original['answer']]
+            assert bank['chapterLink']=='../../'+slug+'/' and offline_banks[key]['chapterLink']==slug+'.html'
+            quiz=course.with_name(slug+'-quiz.html')
+            equal(quiz.read_text(encoding='utf-8'),archive.read('Linux-scripting-bash/'+quiz.relative_to(bash_source).as_posix()),'Quiz Bash '+slug+' (ZIP)')
+            parser=QuizLinks();parser.folder=quiz.parent;parser.feed(quiz.read_text(encoding='utf-8'))
+            assert (CONTENT/'bash/cours/quiz'/f'{slug}.html').is_file()
+            assert f'{BASE}/bash/cours/quiz/{slug}.html' in (CONTENT/'bash'/slug/'index.md').read_text(encoding='utf-8')
+        for folder in ['assets/quiz','assets/themes']:
+            for asset in (bash_source/folder).glob('*'):
+                if asset.is_file():assert archive.read('Linux-scripting-bash/'+folder+'/'+asset.name)==asset.read_bytes()
         with tarfile.open(CONTENT / 'telechargements/bash/orion-academie.tar.gz', 'r:gz') as game:
             for name in ['orion.py','missions.json','jouer.sh','README.md']:
                 expected = (bash_source / 'jeu' / name).read_bytes().replace(b'\r\n', b'\n')
@@ -110,11 +137,12 @@ def local_audit():
             if folder == 'assets/quiz' and asset.name not in {'quiz.css', 'quiz-engine.js'}: continue
             equal(asset.read_text(encoding='utf-8-sig'), (linux_source / folder / asset.name).read_bytes(), str(asset.relative_to(CONTENT)) + ' (coffre)')
     print('Coffre → contenus : 10 cours Linux + 6 cours Bash, 17 TP, ZIP et téléchargements conformes.')
-    print('Quiz et thèmes du coffre : dix quiz de vingt questions et ressources communes conformes.')
+    print('Quiz et thèmes du coffre : dix quiz Linux et six quiz Bash de vingt questions conformes, avec les ressources hors ligne.')
 
 
 def live_audit():
     paths = sorted(set(CONTENT.glob('telechargements/**/*.md')) | set(CONTENT.glob('telechargements/**/*.tar.gz')) | set(CONTENT.glob('telechargements/**/*.sha256')) | set(CONTENT.glob('cours/*-interactif.html')) | set(CONTENT.glob('bash/cours/*-interactif.html')) | set(CONTENT.glob('bash/images/*.svg')) | set(CONTENT.glob('cours/quiz/*.html')) | set(CONTENT.glob('assets/brands/*')) | {CONTENT / 'assets/quiz/quiz-banks.js', CONTENT / 'linux-initiation-obsidian.zip', CONTENT / 'linux-scripting-bash-obsidian.zip'})
+    paths=sorted(set(paths)|set(CONTENT.glob('bash/cours/quiz/*.html'))|{CONTENT/'bash/assets/quiz/quiz-banks.js'})
     def compare(path):
         relative = path.relative_to(CONTENT).as_posix()
         try:

@@ -93,7 +93,9 @@ for index, course in enumerate(courses):
     article = renderer.convert(callouts(body))
     previous = f'<a href="../{courses[index-1].stem}/{courses[index-1].stem}.html">← Chapitre précédent</a>' if index else '<span>Début du parcours</span>'
     following = f'<a href="../{courses[index+1].stem}/{courses[index+1].stem}.html">Chapitre suivant →</a>' if index+1 < len(courses) else '<span>Fin du parcours</span>'
-    nav = f'<nav class="lesson-nav" aria-label="Parcours">{previous}<a href="{course.name}">Cours Markdown</a>{following}</nav>'
+    nav = f'<nav class="lesson-nav" aria-label="Parcours">{previous}<a href="{course.name}">Cours Markdown</a><a href="{course.stem}-quiz.html">Quiz — 20 questions</a>{following}</nav>'
+    article += f'<section aria-label="Quiz du chapitre"><h2>Quiz du chapitre — 20 questions</h2><p>Chaque réponse est expliquée. Tu peux recommencer avec un nouvel ordre des questions.</p><p><a href="{course.stem}-quiz.html">Ouvrir le quiz dans sa propre page →</a></p><iframe class="course-quiz-frame" src="{course.stem}-quiz.html" title="Quiz du chapitre {index+1:02d}" loading="lazy" style="width:100%;height:1100px;border:0;border-radius:12px"></iframe></section>'
     page = f'<!doctype html>\n<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{html.escape(title)} — Bash débutant</title><style>{CSS}</style></head><body><main>{nav}<p class="chapter-label">BASH · CHAPITRE {index+1:02d} / 06</p><details class="toc"><summary>Sommaire du chapitre</summary>{renderer.toc}</details>{article}{nav}</main></body></html>\n'
+    page=page.replace('</head>','<link rel="stylesheet" href="../../assets/themes/theme.css"><script src="../../assets/themes/theme.js"></script></head>',1)
     course.with_suffix('.html').write_text(page, encoding='utf-8')
 print('Bash : six HTML autonomes et sept schémas pédagogiques régénérés depuis le coffre.')
