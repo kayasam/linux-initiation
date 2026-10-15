@@ -3,6 +3,7 @@
 @use "./explorer-pc.scss";
 @use "./course-navigation.scss";
 @use "./course-resources.scss";
+@use "./support-viewer.scss";
 
 body[data-slug="00-contexte/index"] .page-listing {
   display: none;
@@ -202,6 +203,7 @@ article a[href*="/telechargements/"][href$=".md"]:not(.resource-download):hover 
 }
 
 /* Select the whole chapter card; its text must keep its normal geometry. */
+.explorer-content .folder-container.support-current-chapter,
 .explorer-content .folder-container:has(a:is(.active, .is-active, .course-current-page, [aria-current="page"])) {
   border-color: var(--chapter-accent);
   background: color-mix(in srgb, var(--chapter-accent) 12%, var(--light));
@@ -238,4 +240,4 @@ article a[href*="/telechargements/"][href$=".md"]:not(.resource-download):hover 
 .explorer-content .folder-container[data-folderpath^="bash/jeu"]::before { content: "JEU"; }
 
 /* The chapter already links to its TP: omit Quartz's duplicate folder listing. */
-body:has(article a[href$="-interactif.html"]) .page-listing { display: none; }
+body:has(.chapter-resources) .page-listing { display: none; }

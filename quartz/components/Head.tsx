@@ -6,6 +6,7 @@ import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } fro
 import { unescapeHTML } from "../util/escape"
 import courseNavigation from "./scripts/course-navigation.inline"
 import courseResources from "./scripts/course-resources.inline"
+import supportViewer from "./scripts/support-viewer.inline"
 import courseResourceIndex from "../../content/assets/course-resources.json"
 
 export default (() => {
@@ -112,6 +113,6 @@ export default (() => {
     )
   }
 
-  Head.afterDOMLoaded = courseNavigation + "\n" + courseResources
+  Head.afterDOMLoaded = courseNavigation + "\n" + courseResources + "\n" + supportViewer
   return Head
 }) satisfies QuartzComponentConstructor

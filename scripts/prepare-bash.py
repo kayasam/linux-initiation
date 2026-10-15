@@ -92,7 +92,7 @@ def populate(destination, chapters):
         matching = [p for p in tps if p.parent == course.parent / 'tp']
         if matching:
             body = body.replace(f'](tp/{matching[0].name})', f']({BASE}/{routes[matching[0]]})')
-        links = RESOURCE_UI(destination, BASE, 'bash/' + slug, slug, bool(matching))
+        links = RESOURCE_UI(destination, BASE, 'bash/' + slug, slug, bool(matching), f'{slug[:2]}. {title}')
         site_body = re.sub(r'^(# .+)$', lambda m: m[0] + links, body, count=1, flags=re.M)
         site_body += f'\n[← Parcours Bash]({BASE}/#bash) · [Tous les TP Bash]({BASE}/bash/tp/)\n'
         write(destination / 'bash' / slug / 'index.md', metadata(f'{slug[:2]}. {title}', site_body))

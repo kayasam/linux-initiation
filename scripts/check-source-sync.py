@@ -50,6 +50,10 @@ def local_audit():
         companion = (CONTENT / track / 'cours' / (slug + '-interactif.html')).read_text(encoding='utf-8')
         assert f'href="{BASE}/{key}/">← Le cours en Markdown</a>' in companion, key
         assert f'href="{BASE}/telechargements/{track}cours/{slug}.md" download>' in companion, key
+        for kind in ('html', 'quiz'):
+            assert resources[1 if kind == 'html' else 2]['href'] == f'{BASE}/{key}/{kind}/', key
+            support = (CONTENT / key / kind / 'index.md').read_text(encoding='utf-8')
+            assert 'class="support-frame"' in support and 'Masquer les menus' in support, key
         for resource in resources:
             assert (CONTENT / 'assets/resource-icons' / (resource['kind'] + '.svg')).is_file()
     tp_count = 0
@@ -101,7 +105,7 @@ def local_audit():
             equal(quiz.read_text(encoding='utf-8'),archive.read('Linux-scripting-bash/'+quiz.relative_to(bash_source).as_posix()),'Quiz Bash '+slug+' (ZIP)')
             parser=QuizLinks();parser.folder=quiz.parent;parser.feed(quiz.read_text(encoding='utf-8'))
             assert (CONTENT/'bash/cours/quiz'/f'{slug}.html').is_file()
-            assert f'{BASE}/bash/cours/quiz/{slug}.html' in (CONTENT/'bash'/slug/'index.md').read_text(encoding='utf-8')
+            assert f'{BASE}/bash/{slug}/quiz/' in (CONTENT/'bash'/slug/'index.md').read_text(encoding='utf-8')
         for folder in ['assets/quiz','assets/themes']:
             for asset in (bash_source/folder).glob('*'):
                 if asset.is_file():assert archive.read('Linux-scripting-bash/'+folder+'/'+asset.name)==asset.read_bytes()

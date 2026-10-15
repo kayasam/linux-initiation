@@ -107,7 +107,7 @@ def prepare(source):
         offline = flat_html(course.with_suffix('.html').read_text(encoding='utf-8'), slug)
         offline = offline.replace(f'href="{slug}-quiz.html"', f'href="quiz/{slug}.html"')
         write(vault / 'cours' / f'{slug}.html', offline)
-        links = RESOURCE_UI(stage, BASE, slug, slug, tp is not None)
+        links = RESOURCE_UI(stage, BASE, slug, slug, tp is not None, f'{number}. {title}')
         if tp:
             tpbody = normalize(tp.read_text(encoding='utf-8'))
             for correction in sorted(tp_folder.glob(f'tp-{number}-*correction.md')):
