@@ -40,7 +40,7 @@ html body .resource-buttons a.resource-button {
   .resource-icon {
     display: grid; place-items: center; width: 2rem; height: 2rem;
     background: #fff; border-radius: .45rem;
-    img { display: block; width: 1.5rem; height: 1.5rem; object-fit: contain; margin: 0; border-radius: 0; }
+    img, svg.resource-symbol { display: block; flex-shrink: 0; visibility: visible; opacity: 1; width: 1.5rem; height: 1.5rem; object-fit: contain; margin: 0; border-radius: 0; }
   }
 }
 .resource-buttons .resource-html { --resource-color: #b64c25; }
@@ -64,7 +64,7 @@ html body .resource-buttons--explorer {
     font-size: .74rem;
     border-bottom-width: 2px;
     border-radius: .55rem;
-    .resource-icon { width: 1.4rem; height: 1.4rem; border-radius: .3rem; img { width: 1.1rem; height: 1.1rem; } }
+    .resource-icon { width: 1.4rem; height: 1.4rem; border-radius: .3rem; img, svg.resource-symbol { width: 1.1rem; height: 1.1rem; } }
   }
 }
 .explorer-content li[hidden] { display: none !important; }

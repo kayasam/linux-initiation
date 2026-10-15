@@ -1,4 +1,4 @@
-type ChapterResource = { kind: string; label: string; detail: string; href: string; icon: string }
+type ChapterResource = { kind: string; label: string; detail: string; href: string; icon: string; symbol: string }
 let releaseChapterResources: (() => void) | undefined
 
 function setupChapterResources() {
@@ -45,10 +45,8 @@ function setupChapterResources() {
         const icon = document.createElement("span")
         icon.className = "resource-icon"
         icon.setAttribute("aria-hidden", "true")
-        const image = document.createElement("img")
-        image.src = resource.icon
-        image.alt = ""
-        icon.append(image)
+        const symbol = new DOMParser().parseFromString(resource.symbol, "image/svg+xml").documentElement
+        if (symbol.localName === "svg") icon.append(document.importNode(symbol, true))
         const label = document.createElement("span")
         label.className = "resource-label"
         label.textContent = resource.label

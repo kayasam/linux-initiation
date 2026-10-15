@@ -56,6 +56,7 @@ def local_audit():
             assert 'class="support-frame"' in support and 'Masquer les menus' in support, key
         for resource in resources:
             assert (CONTENT / 'assets/resource-icons' / (resource['kind'] + '.svg')).is_file()
+            assert '<svg class="resource-symbol" width="24" height="24"' in resource['symbol'], key
     tp_count = 0
     with zipfile.ZipFile(CONTENT / 'linux-initiation-obsidian.zip') as archive:
         for course in linux_courses:

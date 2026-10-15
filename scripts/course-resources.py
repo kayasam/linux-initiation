@@ -1,5 +1,6 @@
 """Shared resource buttons and explorer registry for Linux and Bash chapters."""
 import html
+from pathlib import Path
 import json
 import posixpath
 
@@ -25,9 +26,11 @@ def render_resources(destination, base, key, slug, has_tp=False, title=None):
     for kind, url in urls.items():
         label, detail = KINDS[kind]
         icon = f'{base}/assets/resource-icons/{kind}.svg'
-        entries.append(dict(kind=kind, label=label, detail=detail, href=url, icon=icon))
+        symbol = (Path(__file__).resolve().parents[1] / 'site-content/assets/resource-icons' / (kind + '.svg')).read_text(encoding='utf-8').strip()
+        symbol = symbol.replace('<svg ', '<svg class="resource-symbol" width="24" height="24" aria-hidden="true" focusable="false" ', 1)
+        entries.append(dict(kind=kind, label=label, detail=detail, href=url, icon=icon, symbol=symbol))
         buttons.append(f'<a class="resource-button resource-{kind}" data-resource-kind="{kind}" href="{html.escape(url, quote=True)}">'
-                       f'<span class="resource-icon" aria-hidden="true"><img src="{icon}" alt="" /></span>'
+                       f'<span class="resource-icon" aria-hidden="true">{symbol}</span>'
                        f'<span class="resource-label">{label}<small>{detail}</small></span></a>')
     download_url = f'{base}/telechargements/{track}cours/{slug}.md'
     download_button = f'<a class="resource-download" href="{download_url}" download><span aria-hidden="true">↓</span> Télécharger le .md</a>'
