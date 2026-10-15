@@ -2,6 +2,7 @@
 @use "./pc.scss";
 @use "./explorer-pc.scss";
 @use "./course-navigation.scss";
+@use "./course-resources.scss";
 
 body[data-slug="00-contexte/index"] .page-listing {
   display: none;

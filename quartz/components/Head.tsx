@@ -5,6 +5,8 @@ import { googleFontHref, googleFontSubsetHref } from "../util/theme"
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
 import { unescapeHTML } from "../util/escape"
 import courseNavigation from "./scripts/course-navigation.inline"
+import courseResources from "./scripts/course-resources.inline"
+import courseResourceIndex from "../../content/assets/course-resources.json"
 
 export default (() => {
   const Head: QuartzComponent = ({
@@ -93,6 +95,7 @@ export default (() => {
         <link rel="icon" href={iconPath} />
         <meta name="description" content={description} />
         <meta name="generator" content="Quartz" />
+        <script id="course-resource-data" type="application/json" dangerouslySetInnerHTML={{ __html: JSON.stringify(courseResourceIndex).replaceAll("<", "\\u003c") }} />
 
         {css.map((resource) => CSSResourceToStyleElement(resource, true))}
         {js
@@ -109,6 +112,6 @@ export default (() => {
     )
   }
 
-  Head.afterDOMLoaded = courseNavigation
+  Head.afterDOMLoaded = courseNavigation + "\n" + courseResources
   return Head
 }) satisfies QuartzComponentConstructor

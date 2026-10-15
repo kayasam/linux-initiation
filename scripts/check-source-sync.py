@@ -34,6 +34,15 @@ def local_audit():
     linux_courses = sorted(p for p in (linux_source / 'cours').glob('*/*.md') if p.stem == p.parent.name)
     bash_courses = sorted(p for p in (bash_source / 'cours').glob('*/*.md') if p.stem == p.parent.name)
     assert len(linux_courses) == 10 and len(bash_courses) == 6
+    resource_index = json.loads((CONTENT / 'assets/course-resources.json').read_text(encoding='utf-8'))
+    expected_keys = {p.stem for p in linux_courses} | {'bash/' + p.stem for p in bash_courses}
+    assert set(resource_index) == expected_keys, 'Registre des ressources incomplet'
+    for key, resources in resource_index.items():
+        assert [r['kind'] for r in resources[:3]] == ['markdown', 'html', 'quiz'], key
+        assert len(resources) in (3, 4), key
+        if len(resources) == 4: assert resources[3]['kind'] == 'tp', key
+        for resource in resources:
+            assert (CONTENT / 'assets/resource-icons' / (resource['kind'] + '.svg')).is_file()
     tp_count = 0
     with zipfile.ZipFile(CONTENT / 'linux-initiation-obsidian.zip') as archive:
         for course in linux_courses:
@@ -147,6 +156,7 @@ def local_audit():
 def live_audit():
     paths = sorted(set(CONTENT.glob('telechargements/**/*.md')) | set(CONTENT.glob('telechargements/**/*.tar.gz')) | set(CONTENT.glob('telechargements/**/*.sha256')) | set(CONTENT.glob('cours/*-interactif.html')) | set(CONTENT.glob('bash/cours/*-interactif.html')) | set(CONTENT.glob('bash/images/*.svg')) | set(CONTENT.glob('cours/quiz/*.html')) | set(CONTENT.glob('assets/brands/*')) | {CONTENT / 'assets/quiz/quiz-banks.js', CONTENT / 'linux-initiation-obsidian.zip', CONTENT / 'linux-scripting-bash-obsidian.zip'})
     paths=sorted(set(paths)|set(CONTENT.glob('bash/cours/quiz/*.html'))|{CONTENT/'bash/assets/quiz/quiz-banks.js'})
+    paths=sorted(set(paths)|set(CONTENT.glob('assets/resource-icons/*.svg'))|{CONTENT/'assets/course-resources.json'})
     def compare(path):
         relative = path.relative_to(CONTENT).as_posix()
         try:

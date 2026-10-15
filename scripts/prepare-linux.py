@@ -1,6 +1,7 @@
 """Prepare student content; corrections require an explicit publier: true."""
 from pathlib import Path
 import argparse
+import runpy
 import html
 import json
 import re
@@ -9,6 +10,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = 'https://kayasam.github.io/linux-initiation'
+RESOURCE_UI = runpy.run_path(str(ROOT / 'scripts/course-resources.py'))['render_resources']
 DEFAULT_SOURCE = Path('C:/Users/kayaw/Nextcloud/Obsidian/CoffreSam/Formations/linux-initiation')
 
 def write(path, body):
@@ -105,9 +107,8 @@ def prepare(source):
         offline = flat_html(course.with_suffix('.html').read_text(encoding='utf-8'), slug)
         offline = offline.replace(f'href="{slug}-quiz.html"', f'href="quiz/{slug}.html"')
         write(vault / 'cours' / f'{slug}.html', offline)
-        links = f'\n\n> [!TIP] Ressources du chapitre\n> - [Ouvrir le chapitre interactif]({BASE}/cours/{slug}-interactif.html)\n> - [Faire le quiz]({BASE}/cours/quiz/{slug}.html)\n> - <a href="{BASE}/telechargements/cours/{course.name}" download>Télécharger ce cours en Markdown</a>\n'
+        links = RESOURCE_UI(stage, BASE, slug, slug, tp is not None)
         if tp:
-            links += f'> - [Passer au TP]({BASE}/{slug}/tp)\n'
             tpbody = normalize(tp.read_text(encoding='utf-8'))
             for correction in sorted(tp_folder.glob(f'tp-{number}-*correction.md')):
                 if not is_published(correction): continue
@@ -155,7 +156,6 @@ def prepare(source):
                 z.writestr(entry, file.read_bytes())
     shutil.rmtree(vault)
     # Keep the shared home and Bash course in every normal publication.
-    import runpy
     runpy.run_path(str(ROOT / 'scripts/prepare-bash.py'))['populate'](stage, chapters)
     forbidden = [p for p in stage.rglob('*') if p.is_file() and re.search(r'correction|corrig[eé]', p.name, re.I) and p.name not in published_corrections]
     assert not forbidden, forbidden

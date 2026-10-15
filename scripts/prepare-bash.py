@@ -11,6 +11,7 @@ from urllib.parse import urlsplit, unquote
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = Path('C:/Users/kayaw/Nextcloud/Obsidian/CoffreSam/Formations/linux-scripting-bash')
 BASE = 'https://kayasam.github.io/linux-initiation'
+RESOURCE_UI = runpy.run_path(str(ROOT / 'scripts/course-resources.py'))['render_resources']
 
 
 def write(path, body):
@@ -88,12 +89,10 @@ def populate(destination, chapters):
         body = body.replace('../../Ressources/images/', BASE + '/bash/images/')
         body = public_course_links(body, course, courses)
         html_name = f'{slug}-interactif.html'
-        links = f'\n\n> [!TIP] Ressources du chapitre\n> - [Version HTML]({BASE}/bash/cours/{html_name})\n> - <a href="{BASE}/telechargements/bash/cours/{course.name}" download>Télécharger le cours en Markdown</a>\n'
-        links += f'> - [Faire le quiz — 20 questions]({BASE}/bash/cours/quiz/{slug}.html)\n'
         matching = [p for p in tps if p.parent == course.parent / 'tp']
         if matching:
-            links += f'> - [Passer au TP]({BASE}/{routes[matching[0]]})\n'
             body = body.replace(f'](tp/{matching[0].name})', f']({BASE}/{routes[matching[0]]})')
+        links = RESOURCE_UI(destination, BASE, 'bash/' + slug, slug, bool(matching))
         site_body = re.sub(r'^(# .+)$', lambda m: m[0] + links, body, count=1, flags=re.M)
         site_body += f'\n[← Parcours Bash]({BASE}/#bash) · [Tous les TP Bash]({BASE}/bash/tp/)\n'
         write(destination / 'bash' / slug / 'index.md', metadata(f'{slug[:2]}. {title}', site_body))
