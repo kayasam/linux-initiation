@@ -4,6 +4,7 @@ import { CSSResourceToStyleElement, JSResourceToScriptElement } from "../util/re
 import { googleFontHref, googleFontSubsetHref } from "../util/theme"
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
 import { unescapeHTML } from "../util/escape"
+import courseNavigation from "./scripts/course-navigation.inline"
 
 export default (() => {
   const Head: QuartzComponent = ({
@@ -108,5 +109,6 @@ export default (() => {
     )
   }
 
+  Head.afterDOMLoaded = courseNavigation
   return Head
 }) satisfies QuartzComponentConstructor

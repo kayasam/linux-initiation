@@ -4,8 +4,6 @@ $previousPythonUtf8 = $env:PYTHONUTF8
 $env:PYTHONUTF8 = '1'
 Push-Location $PSScriptRoot
 try {
-  & python scripts/render-bash-supports.py
-  if ($LASTEXITCODE) { throw 'Échec de génération des supports Bash.' }
   & python scripts/prepare-linux.py
   if ($LASTEXITCODE) { throw 'Échec de préparation des cours.' }
   & node scripts/prepare-quizzes.mjs

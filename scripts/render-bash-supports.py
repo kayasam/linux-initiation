@@ -1,12 +1,6 @@
-"""Render standalone Bash lessons and explanatory SVGs from the vault Markdown."""
+"""Manually refresh explanatory Bash SVGs; never write the authored HTML."""
 from pathlib import Path
 import html
-import re
-try:
-    import markdown
-except ModuleNotFoundError:
-    raise SystemExit('Installer le rendu Markdown : python -m pip install -r scripts/requirements-bash.txt')
-
 SOURCE = Path('C:/Users/kayaw/Nextcloud/Obsidian/CoffreSam/Formations/linux-scripting-bash')
 IMAGES = SOURCE / 'Ressources/images'
 IMAGES.mkdir(parents=True, exist_ok=True)
@@ -67,35 +61,4 @@ for slug, title, cards in DIAGRAMS:
 <text x="50" y="550" font-size="18">Le sous-shell se termine : son changement de dossier ne remonte pas au parent.</text>
 </g></svg>''', encoding='utf-8')
 
-CSS = '''
-:root{color-scheme:light;--bg:#f4f7fa;--surface:#fff;--text:#172c3c;--text-dim:#455c6d;--accent:#176e78;--border:#c7d6df;--code-bg:#edf3f7;--ink:var(--text);--muted:var(--text-dim);--line:var(--border);--code:var(--code-bg)}
-@media(prefers-color-scheme:dark){:root{color-scheme:dark;--bg:#0e1921;--surface:#172630;--text:#edf6fc;--text-dim:#b9cdd9;--accent:#81d9d9;--border:#405864;--code-bg:#10202a}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.75 'Segoe UI',system-ui,sans-serif}main{max-width:920px;margin:auto;padding:30px 34px 70px;background:var(--surface)}a{color:var(--accent);text-underline-offset:3px}h1{font-size:2.2rem;line-height:1.2;margin:.5em 0 1em}h2{margin:2.3em 0 .7em;padding-top:.5em;border-top:1px solid var(--line);font-size:1.45rem;line-height:1.35}h3{font-size:1.15rem}p,ul,ol{margin:.8em 0}li{margin:.3em 0}code{font-family:'Cascadia Code',Consolas,monospace;font-size:.94em;background:var(--code);padding:.12em .3em;border-radius:4px}pre{padding:18px 20px;background:var(--code);border:1px solid var(--line);border-radius:10px;overflow-x:auto;line-height:1.6}pre code{padding:0;background:transparent;white-space:pre}table{display:block;overflow:auto;border-collapse:collapse;width:100%;margin:1em 0;font-size:.94em}th,td{text-align:left;padding:10px 13px;border-bottom:1px solid var(--line)}th{background:var(--code)}img{display:block;max-width:100%;height:auto;margin:1.4em auto;border-radius:12px}aside{border-left:4px solid var(--accent);padding:12px 18px;background:var(--code);border-radius:0 8px 8px 0;margin:1.2em 0}aside.warning{border-color:#b87913}aside p{margin:.3em 0}.lesson-nav{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;padding:12px 0 22px;font-size:.9rem}.lesson-nav a{font-weight:650}.chapter-label{color:var(--muted);font-size:.83rem;font-weight:700;letter-spacing:.06em}summary{cursor:pointer;font-weight:650}details.toc{border:1px solid var(--line);border-radius:8px;padding:12px 18px;margin-bottom:25px}details.toc ul{margin:.4em 0}hr{border:0;border-top:1px solid var(--line);margin:2em 0}.table-wrap{overflow:auto}@media(max-width:620px){body{font-size:17px}main{padding:20px 18px 45px}h1{font-size:1.8rem}pre{padding:12px}}
-'''
-
-
-def callouts(body):
-    def render(match):
-        kind, title, rest = match.group(1), match.group(2), match.group(3)
-        lines = [re.sub(r'^> ?', '', line) for line in rest.splitlines()]
-        label = title.strip() or {'NOTE': 'Repère', 'TIP': 'Conseil', 'WARNING': 'Attention'}.get(kind, 'Repère')
-        return f'\n<aside class="{kind.lower()}" markdown="1">\n**{label}**\n\n' + '\n'.join(lines) + '\n</aside>\n'
-    return re.sub(r'^> \[!(NOTE|TIP|WARNING)\]([^\n]*)\n((?:>[^\n]*(?:\n|$))+)', render, body, flags=re.M)
-
-
-courses = sorted(p for p in (SOURCE / 'cours').glob('*/*.md') if p.stem == p.parent.name)
-assert len(courses) == 6
-for index, course in enumerate(courses):
-    body = course.read_text(encoding='utf-8-sig')
-    body = re.sub(r'\n\n<!-- ressources-locales -->\n(?:>[^\n]*\n)+', '', body)
-    title = re.search(r'^#\s+(.+)', body, re.M)[1]
-    renderer = markdown.Markdown(extensions=['fenced_code', 'tables', 'toc', 'md_in_html'])
-    article = renderer.convert(callouts(body))
-    previous = f'<a href="../{courses[index-1].stem}/{courses[index-1].stem}.html">← Chapitre précédent</a>' if index else '<span>Début du parcours</span>'
-    following = f'<a href="../{courses[index+1].stem}/{courses[index+1].stem}.html">Chapitre suivant →</a>' if index+1 < len(courses) else '<span>Fin du parcours</span>'
-    nav = f'<nav class="lesson-nav" aria-label="Parcours">{previous}<a href="{course.name}">Cours Markdown</a><a href="{course.stem}-quiz.html">Quiz — 20 questions</a>{following}</nav>'
-    article += f'<section aria-label="Quiz du chapitre"><h2>Quiz du chapitre — 20 questions</h2><p>Chaque réponse est expliquée. Tu peux recommencer avec un nouvel ordre des questions.</p><p><a href="{course.stem}-quiz.html">Ouvrir le quiz dans sa propre page →</a></p><iframe class="course-quiz-frame" src="{course.stem}-quiz.html" title="Quiz du chapitre {index+1:02d}" loading="lazy" style="width:100%;height:1100px;border:0;border-radius:12px"></iframe></section>'
-    page = f'<!doctype html>\n<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{html.escape(title)} — Bash débutant</title><style>{CSS}</style></head><body><main>{nav}<p class="chapter-label">BASH · CHAPITRE {index+1:02d} / 06</p><details class="toc"><summary>Sommaire du chapitre</summary>{renderer.toc}</details>{article}{nav}</main></body></html>\n'
-    page=page.replace('</head>','<link rel="stylesheet" href="../../assets/themes/theme.css"><script src="../../assets/themes/theme.js"></script></head>',1)
-    course.with_suffix('.html').write_text(page, encoding='utf-8')
-print('Bash : six HTML autonomes et sept schémas pédagogiques régénérés depuis le coffre.')
+print("Schémas SVG Bash actualisés. Les HTML interactifs ne sont pas modifiés.")

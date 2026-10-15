@@ -141,13 +141,10 @@ def prepare(source):
     cards = '\n'.join(f'<a class="home-chapter" href="./{c["slug"]}/"><span class="home-chapter__number">{c["slug"][:2]}</span><strong>{html.escape(c["title"])}</strong><span class="home-chapter__arrow" aria-hidden="true">→</span></a>' for c in chapters)
     home = '''<header class="home-header"><h1>Linux — Initiation</h1><p>Comprendre Linux, installer Debian et prendre en main le terminal.</p></header>
 <section class="home-track" aria-labelledby="parcours"><div class="home-track__head"><div class="home-track__logo"><span aria-hidden="true" style="font-size:2.4rem">&gt;_</span></div><div class="home-track__heading"><h2 id="parcours">Vos 10 chapitres</h2><p>Deux jours pour découvrir Linux pas à pas, avec des exemples, des quiz et sept travaux pratiques.</p></div><a class="home-track__start" href="./01-comprendre-linux/">Commencer au chapitre 01 →</a></div><div class="home-chapter-grid">''' + cards + '''</div></section>
-<section class="home-downloads"><h2>Supports hors ligne</h2><div class="home-downloads__grid"><a href="./linux-initiation-obsidian.zip" download><strong>Le cours pour Obsidian</strong><span>Les 10 cours Markdown, les 10 versions interactives et les 7 TP.</span><em>Télécharger le ZIP →</em></a><a href="./ressources/"><strong>Préparer la formation</strong><span>Programme, objectifs et déroulement des deux journées.</span><em>Consulter le programme →</em></a></div></section>'''
+<section class="home-downloads"><h2>Supports hors ligne</h2><div class="home-downloads__grid"><a href="./linux-initiation-obsidian.zip" download><strong>Le cours pour Obsidian</strong><span>Les 10 cours Markdown, les 10 versions interactives et les 7 TP.</span><em>Télécharger le ZIP →</em></a></div></section>'''
     tp_count = sum(c['tp'] is not None for c in chapters)
     home = home.replace('sept travaux pratiques', f'{tp_count} travaux pratiques').replace('les 7 TP', f'les {tp_count} TP')
     write(stage / 'index.md', metadata('Linux — Initiation', home))
-    program = normalize((source / 'programme.md').read_text(encoding='utf-8'))
-    program = program.split('## Fichiers cours')[0]
-    write(stage / 'ressources' / 'index.md', metadata('Programme et objectifs', program))
     write(vault / 'README.md', '# Linux — Initiation\n\nOuvrez ce dossier comme coffre dans Obsidian. Les cours se trouvent dans `cours/` et les exercices dans `tp/`. Ouvrez les fichiers HTML dans votre navigateur pour les versions interactives.\n\n' + '\n'.join(f'- [{c["title"]}](cours/{c["slug"]}.md)' for c in chapters))
     archive = stage / 'linux-initiation-obsidian.zip'
     with zipfile.ZipFile(archive, 'w', zipfile.ZIP_DEFLATED) as z:

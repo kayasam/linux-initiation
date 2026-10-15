@@ -105,6 +105,7 @@ def local_audit():
             equal(course.with_suffix('.html').read_text(encoding='utf-8-sig'), archive.read('Linux-scripting-bash/' + course.with_suffix('.html').relative_to(bash_source).as_posix()), slug + ' (HTML ZIP Bash)')
             body = re.sub(r'\n\n<!-- ressources-locales -->\n(?:>[^\n]*\n)+', '', offline)
             body = body.replace('../../Ressources/images/', BASE + '/bash/images/')
+            body = bash['public_course_links'](body, course, bash_courses)
             tps = [p for p in (course.parent / 'tp').glob('tp-*.md') if not re.search(r'correction|corrig', p.name, re.I)]
             assert len(tps) == 1
             body = body.replace(f'](tp/{tps[0].name})', f']({BASE}/bash/{slug}/tp)')
@@ -116,6 +117,7 @@ def local_audit():
             offline = bash['normalize'](tp.read_text(encoding='utf-8-sig'))
             equal(offline, archive.read('Linux-scripting-bash/' + tp.relative_to(bash_source).as_posix()), tp.name + ' (ZIP Bash)')
             body = offline
+            body = bash['public_course_links'](body, tp, bash_courses)
             if tp.is_relative_to(bash_source / 'cours'):
                 slug = tp.parent.parent.name
                 body = body.replace(f'](../{slug}.md)', f']({BASE}/bash/{slug}/)')

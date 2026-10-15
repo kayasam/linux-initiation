@@ -12,7 +12,7 @@ Double-cliquer sur **Publier les cours.cmd**, puis saisir un message et confirme
 
 Pour vérifier sans publier : `./publier-les-cours.ps1 -PrepareOnly`.
 
-Le script régénère d'abord les six HTML Bash et leurs schémas depuis les cours Markdown du coffre. Il faut le module Python Markdown, présent sur le poste de référence ; pour un nouveau poste : `python -m pip install -r scripts/requirements-bash.txt`. Les HTML distribués sont autonomes et conservent les liens vers leurs TP. Éditer les Markdown, puis régénérer les HTML, évite de maintenir deux cours différents.
+Les HTML Bash sont des compagnons interactifs conçus à la main, distincts du cours Markdown. Les modifier directement dans le coffre ; la publication copie les fichiers existants et adapte leurs liens, sans les régénérer ni les écraser. Le skill `cours-html-interactif` décrit leur forme. Pour actualiser uniquement les schémas SVG, lancer manuellement `python scripts/render-bash-supports.py` ; cette commande ne modifie aucun HTML.
 
 Le jeu Orion Académie est maintenu dans `Formations/linux-scripting-bash/jeu/` : moteur, missions, lanceur et README. La préparation génère une archive `.tar.gz` reproductible, sa somme SHA-256, la page `/bash/jeu/` et inclut les sources dans le ZIP Bash. Le contrôle de synchronisation vérifie aussi ces fichiers. Avant une évolution du jeu, lancer `python scripts/validate-orion-game.py --ssh debian`. La publication ordinaire reste utilisable sans accès à la VM ; GitHub Actions rejoue également la campagne et les scénarios de terminal sur Linux.
 
