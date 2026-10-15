@@ -1,192 +1,124 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Chapitre 03 — Écrire son premier script — Bash débutant</title><style>
-:root{color-scheme:light;--bg:#f4f7fa;--surface:#fff;--text:#172c3c;--text-dim:#455c6d;--accent:#176e78;--border:#c7d6df;--code-bg:#edf3f7;--ink:var(--text);--muted:var(--text-dim);--line:var(--border);--code:var(--code-bg)}
-@media(prefers-color-scheme:dark){:root{color-scheme:dark;--bg:#0e1921;--surface:#172630;--text:#edf6fc;--text-dim:#b9cdd9;--accent:#81d9d9;--border:#405864;--code-bg:#10202a}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.75 'Segoe UI',system-ui,sans-serif}main{max-width:920px;margin:auto;padding:30px 34px 70px;background:var(--surface)}a{color:var(--accent);text-underline-offset:3px}h1{font-size:2.2rem;line-height:1.2;margin:.5em 0 1em}h2{margin:2.3em 0 .7em;padding-top:.5em;border-top:1px solid var(--line);font-size:1.45rem;line-height:1.35}h3{font-size:1.15rem}p,ul,ol{margin:.8em 0}li{margin:.3em 0}code{font-family:'Cascadia Code',Consolas,monospace;font-size:.94em;background:var(--code);padding:.12em .3em;border-radius:4px}pre{padding:18px 20px;background:var(--code);border:1px solid var(--line);border-radius:10px;overflow-x:auto;line-height:1.6}pre code{padding:0;background:transparent;white-space:pre}table{display:block;overflow:auto;border-collapse:collapse;width:100%;margin:1em 0;font-size:.94em}th,td{text-align:left;padding:10px 13px;border-bottom:1px solid var(--line)}th{background:var(--code)}img{display:block;max-width:100%;height:auto;margin:1.4em auto;border-radius:12px}aside{border-left:4px solid var(--accent);padding:12px 18px;background:var(--code);border-radius:0 8px 8px 0;margin:1.2em 0}aside.warning{border-color:#b87913}aside p{margin:.3em 0}.lesson-nav{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;padding:12px 0 22px;font-size:.9rem}.lesson-nav a{font-weight:650}.chapter-label{color:var(--muted);font-size:.83rem;font-weight:700;letter-spacing:.06em}summary{cursor:pointer;font-weight:650}details.toc{border:1px solid var(--line);border-radius:8px;padding:12px 18px;margin-bottom:25px}details.toc ul{margin:.4em 0}hr{border:0;border-top:1px solid var(--line);margin:2em 0}.table-wrap{overflow:auto}@media(max-width:620px){body{font-size:17px}main{padding:20px 18px 45px}h1{font-size:1.8rem}pre{padding:12px}}
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Construis le robot d’accueil Orion : explore un script Bash, essaie ses arguments, ses permissions, ses codes de retour et sa trace. Ateliers interactifs et quiz.">
+<title>Ton premier script · Bash 03</title>
+<!-- bash-chapter03-interactive · compagnon conçu à la main -->
+<style>:root{color-scheme:light;--bg:#f5f5fb;--surface:#fff;--surface2:#eef1f7;--text:#182d3e;--dim:#455d70;--border:#b5bfce;--violet:#6940bd;--tint:#eeebfa;--mint:#087465;--mint-bg:#e7f6f1;--amber:#925500;--amber-bg:#fff4dd;--blue:#245db7;--blue-bg:#eaf1ff;--shadow:0 16px 45px #23314a09;--terminal:#132232;--terminal-text:#e7f3fc;--terminal-mint:#93e5ca;--accent:var(--violet)}
+html[data-theme=dark]{color-scheme:dark;--bg:#101827;--surface:#192638;--surface2:#223249;--text:#edf4ff;--dim:#bacce0;--border:#566a85;--violet:#c4a4ff;--tint:#302a49;--mint:#80dec6;--mint-bg:#163b36;--amber:#ffcb77;--amber-bg:#42341c;--blue:#9dbfff;--blue-bg:#203456;--shadow:0 16px 45px #0002;--terminal:#0c1725}
+*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.7 'Segoe UI',system-ui,sans-serif}button{font:inherit;cursor:pointer}button:disabled{cursor:default;opacity:.6}a{color:var(--violet);text-underline-offset:4px}button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--violet);outline-offset:4px}h1,h2,h3,p,figure{margin:0}h1,h2,h3{line-height:1.18}p+p{margin-top:.7rem}code,kbd,pre{font-family:'Cascadia Code',Consolas,monospace}code{background:var(--surface2);border-radius:5px;padding:.12em .35em;font-size:.91em}pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:0;font-size:.87rem;line-height:1.85}pre code{padding:0;background:none;font-size:inherit}ul{padding-left:1.25rem}.wrap{max-width:1180px;margin:auto;padding:0 28px}.toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;padding:20px 0 0;font-size:.78rem}.toolbar a{text-decoration:none}.secondary{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:10px;padding:9px 14px;font-weight:650;font-size:.83rem}.primary{border:0;background:var(--violet);color:#fff;border-radius:10px;padding:11px 18px;font-size:.88rem;font-weight:750}html[data-theme=dark] .primary{color:#1b1530}.eyebrow{text-transform:uppercase;font-size:.69rem;letter-spacing:.16em;font-weight:800;color:var(--violet)}.hero{display:grid;grid-template-columns:1fr 310px;align-items:center;gap:2rem;padding:35px 0 30px}.hero h1{font-size:clamp(2.1rem,5vw,3.6rem);letter-spacing:-.05em;margin:.75rem 0 1rem}.hero h1 em{color:var(--violet);font-style:normal}.hero p{max-width:59ch;color:var(--dim);font-size:1.02rem}.chapter-tabs{display:flex;gap:6px;padding:6px;background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow-x:auto;margin-bottom:27px;box-shadow:var(--shadow)}.chapter-tabs button{flex:1;white-space:nowrap;border:0;background:none;border-radius:11px;color:var(--dim);font-size:.88rem;font-weight:700;padding:12px 15px}.chapter-tabs button[aria-selected=true]{color:var(--violet);background:var(--tint)}.tab-number{opacity:.65;margin-right:7px;font-size:.75rem}.section-head{display:flex;justify-content:space-between;align-items:end;gap:1rem;margin:0 0 20px}.section-head h2{font-size:1.55rem;letter-spacing:-.025em;margin:5px 0}.section-head p{color:var(--dim);font-size:.9rem;max-width:65ch}.pill{border:1px solid var(--border);border-radius:30px;padding:6px 12px;font-size:.73rem;white-space:nowrap;color:var(--dim)}.terminal{background:var(--terminal);color:var(--terminal-text);border-radius:14px;overflow:hidden}.terminal-top{display:flex;align-items:center;gap:6px;padding:11px 15px;border-bottom:1px solid #ffffff16;color:#c8d7e6;font-size:.68rem}.terminal-top i{width:7px;height:7px;border-radius:50%;background:#91a2b4;display:inline-block}.terminal-top span{margin-left:auto}.terminal-body{padding:18px 21px}.terminal code{background:none;color:inherit}.prompt{color:var(--terminal-mint)}.terminal-label{font-size:.72rem;color:var(--dim);margin-bottom:8px}.grid-two{display:grid;grid-template-columns:1fr 1fr;gap:20px}.surface{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px;box-shadow:var(--shadow);min-width:0}.surface h3{font-size:1.15rem;margin:0 0 10px}.surface>p,.muted{color:var(--dim)}.surface>p{font-size:.9rem}.spaced{margin-top:24px}.note{border-left:3px solid var(--mint);padding:13px 17px;background:var(--mint-bg);border-radius:0 12px 12px 0;margin-top:17px;font-size:.87rem}.note strong{color:var(--mint)}.warning{background:var(--amber-bg);border-color:var(--amber)}.warning strong{color:var(--amber)}.result{min-height:55px;font-size:.9rem;margin-top:12px;padding:12px 15px;border-radius:11px;background:var(--surface2);overflow-wrap:anywhere}.button-row,.mode-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}.mode-row{margin-bottom:16px}.mode-row button[aria-pressed=true],.button-row button[aria-pressed=true]{background:var(--tint);border-color:var(--violet);color:var(--violet)}.step-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:20px}.step-card{border:1px solid var(--border);border-radius:17px;padding:20px;background:var(--surface);text-align:left;color:var(--text)}.step-card[aria-pressed=true]{background:var(--tint);border-color:var(--violet)}.step-card strong{display:block;margin:10px 0 5px}.step-card small{display:block;color:var(--dim);font-size:.8rem}.code-block{margin-top:15px;padding:17px 19px;background:var(--surface2);border-radius:12px}.timeline{display:flex;gap:7px;margin:19px 0}.timeline span{height:5px;border-radius:5px;background:var(--surface2);flex:1}.timeline span.active{background:var(--violet)}.mini-label,.simulation{font-size:.69rem;text-transform:uppercase;letter-spacing:.1em;font-weight:750;color:var(--dim)}.simulation{color:var(--mint)}.small-note{font-size:.8rem;color:var(--dim);margin-top:12px}.footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:15px;margin:35px 0 24px;padding-top:22px;border-top:1px solid var(--border);font-size:.8rem;color:var(--dim)}.quiz-frame{width:100%;height:1100px;border:1px solid var(--border);border-radius:18px;background:var(--surface);margin-top:22px}.destination-card{display:flex;flex-direction:column;gap:12px}.destination-card a{font-weight:750;margin-top:auto}.panel-bottom{margin:24px 0}.panel-bottom button{width:100%}.noscript{padding:20px;background:var(--amber-bg)}label{display:block;font-size:.85rem;font-weight:650;margin:14px 0 6px}input,select{font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;width:100%;max-width:100%}.tokens{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}.token{padding:9px 14px;border-radius:12px;background:var(--tint);border:1px solid var(--violet);color:var(--violet);font-family:Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%}
+@media(max-width:850px){.hero{grid-template-columns:1fr 210px}.chapter-tabs button{padding:12px 14px}}@media(max-width:620px){.wrap{padding:0 17px}.hero{grid-template-columns:1fr;padding:26px 0 24px;gap:20px}.hero-visual{display:none}.hero h1{font-size:2.3rem}.grid-two,.step-grid{grid-template-columns:1fr}.section-head{align-items:start}.section-head h2{font-size:1.4rem}.pill{white-space:normal;font-size:.68rem}.surface{padding:20px}.chapter-tabs{margin-bottom:24px}.toolbar{font-size:.7rem}.terminal-body{padding:16px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+
+.hero-visual{position:relative;padding:18px}.hero-visual svg{width:100%;height:auto;display:block}.orbit{position:absolute;right:4px;top:8px;font:700 .8rem Consolas,monospace;background:var(--surface);border:1px solid var(--border);padding:7px 12px;border-radius:12px;transform:rotate(6deg);color:var(--violet)}.robot-stroke{stroke:var(--violet)}.robot-fill{fill:var(--tint)}.robot-eye{fill:var(--mint)}.script-editor{background:var(--terminal);border-radius:14px;overflow:hidden;margin:16px 0}.script-line{width:100%;display:flex;gap:15px;padding:9px 17px;border:0;border-left:3px solid transparent;background:none;color:var(--terminal-text);text-align:left;font: .87rem/1.65 'Cascadia Code',Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere}.script-line .ln{color:#a6b6c8;min-width:12px;user-select:none}.script-line[aria-pressed=true]{border-left-color:#c4a4ff;background:#ffffff12}.script-line:hover{background:#ffffff0a}.script-line .line-text{min-width:0}.line-comment{color:#93e5ca}.line-role{display:inline-block;color:var(--violet);background:var(--tint);font:700 .73rem 'Segoe UI',sans-serif;border-radius:20px;padding:5px 12px;margin-bottom:12px}.editor-keys{display:flex;gap:8px;flex-wrap:wrap}.editor-keys kbd{display:inline-block;background:var(--surface2);border:1px solid var(--border);padding:2px 7px;border-radius:6px;font-size:.82rem}.file-state{display:flex;align-items:center;gap:12px;padding:15px;background:var(--surface2);border-radius:12px;margin:15px 0}.file-icon{color:var(--violet);font:700 1.7rem Consolas,monospace}.file-state small{display:block;color:var(--dim);font-size:.8rem}.launch-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.launch-card{border:1px solid var(--border);border-radius:15px;padding:19px;background:var(--surface2)}.launch-card h3{font-size:1.03rem}.launch-card code{padding:0;background:none}.launch-card button{width:100%;margin-top:16px}.permission{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1px dashed var(--border);padding:15px;border-radius:13px;margin:17px 0}.permission .on{color:var(--mint)}.permission .off{color:var(--amber)}.status-badge{display:inline-block;border-radius:30px;padding:4px 12px;color:var(--mint);background:var(--mint-bg);font-weight:750;font-size:.74rem}.status-badge.error{color:var(--amber);background:var(--amber-bg)}.terminal-output{min-height:100px}.robot-answer{margin-top:16px;padding:20px;border-radius:16px;background:linear-gradient(125deg,var(--tint),var(--mint-bg));border:1px solid var(--border)}.robot-answer small{display:block;color:var(--mint);font-size:.7rem;font-weight:750;letter-spacing:.12em}.robot-answer strong{display:block;margin-top:8px;font-size:1.25rem;overflow-wrap:anywhere}.argument-board{display:grid;grid-template-columns:90px 1fr;gap:9px 12px;margin-top:20px;align-items:start}.argument-board>code{color:var(--violet);padding:9px 12px}.argument-board>div{background:var(--surface2);border-radius:8px;padding:9px 12px;font-family:Consolas,monospace;overflow-wrap:anywhere}.argument-board .tokens{margin:0;padding:0;background:none;font-family:inherit}.argument-board .token{font-size:.84rem}.trace-list{list-style:none;margin:14px 0 0;padding:0}.trace-list li{border-left:3px solid var(--border);padding:12px 15px;font-family:Consolas,monospace;font-size:.84rem;white-space:pre-wrap;overflow-wrap:anywhere;margin:0;background:var(--surface2)}.trace-list li.active{border-color:var(--violet);background:var(--tint);color:var(--violet)}.trace-list li.done{border-color:var(--mint)}.trace-list li small{display:block;font:.75rem 'Segoe UI',sans-serif;color:var(--dim);margin-top:5px}.code-tray{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:15px}.return-orb{border:2px solid var(--mint);color:var(--mint);background:var(--mint-bg);width:76px;height:76px;border-radius:50%;display:grid;place-items:center;font:700 2rem Consolas,monospace;flex-shrink:0}.return-orb.error{border-color:var(--amber);color:var(--amber);background:var(--amber-bg)}.checkpoint{border:1px dashed var(--border);border-radius:15px;padding:18px;margin-top:20px}.checkpoint h3{font-size:1rem}.mission-points{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}.mission-point{padding:17px;border:1px solid var(--border);border-radius:15px;background:var(--surface)}.mission-point b{color:var(--violet);display:block;font-size:1.3rem;margin-bottom:6px}.mission-point span{font-size:.83rem;color:var(--dim)}.chapter-tabs{position:sticky;top:8px;z-index:2}.step-card .step-icon{display:block;font-size:1.7rem;color:var(--violet);font-family:Consolas,monospace}.script-line:focus-visible{outline-offset:-4px}.quiz-frame{margin-bottom:16px}
+@media(max-width:620px){.launch-grid,.mission-points{grid-template-columns:1fr}.argument-board{grid-template-columns:55px 1fr}.script-line{font-size:.77rem;gap:8px;padding:10px}.chapter-tabs{position:static}.launch-card{padding:16px}.permission button{width:100%}.hero-visual{display:block;max-width:185px;margin:auto;padding:0}.hero{gap:10px}.hero-visual .orbit{font-size:.65rem}.return-orb{width:64px;height:64px}}
 .bash-site-nav{display:flex;justify-content:space-between;gap:1rem;padding:1rem;flex-wrap:wrap}.bash-site-nav a{color:var(--accent);font-weight:700}
-</style><link rel="stylesheet" href="../../assets/themes/theme.css"><script src="../../assets/themes/theme.js"></script></head><body><nav class="bash-site-nav"><a href="https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/">← Cours Markdown</a><a href="https://kayasam.github.io/linux-initiation/#bash">Parcours Bash →</a></nav><main><nav class="lesson-nav" aria-label="Parcours"><a href="https://kayasam.github.io/linux-initiation/bash/cours/02-variables-interactif.html">← Chapitre précédent</a><a href="https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/">Cours Markdown</a><a href="https://kayasam.github.io/linux-initiation/bash/cours/quiz/03-bases-du-scripting.html">Quiz — 20 questions</a><a href="https://kayasam.github.io/linux-initiation/bash/cours/04-tests-et-conditions-interactif.html">Chapitre suivant →</a></nav><p class="chapter-label">BASH · CHAPITRE 03 / 06</p><details class="toc"><summary>Sommaire du chapitre</summary><div class="toc">
-<ul>
-<li><a href="#chapitre-03-ecrire-son-premier-script">Chapitre 03 — Écrire son premier script</a><ul>
-<li><a href="#a-connaitre-shebang-commentaire-nano-bash-n-bash-chmod-x-1-1-defaut-bash-x">À connaître : shebang, commentaire #, nano, bash -n, bash, chmod +x, ./, $1, ${1:-defaut}, $#, "$@", $?, bash -x.</a></li>
-<li><a href="#1-un-script-est-un-fichier-texte">1. Un script est un fichier texte</a></li>
-<li><a href="#2-creer-le-fichier-avec-nano">2. Créer le fichier avec nano</a></li>
-<li><a href="#3-verifier-avant-de-lancer">3. Vérifier avant de lancer</a></li>
-<li><a href="#4-executer-directement-le-script">4. Exécuter directement le script</a></li>
-<li><a href="#5-les-arguments-des-valeurs-fournies-au-depart">5. Les arguments : des valeurs fournies au départ</a></li>
-<li><a href="#6-le-code-de-retour">6. Le code de retour</a></li>
-<li><a href="#7-comprendre-un-comportement-inattendu">7. Comprendre un comportement inattendu</a></li>
-<li><a href="#a-retenir">À retenir</a></li>
-</ul>
-</li>
-</ul>
-</div>
-</details><h1 id="chapitre-03-ecrire-son-premier-script">Chapitre 03 — Écrire son premier script</h1>
-<aside class="note">
-<p><strong>Objectif</strong></p>
-<p>Transformer quelques commandes en un programme que tu peux relancer, lire et vérifier.</p>
-</aside>
-<h2 id="a-connaitre-shebang-commentaire-nano-bash-n-bash-chmod-x-1-1-defaut-bash-x"><strong>À connaître :</strong> shebang, commentaire <code>#</code>, <code>nano</code>, <code>bash -n</code>, <code>bash</code>, <code>chmod +x</code>, <code>./</code>, <code>$1</code>, <code>${1:-defaut}</code>, <code>$#</code>, <code>"$@"</code>, <code>$?</code>, <code>bash -x</code>.</h2>
-<h2 id="1-un-script-est-un-fichier-texte">1. Un script est un fichier texte</h2>
-<p>Un script Bash contient les commandes que tu aurais pu taper dans le terminal. Bash les lit dans l'ordre. Tu peux ainsi refaire la même tâche sans recopier les commandes.</p>
-<p><img alt="Écrire, vérifier puis exécuter" src="https://kayasam.github.io/linux-initiation/bash/images/bash-03-script.svg" /></p>
-<p>Commence dans un dossier de travail :</p>
-<pre><code class="language-bash">mkdir -p ~/atelier-bash/scripts
+</style><link rel="stylesheet" href="../../assets/themes/theme.css">
+<script src="../../assets/themes/theme.js"></script>
+</head><body><nav class="bash-site-nav"><a href="https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/">← Cours Markdown</a><a href="https://kayasam.github.io/linux-initiation/#bash">Parcours Bash →</a></nav>
+<main class="wrap">
+<div class="toolbar"><a href="https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/">← Le cours en Markdown</a><a href="https://kayasam.github.io/linux-initiation/bash/cours/02-variables-interactif.html">Chapitre 02</a><button class="secondary" id="theme-switch" type="button">Passer au thème sombre</button></div>
+<header class="hero"><div><span class="eyebrow">Bash · Chapitre 03 · Mission Orion</span><h1>Quelques lignes.<br><em>Un robot qui répond.</em></h1><p>Ton premier script accueille l’équipage. Ouvre son capot, lance-le, change ses arguments et apprends à repérer ce qui coince.</p></div><div class="hero-visual" aria-hidden="true"><span class="orbit">./accueil.sh Mila</span><svg viewBox="0 0 300 260" fill="none"><ellipse cx="150" cy="237" rx="95" ry="12" fill="var(--border)" opacity=".25"/><path d="M150 53V32" class="robot-stroke" stroke-width="5"/><circle cx="150" cy="24" r="10" class="robot-eye"/><rect x="65" y="54" width="170" height="122" rx="30" class="robot-fill robot-stroke" stroke-width="4"/><rect x="83" y="76" width="134" height="65" rx="18" fill="var(--surface)"/><circle cx="117" cy="105" r="11" class="robot-eye"/><circle cx="183" cy="105" r="11" class="robot-eye"/><path d="M130 151q20 16 40 0" class="robot-stroke" stroke-width="4" stroke-linecap="round"/><path d="M53 98v33m194-33v33" class="robot-stroke" stroke-width="10" stroke-linecap="round"/><rect x="102" y="181" width="96" height="49" rx="15" class="robot-fill robot-stroke" stroke-width="4"/><path d="M122 194v20m12-20v20m12-20v20" stroke="var(--mint)" stroke-width="4" stroke-linecap="round"/><circle cx="178" cy="204" r="7" fill="var(--amber)"/><path d="m92 188-20 24m136-24 20 24" class="robot-stroke" stroke-width="7" stroke-linecap="round"/></svg></div></header>
+<nav class="chapter-tabs" role="tablist" aria-label="Les ateliers du chapitre">
+<button id="tab-build" role="tab" aria-controls="panel-build" aria-selected="true" data-tab="build"><span class="tab-number">01</span>Ouvrir le capot</button>
+<button id="tab-launch" role="tab" aria-controls="panel-launch" aria-selected="false" tabindex="-1" data-tab="launch"><span class="tab-number">02</span>Lancer</button>
+<button id="tab-args" role="tab" aria-controls="panel-args" aria-selected="false" tabindex="-1" data-tab="args"><span class="tab-number">03</span>Transmettre</button>
+<button id="tab-debug" role="tab" aria-controls="panel-debug" aria-selected="false" tabindex="-1" data-tab="debug"><span class="tab-number">04</span>Déboguer</button>
+<button id="tab-mission" role="tab" aria-controls="panel-mission" aria-selected="false" tabindex="-1" data-tab="mission"><span class="tab-number">05</span>À toi de jouer</button>
+</nav>
+<section id="panel-build" role="tabpanel" aria-labelledby="tab-build" tabindex="0">
+<div class="section-head"><div><span class="eyebrow">Le plan du robot</span><h2>Cinq lignes utiles. Un rôle pour chacune.</h2><p>Clique sur les lignes du fichier pour découvrir ce que Bash en fait.</p></div><span class="pill">Exploration guidée</span></div>
+<div class="grid-two"><section class="surface"><h3>Dans le fichier accueil.sh</h3><div class="script-editor"><div class="terminal-top"><i></i><i></i><i></i><span>accueil.sh · fichier texte</span></div>
+<button class="script-line" data-line="shebang" aria-pressed="true"><span class="ln">1</span><span class="line-text">#!/usr/bin/env bash</span></button>
+<button class="script-line" data-line="comment" aria-pressed="false"><span class="ln">2</span><span class="line-text line-comment"># Un nom peut etre fourni au lancement.</span></button>
+<button class="script-line" data-line="argument" aria-pressed="false"><span class="ln">3</span><span class="line-text">prenom="${1:-visiteur}"</span></button>
+<button class="script-line" data-line="variable" aria-pressed="false"><span class="ln">4</span><span class="line-text">station="Orion"</span></button>
+<button class="script-line" data-line="output" aria-pressed="false"><span class="ln">5</span><span class="line-text">echo "Bienvenue $prenom sur $station."</span></button></div><p class="small-note">Un script reste un fichier texte. Bash lit ses commandes dans l’ordre, ce qui permet de les relancer sans tout retaper.</p></section>
+<section class="surface"><span class="line-role" id="line-role">Le shebang</span><h3 id="line-title">Quel interpréteur doit lire le fichier ?</h3><div class="result" id="line-explanation" aria-live="polite">Lors d’un lancement direct avec ./accueil.sh, cette première ligne demande Bash. /usr/bin/env le recherche dans PATH.</div><div class="code-block"><pre id="line-example">./accueil.sh Mila
+→ Bash lit les commandes du fichier.</pre></div><div class="note" id="line-note"><strong>Tout en haut.</strong> Le shebang se place sur la première ligne. Quand on lance bash accueil.sh, on a déjà choisi Bash.</div></section></div>
+<section class="surface spaced"><span class="simulation">Mini-atelier · nano simulé</span><h3>Le fichier est saisi. Comment le garder ?</h3><p>Dans Debian, tu ouvres <code>nano accueil.sh</code>. Une fois le texte saisi, reproduis la séquence d’enregistrement avec les boutons.</p><div class="file-state"><span class="file-icon" aria-hidden="true">{ }</span><div><strong>accueil.sh</strong><small id="nano-state">Modifié · pas encore enregistré</small></div></div><div class="editor-keys"><button class="secondary" id="nano-save"><kbd>Ctrl+O</kbd> Enregistrer</button><button class="secondary" id="nano-enter" disabled><kbd>Entrée</kbd> Confirmer le nom</button><button class="secondary" id="nano-exit" disabled><kbd>Ctrl+X</kbd> Quitter</button><button class="secondary" id="nano-reset">Recommencer</button></div><div class="result" id="nano-feedback" aria-live="polite">1 / 4 — Le texte est dans l’éditeur. Commence par Ctrl+O.</div><p class="small-note">Dans nano, ^O et ^X signifient Ctrl+O et Ctrl+X. Sur Debian, nano enregistre avec les fins de ligne Linux habituelles (LF).</p></section>
+<div class="panel-bottom"><button class="secondary" data-go="launch">Le fichier est prêt : essayons de le lancer →</button></div>
+</section>
+<section id="panel-launch" role="tabpanel" aria-labelledby="tab-launch" tabindex="0" hidden>
+<div class="section-head"><div><span class="eyebrow">La rampe de lancement</span><h2>Deux chemins pour le même script.</h2><p>Le fichier est supposé enregistré et lisible dans le dossier courant. Essaie sans droit d’exécution, puis ajoute-le.</p></div><span class="pill">Aucune commande réelle exécutée</span></div>
+<section class="surface"><div class="permission"><div><span class="mini-label">État du fichier</span><br><strong id="permission-status" class="off">Lisible · non exécutable</strong></div><button class="secondary" id="chmod-button">chmod +x accueil.sh</button></div><div class="launch-grid"><div class="launch-card"><h3>Tu choisis Bash</h3><p><code>bash accueil.sh Mila</code></p><p class="small-note">Bash ouvre le fichier. Il n’a pas besoin du droit d’exécution sur accueil.sh.</p><button class="primary" data-run="bash">Lancer avec Bash →</button></div><div class="launch-card"><h3>Tu lances le fichier</h3><p><code>./accueil.sh Mila</code></p><p class="small-note">Le fichier doit être exécutable. Son shebang indique l’interpréteur.</p><button class="primary" data-run="direct">Lancer directement →</button></div></div><div class="terminal spaced"><div class="terminal-top"><i></i><i></i><i></i><span>Terminal simulé · stagiaire@debian</span></div><div class="terminal-body"><pre id="launch-output" class="terminal-output">Choisis un mode de lancement.</pre></div></div><div class="result" id="launch-feedback" aria-live="polite">Le bouton chmod +x change l’état du fichier simulé. Ensuite, relance chaque commande pour comparer.</div><div class="button-row"><button class="secondary" id="launch-reset">Recommencer sans le droit x</button></div></section>
+<div class="grid-two spaced"><section class="surface"><h3>Pourquoi ce petit ./ ?</h3><div class="button-row"><button class="secondary" data-path="bare">accueil.sh Mila</button><button class="secondary" data-path="dot">./accueil.sh Mila</button></div><div class="result" id="path-feedback" aria-live="polite">Supposons que le dossier courant n’est pas dans PATH. Quelle écriture permet de désigner le fichier ?</div><p class="small-note">Le point désigne le dossier courant. Le / fait de ./accueil.sh un chemin : Bash ne cherche plus ce nom dans PATH.</p></section><section class="surface"><h3>Ton atelier sur Debian</h3><div class="code-block"><pre>mkdir -p ~/atelier-bash/scripts
 cd ~/atelier-bash/scripts
-</code></pre>
-<h2 id="2-creer-le-fichier-avec-nano">2. Créer le fichier avec nano</h2>
-<p>Ouvre l'éditeur :</p>
-<!-- interactif: editeur -->
-
-<pre><code class="language-bash">nano accueil.sh
-</code></pre>
-<p>Dans l'éditeur, saisis le contenu suivant. Ne recopie pas les marques de bloc de code.</p>
-<!-- fichier: accueil.sh -->
-
-<pre><code class="language-bash">#!/usr/bin/env bash
-
-# Un nom peut etre fourni au lancement.
-prenom=&quot;${1:-visiteur}&quot;
-station=&quot;Orion&quot;
-
-echo &quot;Bienvenue $prenom sur $station.&quot;
-</code></pre>
-<table>
-<thead>
-<tr>
-<th>Ligne</th>
-<th>Rôle</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>#!/usr/bin/env bash</code></td>
-<td>Demande d'utiliser Bash pour l'exécution directe</td>
-</tr>
-<tr>
-<td><code># Un nom…</code></td>
-<td>Commentaire : Bash l'ignore, il s'adresse à qui lit le fichier</td>
-</tr>
-<tr>
-<td><code>prenom="${1:-visiteur}"</code></td>
-<td>Prend le premier argument fourni au script, ou <code>visiteur</code> s'il n'y en a pas</td>
-</tr>
-<tr>
-<td><code>station="Orion"</code></td>
-<td>Range une valeur fixe</td>
-</tr>
-<tr>
-<td><code>echo ...</code></td>
-<td>Produit le message</td>
-</tr>
-</tbody>
-</table>
-<p>La troisième ligne est la plus chargée : <code>$1</code> désigne le premier argument et <code>${1:-visiteur}</code> fournit une valeur de secours, comme le <code>${nom:-defaut}</code> du chapitre 02. Le §5 y revient en détail — pour l'instant, recopie-la telle quelle.</p>
-<p>La première ligne s'appelle le <strong>shebang</strong>. Nous écrivons <code>#!/usr/bin/env bash</code> plutôt que <code>#!/bin/bash</code> : <code>env</code> va chercher Bash là où il est réellement installé, ce qui rend le script utilisable sur des systèmes où le chemin diffère.</p>
-<p>Dans nano : <strong>Ctrl+O</strong>, puis <strong>Entrée</strong> pour enregistrer ; <strong>Ctrl+X</strong> pour quitter. Les indications <code>^O</code> et <code>^X</code> de nano signifient « Ctrl+O » et « Ctrl+X ».</p>
-<aside class="warning">
-<p><strong>Fichier créé sous Windows</strong></p>
-<p>Si tu vois une erreur mentionnant <code>bash\r</code>, le fichier a été enregistré avec des fins de ligne Windows (CRLF). Un script Linux doit être enregistré en <strong>LF</strong>. En travaillant avec nano dans Debian, tu évites ce problème.</p>
-</aside>
-<h2 id="3-verifier-avant-de-lancer">3. Vérifier avant de lancer</h2>
-<pre><code class="language-bash">bash -n accueil.sh
-</code></pre>
-<p><code>-n</code> vérifie la syntaxe <strong>sans exécuter</strong> les commandes. Si rien ne s'affiche et que la commande réussit, Bash n'a pas trouvé d'erreur de syntaxe. Cela ne garantit pas que le programme fait ce que tu souhaites : il faut aussi le tester.</p>
-<p>Lance-le ensuite en indiquant l'interpréteur :</p>
-<pre><code class="language-bash">bash accueil.sh Mila
-</code></pre>
-<p>Résultat : <code>Bienvenue Mila sur Orion.</code>. Dans ce mode, le fichier n'a pas besoin d'être exécutable.</p>
-<h2 id="4-executer-directement-le-script">4. Exécuter directement le script</h2>
-<pre><code class="language-bash">chmod +x accueil.sh
-./accueil.sh Mila
-</code></pre>
-<ul>
-<li><code>chmod +x</code> ajoute le droit d'exécution.</li>
-<li><code>./accueil.sh</code> désigne le fichier dans le dossier courant.</li>
-<li><code>Mila</code> est un argument transmis au script.</li>
-</ul>
-<p>Le <code>./</code> n'est pas décoratif : le dossier courant n'est généralement pas dans <code>PATH</code>. Pour un script stocké ailleurs, indique son chemin.</p>
-<p>Noter aussi ce qui <strong>n'est pas</strong> nécessaire : aucun <code>sudo</code> ici. Tu es propriétaire de ton dossier personnel, donc tu peux y créer un fichier, le rendre exécutable et le lancer sans droits administrateur. Un script qui réclame <code>sudo</code> pour travailler dans <code>~</code> est le signe qu'il se trompe de dossier.</p>
-<h2 id="5-les-arguments-des-valeurs-fournies-au-depart">5. Les arguments : des valeurs fournies au départ</h2>
-<p>Dans le script, <code>$1</code> est le premier argument. <code>${1:-visiteur}</code> donne une valeur par défaut si ce premier argument est absent ou vide.</p>
-<pre><code class="language-bash">./accueil.sh
-./accueil.sh &quot;Mila Vega&quot;
-</code></pre>
-<p>Résultats :</p>
-<pre><code class="language-text">Bienvenue visiteur sur Orion.
-Bienvenue Mila Vega sur Orion.
-</code></pre>
-<p>Les guillemets autour de <code>Mila Vega</code> conservent un seul argument.</p>
-<table>
-<thead>
-<tr>
-<th>Variable spéciale</th>
-<th>Signification</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>$0</code></td>
-<td>Nom utilisé pour lancer le script</td>
-</tr>
-<tr>
-<td><code>$1</code>, <code>$2</code></td>
-<td>Premier et deuxième arguments</td>
-</tr>
-<tr>
-<td><code>$#</code></td>
-<td>Nombre d'arguments</td>
-</tr>
-<tr>
-<td><code>"$@"</code></td>
-<td>Tous les arguments, en conservant leurs limites</td>
-</tr>
-</tbody>
-</table>
-<p>Pour observer les arguments, crée un second fichier :</p>
-<!-- fichier: arguments.sh -->
-
-<pre><code class="language-bash">#!/usr/bin/env bash
-echo &quot;Nombre : $#&quot;
-printf 'Argument : %s\n' &quot;$@&quot;
-</code></pre>
-<pre><code class="language-bash">bash arguments.sh &quot;Mila Vega&quot; pilote
-</code></pre>
-<pre><code class="language-text">Nombre : 2
-Argument : Mila Vega
-Argument : pilote
-</code></pre>
-<p><code>"$@"</code> ne recoupe pas <code>Mila Vega</code> en deux mots : c'est bien un seul argument.</p>
-<p>Une ligne de format, deux lignes affichées : <code>printf</code> <strong>réapplique son format tant qu'il reste des arguments à consommer</strong>. C'est le seul endroit de ce chapitre où <code>printf</code> rend un service qu'<code>echo</code> ne sait pas rendre — <code>echo "Argument : $@"</code> n'afficherait qu'une seule ligne, avec les deux valeurs à la suite. Partout ailleurs, <code>echo</code> suffit.</p>
-<h2 id="6-le-code-de-retour">6. Le code de retour</h2>
-<p>Une commande fournit un <strong>code de retour</strong>. <code>0</code> signifie qu'elle a réussi selon ses propres règles. Une valeur différente de zéro indique un autre résultat : erreur, absence de correspondance pour <code>grep</code>, etc.</p>
-<pre><code class="language-bash">bash accueil.sh Mila
-code=$?
-echo &quot;Code : $code&quot;
-</code></pre>
-<p><code>$?</code> donne le code de la <strong>dernière commande</strong>. Ici, le script réussit et le code est <code>0</code>. Il faut le lire tout de suite, avant qu'une autre commande le remplace.</p>
-<p>Observe un échec sans créer de fichier :</p>
-<pre><code class="language-bash">ls dossier-inexistant-orion 2&gt;/dev/null
-code=$?
-echo &quot;Code apres echec : $code&quot;
-</code></pre>
-<p>Le code est différent de zéro. <code>2&gt;/dev/null</code> masque le message d'erreur ; il ne transforme pas l'échec en réussite. Nous verrons comment réagir au résultat dans le chapitre suivant.</p>
-<h2 id="7-comprendre-un-comportement-inattendu">7. Comprendre un comportement inattendu</h2>
-<pre><code class="language-bash">bash -x accueil.sh Mila
-</code></pre>
-<p><code>-x</code> affiche les commandes après les expansions. Cela aide à comprendre les valeurs réellement utilisées. Les lignes de trace et le résultat normal peuvent apparaître ensemble.</p>
-<aside class="warning">
-<p><strong>Trace et données personnelles</strong></p>
-<p>Une trace peut afficher les valeurs des variables. Utilise les données fictives du cours avant de partager une capture.</p>
-</aside>
-<h2 id="a-retenir">À retenir</h2>
-<ul>
-<li>Le shebang choisit l'interpréteur lors de l'exécution directe ; nous utilisons <code>#!/usr/bin/env bash</code>.</li>
-<li><code>bash -n</code> vérifie la syntaxe ; les essais vérifient le comportement ; <code>bash -x</code> montre les valeurs réellement utilisées.</li>
-<li><code>chmod +x</code> donne le droit d'exécution, <code>./</code> indique le fichier du dossier courant : les deux sont nécessaires.</li>
-<li>Les arguments se lisent avec <code>$1</code>, <code>$#</code> et <code>"$@"</code> ; <code>${1:-defaut}</code> prévoit le cas où l'argument est absent.</li>
-<li>Protège les arguments avec des guillemets.</li>
-<li><code>$?</code> donne le code de retour de la dernière commande : <code>0</code> pour une réussite, autre chose sinon. Lis-le tout de suite.</li>
-<li>Un script n'a pas besoin de <code>sudo</code> pour travailler dans ton dossier personnel.</li>
-</ul>
-<p><strong>À toi :</strong> combien d'arguments reçoit <code>bash arguments.sh "poste radio" Orion</code> ? Pourquoi <code>chmod +x</code> ne suffit-il pas à lancer un fichier ? Que vaut <code>$?</code> juste après une commande qui a échoué ?</p>
-<p><a href="https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/tp">Passer au TP</a></p><section aria-label="Quiz du chapitre"><h2>Quiz du chapitre — 20 questions</h2><p>Chaque réponse est expliquée. Tu peux recommencer avec un nouvel ordre des questions.</p><p><a href="https://kayasam.github.io/linux-initiation/bash/cours/quiz/03-bases-du-scripting.html">Ouvrir le quiz dans sa propre page →</a></p><iframe class="course-quiz-frame" src="https://kayasam.github.io/linux-initiation/bash/cours/quiz/03-bases-du-scripting.html" title="Quiz du chapitre 03" loading="lazy" style="width:100%;height:1100px;border:0;border-radius:12px"></iframe></section><nav class="lesson-nav" aria-label="Parcours"><a href="https://kayasam.github.io/linux-initiation/bash/cours/02-variables-interactif.html">← Chapitre précédent</a><a href="https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/">Cours Markdown</a><a href="https://kayasam.github.io/linux-initiation/bash/cours/quiz/03-bases-du-scripting.html">Quiz — 20 questions</a><a href="https://kayasam.github.io/linux-initiation/bash/cours/04-tests-et-conditions-interactif.html">Chapitre suivant →</a></nav></main></body></html>
+nano accueil.sh</pre></div><div class="note"><strong>Ton dossier, tes fichiers.</strong> Aucun sudo n’est nécessaire pour créer et lancer ce script dans ton dossier personnel.</div><p class="small-note">Une erreur qui mentionne bash\r peut venir de fins de ligne Windows (CRLF). Enregistre le script en LF.</p></section></div>
+<div class="panel-bottom"><button class="secondary" data-go="args">Le robot démarre : donnons-lui des arguments →</button></div>
+</section>
+<section id="panel-args" role="tabpanel" aria-labelledby="tab-args" tabindex="0" hidden>
+<div class="section-head"><div><span class="eyebrow">Le sas de l’équipage</span><h2>Des valeurs au départ. Des paramètres à l’arrivée.</h2><p>Compare ces lancements : le script est le même, les arguments changent.</p></div><span class="pill">Prédire · cliquer · observer</span></div>
+<section class="surface"><div class="mode-row"><button class="secondary" data-args="none" aria-pressed="false">Sans argument</button><button class="secondary" data-args="quoted" aria-pressed="true">"Mila Vega" pilote</button><button class="secondary" data-args="bare" aria-pressed="false">Mila Vega pilote</button><button class="secondary" data-args="empty" aria-pressed="false">"" pilote</button></div><div class="terminal"><div class="terminal-top"><i></i><i></i><i></i><span>Commande de lancement</span></div><div class="terminal-body"><pre id="args-command"></pre></div></div><div class="grid-two"><div class="argument-board"><code>$0</code><div>accueil.sh</div><code>$1</code><div id="arg-first"></div><code>$2</code><div id="arg-second"></div><code>$#</code><div id="arg-count"></div><code>"$@"</code><div class="tokens" id="arg-tokens"></div></div><div class="robot-answer"><small>ORION · ROBOT D’ACCUEIL</small><strong id="greeting"></strong><p class="small-note">Le robot utilise <code>prenom="${1:-visiteur}"</code>, puis <code>echo "Bienvenue $prenom sur $station."</code>.</p></div></div><div class="result" id="args-feedback" aria-live="polite"></div><p class="small-note">Ici, les commandes commencent par bash accueil.sh : $0 vaut accueil.sh. Avec ./accueil.sh, $0 vaudrait ./accueil.sh.</p></section>
+<div class="grid-two spaced"><section class="surface"><h3>Les arguments gardent leur frontière</h3><div class="code-block"><pre>echo "Nombre : $#"
+printf 'Argument : %s\n' "$@"</pre></div><div class="terminal spaced"><div class="terminal-body"><pre id="args-printf"></pre></div></div><p class="small-note">"$@" transmet chaque argument séparément. printf réutilise son format pour les arguments suivants. Avec zéro argument, ce format affiche malgré tout une ligne vide.</p></section><section class="surface"><span class="simulation">Lancement personnalisé · un argument</span><h3>Le robot connaît ton nom</h3><form id="greeting-form"><label for="visitor-name">Valeur du premier argument</label><input id="visitor-name" value="Sam Guillard" maxlength="70" autocomplete="off"><div class="button-row"><button class="primary" type="submit">Accueillir →</button></div></form><div class="terminal spaced"><div class="terminal-body"><pre id="custom-command"></pre></div></div><div class="result" id="custom-greeting" aria-live="polite"></div><p class="small-note">Le simulateur protège le nom pour en faire un seul argument. Vide le champ : le nom de secours visiteur prend le relais.</p></section></div>
+<div class="panel-bottom"><button class="secondary" data-go="debug">Et si le robot ne répond pas comme prévu ? →</button></div>
+</section>
+<section id="panel-debug" role="tabpanel" aria-labelledby="tab-debug" tabindex="0" hidden>
+<div class="section-head"><div><span class="eyebrow">Le banc de diagnostic</span><h2>Vérifier. Observer. Comprendre.</h2><p>Une syntaxe correcte ne garantit pas un résultat correct. Essaie les trois versions de la dernière ligne.</p></div><span class="pill">Erreurs sans risque</span></div>
+<section class="surface"><div class="mode-row"><button class="secondary" data-bug="ok" aria-pressed="true">Version correcte</button><button class="secondary" data-bug="quote" aria-pressed="false">Guillemet oublié</button><button class="secondary" data-bug="typo" aria-pressed="false">Commande mal écrite</button></div><div class="code-block"><pre id="bug-code">echo "Bienvenue $prenom sur $station."</pre></div><div class="button-row"><button class="secondary" id="syntax-check">bash -n accueil.sh</button><button class="primary" id="bug-run">bash accueil.sh Mila →</button></div><div class="terminal spaced"><div class="terminal-top"><i></i><i></i><i></i><span>Diagnostic simulé · messages résumés</span></div><div class="terminal-body"><pre id="bug-output" class="terminal-output">Vérifie la syntaxe, puis lance le script.</pre></div></div><div class="result" id="bug-feedback" aria-live="polite">-n lit la syntaxe sans exécuter les commandes. Une commande inconnue peut donc passer cette vérification.</div></section>
+<div class="grid-two spaced"><section class="surface"><span class="simulation">$? · la dernière commande seulement</span><h3>Attrape le code avant qu’il change</h3><p>Les boutons sont exécutés dans l’ordre de tes clics. Provoque un échec, capture le code, puis essaie echo.</p><div class="button-row"><button class="secondary" id="return-fail">ls dossier-inexistant-orion</button><button class="secondary" id="return-echo">echo "Test"</button><button class="secondary" id="return-capture">code=$?</button><button class="secondary" id="return-reset">Recommencer</button></div><div class="code-tray"><div class="return-orb" id="return-value">0</div><div><strong>Valeur actuelle de $?</strong><p class="small-note" id="captured-code">code n’a pas encore été affectée.</p></div></div><div class="result" id="return-feedback" aria-live="polite">Au départ, la commande précédente a réussi : $? vaut 0.</div><div class="note"><strong>À lire tout de suite.</strong> 0 signifie réussite selon les règles de la commande. Un autre code indique un échec ou un autre résultat, selon la commande.</div></section>
+<section class="surface"><span class="simulation">bash -x · pas à pas</span><h3>Regarde les valeurs se remplacer</h3><div class="code-block"><pre>bash -x accueil.sh "Mila Vega"</pre></div><ol class="trace-list" id="trace-list"><li data-trace="0">+ prenom='Mila Vega'<small>Le premier argument devient la valeur de prenom.</small></li><li data-trace="1">+ station=Orion<small>La variable station reçoit Orion.</small></li><li data-trace="2">+ echo 'Bienvenue Mila Vega sur Orion.'<small>La trace montre la commande après expansion.</small></li><li data-trace="3">Bienvenue Mila Vega sur Orion.<small>Cette ligne est la sortie normale de echo.</small></li></ol><div class="result" id="trace-feedback" aria-live="polite">0 / 4 — Avance pour découvrir la trace du script correct.</div><div class="button-row"><button class="primary" id="trace-next">Ligne suivante →</button><button class="secondary" id="trace-reset">Recommencer</button></div><p class="small-note">Les lignes avec + sont la trace, envoyée sur la sortie d’erreur ; le message d’accueil est la sortie normale. Les commentaires et le shebang n’y sont pas exécutés comme des commandes.</p></section></div>
+<div class="panel-bottom"><button class="secondary" data-go="mission">Le robot est prêt : à toi de prendre les commandes →</button></div>
+</section>
+<section id="panel-mission" role="tabpanel" aria-labelledby="tab-mission" tabindex="0" hidden>
+<div class="section-head"><div><span class="eyebrow">Mission Orion · robot d’accueil</span><h2>Du simulateur à ton terminal.</h2><p>Vérifie tes repères, puis programme le vrai robot dans ta VM Debian.</p></div><span class="pill">20 questions + un TP</span></div>
+<div class="grid-two"><section class="surface destination-card"><span class="mini-label">Le quiz du chapitre</span><h3>Tester tes réflexes</h3><p>Shebang, arguments, permissions et diagnostic : chaque réponse t’aide à comprendre ce qui se passe.</p><a href="https://kayasam.github.io/linux-initiation/bash/cours/quiz/03-bases-du-scripting.html">Ouvrir le quiz en pleine page →</a></section><section class="surface destination-card"><span class="mini-label">TP 03 · dans Debian</span><h3>Programmer le robot d’accueil</h3><p>Écris accueil.sh, personnalise le message et vérifie ses réactions avec plusieurs arguments.</p><a href="https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/tp">Ouvrir le TP 03 →</a></section></div>
+<section class="surface spaced"><span class="mini-label">Un dernier défi avant le TP</span><h3>Tu lances bash accueil.sh "poste radio" Orion. Que contient $1 ?</h3><div class="button-row"><button class="secondary" data-challenge="poste">poste</button><button class="secondary" data-challenge="correct">poste radio</button><button class="secondary" data-challenge="orion">Orion</button></div><div class="result" id="challenge-feedback" aria-live="polite">Choisis une réponse. Les guillemets sont ton indice.</div></section>
+<div class="mission-points"><div class="mission-point"><b>01</b><strong>Créer</strong><br><span>Ton fichier dans ~/atelier-bash/scripts.</span></div><div class="mission-point"><b>02</b><strong>Essayer</strong><br><span>Un nom, plusieurs mots, aucun nom.</span></div><div class="mission-point"><b>03</b><strong>Observer</strong><br><span>La sortie, le code de retour et la trace.</span></div></div>
+<iframe class="quiz-frame" id="chapter-quiz" data-quiz-src="https://kayasam.github.io/linux-initiation/bash/cours/quiz/03-bases-du-scripting.html" title="Quiz Bash 03 — Écrire son premier script"></iframe>
+</section>
+<footer class="footer"><span>Bash 03 · Ton premier script · Ateliers simulés</span><a href="https://kayasam.github.io/linux-initiation/bash/cours/04-tests-et-conditions-interactif.html">Chapitre suivant : tests et conditions →</a></footer>
+<noscript><div class="noscript">Active JavaScript pour manipuler les ateliers. Le <a href="https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/">cours Markdown</a> et le <a href="https://kayasam.github.io/linux-initiation/bash/cours/quiz/03-bases-du-scripting.html">quiz</a> restent accessibles.</div></noscript>
+</main>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id),all=selector=>[...document.querySelectorAll(selector)];
+function pressed(selector,button){all(selector).forEach(b=>b.setAttribute('aria-pressed',String(b===button)))}
+const tabs=all('[data-tab]');
+function openTab(key,focus=false){tabs.forEach(b=>{const active=b.dataset.tab===key;b.setAttribute('aria-selected',String(active));b.tabIndex=active?0:-1;$(b.getAttribute('aria-controls')).hidden=!active;if(active&&focus)b.focus()});if(key==='mission'&&!$('chapter-quiz').getAttribute('src'))$('chapter-quiz').src=$('chapter-quiz').dataset.quizSrc}
+tabs.forEach((b,i)=>{b.addEventListener('click',()=>openTab(b.dataset.tab));b.addEventListener('keydown',e=>{const n=e.key==='ArrowRight'?(i+1)%tabs.length:e.key==='ArrowLeft'?(i+tabs.length-1)%tabs.length:e.key==='Home'?0:e.key==='End'?tabs.length-1:null;if(n!==null){e.preventDefault();openTab(tabs[n].dataset.tab,true)}})});
+all('[data-go]').forEach(b=>b.addEventListener('click',()=>{openTab(b.dataset.go,true);$('tab-'+b.dataset.go).scrollIntoView({block:'nearest'})}));
+function syncFrame(){const f=$('chapter-quiz');f.contentWindow?.postMessage({type:'linux-theme',theme:document.documentElement.dataset.theme},location.protocol==='file:'?'*':location.origin)}
+function setTheme(theme){document.documentElement.dataset.theme=theme;$('theme-switch').textContent=theme==='dark'?'Passer au thème clair':'Passer au thème sombre';syncFrame()}
+let theme;try{theme=localStorage.getItem('theme')}catch{}setTheme(theme==='dark'||theme==='light'?theme:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+$('theme-switch').addEventListener('click',()=>{const next=document.documentElement.dataset.theme==='dark'?'light':'dark';setTheme(next);try{localStorage.setItem('theme',next)}catch{}});$('chapter-quiz').addEventListener('load',syncFrame);
+const lines={
+shebang:{role:'Le shebang',title:'Quel interpréteur doit lire le fichier ?',text:'Lors d’un lancement direct avec ./accueil.sh, cette première ligne demande Bash. /usr/bin/env le recherche dans PATH.',example:'./accueil.sh Mila\n→ Bash lit les commandes du fichier.',note:'Tout en haut : le shebang se place sur la première ligne. Avec bash accueil.sh, tu as déjà choisi Bash.'},
+comment:{role:'Pour la personne qui lit',title:'Une note qui ne s’exécute pas.',text:'Cette ligne commence par #. Bash l’ignore : elle explique l’intention du programme à celle ou celui qui le relira.',example:'# Un nom peut etre fourni au lancement.\n→ Aucun message affiché.',note:'Le commentaire explique pourquoi. La commande echo, elle, produit un message à l’exécution.'},
+argument:{role:'Le premier argument',title:'Un nom, ou un nom de secours.',text:'$1 désigne le premier argument reçu. ${1:-visiteur} fournit visiteur si cet argument est absent ou vide.',example:'bash accueil.sh "Mila Vega"\n→ prenom reçoit Mila Vega\n\nbash accueil.sh\n→ prenom reçoit visiteur',note:'Comme au chapitre 02, :- fournit un défaut. Ici, la valeur obtenue est ensuite affectée à prenom.'},
+variable:{role:'Une valeur fixe',title:'La station garde son nom.',text:'station="Orion" affecte le texte Orion. Pas de $ à l’affectation, pas d’espace autour de = : les repères du chapitre 02 restent valables.',example:'station="Orion"\n→ $station donnera Orion à la lecture.',note:'Le script crée sa propre variable. Elle ne modifie pas une variable station présente dans le shell qui le lance.'},
+output:{role:'La réponse du robot',title:'Les variables deviennent un message.',text:'Bash remplace $prenom et $station par leurs valeurs. Les guillemets doubles gardent la phrase en un seul argument pour echo.',example:'echo "Bienvenue $prenom sur $station."\n→ Bienvenue Mila sur Orion.',note:'echo affiche le message puis un retour à la ligne. Le $ sert à lire les valeurs définies plus haut.'}
+};
+all('[data-line]').forEach(b=>b.addEventListener('click',()=>{pressed('[data-line]',b);const l=lines[b.dataset.line];$('line-role').textContent=l.role;$('line-title').textContent=l.title;$('line-explanation').textContent=l.text;$('line-example').textContent=l.example;$('line-note').textContent=l.note}));
+let nano=0;function renderNano(){const states=['Modifié · pas encore enregistré','Enregistrement · confirmer le nom accueil.sh','Enregistré · toujours dans nano','Enregistré · retour au terminal'];const tips=['Le texte est dans l’éditeur. Commence par Ctrl+O.','Nano propose accueil.sh : Entrée confirme le nom.','Le fichier est écrit sur disque. Ctrl+X quitte l’éditeur.','Le fichier reste sur disque. Tu peux maintenant le vérifier et le lancer.'];$('nano-state').textContent=states[nano];$('nano-feedback').textContent=(nano+1)+' / 4 — '+tips[nano];$('nano-save').disabled=nano!==0;$('nano-enter').disabled=nano!==1;$('nano-exit').disabled=nano!==2}
+$('nano-save').addEventListener('click',()=>{nano=1;renderNano()});$('nano-enter').addEventListener('click',()=>{nano=2;renderNano()});$('nano-exit').addEventListener('click',()=>{nano=3;renderNano()});$('nano-reset').addEventListener('click',()=>{nano=0;renderNano()});renderNano();
+let executable=false;function permission(){$('permission-status').textContent=executable?'Lisible · exécutable ✓':'Lisible · non exécutable';$('permission-status').className=executable?'on':'off';$('chmod-button').disabled=executable}
+$('chmod-button').addEventListener('click',()=>{executable=true;permission();$('launch-feedback').textContent='Le droit x est ajouté. Il s’appliquera au prochain lancement direct. Relance ./accueil.sh Mila.'});
+all('[data-run]').forEach(b=>b.addEventListener('click',()=>{const direct=b.dataset.run==='direct',ok=!direct||executable;$('launch-output').textContent='$ '+(direct?'./':'bash ')+'accueil.sh Mila\n'+(ok?'Bienvenue Mila sur Orion.\n\nCode de retour : 0':'Permission refusée\n\nCode de retour : 126');$('launch-feedback').textContent=ok?(direct?'Le fichier est exécutable. ./ désigne le fichier courant ; le shebang demande Bash.':'Bash lit le fichier. Le droit d’exécution sur accueil.sh n’est pas nécessaire ici.'):'Le fichier est trouvé, mais il n’a pas le droit x. Ajoute ce droit avec chmod +x, puis relance.'}));
+$('launch-reset').addEventListener('click',()=>{executable=false;permission();$('launch-output').textContent='Choisis un mode de lancement.';$('launch-feedback').textContent='Le fichier simulé est à nouveau non exécutable. Compare bash accueil.sh et ./accueil.sh.'});permission();
+all('[data-path]').forEach(b=>b.addEventListener('click',()=>{$('path-feedback').textContent=b.dataset.path==='dot'?'./accueil.sh désigne le fichier du dossier courant. Pour ce lancement direct, il faut aussi le droit x.':'Sans /, Bash cherche accueil.sh dans PATH. Dans cet exemple, le dossier courant n’y est pas : commande introuvable.'}));
+const ARGUMENTS={none:{cmd:'bash accueil.sh',args:[],text:'Aucun argument : $# vaut 0. $1 est absent ; le robot utilise visiteur.'},quoted:{cmd:'bash accueil.sh "Mila Vega" pilote',args:['Mila Vega','pilote'],text:'Deux arguments. Les guillemets gardent Mila Vega ensemble ; pilote arrive dans $2.'},bare:{cmd:'bash accueil.sh Mila Vega pilote',args:['Mila','Vega','pilote'],text:'Trois arguments. Sans guillemets, Mila et Vega sont séparés. Le robot ne lit que $1 : il accueille Mila.'},empty:{cmd:'bash accueil.sh "" pilote',args:['','pilote'],text:'Deux arguments, dont le premier est vide. Il existe bien, mais :- choisit visiteur quand sa valeur est vide.'}};
+function renderArgs(key){const a=ARGUMENTS[key];$('args-command').textContent=a.cmd;$('arg-first').textContent=a.args.length?(a.args[0]||'(chaîne vide)'):'(absent)';$('arg-second').textContent=a.args.length>1?a.args[1]:'(absent)';$('arg-count').textContent=a.args.length;$('arg-tokens').replaceChildren(...a.args.map((text,i)=>{const e=document.createElement('span');e.className='token';e.textContent=(i+1)+': '+(text||'(vide)');return e}));if(!a.args.length){const e=document.createElement('span');e.className='small-note';e.textContent='Aucun argument à transmettre';$('arg-tokens').append(e)}$('greeting').textContent='Bienvenue '+(a.args[0]||'visiteur')+' sur Orion.';$('args-feedback').textContent=a.text;$('args-printf').textContent='Nombre : '+a.args.length+'\n'+(a.args.length?a.args:['']).map(v=>'Argument : '+v).join('\n')}
+all('[data-args]').forEach(b=>b.addEventListener('click',()=>{pressed('[data-args]',b);renderArgs(b.dataset.args)}));renderArgs('quoted');
+// A value becomes one literal argument. No user input is evaluated.
+function quoteLiteral(s){return "'"+s.replaceAll("'","'\\''")+"'"}
+function customGreeting(){const name=$('visitor-name').value;$('custom-command').textContent='bash accueil.sh '+quoteLiteral(name);$('custom-greeting').textContent='Bienvenue '+(name||'visiteur')+' sur Orion.'}
+$('greeting-form').addEventListener('submit',e=>{e.preventDefault();customGreeting()});customGreeting();
+let bug='ok';const BUGS={ok:'echo "Bienvenue $prenom sur $station."',quote:'echo "Bienvenue $prenom sur $station.',typo:'echor "Bienvenue $prenom sur $station."'};
+all('[data-bug]').forEach(b=>b.addEventListener('click',()=>{pressed('[data-bug]',b);bug=b.dataset.bug;$('bug-code').textContent=BUGS[bug];$('bug-output').textContent='Version sélectionnée. Vérifie la syntaxe, puis lance le script.';$('bug-feedback').textContent='Le même fichier contient les affectations de prenom et station. Seule la dernière ligne change.'}));
+$('syntax-check').addEventListener('click',()=>{const bad=bug==='quote';$('bug-output').textContent='$ bash -n accueil.sh\n'+(bad?'Erreur de syntaxe : guillemet double non fermé.\nCode : 2':'(Aucune sortie)\nCode : 0');$('bug-feedback').textContent=bad?'Bash trouve une erreur avant exécution. Ferme le guillemet.':'La syntaxe est acceptée. -n n’a exécuté aucune commande : essaie maintenant le lancement pour vérifier le comportement.'});
+$('bug-run').addEventListener('click',()=>{$('bug-output').textContent='$ bash accueil.sh Mila\n'+(bug==='quote'?'Erreur de syntaxe : guillemet double non fermé.\nCode : 2':bug==='typo'?'echor : commande introuvable\nCode : 127':'Bienvenue Mila sur Orion.\nCode : 0');$('bug-feedback').textContent=bug==='typo'?'echor a une syntaxe valide, mais ce nom de commande n’existe pas dans notre simulation. C’est une erreur à l’exécution, pas une erreur de syntaxe.':bug==='quote'?'Le message d’accueil ne s’exécute pas : il manque le guillemet de fin.':'Le script affiche le message attendu. Sa dernière commande réussit : le code de retour du script vaut 0.'});
+let last=0,captured=null;function showReturn(message){$('return-value').textContent=last;$('return-value').className='return-orb'+(last!==0?' error':'');$('captured-code').textContent=captured===null?'code n’a pas encore été affectée.':'Valeur conservée dans code : '+captured;$('return-feedback').textContent=message}
+$('return-fail').addEventListener('click',()=>{last=2;showReturn('ls échoue : dans cet exemple Debian, son code est 2. $? vaut maintenant 2. Capture-le avant de lancer une autre commande.')});
+$('return-echo').addEventListener('click',()=>{last=0;showReturn('echo affiche Test et réussit. $? vaut maintenant 0 : le code précédent est remplacé.')});
+$('return-capture').addEventListener('click',()=>{captured=last;last=0;showReturn('code=$? conserve '+captured+' dans code. Cette affectation réussit elle-même : $? vaut ensuite 0, tandis que code garde '+captured+'.')});
+$('return-reset').addEventListener('click',()=>{last=0;captured=null;showReturn('Au départ, la commande précédente a réussi : $? vaut 0.')});
+let trace=0;const traceExplanations=['Avance pour découvrir la trace du script correct.','Le premier argument Mila Vega est affecté à prenom. Les guillemets affichés dans la trace regroupent la valeur.','La station reçoit Orion. Les affectations ne produisent pas de sortie normale.','Les variables sont remplacées avant echo. Le + permet de reconnaître la ligne de trace.','La commande affiche le message. Cette dernière ligne n’a pas de + : c’est le résultat, pas la trace.'];
+function renderTrace(){all('[data-trace]').forEach(e=>{const i=Number(e.dataset.trace);e.hidden=i>=trace;e.className=i===trace-1?'active':i<trace?'done':''});$('trace-feedback').textContent=trace+' / 4 — '+traceExplanations[trace];$('trace-next').disabled=trace===4;$('trace-next').textContent=trace===4?'Trace terminée':'Ligne suivante →'}
+$('trace-next').addEventListener('click',()=>{trace=Math.min(4,trace+1);renderTrace()});$('trace-reset').addEventListener('click',()=>{trace=0;renderTrace()});renderTrace();
+all('[data-challenge]').forEach(b=>b.addEventListener('click',()=>{$('challenge-feedback').textContent=b.dataset.challenge==='correct'?'Bien vu ! $1 contient poste radio, en un seul argument. $2 contient Orion et $# vaut 2.':'Observe les guillemets : poste radio forme un seul argument et arrive dans $1. Orion est le deuxième argument.'}));
+})();
+</script></body></html>

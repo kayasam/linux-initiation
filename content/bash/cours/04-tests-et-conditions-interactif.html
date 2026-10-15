@@ -1,235 +1,127 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Chapitre 04 — Les tests et les conditions — Bash débutant</title><style>
-:root{color-scheme:light;--bg:#f4f7fa;--surface:#fff;--text:#172c3c;--text-dim:#455c6d;--accent:#176e78;--border:#c7d6df;--code-bg:#edf3f7;--ink:var(--text);--muted:var(--text-dim);--line:var(--border);--code:var(--code-bg)}
-@media(prefers-color-scheme:dark){:root{color-scheme:dark;--bg:#0e1921;--surface:#172630;--text:#edf6fc;--text-dim:#b9cdd9;--accent:#81d9d9;--border:#405864;--code-bg:#10202a}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.75 'Segoe UI',system-ui,sans-serif}main{max-width:920px;margin:auto;padding:30px 34px 70px;background:var(--surface)}a{color:var(--accent);text-underline-offset:3px}h1{font-size:2.2rem;line-height:1.2;margin:.5em 0 1em}h2{margin:2.3em 0 .7em;padding-top:.5em;border-top:1px solid var(--line);font-size:1.45rem;line-height:1.35}h3{font-size:1.15rem}p,ul,ol{margin:.8em 0}li{margin:.3em 0}code{font-family:'Cascadia Code',Consolas,monospace;font-size:.94em;background:var(--code);padding:.12em .3em;border-radius:4px}pre{padding:18px 20px;background:var(--code);border:1px solid var(--line);border-radius:10px;overflow-x:auto;line-height:1.6}pre code{padding:0;background:transparent;white-space:pre}table{display:block;overflow:auto;border-collapse:collapse;width:100%;margin:1em 0;font-size:.94em}th,td{text-align:left;padding:10px 13px;border-bottom:1px solid var(--line)}th{background:var(--code)}img{display:block;max-width:100%;height:auto;margin:1.4em auto;border-radius:12px}aside{border-left:4px solid var(--accent);padding:12px 18px;background:var(--code);border-radius:0 8px 8px 0;margin:1.2em 0}aside.warning{border-color:#b87913}aside p{margin:.3em 0}.lesson-nav{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;padding:12px 0 22px;font-size:.9rem}.lesson-nav a{font-weight:650}.chapter-label{color:var(--muted);font-size:.83rem;font-weight:700;letter-spacing:.06em}summary{cursor:pointer;font-weight:650}details.toc{border:1px solid var(--line);border-radius:8px;padding:12px 18px;margin-bottom:25px}details.toc ul{margin:.4em 0}hr{border:0;border-top:1px solid var(--line);margin:2em 0}.table-wrap{overflow:auto}@media(max-width:620px){body{font-size:17px}main{padding:20px 18px 45px}h1{font-size:1.8rem}pre{padding:12px}}
+<html lang="fr" data-theme="light"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Contrôle le sas d’Orion : branchements if, tests de texte et d’entiers, billets simulés, gardes, case et logique. Un complément interactif au cours Bash 04.">
+<title>Tests et conditions · Bash 04</title>
+<!-- bash-chapter04-interactive · compagnon conçu à la main -->
+<style>:root{color-scheme:light;--bg:#f5f5fb;--surface:#fff;--surface2:#eef1f7;--text:#182d3e;--dim:#455d70;--border:#b5bfce;--violet:#6940bd;--tint:#eeebfa;--mint:#087465;--mint-bg:#e7f6f1;--amber:#925500;--amber-bg:#fff4dd;--blue:#245db7;--blue-bg:#eaf1ff;--shadow:0 16px 45px #23314a09;--terminal:#132232;--terminal-text:#e7f3fc;--terminal-mint:#93e5ca;--accent:var(--violet)}
+html[data-theme=dark]{color-scheme:dark;--bg:#101827;--surface:#192638;--surface2:#223249;--text:#edf4ff;--dim:#bacce0;--border:#566a85;--violet:#c4a4ff;--tint:#302a49;--mint:#80dec6;--mint-bg:#163b36;--amber:#ffcb77;--amber-bg:#42341c;--blue:#9dbfff;--blue-bg:#203456;--shadow:0 16px 45px #0002;--terminal:#0c1725}
+*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.7 'Segoe UI',system-ui,sans-serif}button{font:inherit;cursor:pointer}button:disabled{cursor:default;opacity:.6}a{color:var(--violet);text-underline-offset:4px}button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--violet);outline-offset:4px}h1,h2,h3,p,figure{margin:0}h1,h2,h3{line-height:1.18}p+p{margin-top:.7rem}code,kbd,pre{font-family:'Cascadia Code',Consolas,monospace}code{background:var(--surface2);border-radius:5px;padding:.12em .35em;font-size:.91em}pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:0;font-size:.87rem;line-height:1.85}pre code{padding:0;background:none;font-size:inherit}ul{padding-left:1.25rem}.wrap{max-width:1180px;margin:auto;padding:0 28px}.toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;padding:20px 0 0;font-size:.78rem}.toolbar a{text-decoration:none}.secondary{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:10px;padding:9px 14px;font-weight:650;font-size:.83rem}.primary{border:0;background:var(--violet);color:#fff;border-radius:10px;padding:11px 18px;font-size:.88rem;font-weight:750}html[data-theme=dark] .primary{color:#1b1530}.eyebrow{text-transform:uppercase;font-size:.69rem;letter-spacing:.16em;font-weight:800;color:var(--violet)}.hero{display:grid;grid-template-columns:1fr 310px;align-items:center;gap:2rem;padding:35px 0 30px}.hero h1{font-size:clamp(2.1rem,5vw,3.6rem);letter-spacing:-.05em;margin:.75rem 0 1rem}.hero h1 em{color:var(--violet);font-style:normal}.hero p{max-width:59ch;color:var(--dim);font-size:1.02rem}.chapter-tabs{display:flex;gap:6px;padding:6px;background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow-x:auto;margin-bottom:27px;box-shadow:var(--shadow)}.chapter-tabs button{flex:1;white-space:nowrap;border:0;background:none;border-radius:11px;color:var(--dim);font-size:.88rem;font-weight:700;padding:12px 15px}.chapter-tabs button[aria-selected=true]{color:var(--violet);background:var(--tint)}.tab-number{opacity:.65;margin-right:7px;font-size:.75rem}.section-head{display:flex;justify-content:space-between;align-items:end;gap:1rem;margin:0 0 20px}.section-head h2{font-size:1.55rem;letter-spacing:-.025em;margin:5px 0}.section-head p{color:var(--dim);font-size:.9rem;max-width:65ch}.pill{border:1px solid var(--border);border-radius:30px;padding:6px 12px;font-size:.73rem;white-space:nowrap;color:var(--dim)}.terminal{background:var(--terminal);color:var(--terminal-text);border-radius:14px;overflow:hidden}.terminal-top{display:flex;align-items:center;gap:6px;padding:11px 15px;border-bottom:1px solid #ffffff16;color:#c8d7e6;font-size:.68rem}.terminal-top i{width:7px;height:7px;border-radius:50%;background:#91a2b4;display:inline-block}.terminal-top span{margin-left:auto}.terminal-body{padding:18px 21px}.terminal code{background:none;color:inherit}.prompt{color:var(--terminal-mint)}.terminal-label{font-size:.72rem;color:var(--dim);margin-bottom:8px}.grid-two{display:grid;grid-template-columns:1fr 1fr;gap:20px}.surface{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px;box-shadow:var(--shadow);min-width:0}.surface h3{font-size:1.15rem;margin:0 0 10px}.surface>p,.muted{color:var(--dim)}.surface>p{font-size:.9rem}.spaced{margin-top:24px}.note{border-left:3px solid var(--mint);padding:13px 17px;background:var(--mint-bg);border-radius:0 12px 12px 0;margin-top:17px;font-size:.87rem}.note strong{color:var(--mint)}.warning{background:var(--amber-bg);border-color:var(--amber)}.warning strong{color:var(--amber)}.result{min-height:55px;font-size:.9rem;margin-top:12px;padding:12px 15px;border-radius:11px;background:var(--surface2);overflow-wrap:anywhere}.button-row,.mode-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}.mode-row{margin-bottom:16px}.mode-row button[aria-pressed=true],.button-row button[aria-pressed=true]{background:var(--tint);border-color:var(--violet);color:var(--violet)}.step-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:20px}.step-card{border:1px solid var(--border);border-radius:17px;padding:20px;background:var(--surface);text-align:left;color:var(--text)}.step-card[aria-pressed=true]{background:var(--tint);border-color:var(--violet)}.step-card strong{display:block;margin:10px 0 5px}.step-card small{display:block;color:var(--dim);font-size:.8rem}.code-block{margin-top:15px;padding:17px 19px;background:var(--surface2);border-radius:12px}.timeline{display:flex;gap:7px;margin:19px 0}.timeline span{height:5px;border-radius:5px;background:var(--surface2);flex:1}.timeline span.active{background:var(--violet)}.mini-label,.simulation{font-size:.69rem;text-transform:uppercase;letter-spacing:.1em;font-weight:750;color:var(--dim)}.simulation{color:var(--mint)}.small-note{font-size:.8rem;color:var(--dim);margin-top:12px}.footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:15px;margin:35px 0 24px;padding-top:22px;border-top:1px solid var(--border);font-size:.8rem;color:var(--dim)}.quiz-frame{width:100%;height:1100px;border:1px solid var(--border);border-radius:18px;background:var(--surface);margin-top:22px}.destination-card{display:flex;flex-direction:column;gap:12px}.destination-card a{font-weight:750;margin-top:auto}.panel-bottom{margin:24px 0}.panel-bottom button{width:100%}.noscript{padding:20px;background:var(--amber-bg)}label{display:block;font-size:.85rem;font-weight:650;margin:14px 0 6px}input,select{font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;width:100%;max-width:100%}.tokens{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}.token{padding:9px 14px;border-radius:12px;background:var(--tint);border:1px solid var(--violet);color:var(--violet);font-family:Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%}
+@media(max-width:850px){.hero{grid-template-columns:1fr 210px}.chapter-tabs button{padding:12px 14px}}@media(max-width:620px){.wrap{padding:0 17px}.hero{grid-template-columns:1fr;padding:26px 0 24px;gap:20px}.hero-visual{display:none}.hero h1{font-size:2.3rem}.grid-two,.step-grid{grid-template-columns:1fr}.section-head{align-items:start}.section-head h2{font-size:1.4rem}.pill{white-space:normal;font-size:.68rem}.surface{padding:20px}.chapter-tabs{margin-bottom:24px}.toolbar{font-size:.7rem}.terminal-body{padding:16px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+
+.hero-visual{position:relative;padding:15px}.hero-visual svg{width:100%;display:block}.hero-stamp{position:absolute;right:0;top:0;background:var(--mint-bg);border:1px solid var(--mint);color:var(--mint);font:700 .75rem Consolas,monospace;padding:7px 12px;border-radius:12px;transform:rotate(5deg)}.chapter-tabs{position:sticky;top:8px;z-index:2}.chapter-tabs button{padding:12px 11px;font-size:.81rem}.fork{max-width:600px;margin:auto;text-align:center}.test-node{background:var(--tint);border:2px solid var(--violet);border-radius:18px;padding:17px;max-width:360px;margin:20px auto 0}.test-node code{background:none;color:var(--violet)}.fork-connector{height:25px;width:2px;background:var(--border);margin:auto}.fork-branches{display:grid;grid-template-columns:1fr 1fr;gap:18px;position:relative;border-top:2px solid var(--border);padding-top:18px}.branch{border:1px solid var(--border);background:var(--surface2);border-radius:15px;padding:18px;text-align:left;opacity:.55;transition:opacity .2s,transform .2s}.branch.active{opacity:1;border:2px solid var(--mint);padding:17px;background:var(--mint-bg);transform:translateY(-3px)}.branch.reject.active{border-color:var(--amber);background:var(--amber-bg)}.branch small{display:block;color:var(--dim);font-size:.72rem;margin-bottom:8px}.branch strong{font-size:.98rem}.stage-chip{display:inline-block;border:1px solid var(--border);border-radius:20px;padding:4px 12px;color:var(--dim);font-size:.74rem}.code-orb{display:grid;place-items:center;width:65px;height:65px;border-radius:50%;background:var(--mint-bg);border:2px solid var(--mint);font:700 1.8rem Consolas,monospace;color:var(--mint);flex-shrink:0}.code-orb.fail{background:var(--amber-bg);border-color:var(--amber);color:var(--amber)}.code-row{display:flex;align-items:center;gap:16px;margin:20px 0}.energy-track{height:16px;background:var(--surface2);border-radius:20px;overflow:hidden;margin:15px 0}.energy-track span{display:block;height:100%;background:var(--mint);transition:width .2s}.mission-branches{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}.mission-branch{padding:15px 12px;border:1px solid var(--border);border-radius:13px;font-size:.8rem;background:var(--surface2)}.mission-branch code{display:block;padding:0;background:none;margin-bottom:5px}.mission-branch.active{border:2px solid var(--violet);padding:14px 11px;background:var(--tint);color:var(--violet)}.mission-branch small{display:block;font-size:.7rem;color:var(--dim);margin-top:7px}.specimen{padding:20px;border:1px solid var(--border);background:var(--surface2);border-radius:15px;min-height:150px;margin:15px 0}.specimen strong{display:block;margin-bottom:8px}.specimen pre{white-space:pre-wrap}.test-buttons{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.test-buttons button[aria-pressed=true]{color:var(--violet);background:var(--tint);border-color:var(--violet)}.channel{font-size:.7rem;font-weight:750;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin:15px 0 8px}.channel.error{color:var(--amber)}.stream{min-height:70px}.pipeline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:20px 0}.guard-step{border:1px solid var(--border);border-radius:13px;padding:15px;background:var(--surface2);font-size:.82rem;opacity:.55}.guard-step b{display:block;color:var(--violet);margin-bottom:5px}.guard-step.current{border:2px solid var(--violet);padding:14px;opacity:1;background:var(--tint)}.guard-step.done{opacity:1;border-color:var(--mint);background:var(--mint-bg)}.guard-step.stop{opacity:1;border-color:var(--amber);background:var(--amber-bg)}.guard-step small{display:block;margin-top:7px;color:var(--dim);font-size:.72rem}.case-branches{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.case-branch{padding:17px;border:1px solid var(--border);border-radius:14px;background:var(--surface2);opacity:.55}.case-branch.active{opacity:1;border:2px solid var(--violet);padding:16px;background:var(--tint)}.case-branch code{display:block;padding:0;background:none;color:var(--violet)}.case-branch small{display:block;color:var(--dim);font-size:.8rem;margin-top:8px}.logic-lights{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.logic-light{border:1px solid var(--border);border-radius:12px;padding:10px 13px;background:var(--surface2);font-size:.8rem}.logic-light.pass{color:var(--mint);background:var(--mint-bg);border-color:var(--mint)}.logic-light.fail{color:var(--amber);background:var(--amber-bg);border-color:var(--amber)}.terminal-body pre{min-height:35px}select{font-size:.9rem}.form-row{display:grid;grid-template-columns:1fr auto;align-items:end;gap:10px}.note code{background:transparent}.decision-code{min-height:145px}
+@media(max-width:850px){.pipeline{grid-template-columns:1fr 1fr}}@media(max-width:620px){.chapter-tabs{position:static}.hero-visual{display:none}.mission-branches,.case-branches{grid-template-columns:1fr}.pipeline{grid-template-columns:1fr 1fr}.fork-branches{gap:10px}.branch{padding:13px}.branch.active{padding:12px}.branch strong{font-size:.85rem}.form-row{grid-template-columns:1fr}.guard-step{padding:12px}.guard-step.current{padding:11px}}
 .bash-site-nav{display:flex;justify-content:space-between;gap:1rem;padding:1rem;flex-wrap:wrap}.bash-site-nav a{color:var(--accent);font-weight:700}
-</style><link rel="stylesheet" href="../../assets/themes/theme.css"><script src="../../assets/themes/theme.js"></script></head><body><nav class="bash-site-nav"><a href="https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/">← Cours Markdown</a><a href="https://kayasam.github.io/linux-initiation/#bash">Parcours Bash →</a></nav><main><nav class="lesson-nav" aria-label="Parcours"><a href="https://kayasam.github.io/linux-initiation/bash/cours/03-bases-du-scripting-interactif.html">← Chapitre précédent</a><a href="https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/">Cours Markdown</a><a href="https://kayasam.github.io/linux-initiation/bash/cours/quiz/04-tests-et-conditions.html">Quiz — 20 questions</a><a href="https://kayasam.github.io/linux-initiation/bash/cours/05-boucles-interactif.html">Chapitre suivant →</a></nav><p class="chapter-label">BASH · CHAPITRE 04 / 06</p><details class="toc"><summary>Sommaire du chapitre</summary><div class="toc">
-<ul>
-<li><a href="#chapitre-04-les-tests-et-les-conditions">Chapitre 04 — Les tests et les conditions</a><ul>
-<li><a href="#a-connaitre-if-then-else-elif-fi-case-exit">À connaître : if, then, else, elif, fi, [[ ... ]], case, exit.</a></li>
-<li><a href="#1-une-question-avec-deux-chemins">1. Une question avec deux chemins</a></li>
-<li><a href="#2-comparer-du-texte">2. Comparer du texte</a></li>
-<li><a href="#3-comparer-des-entiers">3. Comparer des entiers</a></li>
-<li><a href="#4-tester-un-fichier">4. Tester un fichier</a></li>
-<li><a href="#5-reagir-au-resultat-dune-commande">5. Réagir au résultat d'une commande</a></li>
-<li><a href="#6-verifier-les-arguments-avant-de-les-utiliser">6. Vérifier les arguments avant de les utiliser</a></li>
-<li><a href="#7-choisir-parmi-plusieurs-mots-avec-case">7. Choisir parmi plusieurs mots avec case</a></li>
-<li><a href="#8-combiner-deux-verifications">8. Combiner deux vérifications</a></li>
-<li><a href="#a-retenir">À retenir</a></li>
-</ul>
-</li>
-</ul>
-</div>
-</details><h1 id="chapitre-04-les-tests-et-les-conditions">Chapitre 04 — Les tests et les conditions</h1>
-<aside class="note">
-<p><strong>Objectif</strong></p>
-<p>Faire prendre une décision à ton script : continuer, choisir une action ou expliquer pourquoi il s'arrête.</p>
-</aside>
-<h2 id="a-connaitre-if-then-else-elif-fi-case-exit"><strong>À connaître :</strong> <code>if</code>, <code>then</code>, <code>else</code>, <code>elif</code>, <code>fi</code>, <code>[[ ... ]]</code>, <code>case</code>, <code>exit</code>.</h2>
-<h2 id="1-une-question-avec-deux-chemins">1. Une question avec deux chemins</h2>
-<p><img alt="Un test choisit entre deux actions" src="https://kayasam.github.io/linux-initiation/bash/images/bash-04-condition.svg" /></p>
-<p>Un test a un résultat : vrai ou faux. <code>if</code> exécute le premier bloc lorsque le test réussit ; sinon, il peut exécuter le bloc <code>else</code>.</p>
-<pre><code class="language-bash">energie=30
-if [[ &quot;$energie&quot; -ge 20 ]]; then
-    echo 'Depart autorise'
-else
-    echo 'Recharge necessaire'
-fi
-</code></pre>
-<p>Résultat : <code>Depart autorise</code>. Avec <code>energie=10</code>, tu prendrais l'autre chemin.</p>
-<p>Dans ce cours, nous utilisons <code>[[ ... ]]</code>, une syntaxe de <strong>Bash</strong>. Garde les espaces après <code>[[</code> et avant <code>]]</code>. <code>then</code> ouvre le bloc et <code>fi</code> ferme le <code>if</code>. L'indentation de quatre espaces rend les branches visibles.</p>
-<h2 id="2-comparer-du-texte">2. Comparer du texte</h2>
-<pre><code class="language-bash">destination=&quot;Orion&quot;
-if [[ &quot;$destination&quot; == &quot;Orion&quot; ]]; then
-    echo 'Bonne destination'
-else
-    echo 'Verifier le billet'
-fi
-</code></pre>
-<table>
-<thead>
-<tr>
-<th>Test</th>
-<th>Question posée</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>[[ "$nom" == "Mila" ]]</code></td>
-<td>La valeur est-elle exactement <code>Mila</code> ?</td>
-</tr>
-<tr>
-<td><code>[[ "$nom" != "Mila" ]]</code></td>
-<td>Est-elle différente de <code>Mila</code> ?</td>
-</tr>
-<tr>
-<td><code>[[ -z "$nom" ]]</code></td>
-<td>La chaîne est-elle vide ?</td>
-</tr>
-<tr>
-<td><code>[[ -n "$nom" ]]</code></td>
-<td>Contient-elle au moins un caractère ?</td>
-</tr>
-</tbody>
-</table>
-<p>Le signe <code>=</code> d'une affectation n'est pas un test. <code>nom="Mila"</code> change la variable ; le test vérifie sa valeur.</p>
-<h2 id="3-comparer-des-entiers">3. Comparer des entiers</h2>
-<p>Pourquoi un second jeu d'opérateurs ? Parce qu'une variable Bash contient toujours du <strong>texte</strong>. Il n'existe pas de variable « nombre » d'un côté et « texte » de l'autre : c'est l'<strong>opérateur</strong> qui décide comment cette valeur est lue.</p>
-<table>
-<thead>
-<tr>
-<th>Opérateur</th>
-<th>Signification</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>-eq</code>, <code>-ne</code></td>
-<td>Égal, différent</td>
-</tr>
-<tr>
-<td><code>-lt</code>, <code>-le</code></td>
-<td>Inférieur, inférieur ou égal</td>
-</tr>
-<tr>
-<td><code>-gt</code>, <code>-ge</code></td>
-<td>Supérieur, supérieur ou égal</td>
-</tr>
-</tbody>
-</table>
-<aside class="warning">
-<p><strong>Le bon opérateur pour la bonne lecture</strong></p>
-<p>Comparer des nombres avec les opérateurs de texte ne déclenche aucune erreur : seul le résultat change.</p>
-<pre><code class="language-bash">a=10
-b=9
-[[ &quot;$a&quot; -gt &quot;$b&quot; ]]   # VRAI : lus comme des nombres, 10 est plus grand que 9
-[[ &quot;$a&quot; &gt; &quot;$b&quot; ]]     # FAUX : lus comme du texte, « 1 » vient avant « 9 »
-</code></pre>
-<p>Retiens la règle : <code>==</code> et <code>!=</code> pour du texte, <code>-eq</code> et <code>-gt</code> pour des nombres.</p>
-</aside>
-<p>On peut distinguer plusieurs situations avec <code>elif</code> :</p>
-<pre><code class="language-bash">energie=15
-if [[ &quot;$energie&quot; -ge 50 ]]; then
+</style><link rel="stylesheet" href="../../assets/themes/theme.css">
+<script src="../../assets/themes/theme.js"></script>
+</head><body><nav class="bash-site-nav"><a href="https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/">← Cours Markdown</a><a href="https://kayasam.github.io/linux-initiation/#bash">Parcours Bash →</a></nav><main class="wrap">
+<div class="toolbar"><a href="https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/">← Le cours en Markdown</a><a href="https://kayasam.github.io/linux-initiation/bash/cours/03-bases-du-scripting-interactif.html">Chapitre 03</a><button class="secondary" id="theme-switch" type="button">Passer au thème sombre</button></div>
+<header class="hero"><div><span class="eyebrow">Bash · Chapitre 04 · Mission Orion</span><h1>Une question.<br><em>Le bon chemin.</em></h1><p>Le sas doit-il s’ouvrir ? Ton script apprend à décider. Change les valeurs, teste les billets et suis le chemin choisi par Bash.</p></div><div class="hero-visual" aria-hidden="true"><span class="hero-stamp">if → then → fi</span><svg viewBox="0 0 300 245" fill="none"><rect x="43" y="20" width="214" height="204" rx="35" fill="var(--tint)" stroke="var(--violet)" stroke-width="4"/><rect x="67" y="49" width="166" height="151" rx="23" fill="var(--surface)" stroke="var(--border)" stroke-width="2"/><path d="M150 54v141" stroke="var(--border)" stroke-width="2" stroke-dasharray="7 5"/><circle cx="150" cy="95" r="26" fill="var(--mint-bg)" stroke="var(--mint)" stroke-width="3"/><path d="m138 94 9 9 16-18" stroke="var(--mint)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M93 164h28m-9-9 9 9-9 9m67-18-9 9 9 9m-9-9h28" stroke="var(--violet)" stroke-width="4" stroke-linecap="round"/><rect x="247" y="77" width="34" height="76" rx="12" fill="var(--surface)" stroke="var(--border)"/><circle cx="264" cy="97" r="6" fill="var(--mint)"/><circle cx="264" cy="117" r="6" fill="var(--amber)" opacity=".4"/><circle cx="264" cy="137" r="6" fill="var(--border)"/></svg></div></header>
+<nav class="chapter-tabs" role="tablist" aria-label="Les ateliers du chapitre">
+<button id="tab-decide" role="tab" data-tab="decide" aria-controls="panel-decide" aria-selected="true"><span class="tab-number">01</span>Décider</button>
+<button id="tab-compare" role="tab" data-tab="compare" aria-controls="panel-compare" aria-selected="false" tabindex="-1"><span class="tab-number">02</span>Comparer</button>
+<button id="tab-ticket" role="tab" data-tab="ticket" aria-controls="panel-ticket" aria-selected="false" tabindex="-1"><span class="tab-number">03</span>Tester le billet</button>
+<button id="tab-guards" role="tab" data-tab="guards" aria-controls="panel-guards" aria-selected="false" tabindex="-1"><span class="tab-number">04</span>Protéger</button>
+<button id="tab-route" role="tab" data-tab="route" aria-controls="panel-route" aria-selected="false" tabindex="-1"><span class="tab-number">05</span>Orienter</button>
+<button id="tab-quiz" role="tab" data-tab="quiz" aria-controls="panel-quiz" aria-selected="false" tabindex="-1"><span class="tab-number">06</span>À toi de jouer</button>
+</nav>
+<section id="panel-decide" role="tabpanel" aria-labelledby="tab-decide" tabindex="0">
+<div class="section-head"><div><span class="eyebrow">L’aiguillage du sas</span><h2>Un test. Une seule branche.</h2><p>Choisis une destination, puis avance pour voir comment if lit le résultat du test.</p></div><span class="pill">Simulation pas à pas</span></div>
+<div class="grid-two"><section class="surface"><label for="destination">destination</label><select id="destination"><option>Orion</option><option>Vega</option><option>Sirius</option></select><div class="terminal spaced"><div class="terminal-top"><i></i><i></i><i></i><span>Extrait Bash · aucune exécution réelle</span></div><div class="terminal-body"><pre id="decision-code" class="decision-code"></pre></div></div><div class="code-row"><span id="decision-orb" class="code-orb">?</span><div><strong id="decision-status">Le test attend</strong><p class="small-note">[[ ... ]] n’affiche rien : son code de retour suffit à if.</p></div></div><div class="button-row"><button class="primary" id="decision-next">Tester →</button><button class="secondary" id="decision-reset">Recommencer</button></div></section>
+<section class="surface"><div class="fork"><span class="stage-chip" id="decision-stage">0 / 3 · avant le test</span><div class="test-node"><code>[[ "$destination" == "Orion" ]]</code></div><div class="fork-connector"></div><div class="fork-branches"><div id="branch-then" class="branch"><small>then · code 0</small><strong>Bonne destination</strong></div><div id="branch-else" class="branch reject"><small>else · test non réussi</small><strong>Verifier le billet</strong></div></div></div><div class="result" id="decision-feedback" aria-live="polite"></div><div class="terminal spaced"><div class="terminal-body"><pre id="decision-output">Aucun message pour l’instant.</pre></div></div><div class="note"><strong>0 ouvre then.</strong> Pour ce test, vrai renvoie 0 et faux renvoie 1. if teste la réussite d’une commande ; il n’interprète pas 0 comme « faux ».</div></section></div>
+<div class="panel-bottom"><button class="secondary" data-go="compare">Posons d’autres questions aux valeurs →</button></div></section>
+<section id="panel-compare" role="tabpanel" aria-labelledby="tab-compare" tabindex="0" hidden>
+<div class="section-head"><div><span class="eyebrow">Les bons instruments</span><h2>Le texte et les nombres ne se lisent pas pareil.</h2><p>Change les valeurs et observe ce que vérifie chaque opérateur.</p></div><span class="pill">Manipule & compare</span></div>
+<div class="grid-two"><section class="surface"><h3>Vide, rempli, égal, différent ?</h3><label for="text-value">Valeur de destination · tu peux tout effacer</label><input id="text-value" value="Orion" maxlength="70" autocomplete="off"><div class="test-buttons"><button class="secondary" data-text="eq" aria-pressed="true">== "Orion"</button><button class="secondary" data-text="ne" aria-pressed="false">!= "Orion"</button><button class="secondary" data-text="empty" aria-pressed="false">-z</button><button class="secondary" data-text="filled" aria-pressed="false">-n</button></div><div class="code-block"><pre id="text-test"></pre></div><div class="result" id="text-feedback" aria-live="polite"></div><p class="small-note">Un espace est un caractère : " " n’est pas une valeur vide. Le test lit la variable sans la modifier.</p></section>
+<section class="surface"><h3>10 est-il plus grand que 9 ?</h3><div class="mode-row"><button class="secondary" data-number="numeric" aria-pressed="true">-gt · nombres</button><button class="secondary" data-number="text" aria-pressed="false">&gt; · texte</button></div><div class="tokens"><span class="token">a="10"</span><span class="token">b="9"</span></div><div class="terminal"><div class="terminal-body"><pre id="number-test"></pre></div></div><div class="result" id="number-feedback" aria-live="polite"></div><div class="note"><strong>L’opérateur choisit la lecture.</strong> Utilise -eq, -ne, -lt, -le, -gt ou -ge pour comparer des entiers.</div></section></div>
+<section class="surface spaced"><span class="simulation">if / elif / else · jauge simulée</span><h3>Quelle mission pour cette réserve d’énergie ?</h3><label for="energy">Énergie : <span id="energy-value">30</span> unités</label><input id="energy" type="range" min="0" max="80" value="30"><div class="energy-track" aria-hidden="true"><span id="energy-fill"></span></div><div class="mission-branches"><div id="energy-large" class="mission-branch"><code>if energie -ge 50</code><strong>Grande mission</strong><small id="large-check"></small></div><div id="energy-small" class="mission-branch"><code>elif energie -ge 20</code><strong>Petite mission</strong><small id="small-check"></small></div><div id="energy-charge" class="mission-branch"><code>else</code><strong>Recharge</strong><small id="charge-check"></small></div></div><div class="code-block"><pre>if [[ "$energie" -ge 50 ]]; then
     echo 'Grande mission'
-elif [[ &quot;$energie&quot; -ge 20 ]]; then
+elif [[ "$energie" -ge 20 ]]; then
     echo 'Petite mission'
 else
     echo 'Recharge'
-fi
-</code></pre>
-<p>Bash s'arrête à la première branche qui réussit. Ici, il affiche <code>Recharge</code>. Les valeurs de cet exemple sont des entiers fixés dans le programme ; une saisie utilisateur doit être vérifiée avant un test numérique.</p>
-<h2 id="4-tester-un-fichier">4. Tester un fichier</h2>
-<pre><code class="language-bash">mkdir -p ~/atelier-bash/conditions
-cd ~/atelier-bash/conditions
-echo 'ORION-OK' &gt; billet.txt
-
-if [[ -f &quot;billet.txt&quot; ]]; then
-    echo 'Billet trouve'
-else
-    echo 'Billet absent'
-fi
-</code></pre>
-<table>
-<thead>
-<tr>
-<th>Test</th>
-<th>Vérification</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>-e</code></td>
-<td>Le chemin existe</td>
-</tr>
-<tr>
-<td><code>-f</code></td>
-<td>C'est un fichier ordinaire</td>
-</tr>
-<tr>
-<td><code>-d</code></td>
-<td>C'est un dossier</td>
-</tr>
-<tr>
-<td><code>-r</code></td>
-<td>Le fichier est lisible pour le processus</td>
-</tr>
-<tr>
-<td><code>-s</code></td>
-<td>Le fichier existe et sa taille dépasse zéro</td>
-</tr>
-</tbody>
-</table>
-<p>Un dossier n'est pas un fichier ordinaire. Choisis le test adapté plutôt que de tout vérifier avec <code>-e</code>.</p>
-<h2 id="5-reagir-au-resultat-dune-commande">5. Réagir au résultat d'une commande</h2>
-<p>On peut placer une commande directement après <code>if</code> : son code de retour sert de test.</p>
-<pre><code class="language-bash">if grep -qx 'ORION-OK' billet.txt; then
+fi</pre></div><div class="result" id="energy-feedback" aria-live="polite"></div><p class="small-note">Bash s’arrête à la première branche qui réussit. Ici, le curseur fournit un entier ; une saisie libre doit être validée avant une comparaison numérique.</p></section>
+<div class="panel-bottom"><button class="secondary" data-go="ticket">Passons aux fichiers : le billet est-il utilisable ? →</button></div></section>
+<section id="panel-ticket" role="tabpanel" aria-labelledby="tab-ticket" tabindex="0" hidden>
+<div class="section-head"><div><span class="eyebrow">Le scanner du sas</span><h2>Exister ne suffit pas à être un bon billet.</h2><p>Choisis un état pour billet.txt, puis essaie les tests de fichier et la lecture du contenu.</p></div><span class="pill">Fichiers fictifs</span></div>
+<div class="grid-two"><section class="surface"><label for="ticket-state">État de billet.txt</label><select id="ticket-state"><option value="valid">Fichier lisible · ORION-OK</option><option value="multi">Fichier avec plusieurs lignes · une ligne ORION-OK</option><option value="wrong">Fichier lisible · PRESQUE-ORION-OK</option><option value="empty">Fichier vide</option><option value="directory">Un dossier nommé billet.txt</option><option value="missing">Chemin absent</option><option value="locked">Fichier non lisible</option></select><div class="specimen"><strong id="ticket-title"></strong><pre id="ticket-content"></pre></div><div class="test-buttons"><button class="secondary" data-file-test="e" aria-pressed="false">-e</button><button class="secondary" data-file-test="f" aria-pressed="true">-f</button><button class="secondary" data-file-test="d" aria-pressed="false">-d</button><button class="secondary" data-file-test="r" aria-pressed="false">-r</button><button class="secondary" data-file-test="w" aria-pressed="false">-w</button><button class="secondary" data-file-test="s" aria-pressed="false">-s</button></div><div class="code-block"><pre id="file-test-code"></pre></div><div class="result" id="file-test-feedback" aria-live="polite"></div><p class="small-note">Simulation d’un processus sans privilèges, sans lien symbolique. Les droits sont fixés pour chaque exemple ; -r et -w ne vérifient pas le type du chemin.</p></section>
+<section class="surface"><h3>Et si grep sert de test ?</h3><div class="code-block"><pre>if grep -qx 'ORION-OK' billet.txt; then
     echo 'Billet accepte'
 else
     echo 'Billet refuse'
-fi
-</code></pre>
-<p><code>grep -q</code> n'affiche pas les lignes trouvées. <code>-x</code> exige une correspondance sur une ligne entière. Le code <code>0</code> de <code>grep</code> sélectionne le premier bloc.</p>
-<p>Cet exemple vérifie qu'au moins une ligne est exactement <code>ORION-OK</code>. Ce n'est pas une vérification de signature ni un vrai système d'accès.</p>
-<h2 id="6-verifier-les-arguments-avant-de-les-utiliser">6. Vérifier les arguments avant de les utiliser</h2>
-<p>Contenu de <code>controle.sh</code> :</p>
-<!-- fichier: controle.sh -->
-
-<pre><code class="language-bash">#!/usr/bin/env bash
-
-if [[ &quot;$#&quot; -ne 1 ]]; then
-    echo &quot;Usage : $0 fichier&quot; &gt;&amp;2
-    exit 2
-fi
-
-fichier=&quot;$1&quot;
-if [[ ! -f &quot;$fichier&quot; ]]; then
-    echo &quot;Fichier absent : $fichier&quot; &gt;&amp;2
-    exit 2
-fi
-
-echo &quot;Fichier disponible : $fichier&quot;
-exit 0
-</code></pre>
-<ul>
-<li><code>$#</code> vérifie le nombre d'arguments <strong>avant</strong> la lecture de <code>$1</code>.</li>
-<li><code>!</code> inverse un test.</li>
-<li><code>&gt;&amp;2</code> dirige un message vers la sortie d'erreur.</li>
-<li><code>exit</code> termine ce script avec le code choisi.</li>
-</ul>
-<pre><code class="language-bash">bash -n controle.sh
-bash controle.sh billet.txt
-bash controle.sh introuvable.txt
-echo &quot;Code du dernier essai : $?&quot;
-</code></pre>
-<p>Le premier essai réussit. Le second affiche une erreur et le code <strong>2</strong>. Ces valeurs sont une convention choisie pour ce programme ; d'autres commandes peuvent en utiliser d'autres.</p>
-<h2 id="7-choisir-parmi-plusieurs-mots-avec-case">7. Choisir parmi plusieurs mots avec case</h2>
-<pre><code class="language-bash">choix=&quot;radio&quot;
-case &quot;$choix&quot; in
-    radio)
-        echo 'Canal radio ouvert'
-        ;;
-    reserve)
-        echo 'Reserve disponible'
-        ;;
-    *)
-        echo 'Choix inconnu'
-        ;;
-esac
-</code></pre>
-<p>Chaque choix se termine par <code>)</code>. <code>;;</code> termine sa branche. <code>*</code> récupère les autres cas. <code>esac</code> ferme la structure.</p>
-<h2 id="8-combiner-deux-verifications">8. Combiner deux vérifications</h2>
-<pre><code class="language-bash">if [[ -f &quot;billet.txt&quot; &amp;&amp; -r &quot;billet.txt&quot; ]]; then
-    echo 'Le billet est un fichier lisible'
-fi
-</code></pre>
-<p><code>&amp;&amp;</code> signifie « et ». <code>||</code> signifie « ou ». Commence par des tests courts ; si la condition devient difficile à lire, sépare les vérifications et explique chaque erreur.</p>
-<h2 id="a-retenir">À retenir</h2>
-<ul>
-<li>Un test choisit un chemin ; il ne modifie pas la valeur testée.</li>
-<li>Une valeur est toujours du texte : <code>==</code> et <code>!=</code> la comparent comme du texte, <code>-eq</code> et <code>-gt</code> comme un nombre.</li>
-<li>Vérifie les arguments et les fichiers avant leur utilisation.</li>
-<li>Prévois aussi un message et un code de retour pour les cas invalides.</li>
-</ul>
-<p><strong>À toi :</strong> quel test différencie un dossier d'un fichier ? Quelle branche exécute <code>case</code> pour un mot inconnu ?</p>
-<p><a href="https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/tp">Passer au TP</a></p><section aria-label="Quiz du chapitre"><h2>Quiz du chapitre — 20 questions</h2><p>Chaque réponse est expliquée. Tu peux recommencer avec un nouvel ordre des questions.</p><p><a href="https://kayasam.github.io/linux-initiation/bash/cours/quiz/04-tests-et-conditions.html">Ouvrir le quiz dans sa propre page →</a></p><iframe class="course-quiz-frame" src="https://kayasam.github.io/linux-initiation/bash/cours/quiz/04-tests-et-conditions.html" title="Quiz du chapitre 04" loading="lazy" style="width:100%;height:1100px;border:0;border-radius:12px"></iframe></section><nav class="lesson-nav" aria-label="Parcours"><a href="https://kayasam.github.io/linux-initiation/bash/cours/03-bases-du-scripting-interactif.html">← Chapitre précédent</a><a href="https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/">Cours Markdown</a><a href="https://kayasam.github.io/linux-initiation/bash/cours/quiz/04-tests-et-conditions.html">Quiz — 20 questions</a><a href="https://kayasam.github.io/linux-initiation/bash/cours/05-boucles-interactif.html">Chapitre suivant →</a></nav></main></body></html>
+fi</pre></div><div class="code-row"><span id="grep-orb" class="code-orb">0</span><div><strong>Code renvoyé par grep</strong><p class="small-note">-q garde la recherche silencieuse ; -x exige une ligne entière.</p></div></div><div class="terminal"><div class="terminal-top"><i></i><i></i><i></i><span>Message de la branche choisie</span></div><div class="terminal-body"><pre id="grep-output"></pre></div></div><div class="result" id="grep-feedback" aria-live="polite"></div><p class="small-note">grep peut renvoyer 1 (aucune correspondance) ou 2 (erreur ici). if prend else dans les deux cas. -q ne masque pas les messages d’erreur.</p></section></div>
+<section class="surface spaced"><h3>Deux vérifications avec &&</h3><div class="code-block"><pre>[[ -f "billet.txt" && -r "billet.txt" ]]</pre></div><div class="logic-lights"><span id="and-file" class="logic-light"></span><span id="and-read" class="logic-light"></span><span id="and-result" class="logic-light"></span></div><div class="result" id="and-feedback" aria-live="polite"></div><p class="small-note">Les deux tests doivent réussir. Si -f échoue, Bash n’a pas besoin d’évaluer -r.</p></section>
+<div class="panel-bottom"><button class="secondary" data-go="guards">Vérifions les entrées avant de travailler →</button></div></section>
+<section id="panel-guards" role="tabpanel" aria-labelledby="tab-guards" tabindex="0" hidden>
+<div class="section-head"><div><span class="eyebrow">Le poste de contrôle</span><h2>Une garde qui échoue arrête le script.</h2><p>Suis controle.sh : nombre d’arguments, type du fichier, puis message final. Observe ce que exit empêche d’exécuter.</p></div><span class="pill">Pas à pas · sorties séparées</span></div>
+<section class="surface"><label for="guard-scenario">Lancement à explorer</label><select id="guard-scenario"><option value="valid">bash controle.sh billet.txt</option><option value="missing">bash controle.sh absent.txt</option><option value="none">bash controle.sh</option><option value="many">bash controle.sh billet.txt autre.txt</option><option value="directory">bash controle.sh .</option></select><div class="pipeline"><div class="guard-step" id="guard-0"><b>01 · Compter</b><code>[[ "$#" -ne 1 ]]</code><small>Si vrai : usage, exit 2.</small></div><div class="guard-step" id="guard-1"><b>02 · Affecter</b><code>fichier="$1"</code><small>Après le contrôle du nombre.</small></div><div class="guard-step" id="guard-2"><b>03 · Vérifier</b><code>[[ ! -f "$fichier" ]]</code><small>Si vrai : erreur, exit 2.</small></div><div class="guard-step" id="guard-3"><b>04 · Continuer</b><code>echo … ; exit 0</code><small>Seulement si les gardes passent.</small></div></div><div class="result" id="guard-feedback" aria-live="polite"></div><div class="button-row"><button class="primary" id="guard-next">Étape suivante →</button><button class="secondary" id="guard-reset">Recommencer</button><span class="pill" id="guard-exit">Script pas encore terminé</span></div><div class="grid-two"><div><p class="channel">Sortie standard · echo habituel</p><div class="terminal"><div class="terminal-body"><pre class="stream" id="guard-stdout">(Aucun message)</pre></div></div></div><div><p class="channel error">Sortie d’erreur · echo … &gt;&amp;2</p><div class="terminal"><div class="terminal-body"><pre class="stream" id="guard-stderr">(Aucun message)</pre></div></div></div></div><div class="note"><strong>! inverse le test.</strong> Si -f est faux, ! -f est vrai : on entre dans la garde qui signale l’erreur. exit 2 termine ce script ; il ne ferme pas le shell qui a lancé bash controle.sh.</div><p class="small-note">Cet atelier suit le controle.sh du cours : il vérifie le type, pas les droits ni le contenu. Le TP te demandera aussi un fichier lisible et la vérification ORION-OK. Le code 2 est un choix de ce programme.</p></section>
+<div class="panel-bottom"><button class="secondary" data-go="route">Choisir parmi plusieurs destinations et motifs →</button></div></section>
+<section id="panel-route" role="tabpanel" aria-labelledby="tab-route" tabindex="0" hidden>
+<div class="section-head"><div><span class="eyebrow">Le menu de la station</span><h2>Une valeur. Plusieurs motifs possibles.</h2><p>case choisit la première branche qui correspond. Les synonymes peuvent partager la même action.</p></div><span class="pill">Saisie simulée</span></div>
+<section class="surface"><label for="case-value">choix · essaie radio, phonie, reserve, stock ou un autre mot</label><input id="case-value" value="radio" maxlength="70" autocomplete="off"><div class="case-branches"><div class="case-branch" id="case-radio"><code>radio | phonie)</code><strong>Canal radio ouvert</strong><small>;; termine cette branche.</small></div><div class="case-branch" id="case-stock"><code>reserve | stock)</code><strong>Reserve disponible</strong><small>Deux mots, une seule action.</small></div><div class="case-branch" id="case-other"><code>*)</code><strong>Choix inconnu</strong><small>Le motif * récupère les autres cas.</small></div></div><div class="terminal"><div class="terminal-body"><pre id="case-output"></pre></div></div><div class="result" id="case-feedback" aria-live="polite"></div><p class="small-note">Le | entre les motifs de case regroupe des alternatives. Ce n’est pas un tube entre commandes. esac ferme la structure.</p></section>
+<div class="grid-two spaced"><section class="surface"><h3>Un motif pour valider la forme</h3><label for="digit-value">Un seul chiffre de 0 à 9</label><input id="digit-value" value="7" maxlength="30" autocomplete="off" inputmode="text"><div class="code-block"><pre>case "$choix" in
+    [0-9]) echo "Chiffre accepte : $choix" ;;
+    *) echo "Ce n'est pas un chiffre" &gt;&amp;2 ;;
+esac</pre></div><div class="result" id="digit-feedback" aria-live="polite"></div><p class="small-note">7 convient ; 12, -1, une espace ou une valeur vide ne conviennent pas. [0-9] décrit un seul caractère, pas un entier de longueur quelconque.</p></section><section class="surface"><h3>Deux destinations avec ||</h3><label for="or-destination">Destination demandée</label><select id="or-destination"><option>Orion</option><option selected>Vega</option><option>Sirius</option></select><div class="code-block"><pre>[[ "$destination" == "Orion" ||
+   "$destination" == "Vega" ]]</pre></div><div class="logic-lights"><span id="or-first" class="logic-light"></span><span id="or-second" class="logic-light"></span></div><div class="result" id="or-feedback" aria-live="polite"></div><p class="small-note">Un seul succès suffit. Si le premier test réussit, Bash ne teste pas le second.</p></section></div>
+<div class="panel-bottom"><button class="secondary" data-go="quiz">À toi de contrôler le sas →</button></div></section>
+<section id="panel-quiz" role="tabpanel" aria-labelledby="tab-quiz" tabindex="0" hidden>
+<div class="section-head"><div><span class="eyebrow">Mission Orion · sas de la station</span><h2>Prêt à écrire ton contrôleur ?</h2><p>Teste tes réflexes, puis reproduis ces décisions dans ton terminal Debian.</p></div><span class="pill">20 questions + un TP</span></div>
+<div class="grid-two"><section class="surface destination-card"><span class="mini-label">Quiz du chapitre</span><h3>Choisir le bon chemin</h3><p>Tests, branches, gardes et motifs : chaque réponse est expliquée pour progresser.</p><a href="https://kayasam.github.io/linux-initiation/bash/cours/quiz/04-tests-et-conditions.html">Ouvrir le quiz en pleine page →</a></section><section class="surface destination-card"><span class="mini-label">TP 04 · dans Debian</span><h3>Contrôler le sas de la station</h3><p>Programme sas.sh, vérifie ses arguments et accepte les billets qui contiennent une ligne ORION-OK.</p><a href="https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/tp">Ouvrir le TP 04 →</a></section></div>
+<section class="surface spaced"><h3>Dernier défi : le fichier est absent.</h3><p>Le test <code>[[ ! -f "$fichier" ]]</code> réussit-il ?</p><div class="button-row"><button class="secondary" data-challenge="yes">Oui · code 0</button><button class="secondary" data-challenge="no">Non · code 1</button></div><div class="result" id="challenge-feedback" aria-live="polite">Choisis ta réponse : ! inverse le résultat de -f.</div></section>
+<iframe class="quiz-frame" id="chapter-quiz" data-quiz-src="https://kayasam.github.io/linux-initiation/bash/cours/quiz/04-tests-et-conditions.html" title="Quiz Bash 04 — Les tests et les conditions"></iframe>
+</section>
+<footer class="footer"><span>Bash 04 · Tests et conditions · Ateliers simulés</span><a href="https://kayasam.github.io/linux-initiation/bash/cours/05-boucles-interactif.html">Chapitre suivant : les boucles →</a></footer>
+<noscript><div class="noscript">Active JavaScript pour les ateliers. Le <a href="https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/">cours Markdown</a> et le <a href="https://kayasam.github.io/linux-initiation/bash/cours/quiz/04-tests-et-conditions.html">quiz</a> restent accessibles.</div></noscript>
+</main>
+<script>(()=>{
+'use strict';
+const $=id=>document.getElementById(id),all=s=>[...document.querySelectorAll(s)];
+function pressed(selector,b){all(selector).forEach(x=>x.setAttribute('aria-pressed',String(x===b)))}
+const tabs=all('[data-tab]');
+function openTab(key,focus=false){tabs.forEach(b=>{const on=b.dataset.tab===key;b.setAttribute('aria-selected',String(on));b.tabIndex=on?0:-1;$(b.getAttribute('aria-controls')).hidden=!on;if(on&&focus)b.focus()});if(key==='quiz'&&!$('chapter-quiz').getAttribute('src'))$('chapter-quiz').src=$('chapter-quiz').dataset.quizSrc}
+tabs.forEach((b,i)=>{b.addEventListener('click',()=>openTab(b.dataset.tab));b.addEventListener('keydown',e=>{const n=e.key==='ArrowRight'?(i+1)%tabs.length:e.key==='ArrowLeft'?(i+tabs.length-1)%tabs.length:e.key==='Home'?0:e.key==='End'?tabs.length-1:null;if(n!==null){e.preventDefault();openTab(tabs[n].dataset.tab,true)}})});
+all('[data-go]').forEach(b=>b.addEventListener('click',()=>{openTab(b.dataset.go,true);$('tab-'+b.dataset.go).scrollIntoView({block:'nearest'})}));
+function syncFrame(){const f=$('chapter-quiz');f.contentWindow?.postMessage({type:'linux-theme',theme:document.documentElement.dataset.theme},location.protocol==='file:'?'*':location.origin)}
+function setTheme(theme){document.documentElement.dataset.theme=theme;$('theme-switch').textContent=theme==='dark'?'Passer au thème clair':'Passer au thème sombre';syncFrame()}
+let theme;try{theme=localStorage.getItem('theme')}catch{}setTheme(theme==='dark'||theme==='light'?theme:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+$('theme-switch').addEventListener('click',()=>{const next=document.documentElement.dataset.theme==='dark'?'light':'dark';setTheme(next);try{localStorage.setItem('theme',next)}catch{}});$('chapter-quiz').addEventListener('load',syncFrame);
+// All inputs are displayed as literal text; no shell or JavaScript evaluation.
+const literal=s=>"'"+s.replaceAll("'","'\\''")+"'";
+let decision=0;
+function decide(){const destination=$('destination').value,ok=destination==='Orion';$('decision-code').textContent='destination='+literal(destination)+'\nif [[ "$destination" == "Orion" ]]; then\n    echo \'Bonne destination\'\nelse\n    echo \'Verifier le billet\'\nfi';$('decision-orb').textContent=decision>0?(ok?'0':'1'):'?';$('decision-orb').className='code-orb'+(decision>0&&!ok?' fail':'');$('decision-status').textContent=decision===0?'Le test attend':ok?'Le test réussit':'Le test échoue';$('branch-then').className='branch'+(decision>=2&&ok?' active':'');$('branch-else').className='branch reject'+(decision>=2&&!ok?' active':'');$('decision-stage').textContent=decision+' / 3 · '+['avant le test','code de retour obtenu','branche choisie','fi : suite du script'][decision];$('decision-output').textContent=decision>=2?(ok?'Bonne destination':'Verifier le billet'):'Aucun message pour l’instant.';const texts=['Lance le test. La comparaison ne change pas la destination.','Le test renvoie '+(ok?'0 : if prépare then.':'1 : if prépare else.')+' Le test lui-même n’a rien affiché.','Seule la branche '+(ok?'then':'else')+' est exécutée. L’autre est ignorée.','fi ferme la structure. Le script peut continuer après la branche choisie.'];$('decision-feedback').textContent=texts[decision];$('decision-next').disabled=decision===3;$('decision-next').textContent=['Tester →','Exécuter la branche →','Atteindre fi →','Parcours terminé'][decision]}
+$('decision-next').addEventListener('click',()=>{decision=Math.min(3,decision+1);decide()});$('decision-reset').addEventListener('click',()=>{decision=0;decide()});$('destination').addEventListener('change',()=>{decision=0;decide()});decide();
+let textMode='eq';function textTest(){const v=$('text-value').value;const modes={eq:{code:'"$destination" == "Orion"',ok:v==='Orion',why:'== vérifie une égalité exacte et sensible à la casse.'},ne:{code:'"$destination" != "Orion"',ok:v!=='Orion',why:'!= vérifie que les textes sont différents.'},empty:{code:'-z "$destination"',ok:v.length===0,why:'-z réussit uniquement si la longueur vaut zéro.'},filled:{code:'-n "$destination"',ok:v.length>0,why:'-n réussit si au moins un caractère est présent.'}};const m=modes[textMode];$('text-test').textContent='destination='+literal(v)+'\n[[ '+m.code+' ]]';$('text-feedback').textContent=(m.ok?'Vrai · code 0. ':'Faux · code 1. ')+m.why}
+$('text-value').addEventListener('input',textTest);all('[data-text]').forEach(b=>b.addEventListener('click',()=>{pressed('[data-text]',b);textMode=b.dataset.text;textTest()}));textTest();
+function numberTest(mode){const numeric=mode==='numeric';$('number-test').textContent='[[ "$a" '+(numeric?'-gt':'>')+' "$b" ]]\n→ code '+(numeric?'0':'1');$('number-feedback').textContent=numeric?'Vrai : lus comme des nombres, 10 est plus grand que 9.':'Faux : lus comme du texte, ces chiffres commencent par 1 et 9. Pour cet exemple, « 10 » se classe avant « 9 ».'}
+all('[data-number]').forEach(b=>b.addEventListener('click',()=>{pressed('[data-number]',b);numberTest(b.dataset.number)}));numberTest('numeric');
+function energy(){const n=Number($('energy').value),key=n>=50?'large':n>=20?'small':'charge';$('energy-value').textContent=n;$('energy-fill').style.width=n/80*100+'%';['large','small','charge'].forEach(k=>$('energy-'+k).className='mission-branch'+(k===key?' active':''));$('large-check').textContent=n>=50?'Vrai · code 0':'Faux · code 1';$('small-check').textContent=n>=50?'Non évalué':n>=20?'Vrai · code 0':'Faux · code 1';$('charge-check').textContent=key==='charge'?'Branche choisie':'Ignorée';$('energy-feedback').textContent=n>=50?'Grande mission. Le premier test réussit ; Bash ne teste même pas le seuil de 20.':n>=20?'Petite mission. Le seuil de 50 échoue, celui de 20 réussit : Bash choisit elif.':'Recharge. Les deux tests échouent : Bash choisit else.'}
+$('energy').addEventListener('input',energy);energy();
+const FILES={
+valid:{name:'Fichier ordinaire · lisible et modifiable',content:'ORION-OK',e:true,f:true,d:false,r:true,w:true,s:true,grep:0},
+multi:{name:'Fichier ordinaire · plusieurs lignes',content:'Equipage Orion\nORION-OK\nFin du billet',e:true,f:true,d:false,r:true,w:true,s:true,grep:0},
+wrong:{name:'Fichier ordinaire · lisible et modifiable',content:'PRESQUE-ORION-OK',e:true,f:true,d:false,r:true,w:true,s:true,grep:1},
+empty:{name:'Fichier ordinaire · taille 0',content:'(Aucune ligne)',e:true,f:true,d:false,r:true,w:true,s:false,grep:1},
+directory:{name:'Dossier · lisible, modifiable, taille simulée 4096',content:'(Ce chemin est un dossier, pas un billet.)',e:true,f:false,d:true,r:true,w:true,s:true,grep:2},
+missing:{name:'Chemin absent',content:'(Rien à cet emplacement.)',e:false,f:false,d:false,r:false,w:false,s:false,grep:2},
+locked:{name:'Fichier ordinaire · ni lisible ni modifiable',content:'(Le processus simulé ne peut pas lire ce fichier.)',e:true,f:true,d:false,r:false,w:false,s:true,grep:2}
+};
+const QUESTIONS={e:'Le chemin existe-t-il ?',f:'Est-ce un fichier ordinaire ?',d:'Est-ce un dossier ?',r:'Le processus peut-il le lire ?',w:'Le processus peut-il le modifier ?',s:'Existe-t-il avec une taille supérieure à zéro ?'};
+let fileTest='f';function ticket(){const key=$('ticket-state').value,f=FILES[key];$('ticket-title').textContent=f.name;$('ticket-content').textContent=f.content;$('file-test-code').textContent='[[ -'+fileTest+' "billet.txt" ]]';$('file-test-feedback').textContent=QUESTIONS[fileTest]+' '+(f[fileTest]?'Oui · code 0.':'Non · code 1.');$('grep-orb').textContent=f.grep;$('grep-orb').className='code-orb'+(f.grep?' fail':'');$('grep-output').textContent=f.grep===0?'Billet accepte':'Billet refuse';$('grep-feedback').textContent=f.grep===0?'Au moins une ligne entière correspond à ORION-OK. grep renvoie 0 ; if choisit then. Les autres lignes peuvent contenir autre chose.':f.grep===1?'Aucune ligne entière ne correspond. grep renvoie 1 ; if choisit else.':key==='directory'?'Erreur : billet.txt est un dossier. grep renvoie 2 ; if choisit aussi else.':key==='missing'?'Erreur : le fichier est absent. grep renvoie 2 ; if choisit aussi else.':'Erreur : le fichier est non lisible. grep renvoie 2 ; if choisit aussi else.';$('and-file').textContent='-f : '+(f.f?'vrai':'faux');$('and-file').className='logic-light '+(f.f?'pass':'fail');$('and-read').textContent='-r : '+(!f.f?'non évalué':f.r?'vrai':'faux');$('and-read').className='logic-light'+(f.f?(f.r?' pass':' fail'):'');$('and-result').textContent='&& : code '+(f.f&&f.r?'0':'1');$('and-result').className='logic-light '+(f.f&&f.r?'pass':'fail');$('and-feedback').textContent=f.f&&f.r?'Les deux tests réussissent : on a un fichier ordinaire lisible. Cela ne garantit pas encore que son contenu est un billet valide.':!f.f?'Le premier test échoue : le chemin n’est pas un fichier ordinaire. Le second test est ignoré.':'Le type convient, mais la lecture échoue. Avec &&, un seul échec suffit à refuser.'}
+$('ticket-state').addEventListener('change',ticket);all('[data-file-test]').forEach(b=>b.addEventListener('click',()=>{pressed('[data-file-test]',b);fileTest=b.dataset.fileTest;ticket()}));ticket();
+const GUARDS={valid:{count:1,file:'billet.txt',exists:true},missing:{count:1,file:'absent.txt',exists:false},none:{count:0,file:'',exists:false},many:{count:2,file:'billet.txt',exists:true},directory:{count:1,file:'.',exists:false}};
+let guardPosition=0,guardEnded=false,guardStop=-1,stdout='',stderr='',exitCode=null,guardMessage='';
+function resetGuards(){guardPosition=0;guardEnded=false;guardStop=-1;stdout='';stderr='';exitCode=null;guardMessage='Au départ : le script va vérifier $# avant de lire $1.';renderGuards()}
+function renderGuards(){for(let i=0;i<4;i++)$('guard-'+i).className='guard-step'+(i===guardStop?' stop':i<guardPosition?' done':i===guardPosition&&!guardEnded?' current':'');$('guard-feedback').textContent=guardMessage;$('guard-stdout').textContent=stdout||'(Aucun message)';$('guard-stderr').textContent=stderr||'(Aucun message)';$('guard-exit').textContent=exitCode===null?'Script pas encore terminé':'Code du script : '+exitCode;$('guard-next').disabled=guardEnded;$('guard-next').textContent=guardEnded?'Script terminé':'Étape suivante →'}
+$('guard-next').addEventListener('click',()=>{if(guardEnded)return;const g=GUARDS[$('guard-scenario').value];if(guardPosition===0){if(g.count!==1){stderr='Usage : controle.sh fichier';exitCode=2;guardEnded=true;guardStop=0;guardMessage='$# vaut '+g.count+'. Le test -ne 1 réussit (code 0) : la garde affiche l’usage sur >&2 et exit 2 arrête le script. $1 ne sera pas lu.'}else guardMessage='$# vaut 1. Le test -ne 1 échoue (code 1) : on n’entre pas dans la garde, le script continue.'}else if(guardPosition===1){guardMessage='fichier reçoit '+literal(g.file)+'. Le nombre d’arguments a été vérifié avant cette lecture.'}else if(guardPosition===2){if(!g.exists){stderr='Fichier absent : '+g.file;exitCode=2;guardEnded=true;guardStop=2;guardMessage='-f est faux, donc ! -f est vrai (code 0). La garde affiche son message sur >&2 puis exit 2 termine le script.'+(g.file==='.'?' Le message du cours dit « absent », mais ici le chemin existe : c’est un dossier.':'')}else guardMessage='-f est vrai, donc ! -f est faux (code 1). La garde est ignorée : on peut continuer.'}else{stdout='Fichier disponible : '+g.file;exitCode=0;guardEnded=true;guardMessage='Les deux gardes ont laissé passer. Le message va sur la sortie standard, puis exit 0 termine le script avec succès.'}guardPosition++;renderGuards()});
+$('guard-scenario').addEventListener('change',resetGuards);$('guard-reset').addEventListener('click',resetGuards);resetGuards();
+function menu(){const value=$('case-value').value,key=['radio','phonie'].includes(value)?'radio':['reserve','stock'].includes(value)?'stock':'other';['radio','stock','other'].forEach(k=>$('case-'+k).className='case-branch'+(key===k?' active':''));const message={radio:'Canal radio ouvert',stock:'Reserve disponible',other:'Choix inconnu'}[key];$('case-output').textContent='choix='+literal(value)+'\n→ '+message;$('case-feedback').textContent=key==='radio'?'Premier motif correspondant : radio | phonie. Cette branche s’exécute puis ;; arrête la sélection.':key==='stock'?'Le premier motif ne correspond pas. reserve | stock correspond : seule cette branche s’exécute.':'Aucun des mots prévus ne correspond exactement. Le motif * récupère cette valeur, même vide. La casse et les espaces comptent.'}
+$('case-value').addEventListener('input',menu);menu();
+function digit(){const value=$('digit-value').value,ok=/^[0-9]$/.test(value);$('digit-feedback').textContent=ok?'Sortie standard : Chiffre accepte : '+value:'Sortie d’erreur (>&2) : Ce n’est pas un chiffre. Le motif [0-9] ne correspond pas à cette valeur.'}
+$('digit-value').addEventListener('input',digit);digit();
+function or(){const v=$('or-destination').value,first=v==='Orion',second=v==='Vega';$('or-first').textContent='== Orion : '+(first?'vrai':'faux');$('or-first').className='logic-light '+(first?'pass':'fail');$('or-second').textContent='== Vega : '+(first?'non évalué':second?'vrai':'faux');$('or-second').className='logic-light'+(!first?(second?' pass':' fail'):'');$('or-feedback').textContent=first?'Destination desservie · code 0. Le premier test suffit : le second n’est pas évalué.':second?'Destination desservie · code 0. Le premier test échoue, le second réussit : || accepte.':'Destination non desservie · code 1. Aucun des deux tests ne réussit.'}
+$('or-destination').addEventListener('change',or);or();
+all('[data-challenge]').forEach(b=>b.addEventListener('click',()=>{$('challenge-feedback').textContent=b.dataset.challenge==='yes'?'Exact ! Le fichier absent fait échouer -f. ! inverse ce résultat : le test complet réussit et renvoie 0. La garde peut alors afficher son erreur.':'Le ! change tout : -f est faux pour un fichier absent, donc ! -f est vrai. Le test complet renvoie 0, et la garde peut arrêter le script.'}));
+})();
+</script></body></html>
