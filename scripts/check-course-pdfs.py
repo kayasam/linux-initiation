@@ -21,7 +21,7 @@ total = 0
 for entry in manifest:
     path = CONTENT / entry['pdf']
     source = CONTENT / entry['source']
-    assert hashlib.sha256(source.read_bytes()).hexdigest() == entry['sourceSha256']
+    assert hashlib.sha256(source.read_text(encoding='utf-8-sig').encode('utf-8')).hexdigest() == entry['sourceSha256']
     assert hashlib.sha256(path.read_bytes()).hexdigest() == entry['pdfSha256']
     doc = fitz.open(path)
     assert len(doc) == entry['pages']

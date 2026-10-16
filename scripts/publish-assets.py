@@ -61,7 +61,7 @@ print(f'Bash : six cours et {bash_tp_count} TP dans le ZIP ; seules les correcti
 pdf_manifest = json.loads((ROOT / 'content/assets/course-pdfs.json').read_text(encoding='utf-8'))
 assert len(pdf_manifest) == 16
 for entry in pdf_manifest:
-    assert hashlib.sha256((ROOT / 'content' / entry['source']).read_bytes()).hexdigest() == entry['sourceSha256'], 'PDF périmé : ' + entry['key']
+    assert hashlib.sha256((ROOT / 'content' / entry['source']).read_text(encoding='utf-8-sig').encode('utf-8')).hexdigest() == entry['sourceSha256'], 'PDF périmé : ' + entry['key']
     assert hashlib.sha256((public / entry['pdf']).read_bytes()).hexdigest() == entry['pdfSha256'], entry['key']
     assert (public / entry['pdf']).read_bytes().startswith(b'%PDF-')
     course = (ROOT / 'content' / entry['key'] / 'index.md').read_text(encoding='utf-8')

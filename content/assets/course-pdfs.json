@@ -4,7 +4,7 @@
     "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/01-comprendre-linux.pdf",
     "source": "telechargements/cours/01-comprendre-linux.md",
     "pdf": "telechargements/cours/01-comprendre-linux.pdf",
-    "sourceSha256": "fc732faa4d766015bf20ab120897e4a37b5e3ad3d9a4112f56e276c80875aa1e",
+    "sourceSha256": "8d8f3fcb975d4e15c7f59ca71aef892b47f97fc0ee0c19cd7c703e95ceb0d56d",
     "pdfSha256": "193a2badbbb7bbc47fc3403270bcda80b6ed33e423dbc05c8bd5a4368bfb3250",
     "pages": 8
   },
@@ -13,7 +13,7 @@
     "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/02-installer-la-vm.pdf",
     "source": "telechargements/cours/02-installer-la-vm.md",
     "pdf": "telechargements/cours/02-installer-la-vm.pdf",
-    "sourceSha256": "70bb6bb6c3fec8be8daf803f1c8308405494808be7c7b9b9258a63dd3affab5a",
+    "sourceSha256": "c845e0887c6b433b5721ee3b9ef492d41fb9a1c3631cb26fbed763c8012909ee",
     "pdfSha256": "426ed43f2782bf64f41d9e50a6a52fda4342c9319973aad68b96d596440045b0",
     "pages": 4
   },
@@ -22,7 +22,7 @@
     "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/03-interface-graphique.pdf",
     "source": "telechargements/cours/03-interface-graphique.md",
     "pdf": "telechargements/cours/03-interface-graphique.pdf",
-    "sourceSha256": "735c6bb919533e1ae983a0ec4a9939e1d21739db1340c59171ef31bffeaaf498",
+    "sourceSha256": "2ecac3254d962ec9720a03fd1ddbb20d29b9c150c13c4a7fb09ca0aab2972994",
     "pdfSha256": "10472f658c1ad52ebfc908a22ad9e0004f9d4bc00b63a5c498e84e1e86675566",
     "pages": 4
   },
@@ -31,7 +31,7 @@
     "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/04-le-terminal.pdf",
     "source": "telechargements/cours/04-le-terminal.md",
     "pdf": "telechargements/cours/04-le-terminal.pdf",
-    "sourceSha256": "c3db03e4a5541660855ce3d8db6a8ebe72e33c7d025c896f9161b47e84d886fc",
+    "sourceSha256": "38e3f03605d7a250565018ef92c89859156f978d8f1129b782b570ec1182b7c2",
     "pdfSha256": "6fa754817c8c309db5edce294cefb648f17d9718a8b7e4ff318ba53c150a9a5a",
     "pages": 6
   },
@@ -40,7 +40,7 @@
     "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/05-fichiers-et-repertoires.pdf",
     "source": "telechargements/cours/05-fichiers-et-repertoires.md",
     "pdf": "telechargements/cours/05-fichiers-et-repertoires.pdf",
-    "sourceSha256": "10642b1dda574a4177c45699648db4a2571687189340bd6ebb2f3c3162db1f3b",
+    "sourceSha256": "80a7b9fa1fcbc07652d6d2ce1099fd2438d0d59eb3960674ffd533bb5706c473",
     "pdfSha256": "10c481a0af71aeb8bd314feb641bfc4db71e0555dd9fefadc8f5d3f344ab5c8a",
     "pages": 5
   },
@@ -49,7 +49,7 @@
     "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/06-arborescence-linux.pdf",
     "source": "telechargements/cours/06-arborescence-linux.md",
     "pdf": "telechargements/cours/06-arborescence-linux.pdf",
-    "sourceSha256": "3e42e8daa336463ba81124465bf219a179dcfbaec89d741cea22b80f78eead98",
+    "sourceSha256": "7061e6176e26d6949119dbed36614925d4861bfd2ede76a48d21b19ca41d2fbf",
     "pdfSha256": "82a0c19a078bc5dbd10b2a6b6e22d4948bdea30936fa6baf542f3765d4098bd1",
     "pages": 5
   },
@@ -58,7 +58,7 @@
     "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/07-utilisateurs-et-permissions.pdf",
     "source": "telechargements/cours/07-utilisateurs-et-permissions.md",
     "pdf": "telechargements/cours/07-utilisateurs-et-permissions.pdf",
-    "sourceSha256": "955e6a471f946dd0c7dc6d70dd6823f7afb7b2fae930580a1a82b47e12ae361b",
+    "sourceSha256": "5260112684b7cbcaae12ec3083c5883fe66415b953c68bfed9b1ae797af3b51f",
     "pdfSha256": "38be0757175224fd40e60d916dc0b8a8c843bc298188ef3fd86afa393e1beff0",
     "pages": 5
   },
@@ -67,7 +67,7 @@
     "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/08-gestion-des-paquets.pdf",
     "source": "telechargements/cours/08-gestion-des-paquets.md",
     "pdf": "telechargements/cours/08-gestion-des-paquets.pdf",
-    "sourceSha256": "bd9bb39e755ff4ad5876f9be8d85a9a33935c82b15726d6000e180ac2c218e32",
+    "sourceSha256": "f2203ff8d4d1d3d100f4c6b8b139f8def7e0613cff26ab87006e7206bf8d82b0",
     "pdfSha256": "49e0716ecf1bc5502d37bba6a70d9f33e0af841d4e2f3b1a0c9c43affa842441",
     "pages": 4
   },
@@ -76,7 +76,7 @@
     "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/09-redirections-et-tubes.pdf",
     "source": "telechargements/cours/09-redirections-et-tubes.md",
     "pdf": "telechargements/cours/09-redirections-et-tubes.pdf",
-    "sourceSha256": "952199a425d49183dc511a6c722e4e3e393afd7b173987a022221061040d27d0",
+    "sourceSha256": "f9a66e6216b6d8543f33102cee70357dcffcd899c49e2f48dcb95abc24939ba9",
     "pdfSha256": "8c463acf6a3471f0b6364472d36c01274875cf29ad198cd4553852dd98db60f5",
     "pages": 5
   },
@@ -85,7 +85,7 @@
     "href": "https://kayasam.github.io/linux-initiation/telechargements/cours/10-reseau-et-services.pdf",
     "source": "telechargements/cours/10-reseau-et-services.md",
     "pdf": "telechargements/cours/10-reseau-et-services.pdf",
-    "sourceSha256": "7011fc3068f71f5a516760fe0ec4525aa392b00e8520ec05052ca2cd44681832",
+    "sourceSha256": "4b55674f079f623a2a2efa4131eaef3aeefbedc95f0f5ca7d85d8eb9599b3dde",
     "pdfSha256": "4dc8974ac4af2152aefd197b72fca1a0c7ab8a07f102b3e813377bdbaa4f6b44",
     "pages": 4
   },
@@ -94,7 +94,7 @@
     "href": "https://kayasam.github.io/linux-initiation/telechargements/bash/cours/01-shell-et-environnement.pdf",
     "source": "telechargements/bash/cours/01-shell-et-environnement.md",
     "pdf": "telechargements/bash/cours/01-shell-et-environnement.pdf",
-    "sourceSha256": "db943bdd9e5f0c3aff2f2f5b6af27a5edd813be121cc2fb3cf87d7a7a958d199",
+    "sourceSha256": "aa67010d25532cb32e064384a2e73e78da8d32d5814c9779e76b495e3a285f84",
     "pdfSha256": "ead8e85eba598af31a84a32d9a88999a3ea780bf6dbd7e1a42964dd56e42b981",
     "pages": 6
   },
@@ -103,7 +103,7 @@
     "href": "https://kayasam.github.io/linux-initiation/telechargements/bash/cours/02-variables.pdf",
     "source": "telechargements/bash/cours/02-variables.md",
     "pdf": "telechargements/bash/cours/02-variables.pdf",
-    "sourceSha256": "67263284e0d1777478c167e408d15d6fff6409e52d8f117e7299c169ea7f6a1c",
+    "sourceSha256": "366e255811d94f7492eafdb3b8107740c24aef44dc4bca0e1baf881238bd74d1",
     "pdfSha256": "3b6144471f2c696e8d259eb2c70b046ff00c486d0888bd1bc6dd64023ddc9221",
     "pages": 7
   },
@@ -112,7 +112,7 @@
     "href": "https://kayasam.github.io/linux-initiation/telechargements/bash/cours/03-bases-du-scripting.pdf",
     "source": "telechargements/bash/cours/03-bases-du-scripting.md",
     "pdf": "telechargements/bash/cours/03-bases-du-scripting.pdf",
-    "sourceSha256": "4b3e03d311aadf7fb0f650ed440e8f1dcf320187fd7e6098e3a88de291e46a3f",
+    "sourceSha256": "fe53444dd889c7d0f53ab2ca477a3e7a87bf67ab0d1ec4c9d286c81995edc2c5",
     "pdfSha256": "6978c5e37c417d41327d5f4e78934dba21811b8cae31ae57a71378e7bc1b8421",
     "pages": 4
   },
@@ -121,7 +121,7 @@
     "href": "https://kayasam.github.io/linux-initiation/telechargements/bash/cours/04-tests-et-conditions.pdf",
     "source": "telechargements/bash/cours/04-tests-et-conditions.md",
     "pdf": "telechargements/bash/cours/04-tests-et-conditions.pdf",
-    "sourceSha256": "5aaf9d69300ccb6495cb6ba929e1569d5979a3e70c533fa87ed4f84b4dcd71d6",
+    "sourceSha256": "c72cfaf7ab500588e6c8b16102d9db24434561b7f7b6d56d0975c792adbe3cad",
     "pdfSha256": "1d0a4cb6df1036be314524b2092d4eac02456b527033333d6d251c2f43b0fbbb",
     "pages": 8
   },
@@ -130,7 +130,7 @@
     "href": "https://kayasam.github.io/linux-initiation/telechargements/bash/cours/05-boucles.pdf",
     "source": "telechargements/bash/cours/05-boucles.md",
     "pdf": "telechargements/bash/cours/05-boucles.pdf",
-    "sourceSha256": "5ba23299f209a82388b64ec224515c9bd61bad02d924e0fd5226f44c8336f038",
+    "sourceSha256": "9048b421a788d72bc2d25383dea55f2febe87e4e63b93c68a71a3f8d150b3c42",
     "pdfSha256": "3381f2a637f76c2a55d384dd4ce9a453d688856e1462b604c611fcfaee73a432",
     "pages": 6
   },
@@ -139,7 +139,7 @@
     "href": "https://kayasam.github.io/linux-initiation/telechargements/bash/cours/06-sed-et-awk.pdf",
     "source": "telechargements/bash/cours/06-sed-et-awk.md",
     "pdf": "telechargements/bash/cours/06-sed-et-awk.pdf",
-    "sourceSha256": "0d78b3f1172b860f952fa5276991095537c60fdef294b832f721a2db978406eb",
+    "sourceSha256": "16b41ca43a9861c3bb8646936cdd2f23f8304d2be078af71513aaaa45788f8c4",
     "pdfSha256": "9e28d7e721a9f03b983d7668269680eb9d42bdb40833a77f0c16109feb4b8147",
     "pages": 5
   }

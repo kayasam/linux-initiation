@@ -243,7 +243,7 @@ def build_pdf(source):
     document.build(story, onFirstPage=page_footer, onLaterPages=page_footer, canvasmaker=partial(canvas.Canvas, invariant=1))
     reader = PdfReader(target)
     assert reader.pages and all(page.extract_text().strip() for page in reader.pages), target
-    return dict(key=track + source.stem, href=f'{BASE}/telechargements/{track}cours/{target.name}', source=source.relative_to(CONTENT).as_posix(), pdf=target.relative_to(CONTENT).as_posix(), sourceSha256=hashlib.sha256(source.read_bytes()).hexdigest(), pdfSha256=hashlib.sha256(target.read_bytes()).hexdigest(), pages=len(reader.pages))
+    return dict(key=track + source.stem, href=f'{BASE}/telechargements/{track}cours/{target.name}', source=source.relative_to(CONTENT).as_posix(), pdf=target.relative_to(CONTENT).as_posix(), sourceSha256=hashlib.sha256(source.read_text(encoding='utf-8-sig').encode('utf-8')).hexdigest(), pdfSha256=hashlib.sha256(target.read_bytes()).hexdigest(), pages=len(reader.pages))
 
 
 def version_downloads():
