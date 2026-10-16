@@ -4,7 +4,7 @@ title: "06. Traiter du texte avec sed et awk"
 
 # Chapitre 06 — Traiter du texte avec sed et awk
 
-<nav class="chapter-resources" aria-label="Ressources du chapitre" data-course-key="bash/06-sed-et-awk" style="--resource-count:4"><div class="resource-buttons"><a class="resource-button resource-markdown" data-resource-kind="markdown" aria-label="Cours — Lire le cours en Markdown" href="https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/"><span class="resource-icon" aria-hidden="true"><svg class="resource-symbol" width="24" height="24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 24"><rect x="1" y="1" width="30" height="22" rx="3" fill="none" stroke="#34495e" stroke-width="2"/><path d="M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z" fill="#34495e"/><path d="M23 6h3v7h3l-4.5 5-4.5-5h3Z" fill="#34495e"/></svg></span><span class="resource-label">Cours<small>Lire le cours en Markdown</small></span></a><a class="resource-button resource-html" data-resource-kind="html" aria-label="HTML — Explorer le chapitre" href="https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/html/"><span class="resource-icon" aria-hidden="true"><svg class="resource-symbol" width="24" height="24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 32"><path d="M2 2h24l-2 25-10 3-10-3Z" fill="#e44d26"/><path d="M14 5v22l7-2 2-20Z" fill="#f16529"/><path d="M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z" fill="#fff"/></svg></span><span class="resource-label">HTML<small>Explorer le chapitre</small></span></a><a class="resource-button resource-quiz" data-resource-kind="quiz" aria-label="Quiz — 20 questions" href="https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/quiz/"><span class="resource-icon" aria-hidden="true"><svg class="resource-symbol" width="24" height="24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect x="4" y="3" width="24" height="26" rx="6" fill="#7652ad"/><path d="M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/><circle cx="16" cy="23" r="1.6" fill="#fff"/></svg></span><span class="resource-label">Quiz<small>20 questions</small></span></a><a class="resource-button resource-tp" data-resource-kind="tp" aria-label="TP — Mettre en pratique" href="https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp"><span class="resource-icon" aria-hidden="true"><svg class="resource-symbol" width="24" height="24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect x="2" y="4" width="28" height="24" rx="5" fill="#237b60"/><path d="m8 12 5 4-5 4m9 0h7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="resource-label">TP<small>Mettre en pratique</small></span></a></div><div class="resource-actions"><a class="resource-download" href="https://kayasam.github.io/linux-initiation/telechargements/bash/cours/06-sed-et-awk.md" download aria-label="Télécharger le cours en Markdown"><span aria-hidden="true">↓</span> Télécharger .md</a><a class="resource-download resource-pdf" href="https://kayasam.github.io/linux-initiation/telechargements/bash/cours/06-sed-et-awk.pdf?v=9e28d7e721a9" download aria-label="Télécharger le cours en PDF"><span aria-hidden="true">↓</span> PDF</a><button type="button" class="support-focus-toggle" aria-pressed="false">Masquer les menus</button></div></nav>
+<nav class="chapter-resources" aria-label="Ressources du chapitre" data-course-key="bash/06-sed-et-awk" style="--resource-count:4"><div class="resource-buttons"><a class="resource-button resource-markdown" data-resource-kind="markdown" aria-label="Cours — Lire le cours en Markdown" href="https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/"><span class="resource-icon" aria-hidden="true"><svg class="resource-symbol" width="24" height="24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 24"><rect x="1" y="1" width="30" height="22" rx="3" fill="none" stroke="#34495e" stroke-width="2"/><path d="M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z" fill="#34495e"/><path d="M23 6h3v7h3l-4.5 5-4.5-5h3Z" fill="#34495e"/></svg></span><span class="resource-label">Cours<small>Lire le cours en Markdown</small></span></a><a class="resource-button resource-html" data-resource-kind="html" aria-label="HTML — Explorer le chapitre" href="https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/html/"><span class="resource-icon" aria-hidden="true"><svg class="resource-symbol" width="24" height="24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 32"><path d="M2 2h24l-2 25-10 3-10-3Z" fill="#e44d26"/><path d="M14 5v22l7-2 2-20Z" fill="#f16529"/><path d="M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z" fill="#fff"/></svg></span><span class="resource-label">HTML<small>Explorer le chapitre</small></span></a><a class="resource-button resource-quiz" data-resource-kind="quiz" aria-label="Quiz — 20 questions" href="https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/quiz/"><span class="resource-icon" aria-hidden="true"><svg class="resource-symbol" width="24" height="24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect x="4" y="3" width="24" height="26" rx="6" fill="#7652ad"/><path d="M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/><circle cx="16" cy="23" r="1.6" fill="#fff"/></svg></span><span class="resource-label">Quiz<small>20 questions</small></span></a><a class="resource-button resource-tp" data-resource-kind="tp" aria-label="TP — Mettre en pratique" href="https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp"><span class="resource-icon" aria-hidden="true"><svg class="resource-symbol" width="24" height="24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect x="2" y="4" width="28" height="24" rx="5" fill="#237b60"/><path d="m8 12 5 4-5 4m9 0h7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="resource-label">TP<small>Mettre en pratique</small></span></a></div><div class="resource-actions"><a class="resource-download" href="https://kayasam.github.io/linux-initiation/telechargements/bash/cours/06-sed-et-awk.md" download aria-label="Télécharger le cours en Markdown"><span aria-hidden="true">↓</span> Télécharger .md</a><button type="button" class="support-focus-toggle" aria-pressed="false">Masquer les menus</button></div></nav>
 
 
 > [!NOTE] Objectif
@@ -48,6 +48,12 @@ Ce fichier utilise `;` pour séparer quatre champs. La première ligne est un en
 
 ## 3. Remplacer du texte avec sed
 
+`sed` signifie *stream editor*, éditeur de flux. Il lit un fichier **ligne par ligne**, applique à chaque ligne les commandes que tu lui donnes, et écrit le résultat sur sa sortie standard. Il ne charge pas le fichier en mémoire et ne l'ouvre pas dans une fenêtre : il n'y a rien à faire défiler, rien à enregistrer.
+
+C'est ce qui le rend utile là où un éditeur ne suffit pas : remplacer un mot dans cinquante fichiers de configuration, retirer les lignes de commentaire d'un fichier avant de le traiter, ou extraire les lignes 200 à 250 d'un journal de plusieurs gigaoctets. Les tâches typiques en administration sont le remplacement en masse, la suppression de lignes et l'extraction d'une portion de fichier.
+
+Deux points à retenir dès maintenant : `sed` travaille **sur une ligne à la fois** — il ne sait pas ce qu'il y a trois lignes plus loin — et il **ne modifie pas le fichier lu**, sauf si tu l'y forces avec l'option `-i` (§9).
+
 ```bash
 sed 's/informatique/materiel/g' stock.csv
 ```
@@ -76,6 +82,27 @@ Les guillemets simples protègent l'expression du shell. La recherche de `sed` u
 > ```
 >
 > Sans `g`, `sed` ne remplace que **la première** occurrence de chaque ligne. C'est l'oubli le plus fréquent avec `s///`.
+
+### Mémo — les variantes de `s///`
+
+| Écriture | Effet | Exemple | Résultat |
+|---|---|---|---|
+| `s/a/X/` | la **première** occurrence de chaque ligne | `echo 'a;b;c' \| sed 's/;/-/'` | `a-b;c` |
+| `s/a/X/g` | **toutes** les occurrences | `echo 'a;b;c' \| sed 's/;/-/g'` | `a-b-c` |
+| `s/a/X/2` | la **2ᵉ** occurrence seulement | `echo 'a;b;c;d' \| sed 's/;/-/2'` | `a;b-c;d` |
+| `s/a/X/i` | sans tenir compte de la casse | `echo 'Radio RADIO' \| sed 's/radio/X/gi'` | `X X` |
+| `s/a/[&]/` | `&` rappelle le **texte trouvé** | `echo 'clavier' \| sed 's/clavier/[&]/'` | `[clavier]` |
+| `s/(…)/\1/` | `\1` rappelle un **groupe capturé** (avec `-E`) | `echo 'clavier;8' \| sed -E 's/^(.+);(.+)$/\2 x \1/'` | `8 x clavier` |
+
+> [!TIP] Le délimiteur n'est pas forcément `/`
+> **Le caractère qui suit le `s` devient le délimiteur.** Dès que le motif contient des chemins, changer de délimiteur évite d'échapper chaque slash :
+>
+> ```bash
+> sed 's/\/etc\/apt\//\/srv\/miroir\//' chemins.txt   # illisible
+> sed 's|/etc/apt/|/srv/miroir/|' chemins.txt         # identique, lisible
+> ```
+>
+> `s#…#…#` et `s,…,…,` fonctionnent aussi. Choisis un caractère absent du motif et du remplacement.
 
 Pour conserver le résultat :
 
@@ -110,7 +137,61 @@ sed '/papeterie/d' stock.csv
 
 Ce dernier exemple retire de la sortie les lignes contenant `papeterie`.
 
+### Mémo — une commande `sed` se lit `adresse` + `action`
+
+Dans `sed '2,4p'`, `2,4` est l'**adresse** (quelles lignes) et `p` est l'**action** (quoi en faire). Les deux parties se combinent librement : `1d`, `/papeterie/d`, `$p`, `2,4s/a/X/`…
+
+**Les adresses les plus utiles** — exemples sur notre `stock.csv` de 6 lignes :
+
+| Adresse | Désigne | Exemple |
+|---|---|---|
+| `3` | la ligne 3 | `sed -n '3p'` |
+| `2,4` | les lignes 2 à 4 incluses | `sed -n '2,4p'` |
+| `2,$` | de la ligne 2 à la fin | `sed -n '2,$p'` |
+| `$` | la dernière ligne | `sed -n '$p'` |
+| `/motif/` | les lignes contenant le motif | `sed -n '/papeterie/p'` |
+| `/a/,/b/` | de la 1ʳᵉ ligne `a` à la 1ʳᵉ ligne `b` | `sed -n '/souris/,/ecran/p'` |
+| `2,+2` | la ligne 2 et les 2 suivantes | `sed -n '2,+2p'` |
+| `0~2` | une ligne sur deux | `sed -n '0~2p'` |
+| `1!` | **toutes sauf** la ligne 1 (`!` = négation) | `sed -n '1!p'` |
+| *(aucune)* | toutes les lignes | `sed 's/a/X/'` |
+
+**Les actions les plus utiles :**
+
+| Action | Rôle | Exemple | Effet |
+|---|---|---|---|
+| `s///` | substituer | `sed 's/a/X/'` | remplace |
+| `p` | afficher (avec `-n`) | `sed -n '2p'` | ligne 2 |
+| `d` | supprimer de la sortie | `sed '1d'` | sans l'en-tête |
+| `q` | quitter à cette ligne | `sed '3q'` | les 3 premières lignes |
+| `=` | afficher le **numéro** de ligne | `sed -n '/ecran/='` | `5` |
+| `a texte` | ajouter une ligne **après** | `sed '1a ---'` | insère après l'en-tête |
+| `i texte` | insérer une ligne **avant** | `sed '1i # titre'` | ajoute un titre |
+| `c texte` | remplacer la ligne entière | `sed '2c nouveau'` | écrase la ligne 2 |
+| `y/abc/ABC/` | translittérer caractère à caractère | `echo abc \| sed 'y/abc/ABC/'` | `ABC` |
+
+### Mémo — les options de `sed`
+
+| Option | Rôle |
+|---|---|
+| `-n` | n'affiche rien automatiquement — va de pair avec `p` |
+| `-e` | enchaîner plusieurs expressions : `sed -n -e '1p' -e '3p'` |
+| `-E` | expressions régulières **étendues** : `(…)`, `{2}`, `+`, `?` sans antislash |
+| `-i` | modifie le fichier **sur place** — voir le §9, à utiliser avec `-i.bak` |
+| `-f` | lire les commandes depuis un fichier de script `sed` |
+
+> [!WARNING] `q` s'arrête vraiment
+> `sed '3q'` ne se contente pas de filtrer : `sed` **quitte** à la ligne 3 et ne lit pas la suite. C'est ce qui rend `sed '1000q'` beaucoup plus rapide que `head -1000` sur un fichier de plusieurs gigaoctets.
+
 ## 5. Lire les champs avec awk
+
+`awk` porte les initiales de ses trois auteurs (Aho, Weinberger, Kernighan). Comme `sed`, il lit le fichier ligne par ligne — mais au lieu de voir chaque ligne comme du texte, il la **découpe en champs** numérotés `$1`, `$2`, `$3`… Un fichier devient ainsi un tableau de lignes et de colonnes.
+
+C'est ce découpage qui fait tout l'intérêt de l'outil : il permet de désigner une colonne précise, de filtrer sur sa valeur et de calculer. `awk` sait additionner, multiplier, compter et stocker des résultats intermédiaires, ce que `sed` ne sait pas faire. Les tâches typiques sont l'extraction de colonnes, le filtrage sur un critère chiffré, le calcul de totaux et le regroupement par catégorie.
+
+En pratique, tu le croiseras sur tout ce qui arrive en colonnes : un export CSV, la sortie de `ps` ou de `df`, un journal d'accès Apache, un fichier `/etc/passwd`.
+
+La règle pour choisir : **si tu raisonnes en lignes et en mots, c'est `sed` ; si tu raisonnes en colonnes et en chiffres, c'est `awk`.**
 
 Un programme `awk` s'écrit toujours sur le même modèle :
 
@@ -151,6 +232,56 @@ Les `$1` et `$3` appartiennent ici à **awk**, pas à Bash : les guillemets simp
 > | `'NR > 1'` | Pas d'action → `awk` affiche la ligne entière |
 >
 > Garde ce tableau en tête : tu croiseras les trois formes, y compris au §8 de ce chapitre.
+
+### Mémo — les variables d'`awk`
+
+Elles s'écrivent **sans `$`** : les `$` désignent des colonnes, ces variables n'en sont pas.
+
+| Variable | Contient | Exemple sur `stock.csv` |
+|---|---|---|
+| `NR` | numéro de la ligne en cours | `awk 'END { print NR }'` → `6` |
+| `NF` | nombre de champs de la ligne | `awk -F ';' 'NR==2 { print NF }'` → `4` |
+| `$0` | la ligne entière | identique à `cat` |
+| `$1`, `$2`… | les champs, de gauche à droite | `$1` = produit |
+| `$NF` | le **dernier** champ, quel que soit leur nombre | `$NF` = prix |
+| `$(NF-1)` | l'avant-dernier champ | `$(NF-1)` = quantité |
+| `FS` | séparateur d'**entrée** — équivaut à `-F` | `awk 'BEGIN { FS=";" } …'` |
+| `OFS` | séparateur de **sortie** (espace par défaut) | `awk -F ';' -v OFS=' \| ' …` |
+| `FILENAME` | nom du fichier lu | utile avec plusieurs fichiers |
+
+> [!TIP] Passer une valeur du shell à `awk`
+> Les guillemets simples empêchent Bash de substituer ses variables. L'option `-v` est la façon propre de faire entrer une valeur :
+>
+> ```bash
+> seuil=10
+> awk -F ';' -v seuil="$seuil" 'NR>1 && $3 < seuil { print $1 }' stock.csv
+> ```
+>
+> Dans le programme `awk`, `seuil` s'écrit **sans `$`** : c'est une variable `awk`, pas une variable Bash.
+
+### Mémo — les opérateurs de condition
+
+| Opérateur | Sens | Exemple |
+|---|---|---|
+| `==` `!=` | égal / différent | `$2 == "papeterie"` |
+| `<` `<=` `>` `>=` | comparaisons | `$3 < 10` |
+| `~` | correspond à une regex | `$1 ~ /^c/` |
+| `!~` | ne correspond pas | `$2 !~ /papeterie/` |
+| `&&` `\|\|` `!` | et / ou / non | `NR>1 && $3 < 10` |
+
+### Mémo — les fonctions les plus utiles
+
+| Fonction | Rôle | Exemple | Résultat |
+|---|---|---|---|
+| `length(s)` | longueur | `length("clavier")` | `7` |
+| `toupper(s)` / `tolower(s)` | casse | `toupper("clavier")` | `CLAVIER` |
+| `substr(s, debut, n)` | extraire | `substr("clavier", 1, 4)` | `clav` |
+| `int(n)` | partie entière | `int(7.9)` | `7` |
+| `gsub(/motif/, "X")` | remplacer dans `$0` | `gsub(/;/, "-")` | `a-b-c` |
+| `split(s, t, "-")` | découper dans un tableau | `split("a-b-c", t, "-")` | `3`, et `t[2]` = `b` |
+
+> [!NOTE] Lequel des deux `awk` ?
+> Sur Debian, `awk` est **mawk** par défaut, pas **gawk**. Les tableaux ci-dessus fonctionnent sur les deux. En revanche, `gensub()`, `asort()`, `IGNORECASE` ou `PROCINFO["sorted_in"]` sont propres à gawk : beaucoup d'exemples trouvés en ligne les utilisent sans le préciser. Vérifie avec `awk --version`.
 
 ## 6. Filtrer avec une condition
 
@@ -222,6 +353,7 @@ Le défi supplémentaire du TP demande cette option : ce n'est pas une notion fa
 ## À retenir
 
 - `sed` transforme ou sélectionne du texte ; `awk` travaille avec des champs.
+- Une commande `sed` se lit **adresse + action** : `2,4p`, `1d`, `/papeterie/d`, `$p`. Les mémos des §3, §4 et §5 regroupent les adresses, les actions, les options et les variables à connaître.
 - `cat > fichier <<'EOF'` écrit plusieurs lignes d'un coup, telles quelles.
 - `s/recherche/remplacement/g` : sans le `g`, seule la **première** occurrence de chaque ligne est remplacée.
 - `sed -n '2,4p'` garde des lignes, `sed '1d'` et `sed '/motif/d'` en retirent — toujours sur la sortie, jamais sur le fichier.
@@ -233,6 +365,6 @@ Le défi supplémentaire du TP demande cette option : ce n'est pas une notion fa
 
 **À toi :** que désigne `$4` dans notre inventaire ? Pourquoi utilisons-nous `NR > 1` ? Pourquoi des guillemets simples autour du programme `awk` ? Que ferait `sed 's/;/,/'` sans le `g` sur une ligne de ce fichier ?
 
-[Passer au TP](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp/tp-06-sed-et-awk)
+[Passer au TP 06 bis (pas à pas)](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp/tp-06-sed-et-awk-2) · [TP 06 avancé](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp/tp-06-sed-et-awk)
 
 [← Parcours Bash](https://kayasam.github.io/linux-initiation/#bash) · [Tous les TP Bash](https://kayasam.github.io/linux-initiation/bash/tp/)

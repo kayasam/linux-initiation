@@ -8,4 +8,4 @@ title: "Travaux pratiques — Traiter du texte avec sed et awk"
 
 - [TP 06 bis — sed et awk pas à pas](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp/tp-06-sed-et-awk-2)
 
-- [Préparer le ravitaillement d'Orion](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp/tp-06-sed-et-awk)
+- [Préparer le ravitaillement d'Orion *(avancé)*](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp/tp-06-sed-et-awk)

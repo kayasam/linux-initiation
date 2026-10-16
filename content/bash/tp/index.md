@@ -11,7 +11,7 @@ title: "Travaux pratiques"
 - [TP 05 bis — Les boucles pas à pas](https://kayasam.github.io/linux-initiation/bash/05-boucles/tp/tp-05-boucles-2)
 - [Programmer le robot copieur](https://kayasam.github.io/linux-initiation/bash/05-boucles/tp/tp-05-boucles)
 - [TP 06 bis — sed et awk pas à pas](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp/tp-06-sed-et-awk-2)
-- [Préparer le ravitaillement d'Orion](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp/tp-06-sed-et-awk)
+- [Préparer le ravitaillement d'Orion *(avancé)*](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp/tp-06-sed-et-awk)
 - [TP bonus — Trois jeux dans le terminal](https://kayasam.github.io/linux-initiation/bash/ateliers/tp-bonus-exercices-ludiques)
 - [TP final — BIP-42 a perdu son boulon](https://kayasam.github.io/linux-initiation/bash/ateliers/tp-final-bip-42)
 - [TP de synthèse — Le rapport de mission Orion](https://kayasam.github.io/linux-initiation/bash/ateliers/tp-synthese)

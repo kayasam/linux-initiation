@@ -29,4 +29,4 @@ Se repérer dans le terminal, naviguer dans l'arborescence et lire des fichiers.
 
 **A10.** Affiche l'historique de tes 10 dernières commandes.
 
-[Correction du TP](https://kayasam.github.io/linux-initiation/04-le-terminal/tp-04-terminal-correction)
+[Correction du TP](https://kayasam.github.io/linux-initiation/04-le-terminal/tp-04-terminal-Corrigév2)
