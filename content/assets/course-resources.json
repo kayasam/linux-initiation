@@ -2,11 +2,12 @@
   "01-comprendre-linux": [
     {
       "kind": "markdown",
-      "label": "Markdown",
-      "detail": "Lire le cours",
+      "label": "Cours",
+      "detail": "Lire le cours en Markdown",
       "href": "https://kayasam.github.io/linux-initiation/01-comprendre-linux/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>",
+      "chapterTitle": "01. Comprendre Linux"
     },
     {
       "kind": "html",
@@ -14,7 +15,8 @@
       "detail": "Explorer le chapitre",
       "href": "https://kayasam.github.io/linux-initiation/01-comprendre-linux/html/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "01. Comprendre Linux"
     },
     {
       "kind": "quiz",
@@ -22,17 +24,19 @@
       "detail": "20 questions",
       "href": "https://kayasam.github.io/linux-initiation/01-comprendre-linux/quiz/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "01. Comprendre Linux"
     }
   ],
   "02-installer-la-vm": [
     {
       "kind": "markdown",
-      "label": "Markdown",
-      "detail": "Lire le cours",
+      "label": "Cours",
+      "detail": "Lire le cours en Markdown",
       "href": "https://kayasam.github.io/linux-initiation/02-installer-la-vm/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>",
+      "chapterTitle": "02. Installer la machine virtuelle"
     },
     {
       "kind": "html",
@@ -40,7 +44,8 @@
       "detail": "Explorer le chapitre",
       "href": "https://kayasam.github.io/linux-initiation/02-installer-la-vm/html/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "02. Installer la machine virtuelle"
     },
     {
       "kind": "quiz",
@@ -48,7 +53,8 @@
       "detail": "20 questions",
       "href": "https://kayasam.github.io/linux-initiation/02-installer-la-vm/quiz/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "02. Installer la machine virtuelle"
     },
     {
       "kind": "tp",
@@ -56,17 +62,19 @@
       "detail": "Mettre en pratique",
       "href": "https://kayasam.github.io/linux-initiation/02-installer-la-vm/tp",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>",
+      "chapterTitle": "02. Installer la machine virtuelle"
     }
   ],
   "03-interface-graphique": [
     {
       "kind": "markdown",
-      "label": "Markdown",
-      "detail": "Lire le cours",
+      "label": "Cours",
+      "detail": "Lire le cours en Markdown",
       "href": "https://kayasam.github.io/linux-initiation/03-interface-graphique/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>",
+      "chapterTitle": "03. L'interface graphique"
     },
     {
       "kind": "html",
@@ -74,7 +82,8 @@
       "detail": "Explorer le chapitre",
       "href": "https://kayasam.github.io/linux-initiation/03-interface-graphique/html/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "03. L'interface graphique"
     },
     {
       "kind": "quiz",
@@ -82,17 +91,19 @@
       "detail": "20 questions",
       "href": "https://kayasam.github.io/linux-initiation/03-interface-graphique/quiz/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "03. L'interface graphique"
     }
   ],
   "04-le-terminal": [
     {
       "kind": "markdown",
-      "label": "Markdown",
-      "detail": "Lire le cours",
+      "label": "Cours",
+      "detail": "Lire le cours en Markdown",
       "href": "https://kayasam.github.io/linux-initiation/04-le-terminal/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>",
+      "chapterTitle": "04. Le terminal"
     },
     {
       "kind": "html",
@@ -100,7 +111,8 @@
       "detail": "Explorer le chapitre",
       "href": "https://kayasam.github.io/linux-initiation/04-le-terminal/html/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "04. Le terminal"
     },
     {
       "kind": "quiz",
@@ -108,7 +120,8 @@
       "detail": "20 questions",
       "href": "https://kayasam.github.io/linux-initiation/04-le-terminal/quiz/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "04. Le terminal"
     },
     {
       "kind": "tp",
@@ -116,17 +129,19 @@
       "detail": "Mettre en pratique",
       "href": "https://kayasam.github.io/linux-initiation/04-le-terminal/tp",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>",
+      "chapterTitle": "04. Le terminal"
     }
   ],
   "05-fichiers-et-repertoires": [
     {
       "kind": "markdown",
-      "label": "Markdown",
-      "detail": "Lire le cours",
+      "label": "Cours",
+      "detail": "Lire le cours en Markdown",
       "href": "https://kayasam.github.io/linux-initiation/05-fichiers-et-repertoires/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>",
+      "chapterTitle": "05. Fichiers et répertoires"
     },
     {
       "kind": "html",
@@ -134,7 +149,8 @@
       "detail": "Explorer le chapitre",
       "href": "https://kayasam.github.io/linux-initiation/05-fichiers-et-repertoires/html/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "05. Fichiers et répertoires"
     },
     {
       "kind": "quiz",
@@ -142,7 +158,8 @@
       "detail": "20 questions",
       "href": "https://kayasam.github.io/linux-initiation/05-fichiers-et-repertoires/quiz/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "05. Fichiers et répertoires"
     },
     {
       "kind": "tp",
@@ -150,17 +167,19 @@
       "detail": "Mettre en pratique",
       "href": "https://kayasam.github.io/linux-initiation/05-fichiers-et-repertoires/tp",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>",
+      "chapterTitle": "05. Fichiers et répertoires"
     }
   ],
   "06-arborescence-linux": [
     {
       "kind": "markdown",
-      "label": "Markdown",
-      "detail": "Lire le cours",
+      "label": "Cours",
+      "detail": "Lire le cours en Markdown",
       "href": "https://kayasam.github.io/linux-initiation/06-arborescence-linux/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>",
+      "chapterTitle": "06. L'arborescence Linux"
     },
     {
       "kind": "html",
@@ -168,7 +187,8 @@
       "detail": "Explorer le chapitre",
       "href": "https://kayasam.github.io/linux-initiation/06-arborescence-linux/html/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "06. L'arborescence Linux"
     },
     {
       "kind": "quiz",
@@ -176,7 +196,8 @@
       "detail": "20 questions",
       "href": "https://kayasam.github.io/linux-initiation/06-arborescence-linux/quiz/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "06. L'arborescence Linux"
     },
     {
       "kind": "tp",
@@ -184,17 +205,19 @@
       "detail": "Mettre en pratique",
       "href": "https://kayasam.github.io/linux-initiation/06-arborescence-linux/tp",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>",
+      "chapterTitle": "06. L'arborescence Linux"
     }
   ],
   "07-utilisateurs-et-permissions": [
     {
       "kind": "markdown",
-      "label": "Markdown",
-      "detail": "Lire le cours",
+      "label": "Cours",
+      "detail": "Lire le cours en Markdown",
       "href": "https://kayasam.github.io/linux-initiation/07-utilisateurs-et-permissions/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>",
+      "chapterTitle": "07. Utilisateurs et permissions"
     },
     {
       "kind": "html",
@@ -202,7 +225,8 @@
       "detail": "Explorer le chapitre",
       "href": "https://kayasam.github.io/linux-initiation/07-utilisateurs-et-permissions/html/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "07. Utilisateurs et permissions"
     },
     {
       "kind": "quiz",
@@ -210,7 +234,8 @@
       "detail": "20 questions",
       "href": "https://kayasam.github.io/linux-initiation/07-utilisateurs-et-permissions/quiz/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "07. Utilisateurs et permissions"
     },
     {
       "kind": "tp",
@@ -218,17 +243,19 @@
       "detail": "Mettre en pratique",
       "href": "https://kayasam.github.io/linux-initiation/07-utilisateurs-et-permissions/tp",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>",
+      "chapterTitle": "07. Utilisateurs et permissions"
     }
   ],
   "08-gestion-des-paquets": [
     {
       "kind": "markdown",
-      "label": "Markdown",
-      "detail": "Lire le cours",
+      "label": "Cours",
+      "detail": "Lire le cours en Markdown",
       "href": "https://kayasam.github.io/linux-initiation/08-gestion-des-paquets/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>",
+      "chapterTitle": "08. Gestion des paquets"
     },
     {
       "kind": "html",
@@ -236,7 +263,8 @@
       "detail": "Explorer le chapitre",
       "href": "https://kayasam.github.io/linux-initiation/08-gestion-des-paquets/html/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "08. Gestion des paquets"
     },
     {
       "kind": "quiz",
@@ -244,7 +272,8 @@
       "detail": "20 questions",
       "href": "https://kayasam.github.io/linux-initiation/08-gestion-des-paquets/quiz/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "08. Gestion des paquets"
     },
     {
       "kind": "tp",
@@ -252,17 +281,19 @@
       "detail": "Mettre en pratique",
       "href": "https://kayasam.github.io/linux-initiation/08-gestion-des-paquets/tp",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>",
+      "chapterTitle": "08. Gestion des paquets"
     }
   ],
   "09-redirections-et-tubes": [
     {
       "kind": "markdown",
-      "label": "Markdown",
-      "detail": "Lire le cours",
+      "label": "Cours",
+      "detail": "Lire le cours en Markdown",
       "href": "https://kayasam.github.io/linux-initiation/09-redirections-et-tubes/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>",
+      "chapterTitle": "09. Redirections et tubes"
     },
     {
       "kind": "html",
@@ -270,7 +301,8 @@
       "detail": "Explorer le chapitre",
       "href": "https://kayasam.github.io/linux-initiation/09-redirections-et-tubes/html/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "09. Redirections et tubes"
     },
     {
       "kind": "quiz",
@@ -278,7 +310,8 @@
       "detail": "20 questions",
       "href": "https://kayasam.github.io/linux-initiation/09-redirections-et-tubes/quiz/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "09. Redirections et tubes"
     },
     {
       "kind": "tp",
@@ -286,17 +319,19 @@
       "detail": "Mettre en pratique",
       "href": "https://kayasam.github.io/linux-initiation/09-redirections-et-tubes/tp",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>",
+      "chapterTitle": "09. Redirections et tubes"
     }
   ],
   "10-reseau-et-services": [
     {
       "kind": "markdown",
-      "label": "Markdown",
-      "detail": "Lire le cours",
+      "label": "Cours",
+      "detail": "Lire le cours en Markdown",
       "href": "https://kayasam.github.io/linux-initiation/10-reseau-et-services/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>",
+      "chapterTitle": "10. Réseau et services"
     },
     {
       "kind": "html",
@@ -304,7 +339,8 @@
       "detail": "Explorer le chapitre",
       "href": "https://kayasam.github.io/linux-initiation/10-reseau-et-services/html/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "10. Réseau et services"
     },
     {
       "kind": "quiz",
@@ -312,7 +348,8 @@
       "detail": "20 questions",
       "href": "https://kayasam.github.io/linux-initiation/10-reseau-et-services/quiz/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "10. Réseau et services"
     },
     {
       "kind": "tp",
@@ -320,17 +357,19 @@
       "detail": "Mettre en pratique",
       "href": "https://kayasam.github.io/linux-initiation/10-reseau-et-services/tp",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>",
+      "chapterTitle": "10. Réseau et services"
     }
   ],
   "bash/01-shell-et-environnement": [
     {
       "kind": "markdown",
-      "label": "Markdown",
-      "detail": "Lire le cours",
+      "label": "Cours",
+      "detail": "Lire le cours en Markdown",
       "href": "https://kayasam.github.io/linux-initiation/bash/01-shell-et-environnement/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>",
+      "chapterTitle": "01. Le shell et son environnement"
     },
     {
       "kind": "html",
@@ -338,7 +377,8 @@
       "detail": "Explorer le chapitre",
       "href": "https://kayasam.github.io/linux-initiation/bash/01-shell-et-environnement/html/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "01. Le shell et son environnement"
     },
     {
       "kind": "quiz",
@@ -346,7 +386,8 @@
       "detail": "20 questions",
       "href": "https://kayasam.github.io/linux-initiation/bash/01-shell-et-environnement/quiz/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "01. Le shell et son environnement"
     },
     {
       "kind": "tp",
@@ -354,17 +395,19 @@
       "detail": "Mettre en pratique",
       "href": "https://kayasam.github.io/linux-initiation/bash/01-shell-et-environnement/tp",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>",
+      "chapterTitle": "01. Le shell et son environnement"
     }
   ],
   "bash/02-variables": [
     {
       "kind": "markdown",
-      "label": "Markdown",
-      "detail": "Lire le cours",
+      "label": "Cours",
+      "detail": "Lire le cours en Markdown",
       "href": "https://kayasam.github.io/linux-initiation/bash/02-variables/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>",
+      "chapterTitle": "02. Les variables"
     },
     {
       "kind": "html",
@@ -372,7 +415,8 @@
       "detail": "Explorer le chapitre",
       "href": "https://kayasam.github.io/linux-initiation/bash/02-variables/html/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "02. Les variables"
     },
     {
       "kind": "quiz",
@@ -380,7 +424,8 @@
       "detail": "20 questions",
       "href": "https://kayasam.github.io/linux-initiation/bash/02-variables/quiz/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "02. Les variables"
     },
     {
       "kind": "tp",
@@ -388,17 +433,19 @@
       "detail": "Mettre en pratique",
       "href": "https://kayasam.github.io/linux-initiation/bash/02-variables/tp",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>",
+      "chapterTitle": "02. Les variables"
     }
   ],
   "bash/03-bases-du-scripting": [
     {
       "kind": "markdown",
-      "label": "Markdown",
-      "detail": "Lire le cours",
+      "label": "Cours",
+      "detail": "Lire le cours en Markdown",
       "href": "https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>",
+      "chapterTitle": "03. Écrire son premier script"
     },
     {
       "kind": "html",
@@ -406,7 +453,8 @@
       "detail": "Explorer le chapitre",
       "href": "https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/html/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "03. Écrire son premier script"
     },
     {
       "kind": "quiz",
@@ -414,7 +462,8 @@
       "detail": "20 questions",
       "href": "https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/quiz/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "03. Écrire son premier script"
     },
     {
       "kind": "tp",
@@ -422,17 +471,19 @@
       "detail": "Mettre en pratique",
       "href": "https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/tp",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>",
+      "chapterTitle": "03. Écrire son premier script"
     }
   ],
   "bash/04-tests-et-conditions": [
     {
       "kind": "markdown",
-      "label": "Markdown",
-      "detail": "Lire le cours",
+      "label": "Cours",
+      "detail": "Lire le cours en Markdown",
       "href": "https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>",
+      "chapterTitle": "04. Les tests et les conditions"
     },
     {
       "kind": "html",
@@ -440,7 +491,8 @@
       "detail": "Explorer le chapitre",
       "href": "https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/html/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "04. Les tests et les conditions"
     },
     {
       "kind": "quiz",
@@ -448,7 +500,8 @@
       "detail": "20 questions",
       "href": "https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/quiz/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "04. Les tests et les conditions"
     },
     {
       "kind": "tp",
@@ -456,17 +509,19 @@
       "detail": "Mettre en pratique",
       "href": "https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/tp",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>",
+      "chapterTitle": "04. Les tests et les conditions"
     }
   ],
   "bash/05-boucles": [
     {
       "kind": "markdown",
-      "label": "Markdown",
-      "detail": "Lire le cours",
+      "label": "Cours",
+      "detail": "Lire le cours en Markdown",
       "href": "https://kayasam.github.io/linux-initiation/bash/05-boucles/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>",
+      "chapterTitle": "05. Les boucles"
     },
     {
       "kind": "html",
@@ -474,7 +529,8 @@
       "detail": "Explorer le chapitre",
       "href": "https://kayasam.github.io/linux-initiation/bash/05-boucles/html/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "05. Les boucles"
     },
     {
       "kind": "quiz",
@@ -482,7 +538,8 @@
       "detail": "20 questions",
       "href": "https://kayasam.github.io/linux-initiation/bash/05-boucles/quiz/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "05. Les boucles"
     },
     {
       "kind": "tp",
@@ -490,17 +547,19 @@
       "detail": "Mettre en pratique",
       "href": "https://kayasam.github.io/linux-initiation/bash/05-boucles/tp",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>",
+      "chapterTitle": "05. Les boucles"
     }
   ],
   "bash/06-sed-et-awk": [
     {
       "kind": "markdown",
-      "label": "Markdown",
-      "detail": "Lire le cours",
+      "label": "Cours",
+      "detail": "Lire le cours en Markdown",
       "href": "https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/markdown.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 24\"><rect x=\"1\" y=\"1\" width=\"30\" height=\"22\" rx=\"3\" fill=\"none\" stroke=\"#34495e\" stroke-width=\"2\"/><path d=\"M5 18V6h3l4 5 4-5h3v12h-3v-7l-4 5-4-5v7Z\" fill=\"#34495e\"/><path d=\"M23 6h3v7h3l-4.5 5-4.5-5h3Z\" fill=\"#34495e\"/></svg>",
+      "chapterTitle": "06. Traiter du texte avec sed et awk"
     },
     {
       "kind": "html",
@@ -508,7 +567,8 @@
       "detail": "Explorer le chapitre",
       "href": "https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/html/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/html.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 28 32\"><path d=\"M2 2h24l-2 25-10 3-10-3Z\" fill=\"#e44d26\"/><path d=\"M14 5v22l7-2 2-20Z\" fill=\"#f16529\"/><path d=\"M7 8h15l-.3 3H11l.3 3h10l-.8 9-6.5 2-6.5-2-.4-5h3l.2 2.6 3.7 1 3.7-1 .3-3.6H8Z\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "06. Traiter du texte avec sed et awk"
     },
     {
       "kind": "quiz",
@@ -516,7 +576,8 @@
       "detail": "20 questions",
       "href": "https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/quiz/",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/quiz.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"4\" y=\"3\" width=\"24\" height=\"26\" rx=\"6\" fill=\"#7652ad\"/><path d=\"M12 12a4 4 0 1 1 6 3.5c-1.5.8-2 1.4-2 3\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"23\" r=\"1.6\" fill=\"#fff\"/></svg>",
+      "chapterTitle": "06. Traiter du texte avec sed et awk"
     },
     {
       "kind": "tp",
@@ -524,7 +585,8 @@
       "detail": "Mettre en pratique",
       "href": "https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp",
       "icon": "https://kayasam.github.io/linux-initiation/assets/resource-icons/tp.svg",
-      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>"
+      "symbol": "<svg class=\"resource-symbol\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"2\" y=\"4\" width=\"28\" height=\"24\" rx=\"5\" fill=\"#237b60\"/><path d=\"m8 12 5 4-5 4m9 0h7\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>",
+      "chapterTitle": "06. Traiter du texte avec sed et awk"
     }
   ]
 }

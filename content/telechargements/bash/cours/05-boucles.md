@@ -288,4 +288,4 @@ Les TP de synthèse et le TP final utilisent une fonction pour écrire les titre
 
 **À toi :** que se passe-t-il si le motif `*.txt` ne correspond à aucun fichier ? Pourquoi `IFS=` et `-r` ne changent-ils rien sur `Mila Vega`, mais tout sur `C:\Orion\radio` ?
 
-[Passer au TP](https://kayasam.github.io/linux-initiation/bash/05-boucles/tp)
+[Passer au TP](https://kayasam.github.io/linux-initiation/bash/05-boucles/tp/tp-05-boucles)
