@@ -93,6 +93,8 @@ Conserve tes fichiers : aucune suppression n'est demandée.
 
 [← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/01-shell-et-environnement/)
 
+[Correction du TP](https://kayasam.github.io/linux-initiation/bash/01-shell-et-environnement/tp-01-environnement-correction)
+
 [← Parcours Bash](https://kayasam.github.io/linux-initiation/#bash)
 
 <a href="https://kayasam.github.io/linux-initiation/telechargements/bash/tp/tp-01-environnement.md" download>Télécharger le TP en Markdown</a>

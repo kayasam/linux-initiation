@@ -31,7 +31,7 @@ Crée `sas.sh` dans nano, avec son shebang.
 
 **B1.** Le programme attend exactement un argument. Si `$#` ne vaut pas 1, affiche une ligne d'utilisation sur la sortie d'erreur et termine avec `exit 2`.
 
-**B2.** Range le premier argument dans `billet`. Vérifie qu'il désigne un fichier ordinaire lisible. Sinon, affiche une erreur et termine avec le code 2.
+**B2.** Range le premier argument dans une variable `billet`. Vérifie qu'il désigne un fichier ordinaire lisible. Sinon, affiche une erreur et termine avec le code 2.
 
 **B3.** Cherche une ligne exactement égale à `ORION-OK` avec `grep -qx`.
 
@@ -73,6 +73,8 @@ Ce menu fait un seul choix puis se termine. Une boucle pour le répéter sera vu
 Les cinq cas du tableau donnent les résultats et codes attendus, et le billet au nom composé fonctionne.
 
 [← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/)
+
+[Correction du TP](https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/tp-04-tests-et-conditions-correction)
 
 [← Parcours Bash](https://kayasam.github.io/linux-initiation/#bash)
 

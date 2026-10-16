@@ -75,6 +75,8 @@ Le journal est créé dans le dossier **depuis lequel tu lances le script**. Pou
 
 [← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/)
 
+[Correction du TP](https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/tp-03-bases-du-scripting-correction)
+
 [← Parcours Bash](https://kayasam.github.io/linux-initiation/#bash)
 
 <a href="https://kayasam.github.io/linux-initiation/telechargements/bash/tp/tp-03-bases-du-scripting.md" download>Télécharger le TP en Markdown</a>

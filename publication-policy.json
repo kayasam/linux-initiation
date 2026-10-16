@@ -1,3 +1,9 @@
 {
-  "corrections": []
+  "corrections": [
+    "tp-01-environnement-correction.md",
+    "tp-02-variables-correction.md",
+    "tp-03-bases-du-scripting-correction.md",
+    "tp-04-terminal-correction.md",
+    "tp-04-tests-et-conditions-correction.md"
+  ]
 }

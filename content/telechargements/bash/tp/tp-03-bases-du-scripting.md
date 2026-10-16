@@ -68,3 +68,5 @@ Le journal est créé dans le dossier **depuis lequel tu lances le script**. Pou
 - Le bonus ajoute des lignes sans remplacer les arrivées précédentes.
 
 [← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/)
+
+[Correction du TP](https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/tp-03-bases-du-scripting-correction)

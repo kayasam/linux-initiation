@@ -56,3 +56,5 @@ Exporte `NOM_STATION="Orion Nord"`. Lance un second Bash avec `bash -c` et affic
 - Tu sais pourquoi les valeurs contenant des espaces restent entre guillemets.
 
 [← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/02-variables/)
+
+[Correction du TP](https://kayasam.github.io/linux-initiation/bash/02-variables/tp-02-variables-correction)
