@@ -1,8 +1,9 @@
 ---
 title: "TP bonus — Trois jeux dans le terminal"
+aliases: ["bash/ateliers/tp-bonus-exercices-ludiques"]
 ---
 
-<nav class="chapter-resources workshop-resources" aria-label="Ressources de l’atelier" data-workshop-key="bash/ateliers/tp-bonus-exercices-ludiques"><div class="resource-buttons"><a class="resource-button" href="https://kayasam.github.io/linux-initiation/bash/ateliers/tp-bonus-exercices-ludiques" aria-current="page"><span class="resource-icon"><svg class="resource-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10c4 0 6 10 3 11-2 1-4-3-5-3H9c-1 0-3 4-5 3C1 17 3 7 7 7Z"/><path d="M6 10v4M4 12h4M15 11h.01M18 13h.01"/></svg></span><span class="resource-label">Énoncé</span></a><a class="resource-button" href="https://kayasam.github.io/linux-initiation/bash/ateliers/tp-bonus-exercices-ludiques-corrigev2"><span class="resource-icon"><svg class="resource-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></span><span class="resource-label">Corrigé v2</span></a></div><div class="resource-actions"><a class="resource-download" href="https://kayasam.github.io/linux-initiation/telechargements/bash/tp/tp-bonus-exercices-ludiques.md" download aria-label="Télécharger ce support en Markdown">↓ Télécharger .md</a><button type="button" class="support-focus-toggle" aria-pressed="false">Masquer les menus</button></div></nav>
+<nav class="chapter-resources workshop-resources" aria-label="Ressources de l’atelier" data-workshop-key="bash/annexe/tp-bonus-exercices-ludiques"><div class="resource-buttons"><a class="resource-button" href="https://kayasam.github.io/linux-initiation/bash/annexe/tp-bonus-exercices-ludiques" aria-current="page"><span class="resource-icon"><svg class="resource-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10c4 0 6 10 3 11-2 1-4-3-5-3H9c-1 0-3 4-5 3C1 17 3 7 7 7Z"/><path d="M6 10v4M4 12h4M15 11h.01M18 13h.01"/></svg></span><span class="resource-label">Énoncé</span></a><a class="resource-button" href="https://kayasam.github.io/linux-initiation/bash/annexe/tp-bonus-exercices-ludiques-corrigev2"><span class="resource-icon"><svg class="resource-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></span><span class="resource-label">Corrigé v2</span></a></div><div class="resource-actions"><a class="resource-download" href="https://kayasam.github.io/linux-initiation/telechargements/bash/tp/tp-bonus-exercices-ludiques.md" download aria-label="Télécharger ce support en Markdown">↓ Télécharger .md</a><button type="button" class="support-focus-toggle" aria-pressed="false">Masquer les menus</button></div></nav>
 
 ## Mission
 
@@ -57,7 +58,7 @@ cd ~/atelier-bash/bonus
 
 Montre ton jeu à un camarade. Il doit pouvoir comprendre les questions, essayer une mauvaise réponse et quitter proprement. Explique les cas testés, pas seulement la réussite.
 
-[Correction du TP](https://kayasam.github.io/linux-initiation/bash/ateliers/tp-bonus-exercices-ludiques-corrigev2)
+[Correction du TP](https://kayasam.github.io/linux-initiation/bash/annexe/tp-bonus-exercices-ludiques-corrigev2)
 
 [← Parcours Bash](https://kayasam.github.io/linux-initiation/#bash)
 

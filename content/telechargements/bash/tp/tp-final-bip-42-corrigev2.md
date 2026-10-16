@@ -543,4 +543,4 @@ Montre une partie au formateur, puis laisse un camarade jouer en mode normal. Pr
 > [!success]- Afficher la correction — Défi final
 > Proposer **5** coupe d’abord l’intervalle 1–9 en deux. À chaque réponse, coupe la zone restante : avec cette stratégie, quatre propositions suffisent au maximum. Garde le secret fixe pour comparer les essais avant de jouer en mode normal.
 
-[← Énoncé du TP](https://kayasam.github.io/linux-initiation/bash/ateliers/tp-final-bip-42)
+[← Énoncé du TP](https://kayasam.github.io/linux-initiation/bash/annexe/tp-final-bip-42)

@@ -266,4 +266,4 @@ Crée une fonction `titre` qui affiche un titre de section. Réutilise-la pour l
 
 Montre le script, le rapport et les essais au formateur. Explique une variable, une condition, une boucle et le programme `awk` de ton choix.
 
-[← Énoncé du TP](https://kayasam.github.io/linux-initiation/bash/ateliers/tp-synthese)
+[← Énoncé du TP](https://kayasam.github.io/linux-initiation/bash/annexe/tp-synthese)

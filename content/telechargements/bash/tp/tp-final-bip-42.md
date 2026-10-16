@@ -171,4 +171,4 @@ Montre une partie au formateur, puis laisse un camarade jouer en mode normal. Pr
 
 **Défi final :** en sachant que le code est entre 1 et 9, quelle première proposition évite de chercher trop longtemps ? Testez vos stratégies !
 
-[Correction du TP](https://kayasam.github.io/linux-initiation/bash/ateliers/tp-final-bip-42-corrigev2)
+[Correction du TP](https://kayasam.github.io/linux-initiation/bash/annexe/tp-final-bip-42-corrigev2)

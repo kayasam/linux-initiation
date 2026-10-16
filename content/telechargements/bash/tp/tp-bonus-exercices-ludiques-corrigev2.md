@@ -230,4 +230,4 @@ cd ~/atelier-bash/bonus
 
 Montre ton jeu à un camarade. Il doit pouvoir comprendre les questions, essayer une mauvaise réponse et quitter proprement. Explique les cas testés, pas seulement la réussite.
 
-[← Énoncé du TP](https://kayasam.github.io/linux-initiation/bash/ateliers/tp-bonus-exercices-ludiques)
+[← Énoncé du TP](https://kayasam.github.io/linux-initiation/bash/annexe/tp-bonus-exercices-ludiques)

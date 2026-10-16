@@ -1,5 +1,6 @@
 ---
 title: "Orion Académie — Le jeu"
+aliases: ["bash/jeu/index"]
 ---
 
 # Orion Académie — Apprendre Bash en sauvant une station
