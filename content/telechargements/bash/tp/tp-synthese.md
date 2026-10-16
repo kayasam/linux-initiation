@@ -79,3 +79,5 @@ Crée une fonction `titre` qui affiche un titre de section. Réutilise-la pour l
 ## Livraison
 
 Montre le script, le rapport et les essais au formateur. Explique une variable, une condition, une boucle et le programme `awk` de ton choix.
+
+[Correction du TP](https://kayasam.github.io/linux-initiation/bash/ateliers/tp-synthese-corrigev2)

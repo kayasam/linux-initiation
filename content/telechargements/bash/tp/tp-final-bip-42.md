@@ -170,3 +170,5 @@ Tu peux aussi créer une fonction `titre` pour éviter de répéter la bannière
 Montre une partie au formateur, puis laisse un camarade jouer en mode normal. Présente `jeu.sh`, `statistiques.sh` et tes scores. Explique où se trouvent une variable, une condition, une boucle, un argument, une redirection, le traitement `sed` et le calcul `awk`.
 
 **Défi final :** en sachant que le code est entre 1 et 9, quelle première proposition évite de chercher trop longtemps ? Testez vos stratégies !
+
+[Correction du TP](https://kayasam.github.io/linux-initiation/bash/ateliers/tp-final-bip-42-corrigev2)

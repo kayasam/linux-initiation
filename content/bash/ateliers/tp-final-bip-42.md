@@ -2,7 +2,7 @@
 title: "TP final — BIP-42 a perdu son boulon"
 ---
 
-# TP final — BIP-42 a perdu son boulon
+<nav class="chapter-resources workshop-resources" aria-label="Ressources de l’atelier" data-workshop-key="bash/ateliers/tp-final-bip-42"><div class="resource-buttons"><a class="resource-button" href="https://kayasam.github.io/linux-initiation/bash/ateliers/tp-final-bip-42" aria-current="page"><span class="resource-icon"><svg class="resource-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span><span class="resource-label">Énoncé</span></a><a class="resource-button" href="https://kayasam.github.io/linux-initiation/bash/ateliers/tp-final-bip-42-corrigev2"><span class="resource-icon"><svg class="resource-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></span><span class="resource-label">Corrigé v2</span></a></div><div class="resource-actions"><a class="resource-download" href="https://kayasam.github.io/linux-initiation/telechargements/bash/tp/tp-final-bip-42.md" download aria-label="Télécharger ce support en Markdown">↓ Télécharger .md</a><button type="button" class="support-focus-toggle" aria-pressed="false">Masquer les menus</button></div></nav>
 
 > Parcours associé : les six chapitres Bash. Travaille dans Bash sur la VM Debian, après ta connexion SSH.
 
@@ -174,6 +174,8 @@ Tu peux aussi créer une fonction `titre` pour éviter de répéter la bannière
 Montre une partie au formateur, puis laisse un camarade jouer en mode normal. Présente `jeu.sh`, `statistiques.sh` et tes scores. Explique où se trouvent une variable, une condition, une boucle, un argument, une redirection, le traitement `sed` et le calcul `awk`.
 
 **Défi final :** en sachant que le code est entre 1 et 9, quelle première proposition évite de chercher trop longtemps ? Testez vos stratégies !
+
+[Correction du TP](https://kayasam.github.io/linux-initiation/bash/ateliers/tp-final-bip-42-corrigev2)
 
 [← Parcours Bash](https://kayasam.github.io/linux-initiation/#bash)
 

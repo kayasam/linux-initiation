@@ -1,0 +1,41 @@
+[
+  {
+    "key": "bash/ateliers/tp-synthese",
+    "kind": "synthese",
+    "order": 0,
+    "label": "Synthèse",
+    "title": "TP de synthèse — Le rapport de mission Orion",
+    "description": "Réunir les six chapitres dans un rapport de mission.",
+    "symbol": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M8 3h8l4 4v14H4V3h4Z\"/><path d=\"M14 3v5h6M8 12h8M8 16h6\"/></svg>",
+    "href": "https://kayasam.github.io/linux-initiation/bash/ateliers/tp-synthese",
+    "markdownHref": "https://kayasam.github.io/linux-initiation/telechargements/bash/tp/tp-synthese.md",
+    "correctionHref": "https://kayasam.github.io/linux-initiation/bash/ateliers/tp-synthese-corrigev2",
+    "correctionMarkdownHref": "https://kayasam.github.io/linux-initiation/telechargements/bash/tp/tp-synthese-corrigev2.md"
+  },
+  {
+    "key": "bash/ateliers/tp-final-bip-42",
+    "kind": "final",
+    "order": 1,
+    "label": "Jeu final",
+    "title": "TP final — BIP-42 a perdu son boulon",
+    "description": "Construire BIP-42, jouer une partie et conserver les scores.",
+    "symbol": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><circle cx=\"12\" cy=\"12\" r=\"5\"/><circle cx=\"12\" cy=\"12\" r=\"1\"/></svg>",
+    "href": "https://kayasam.github.io/linux-initiation/bash/ateliers/tp-final-bip-42",
+    "markdownHref": "https://kayasam.github.io/linux-initiation/telechargements/bash/tp/tp-final-bip-42.md",
+    "correctionHref": "https://kayasam.github.io/linux-initiation/bash/ateliers/tp-final-bip-42-corrigev2",
+    "correctionMarkdownHref": "https://kayasam.github.io/linux-initiation/telechargements/bash/tp/tp-final-bip-42-corrigev2.md"
+  },
+  {
+    "key": "bash/ateliers/tp-bonus-exercices-ludiques",
+    "kind": "bonus",
+    "order": 2,
+    "label": "Bonus",
+    "title": "TP bonus — Trois jeux dans le terminal",
+    "description": "Choisir parmi trois petits jeux indépendants dans le terminal.",
+    "symbol": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7 7h10c4 0 6 10 3 11-2 1-4-3-5-3H9c-1 0-3 4-5 3C1 17 3 7 7 7Z\"/><path d=\"M6 10v4M4 12h4M15 11h.01M18 13h.01\"/></svg>",
+    "href": "https://kayasam.github.io/linux-initiation/bash/ateliers/tp-bonus-exercices-ludiques",
+    "markdownHref": "https://kayasam.github.io/linux-initiation/telechargements/bash/tp/tp-bonus-exercices-ludiques.md",
+    "correctionHref": "https://kayasam.github.io/linux-initiation/bash/ateliers/tp-bonus-exercices-ludiques-corrigev2",
+    "correctionMarkdownHref": "https://kayasam.github.io/linux-initiation/telechargements/bash/tp/tp-bonus-exercices-ludiques-corrigev2.md"
+  }
+]
