@@ -12,6 +12,10 @@ try {
   if ($LASTEXITCODE) { throw 'Échec de préparation des supports HTML hors ligne.' }
   & python scripts/check-source-sync.py
   if ($LASTEXITCODE) { throw 'Échec de synchronisation avec le coffre Obsidian.' }
+  & python scripts/prepare-course-pdfs.py
+  if ($LASTEXITCODE) { throw 'Échec de génération des PDF des cours.' }
+  & python scripts/check-course-pdfs.py
+  if ($LASTEXITCODE) { throw 'Échec de vérification des PDF des cours.' }
   & node scripts/check-learning-ui.mjs
   if ($LASTEXITCODE) { throw 'Échec de vérification des quiz ou des contrastes.' }
   & node scripts/check-introduction.mjs

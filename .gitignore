@@ -10,4 +10,6 @@ tsconfig.tsbuildinfo
 .turbo/
 .publication-stage/
 private/
+.pdf-tools/
+output/pdf/review/
 quartz/cli/tui/dist/

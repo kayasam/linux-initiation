@@ -4,6 +4,7 @@ import shutil
 import re
 import zipfile
 import json
+import hashlib
 from urllib.parse import urlsplit, unquote
 from html.parser import HTMLParser
 
@@ -57,3 +58,18 @@ with zipfile.ZipFile(public/'linux-scripting-bash-obsidian.zip') as z:
     assert not any(re.search(r'correction|corrig', Path(n).name, re.I) and Path(n).name not in allowed_corrections for n in bash_names)
 assert not any(re.search(r'correction|corrig', p.name, re.I) and p.with_suffix('.md').name not in allowed_corrections for p in (public/'bash').rglob('*') if p.is_file())
 print(f'Bash : six cours et {bash_tp_count} TP dans le ZIP ; seules les corrections autorisées sont publiées.')
+pdf_manifest = json.loads((ROOT / 'content/assets/course-pdfs.json').read_text(encoding='utf-8'))
+assert len(pdf_manifest) == 16
+for entry in pdf_manifest:
+    assert hashlib.sha256((ROOT / 'content' / entry['source']).read_bytes()).hexdigest() == entry['sourceSha256'], 'PDF périmé : ' + entry['key']
+    assert hashlib.sha256((public / entry['pdf']).read_bytes()).hexdigest() == entry['pdfSha256'], entry['key']
+    assert (public / entry['pdf']).read_bytes().startswith(b'%PDF-')
+    course = (ROOT / 'content' / entry['key'] / 'index.md').read_text(encoding='utf-8')
+    assert 'resource-pdf' in course
+    assert entry['href'] + '?v=' + entry['pdfSha256'][:12] in course, 'Lien PDF non actualisé : ' + entry['key']
+assert sum('resource-pdf' in page.read_text(encoding='utf-8') for page in (ROOT / 'content').rglob('*.md') if 'telechargements' not in page.parts) == 16, 'PDF réservé aux 16 cours Markdown'
+print('PDF : 16 chapitres à jour, boutons réservés aux cours Markdown.')
+home = (ROOT / 'content/index.md').read_text(encoding='utf-8')
+for archive in (ROOT / 'content').glob('*.zip'):
+    assert archive.name + '?v=' + hashlib.sha256(archive.read_bytes()).hexdigest()[:12] in home
+print('Téléchargements : liens ZIP et PDF versionnés avec le contenu des fichiers.')

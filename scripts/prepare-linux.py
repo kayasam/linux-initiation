@@ -162,6 +162,7 @@ def prepare(source):
     # Keep the shared home and Bash course in every normal publication.
     published_corrections.update(runpy.run_path(str(ROOT / 'scripts/prepare-bash.py'))['populate'](stage, chapters))
     runpy.run_path(str(ROOT / 'scripts/course-resources.py'))['attach_tp_resources'](stage)
+    runpy.run_path(str(ROOT / 'scripts/course-resources.py'))['attach_course_pdf_buttons'](stage, BASE)
     forbidden = [p for p in stage.rglob('*') if p.is_file() and re.search(r'correction|corrig[eé]', p.name, re.I) and p.name not in published_corrections]
     assert not forbidden, forbidden
     assert not any(':::' in p.read_text(encoding='utf-8') for p in stage.rglob('*.md'))

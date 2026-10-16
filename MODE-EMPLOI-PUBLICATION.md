@@ -12,6 +12,10 @@ Pour les corrigés Bash avec réponses dépliables, utiliser le suffixe `-corrig
 
 Double-cliquer sur **Publier les cours.cmd**, puis saisir un message et confirmer la publication. Le script prépare les cours, les quiz, les téléchargements et l’archive, construit Quartz, vérifie les liens et propose l’envoi vers GitHub.
 
+Chaque page de cours Markdown propose aussi un bouton **PDF**. Les seize PDF sont régénérés depuis les mêmes sources que les téléchargements Markdown à chaque publication. Les activités HTML, quiz, TP et corrigés n'affichent pas ce bouton. Un contrôle bloque la publication si un PDF ne correspond plus à son cours. Les liens ZIP et PDF portent une version calculée sur leur contenu : un fichier modifié obtient une nouvelle version de téléchargement pour éviter les anciennes copies en cache. Une simple sauvegarde dans Obsidian ne met pas le site à jour : lancer la publication reste nécessaire.
+
+Pour préparer les PDF sur une nouvelle machine, installer une fois les dépendances locales : `python -m pip install --target .pdf-tools -r scripts/requirements-pdf.txt`. Le générateur utilise les polices Arial et Consolas sous Windows, ou DejaVu sous Linux. Les pages de contrôle visuel sont dans `output/pdf/review/` et ne sont pas publiées.
+
 Pour vérifier sans publier : `./publier-les-cours.ps1 -PrepareOnly`.
 
 Les HTML Bash sont des compagnons interactifs conçus à la main, distincts du cours Markdown. Les modifier directement dans le coffre ; la publication copie les fichiers existants et adapte leurs liens, sans les régénérer ni les écraser. Le skill `cours-html-interactif` décrit leur forme. Pour actualiser uniquement les schémas SVG, lancer manuellement `python scripts/render-bash-supports.py` ; cette commande ne modifie aucun HTML.
