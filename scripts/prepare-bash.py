@@ -58,6 +58,13 @@ def without_frontmatter(text):
     return re.sub(r'^---\s*\n.*?\n---\s*\n', '', text, count=1, flags=re.S)
 
 
+def published_correction(tp):
+    candidates = [tp.with_name(tp.stem + suffix) for suffix in ('-correction.md', '-corrigev2.md', '-Corrigév2.md')]
+    published = [path for path in candidates if path.is_file() and is_published(path)]
+    assert len(published) <= 1, f'Plusieurs corrigés cochés pour {tp.name} : {published}'
+    return published[0] if published else None
+
+
 def title_of(path):
     return re.sub(r'^(?:Chapitre|TP)\s*\d+\s*[—–-]\s*', '', re.search(r'^#\s+(.*)', path.read_text(encoding='utf-8-sig'), re.M)[1])
 
@@ -147,8 +154,8 @@ def populate(destination, chapters):
             slug = tp.parent.parent.name
             body = body.replace(f'](../{slug}.md)', f']({BASE}/bash/{slug}/)')
             body += f'\n[← Revenir au cours]({BASE}/bash/{slug}/)\n'
-        correction = tp.with_name(tp.stem + '-correction.md')
-        if correction.is_file() and is_published(correction):
+        correction = published_correction(tp)
+        if correction:
             published_corrections.add(correction.name)
             correction_route = routes[tp].rsplit('/', 1)[0] + '/' + correction.stem
             original = normalize(without_frontmatter(correction.read_text(encoding='utf-8-sig')))

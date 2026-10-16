@@ -146,8 +146,8 @@ def local_audit():
         for tp in tps:
             if re.search(r'correction|corrig', tp.name, re.I): continue
             offline = bash['normalize'](tp.read_text(encoding='utf-8-sig'))
-            correction = tp.with_name(tp.stem + '-correction.md')
-            published = correction.is_file() and bash['is_published'](correction)
+            correction = bash['published_correction'](tp)
+            published = correction is not None
             if published:
                 offline += f'\n[Correction du TP]({correction.name})\n'
                 equal(bash['normalize'](bash['without_frontmatter'](correction.read_text(encoding='utf-8-sig'))), archive.read('Linux-scripting-bash/' + correction.relative_to(bash_source).as_posix()), correction.name + ' (ZIP Bash)')

@@ -12,8 +12,35 @@ function setupSiteExperience() {
     cleanups.push(() => target.removeEventListener(name, callback))
   }
   const bar = article.querySelector<HTMLElement>(".chapter-resources")
-  const kind = article.querySelector<HTMLElement>(".support-viewer")?.dataset.supportKind ?? (/\/tp(?:\/|$)|-correction(?:\.html)?\/?$/.test(location.pathname) ? "tp" : "markdown")
+  const kind = article.querySelector<HTMLElement>(".support-viewer")?.dataset.supportKind ?? (/\/tp(?:\/|$)|-(?:correction|corrigev2)(?:\.html)?\/?$/i.test(location.pathname) ? "tp" : "markdown")
   const key = bar?.dataset.courseKey
+  if (/corrigev2/i.test(location.pathname)) {
+    article.querySelectorAll<HTMLElement>(".callout.is-collapsible").forEach((callout, index) => {
+      const title = callout.querySelector<HTMLElement>(".callout-title")
+      const content = callout.querySelector<HTMLElement>(".callout-content")
+      if (!title || !content) return
+      content.id = `correction-answer-${index}`
+      title.setAttribute("role", "button")
+      title.tabIndex = 0
+      title.setAttribute("aria-controls", content.id)
+      const syncAnswer = () => {
+        const closed = callout.classList.contains("is-collapsed")
+        title.setAttribute("aria-expanded", String(!closed))
+        content.setAttribute("aria-hidden", String(closed))
+        content.inert = closed
+      }
+      syncAnswer()
+      const observer = new MutationObserver(syncAnswer)
+      observer.observe(callout, { attributes: true, attributeFilter: ["class"] })
+      cleanups.push(() => observer.disconnect())
+      on(title, "keydown", ((event: KeyboardEvent) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault()
+          title.click()
+        }
+      }) as EventListener)
+    })
+  }
   let registry: Record<string, CourseLink[]> = {}
   try { registry = JSON.parse(document.getElementById("course-resource-data")?.textContent ?? "{}") } catch {}
   const siteRoot = Object.values(registry)[0]?.[0]?.href.replace(/(?:bash\/)?\d\d-[^/]+\/$/, "") ?? "/"

@@ -70,13 +70,13 @@ def attach_tp_resources(destination):
             continue
         course = (destination / key / 'index.md').read_text(encoding='utf-8')
         bar = re.search(r'<nav class="chapter-resources".*?</nav>', course, re.S)[0]
-        paths = [destination / key / 'tp.md', *(destination / key).glob('*-correction.md'), *(destination / key / 'tp').glob('*.md')]
+        paths = [destination / key / 'tp.md', *(destination / key).glob('*corr*.md'), *(destination / key / 'tp').glob('*.md')]
         for path in paths:
             if not path.is_file():
                 continue
             page = path.read_text(encoding='utf-8')
             if 'class="chapter-resources"' not in page:
-                if path.name.endswith('-correction.md'):
+                if re.search(r'correction|corrig', path.name, re.I):
                     heading = re.search(r'^# (.+)$', page, re.M)
                     if heading:
                         page = re.sub(r'^title:.*$', lambda _: 'title: ' + json.dumps(heading[1], ensure_ascii=False), page, count=1, flags=re.M)

@@ -8,6 +8,8 @@ Les modifications des cours se font dans `Formations/linux-initiation` du coffre
 
 Pour Linux comme pour Bash, une correction avec `publier: false` (case décochée), ou sans cette propriété, reste exclue du site et du ZIP. Pour la diffuser, cocher `publier: true` puis lancer la publication. Son nom reprend celui de l'énoncé avec le suffixe `-correction.md`. Un lien apparaît depuis le TP ; le corrigé devient également disponible dans les téléchargements et le ZIP. Dans le ZIP, le lien du TP ouvre le fichier local. `publication-policy.json` est régénéré depuis le coffre et contrôle les corrections autorisées. Décocher la propriété retire la correction lors de la prochaine publication, sans retirer les copies déjà téléchargées.
 
+Pour les corrigés Bash avec réponses dépliables, utiliser le suffixe `-corrigev2.md` et des blocs Obsidian `> [!success]- Afficher la correction — A1` sous chaque question. Cocher `publier: true` dans la v2 et décocher l'ancien `-correction.md`. Le script refuse deux versions cochées pour le même TP. La v2 remplace l'ancien corrigé sur le site et dans le ZIP ; les anciens fichiers restent dans le coffre.
+
 Double-cliquer sur **Publier les cours.cmd**, puis saisir un message et confirmer la publication. Le script prépare les cours, les quiz, les téléchargements et l’archive, construit Quartz, vérifie les liens et propose l’envoi vers GitHub.
 
 Pour vérifier sans publier : `./publier-les-cours.ps1 -PrepareOnly`.
