@@ -23,32 +23,20 @@ function setupChapterResources() {
       const entry = workshops.find((item) => path.endsWith("/" + item.key))
       const item = link.closest("li")
       if (!item) return
+      if (!path.includes('/bash/annexe/')) return
       if (!entry) {
-        if (workshops.some((workshop) => path.includes("/" + workshop.key + "-corrig"))) item.hidden = true
-        return
+        if (/-(?:corrig|correction)/i.test(path)) { item.hidden = true; return }
       }
       item.classList.add("workshop-explorer-item")
-      item.style.order = String(entry.order)
+      item.style.order = String(entry?.order ?? 3)
       item.parentElement?.classList.add("workshop-explorer-list")
       link.classList.add("workshop-explorer-link")
-      link.dataset.workshopKind = entry.kind
-      if (!link.dataset.workshopPrepared) {
-        const icon = document.createElement("span")
-        icon.className = "workshop-explorer-icon"
-        icon.setAttribute("aria-hidden", "true")
-        icon.innerHTML = entry.symbol
-        const text = document.createElement("span")
-        const label = document.createElement("span")
-        label.className = "workshop-explorer-label"
-        label.textContent = entry.label
-        const title = document.createElement("span")
-        title.className = "workshop-explorer-title"
-        title.textContent = entry.title
-        text.append(label, title)
-        link.replaceChildren(icon, text)
+      if (entry && !link.dataset.workshopPrepared) {
+        link.textContent = entry.title
         link.dataset.workshopPrepared = "true"
       }
-      if (coursePath.includes("/" + entry.key)) link.setAttribute("aria-current", coursePath.endsWith(entry.key) ? "page" : "location")
+      const key = entry?.key ?? "bash/annexe/orion-academie"
+      if (coursePath.includes("/" + key)) link.setAttribute("aria-current", coursePath.endsWith(key) ? "page" : "location")
       else link.removeAttribute("aria-current")
     })
     explorer!.querySelectorAll<HTMLElement>(".workshop-explorer-list").forEach((list) => {

@@ -156,7 +156,7 @@ def local_audit():
             body = bash['public_course_links'](body, tp, bash_courses)
             siblings = [p for p in tps if p.parent == tp.parent and not re.search(r'correction|corrig', p.name, re.I)]
             for sibling in siblings:
-                route = f'bash/{sibling.parent.parent.name}/tp' if sibling.is_relative_to(bash_source / 'cours') else f'bash/ateliers/{sibling.stem}'
+                route = f'bash/{sibling.parent.parent.name}/tp' if sibling.is_relative_to(bash_source / 'cours') else f'bash/annexe/{sibling.stem}'
                 if sibling.is_relative_to(bash_source / 'cours') and len(siblings) > 1:
                     route += '/' + sibling.stem
                 body = body.replace(f']({sibling.name})', f']({BASE}/{route})')
@@ -165,7 +165,7 @@ def local_audit():
                 body = body.replace(f'](../{slug}.md)', f']({BASE}/bash/{slug}/)')
                 body += f'\n[← Revenir au cours]({BASE}/bash/{slug}/)\n'
             if published:
-                route = f'bash/{tp.parent.parent.name}/tp' if tp.is_relative_to(bash_source / 'cours') else f'bash/ateliers/{tp.stem}'
+                route = f'bash/{tp.parent.parent.name}/tp' if tp.is_relative_to(bash_source / 'cours') else f'bash/annexe/{tp.stem}'
                 if tp.is_relative_to(bash_source / 'cours') and len(siblings) > 1:
                     route += '/' + tp.stem
                 correction_route = route.rsplit('/', 1)[0] + '/' + correction.stem

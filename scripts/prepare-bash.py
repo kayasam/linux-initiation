@@ -44,8 +44,9 @@ def public_course_links(body, source_file, courses):
     return re.sub(r'''(\bhref\s*=\s*["'])([^"']+)(["'])''', lambda m: m[1] + convert(m[2]) + m[3], body)
 
 
-def metadata(title, body):
-    return '---\ntitle: ' + json.dumps(title, ensure_ascii=False) + '\n---\n\n' + body
+def metadata(title, body, aliases=None):
+    old_routes = '\naliases: ' + json.dumps(aliases) if aliases else ''
+    return '---\ntitle: ' + json.dumps(title, ensure_ascii=False) + old_routes + '\n---\n\n' + body
 
 
 def is_published(path):
@@ -85,7 +86,7 @@ def populate(destination, chapters):
     assert len(courses) == 6, 'Six cours Bash attendus'
     candidates = list((SOURCE / 'cours').glob('*/tp/tp-*.md')) + list((SOURCE / 'tp').glob('*/tp-*.md'))
     tps = sorted(p for p in candidates if not re.search(r'correction|corrig', p.name, re.I))
-    routes = {p: (f'bash/{p.parent.parent.name}/tp' if p.is_relative_to(SOURCE / 'cours') else f'bash/ateliers/{p.stem}') for p in tps}
+    routes = {p: (f'bash/{p.parent.parent.name}/tp' if p.is_relative_to(SOURCE / 'cours') else f'bash/annexe/{p.stem}') for p in tps}
     for tp in tps:
         if tp.is_relative_to(SOURCE / 'cours') and sum(p.parent == tp.parent for p in tps) > 1:
             routes[tp] += '/' + tp.stem
@@ -96,7 +97,7 @@ def populate(destination, chapters):
     export.update(runpy.run_path(str(ROOT / 'scripts/package-orion.py'))['package'](game, destination))
     game_page = (game / 'README.md').read_text(encoding='utf-8')
     game_page += f'\n\n[Télécharger Orion Académie]({BASE}/telechargements/bash/orion-academie.tar.gz) · [← Parcours Bash]({BASE}/#bash)\n'
-    write(destination / 'bash/jeu/index.md', metadata('Orion Académie — Le jeu', game_page))
+    write(destination / 'bash/annexe/orion-academie.md', metadata('Orion Académie — Le jeu', game_page, ['bash/jeu/index']))
     images = SOURCE / 'Ressources/images'
     if images.is_dir():
         shutil.copytree(images, destination / 'bash/images', dirs_exist_ok=True)
@@ -166,11 +167,13 @@ def populate(destination, chapters):
                 if sibling.parent == tp.parent:
                     correction_body = correction_body.replace(f']({sibling.name})', f']({BASE}/{routes[sibling]})')
             correction_body += f'\n[← Énoncé du TP]({BASE}/{routes[tp]})\n'
-            write(destination / (correction_route + '.md'), metadata('Correction — ' + title_of(tp), correction_body))
+            aliases = [f'bash/ateliers/{correction.stem}'] if not tp.is_relative_to(SOURCE / 'cours') else None
+            write(destination / (correction_route + '.md'), metadata('Correction — ' + title_of(tp), correction_body, aliases))
             write(destination / 'telechargements/bash/tp' / correction.name, correction_body)
             body += f'\n[Correction du TP]({BASE}/{correction_route})\n'
         links = f'\n[← Parcours Bash]({BASE}/#bash)\n\n<a href="{BASE}/telechargements/bash/tp/{tp.name}" download>Télécharger le TP en Markdown</a>\n'
-        write(destination / (routes[tp] + '.md'), metadata(f'TP {tp.parent.parent.name[:2]}' if tp.is_relative_to(SOURCE / 'cours') else title_of(tp), body + links))
+        aliases = [f'bash/ateliers/{tp.stem}'] if not tp.is_relative_to(SOURCE / 'cours') else None
+        write(destination / (routes[tp] + '.md'), metadata(f'TP {tp.parent.parent.name[:2]}' if tp.is_relative_to(SOURCE / 'cours') else title_of(tp), body + links, aliases))
         write(destination / 'telechargements/bash/tp' / tp.name, body)
         export[tp.relative_to(SOURCE).as_posix()] = offline_body
         tp_links.append(f'- [{title_of(tp)}]({BASE}/{routes[tp]})')
@@ -189,8 +192,8 @@ def populate(destination, chapters):
     workshop_entries = workshop_ui['entries'](workshops, routes, BASE, published_correction)
     write(destination / 'assets/workshops.json', json.dumps(workshop_entries, ensure_ascii=False, indent=2) + '\n')
     workshop_ui['attach_resources'](destination, workshop_entries)
-    write(destination / 'bash/ateliers/index.md', metadata('Ateliers et jeu final', workshop_ui['overview'](workshop_entries)))
-    write(destination / 'bash/index.md', metadata('Bash — Le parcours', '# Scripting Bash\n\n' + '\n'.join(f'- [{title_of(c)}]({BASE}/bash/{c.stem}/)' for c in courses) + f'\n\n[Travaux pratiques]({BASE}/bash/tp/) · [Orion Académie — Le jeu]({BASE}/bash/jeu/)\n'))
+    write(destination / 'bash/annexe/index.md', metadata('Annexe', workshop_ui['overview'](workshop_entries, BASE), ['bash/ateliers/index']))
+    write(destination / 'bash/index.md', metadata('Bash — Le parcours', '# Scripting Bash\n\n' + '\n'.join(f'- [{title_of(c)}]({BASE}/bash/{c.stem}/)' for c in courses) + f'\n\n[Travaux pratiques]({BASE}/bash/tp/) · [Annexe]({BASE}/bash/annexe/)\n'))
     export['README.md'] = '# Scripting Bash\n\nOuvrez ce dossier dans Obsidian. Chaque chapitre est dans `cours/<chapitre>/` avec son cours Markdown, sa version HTML et son dossier `tp/`. Les exercices transversaux sont dans `tp/synthese/`, `tp/final/` et `tp/bonus/`. Seules les corrections explicitement publiées sont incluses.\n'
     export['cours/README.md'] = (SOURCE / 'cours/README.md').read_text(encoding='utf-8-sig')
     with zipfile.ZipFile(destination / 'linux-scripting-bash-obsidian.zip', 'w', zipfile.ZIP_DEFLATED) as archive:

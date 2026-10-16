@@ -52,9 +52,10 @@ def attach_resources(destination, workshops):
             path.write_text(text, encoding='utf-8')
 
 
-def overview(workshops):
+def overview(workshops, base):
     cards = []
     for entry in workshops:
         correction = '<a href="' + entry['correctionHref'] + '">Corrigé à déplier →</a>' if entry['correctionHref'] else ''
-        cards.append('<section class="workshop-card" data-workshop-kind="' + entry['kind'] + '"><span class="workshop-card__icon">' + entry['symbol'] + '</span><div><span class="workshop-card__label">' + entry['label'] + '</span><h2>' + html.escape(entry['title']) + '</h2><p>' + html.escape(entry['description']) + '</p><nav class="workshop-card__actions" aria-label="Ressources — ' + html.escape(entry['title'], quote=True) + '"><a href="' + entry['href'] + '">Ouvrir le TP →</a>' + correction + '</nav></div></section>')
-    return '# Ateliers et jeu final\n\nAprès les six chapitres, rassemble tes acquis avec la synthèse, construis le jeu final ou choisis un petit jeu bonus. Les corrigés se dévoilent question par question.\n\n<div class="workshop-grid">' + ''.join(cards) + '</div>\n'
+        cards.append('<section class="workshop-card"><h2>' + html.escape(entry['title']) + '</h2><p>' + html.escape(entry['description']) + '</p><nav class="workshop-card__actions" aria-label="Ressources — ' + html.escape(entry['title'], quote=True) + '"><a href="' + entry['href'] + '">Énoncé</a>' + correction + '</nav></section>')
+    cards.append('<section class="workshop-card"><h2>Orion Académie — Le jeu</h2><p>Des missions pour pratiquer dans le terminal.</p><nav class="workshop-card__actions" aria-label="Ressources — Orion Académie"><a href="' + base + '/bash/annexe/orion-academie">Ouvrir le jeu</a></nav></section>')
+    return '# Annexe\n\nLes ateliers complémentaires et le jeu Orion Académie.\n\n<div class="workshop-grid">' + ''.join(cards) + '</div>\n'

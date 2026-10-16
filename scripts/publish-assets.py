@@ -90,3 +90,17 @@ for entry in workshops:
                 assert '> [!success]- Afficher la correction — ' + question + '\n' in source, (route, question)
             assert source.count('> [!success]-') == rendered.count('data-callout="success" data-callout-fold'), route
 print('Ateliers : ordre, boutons énoncé/corrigé et réponses repliées vérifiés.')
+assert not (ROOT / 'content/bash/ateliers').exists()
+assert not (ROOT / 'content/bash/jeu').exists()
+assert (public / 'bash/annexe/orion-academie.html').is_file()
+for old, new in [('bash/ateliers/index', 'bash/annexe/'), ('bash/jeu/index', 'bash/annexe/orion-academie')]:
+    redirect = (public / (old + '.html')).read_text(encoding='utf-8')
+    assert new in redirect and 'http-equiv="refresh"' in redirect, old
+for entry in workshops:
+    assert entry['key'].startswith('bash/annexe/')
+    old = 'bash/ateliers/' + entry['key'].rsplit('/', 1)[1]
+    assert entry['key'] in (public / (old + '.html')).read_text(encoding='utf-8')
+    if entry['correctionHref']:
+        old_correction = 'bash/ateliers/' + entry['correctionHref'].rsplit('/', 1)[1]
+        assert 'bash/annexe/' in (public / (old_correction + '.html')).read_text(encoding='utf-8')
+print('Annexe : ateliers et Orion regroupés, anciennes adresses redirigées.')

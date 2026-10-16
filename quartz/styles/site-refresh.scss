@@ -151,40 +151,33 @@ html[saved-theme] body .explorer-content .is-course-chapter {
   > div { grid-column: 1; }
 }
 html[saved-theme] body .explorer-content li { padding-block: 0; margin-block: .15rem; }
-html[saved-theme] body .workshop-explorer-list { display: flex; flex-direction: column; gap: .4rem; padding: .4rem 0 .6rem .3rem; }
+html[saved-theme] body .workshop-explorer-list { display: flex; flex-direction: column; gap: .15rem; padding: .2rem 0 .5rem .45rem; }
 html[saved-theme] body .workshop-explorer-list > [hidden] { display: none !important; }
 html[saved-theme] body .explorer-content a.workshop-explorer-link {
-  display: grid; grid-template-columns: 1.3rem minmax(0, 1fr); gap: .55rem;
-  padding: .7rem .6rem; margin: 0; border: 1px solid var(--lightgray); border-left: 3px solid var(--workshop-accent);
-  border-radius: .65rem; background: var(--site-surface); color: var(--darkgray); opacity: 1;
-  box-shadow: none; text-decoration: none; font-weight: 500; line-height: 1.45;
+  display: block; padding: .55rem .6rem; margin: 0; border: 0; border-left: 2px solid transparent;
+  border-radius: .2rem; background: transparent; color: var(--darkgray); opacity: 1;
+  box-shadow: none; text-decoration: none; font-size: .8rem; font-weight: 450; line-height: 1.5; overflow-wrap: break-word;
   &:hover { background: var(--site-soft); color: var(--dark); }
-  &[aria-current] { background: color-mix(in srgb, var(--workshop-accent) 10%, var(--site-surface)); color: var(--dark); box-shadow: none; }
-  .workshop-explorer-label { display: block; margin-bottom: .18rem; color: var(--workshop-accent); font-size: .65rem; font-weight: 750; }
-  .workshop-explorer-title { display: block; font-size: .79rem; overflow-wrap: anywhere; }
-  .workshop-explorer-icon { color: var(--workshop-accent); padding-top: .15rem; }
-  svg { display: block; width: 1.25rem; height: 1.25rem; }
+  &[aria-current] { background: var(--highlight); border-left-color: var(--secondary); color: var(--dark); box-shadow: none; font-weight: 600; }
 }
-html[saved-theme] body [data-workshop-kind] { --workshop-accent: var(--secondary); }
-html[saved-theme] body [data-workshop-kind=final] { --workshop-accent: var(--tertiary); }
-html[saved-theme="light"] body [data-workshop-kind=bonus] { --workshop-accent: #925614; }
-html[saved-theme="dark"] body [data-workshop-kind=bonus] { --workshop-accent: #e8bf82; }
-html[saved-theme] body[data-slug="bash/ateliers/index"] .page-listing { display: none; }
-html[saved-theme] body .workshop-grid { display: grid; gap: 1rem; margin: 1.5rem 0; }
+html[saved-theme] body[data-slug="bash/annexe/index"] .page-listing { display: none; }
+html[saved-theme] body .workshop-grid { display: grid; margin: 1.5rem 0; }
 html[saved-theme] body nav.chapter-resources.workshop-resources a.resource-button .resource-icon { background: transparent; color: currentColor; }
 html[saved-theme] body .workshop-card {
-  display: grid; grid-template-columns: 2.7rem minmax(0,1fr); gap: .9rem;
-  padding: 1.2rem; border: 1px solid var(--lightgray); border-left: 3px solid var(--workshop-accent); border-radius: .9rem; background: var(--site-surface);
-  .workshop-card__icon { color: var(--workshop-accent); padding-top: .25rem; }
-  svg { width: 2rem; height: 2rem; }
-  .workshop-card__label { color: var(--workshop-accent); font-size: .78rem; font-weight: 750; }
+  padding: 1.1rem 0; border: 0; border-bottom: 1px solid var(--lightgray); background: transparent;
   h2 [role=anchor] { display: none; }
   p { margin: 0 0 .8rem; font-size: .95rem; }
   .workshop-card__actions { display: flex; flex-wrap: wrap; gap: .5rem; }
-  .workshop-card__actions a { padding: .55rem .75rem; border: 1px solid var(--lightgray); border-radius: .5rem; color: var(--workshop-accent); background: var(--site-soft); font-size: .82rem; font-weight: 650; text-decoration: none; }
+  .workshop-card__actions a { padding: .3rem 0; margin-right: 1rem; color: var(--secondary); background: transparent; font-size: .85rem; font-weight: 550; text-decoration: underline; text-underline-offset: .2em; }
   .external-icon { display: none; }
 }
 html[saved-theme] body .center article .workshop-card h2 { margin: .3rem 0 .5rem; font-size: 1.12rem; line-height: 1.45; }
+html[saved-theme] body .explorer-content .folder-container[data-folderpath^="bash/annexe"] {
+  grid-template-columns: minmax(0,1fr) .8rem; margin-top: .6rem; border: 0; border-top: 1px solid var(--lightgray); border-radius: 0;
+  &::before { display: none; }
+  > div { grid-column: 1; }
+  .folder-title { color: var(--darkgray); font-size: .83rem; }
+}
 html[saved-theme] body .explorer-content .folder-container.support-current-chapter {
   border: 1px solid color-mix(in srgb, var(--secondary) 25%, var(--lightgray)); background: var(--highlight);
   .folder-title { color: var(--dark); font-weight: 700; }
