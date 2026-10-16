@@ -76,5 +76,11 @@ def attach_tp_resources(destination):
                 continue
             page = path.read_text(encoding='utf-8')
             if 'class="chapter-resources"' not in page:
-                page = re.sub(r'^(# .+)$', lambda match: match[0] + '\n\n' + bar, page, count=1, flags=re.M)
+                if path.name.endswith('-correction.md'):
+                    heading = re.search(r'^# (.+)$', page, re.M)
+                    if heading:
+                        page = re.sub(r'^title:.*$', lambda _: 'title: ' + json.dumps(heading[1], ensure_ascii=False), page, count=1, flags=re.M)
+                        page = re.sub(r'^# .+$', lambda _: bar, page, count=1, flags=re.M)
+                else:
+                    page = re.sub(r'^(# .+)$', lambda match: match[0] + '\n\n' + bar, page, count=1, flags=re.M)
                 path.write_text(page, encoding='utf-8')
