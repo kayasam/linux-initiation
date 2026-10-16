@@ -193,7 +193,7 @@ def populate(destination, chapters):
     write(destination / 'assets/workshops.json', json.dumps(workshop_entries, ensure_ascii=False, indent=2) + '\n')
     workshop_ui['attach_resources'](destination, workshop_entries)
     write(destination / 'bash/annexe/index.md', metadata('Annexe', workshop_ui['overview'](workshop_entries, BASE), ['bash/ateliers/index']))
-    write(destination / 'bash/index.md', metadata('Bash — Le parcours', '# Scripting Bash\n\n' + '\n'.join(f'- [{title_of(c)}]({BASE}/bash/{c.stem}/)' for c in courses) + f'\n\n[Travaux pratiques]({BASE}/bash/tp/) · [Annexe]({BASE}/bash/annexe/)\n'))
+    write(destination / 'bash/index.md', metadata('Bash — Le parcours', '\n'.join(f'- [{c.stem[:2]}. {title_of(c)}]({BASE}/bash/{c.stem}/)' for c in courses) + f'\n\n[Travaux pratiques]({BASE}/bash/tp/) · [Annexe]({BASE}/bash/annexe/)\n'))
     export['README.md'] = '# Scripting Bash\n\nOuvrez ce dossier dans Obsidian. Chaque chapitre est dans `cours/<chapitre>/` avec son cours Markdown, sa version HTML et son dossier `tp/`. Les exercices transversaux sont dans `tp/synthese/`, `tp/final/` et `tp/bonus/`. Seules les corrections explicitement publiées sont incluses.\n'
     export['cours/README.md'] = (SOURCE / 'cours/README.md').read_text(encoding='utf-8-sig')
     with zipfile.ZipFile(destination / 'linux-scripting-bash-obsidian.zip', 'w', zipfile.ZIP_DEFLATED) as archive:

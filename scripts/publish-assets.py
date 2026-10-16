@@ -104,3 +104,22 @@ for entry in workshops:
         old_correction = 'bash/ateliers/' + entry['correctionHref'].rsplit('/', 1)[1]
         assert 'bash/annexe/' in (public / (old_correction + '.html')).read_text(encoding='utf-8')
 print('Annexe : ateliers et Orion regroupés, anciennes adresses redirigées.')
+exercise_count = 0
+for page_path in (ROOT / 'content').rglob('*.md'):
+    page = page_path.read_text(encoding='utf-8')
+    if 'data-course-key=' not in page or 'support-viewer' in page:
+        continue
+    if not re.search(r'/(?:tp(?:/|\.)|[^/]*corrig[^/]*)', page_path.as_posix(), re.I):
+        continue
+    assert not re.search(r'^# ', page, re.M), 'Titre TP dupliqué : ' + str(page_path)
+    published = re.search(r'\[Correction du TP\]\(([^)]+)\)', page)
+    if published:
+        assert 'Afficher les corrections</a>' in page and 'class="exercise-resources"' in page, str(page_path)
+        assert published[1] in page
+    elif not re.search(r'correction|corrig', page_path.name, re.I):
+        assert 'Afficher les corrections</a>' not in page, 'Correction privée exposée : ' + str(page_path)
+    download = re.search(r'<a class="resource-download" href="([^"]+)"', page)
+    if download:
+        assert '/tp/' in download[1], 'Téléchargement du cours sur un TP : ' + str(page_path)
+    exercise_count += 1
+print(f'TP : {exercise_count} pages, téléchargements contextuels et boutons conditionnels vérifiés.')

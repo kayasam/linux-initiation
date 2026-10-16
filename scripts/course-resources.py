@@ -75,14 +75,34 @@ def attach_tp_resources(destination):
             if not path.is_file():
                 continue
             page = path.read_text(encoding='utf-8')
-            if 'class="chapter-resources"' not in page:
-                if re.search(r'correction|corrig', path.name, re.I):
-                    heading = re.search(r'^# (.+)$', page, re.M)
-                    if heading:
-                        page = re.sub(r'^title:.*$', lambda _: 'title: ' + json.dumps(heading[1], ensure_ascii=False), page, count=1, flags=re.M)
-                        page = re.sub(r'^# .+$', lambda _: bar, page, count=1, flags=re.M)
-                else:
-                    page = re.sub(r'^(# .+)$', lambda match: match[0] + '\n\n' + bar, page, count=1, flags=re.M)
-                path.write_text(page, encoding='utf-8')
+            if 'class="chapter-resources"' in page:
+                continue
+            correction = bool(re.search(r'correction|corrig', path.name, re.I))
+            base = resources[0]['href'].split('/' + key + '/')[0]
+            current = base + '/' + path.relative_to(destination).with_suffix('').as_posix()
+            correction_link = re.search(r'\[Correction du TP\]\(([^)]+)\)', page)
+            statement_link = re.search(r'\[← Énoncé du TP\]\(([^)]+)\)', page)
+            download = re.search(r'<a href="([^"]+/telechargements/[^"]+\.md)" download>', page)
+            if correction:
+                track = 'bash/' if key.startswith('bash/') else ''
+                download_url = base + '/telechargements/' + track + 'tp/' + path.name
+            else:
+                download_url = download[1] if download else None
+            page_bar = bar
+            original_download = re.search(r'<a class="resource-download".*?</a>', page_bar)[0]
+            label = 'Télécharger le corrigé' if correction else 'Télécharger le TP'
+            replacement = ('<a class="resource-download" href="' + html.escape(download_url, quote=True) + '" download aria-label="' + label + ' en Markdown">↓ ' + label + ' (.md)</a>') if download_url else ''
+            page_bar = page_bar.replace(original_download, replacement)
+            exercise_bar = ''
+            # Only generated, explicitly published correction pages are linked here.
+            if correction_link or (correction and statement_link):
+                tp_url = statement_link[1] if correction else current
+                corrected_url = current if correction else correction_link[1]
+                exercise_bar = '<nav class="exercise-resources" aria-label="Ressources du TP"><a href="' + html.escape(tp_url, quote=True) + '"' + (' aria-current="page"' if not correction else '') + '>Énoncé</a><a class="exercise-correction" href="' + html.escape(corrected_url, quote=True) + '"' + (' aria-current="page"' if correction else '') + '>' + ('Corrigé' if correction else 'Afficher les corrections') + '</a></nav>'
+            heading = re.search(r'^# (.+)$', page, re.M)
+            if heading:
+                page = re.sub(r'^title:.*$', lambda _: 'title: ' + json.dumps(heading[1], ensure_ascii=False), page, count=1, flags=re.M)
+                page = re.sub(r'^# .+$', lambda _: page_bar + '\n' + exercise_bar, page, count=1, flags=re.M)
+            path.write_text(page, encoding='utf-8')
 
 

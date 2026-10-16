@@ -172,6 +172,24 @@ html[saved-theme] body .workshop-card {
   .external-icon { display: none; }
 }
 html[saved-theme] body .center article .workshop-card h2 { margin: .3rem 0 .5rem; font-size: 1.12rem; line-height: 1.45; }
+/* Keep the accessible Shiki palette instead of the plugin's bright token overrides. */
+html[saved-theme="light"] body pre code[data-theme] span[style*="--shiki-light"] { color: var(--shiki-light) !important; }
+html[saved-theme="dark"] body pre code[data-theme] span[style*="--shiki-dark"] { color: var(--shiki-dark) !important; }
+html[saved-theme] body .center article pre { background: var(--site-surface); }
+html[saved-theme] body:is([data-slug="bash/index"],[data-slug="linux-initiation/index"],[data-slug="bash/tp/index"]) .page-listing { display: none; }
+html[saved-theme] body .center article .exercise-resources {
+  display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0 1.5rem;
+  a { display: inline-flex; align-items: center; padding: .55rem .85rem; min-height: 44px; box-sizing: border-box; border: 1px solid var(--lightgray); border-radius: .5rem; color: var(--darkgray); font-size: .88rem; text-decoration: none; }
+  a.exercise-correction { color: var(--dark); background: var(--highlight); border-color: var(--secondary); font-weight: 650; }
+  a[aria-current] { font-weight: 700; }
+}
+html[saved-theme] body .support-navigation .support-toc-toggle {
+  width: 100%; display: flex; justify-content: space-between; align-items: center; border: 0; padding: .4rem 0; color: var(--dark); font: 650 .84rem/1.5 var(--bodyFont);
+  &::after { content: "−"; }
+  &[aria-expanded="false"]::after { content: "+"; }
+}
+html[saved-theme] body .support-navigation :is(.support-sections,.support-status)[hidden] { display: none; }
+html[saved-theme] body[data-slug="linux-initiation/index"] .center article > h1:first-child { display: none; }
 html[saved-theme] body .explorer-content .folder-container[data-folderpath^="bash/annexe"] {
   grid-template-columns: minmax(0,1fr) .8rem; margin-top: .6rem; border: 0; border-top: 1px solid var(--lightgray); border-radius: 0;
   &::before { display: none; }

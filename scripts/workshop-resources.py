@@ -32,7 +32,7 @@ def entries(tps, routes, base, published_correction):
 def resources(entry, kind):
     links = [('tp', 'Énoncé', entry['href'], entry['symbol'])]
     if entry['correctionHref']:
-        links.append(('correction', 'Corrigé v2', entry['correctionHref'], '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>'))
+        links.append(('correction', 'Corrigé' if kind == 'correction' else 'Afficher les corrections', entry['correctionHref'], '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>'))
     buttons = ''.join('<a class="resource-button" href="' + html.escape(url, quote=True) + '"' + (' aria-current="page"' if tab == kind else '') + '><span class="resource-icon">' + symbol.replace('<svg ', '<svg class="resource-symbol" ') + '</span><span class="resource-label">' + label + '</span></a>' for tab, label, url, symbol in links)
     download = entry['correctionMarkdownHref'] if kind == 'correction' else entry['markdownHref']
     return '<nav class="chapter-resources workshop-resources" aria-label="Ressources de l’atelier" data-workshop-key="' + entry['key'] + '"><div class="resource-buttons">' + buttons + '</div><div class="resource-actions"><a class="resource-download" href="' + download + '" download aria-label="Télécharger ce support en Markdown">↓ Télécharger .md</a><button type="button" class="support-focus-toggle" aria-pressed="false">Masquer les menus</button></div></nav>'

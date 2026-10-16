@@ -42,15 +42,33 @@ function setupSupportViewer() {
   const panel = document.createElement("nav")
   panel.className = "support-navigation course-toc"
   panel.setAttribute("aria-label", "Navigation du support")
-  const title = document.createElement("strong")
+  const title = document.createElement("button")
+  title.type = "button"
+  title.className = "support-toc-toggle"
   title.textContent = viewer.dataset.supportKind === "quiz" ? "Dans ce quiz" : "Dans ce support"
   const sections = document.createElement("div")
   sections.className = "support-sections"
+  sections.id = "support-section-links"
+  title.setAttribute("aria-controls", "support-section-links support-section-status")
   const status = document.createElement("p")
   status.className = "support-status"
+  status.id = "support-section-status"
   status.setAttribute("aria-live", "polite")
   panel.append(title, sections, status)
   const desktop = matchMedia("(min-width: 1201px)")
+  const compact = matchMedia("(max-width: 800px)")
+  let collapsed = compact.matches
+  function renderCollapsed() {
+    panel.classList.toggle("is-collapsed", collapsed)
+    title.setAttribute("aria-expanded", String(!collapsed))
+    sections.hidden = collapsed
+    status.hidden = collapsed
+  }
+  const toggleSections = () => { collapsed = !collapsed; renderCollapsed() }
+  title.addEventListener("click", toggleSections)
+  const compactChanged = () => { collapsed = compact.matches; renderCollapsed() }
+  compact.addEventListener("change", compactChanged)
+  renderCollapsed()
   function placeNavigation() {
     if (desktop.matches) document.querySelector(".sidebar.right")?.prepend(panel)
     else viewer!.before(panel)
@@ -171,6 +189,8 @@ function setupSupportViewer() {
     releaseFocus()
     cleanups.forEach((cleanup) => cleanup())
     desktop.removeEventListener("change", placeNavigation)
+    compact.removeEventListener("change", compactChanged)
+    title.removeEventListener("click", toggleSections)
     panel.remove()
     document.body.classList.remove("has-support-viewer", "support-focus")
   }

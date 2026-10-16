@@ -45,6 +45,16 @@ function setupSiteExperience() {
   let registry: Record<string, CourseLink[]> = {}
   try { registry = JSON.parse(document.getElementById("course-resource-data")?.textContent ?? "{}") } catch {}
   const siteRoot = Object.values(registry)[0]?.[0]?.href.replace(/(?:bash\/)?\d\d-[^/]+\/$/, "") ?? "/"
+  article.querySelectorAll<HTMLAnchorElement>("a[href]").forEach((link) => {
+    if (new URL(link.href, location.href).origin === location.origin) link.querySelectorAll(".external-icon").forEach((icon) => icon.remove())
+  })
+  queueMicrotask(() => {
+    if (!article.isConnected) return
+    article.querySelectorAll<HTMLButtonElement>("button.clipboard-button").forEach((button) => {
+      button.setAttribute("aria-label", "Copier le code")
+      button.title = "Copier le code"
+    })
+  })
   const isHome = Boolean(article.querySelector(".home-header"))
   document.body.classList.toggle("site-home", isHome)
   document.body.classList.toggle("site-course", Boolean(bar))
