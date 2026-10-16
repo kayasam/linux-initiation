@@ -12,7 +12,7 @@ function setupSiteExperience() {
     cleanups.push(() => target.removeEventListener(name, callback))
   }
   const bar = article.querySelector<HTMLElement>(".chapter-resources")
-  const kind = article.querySelector<HTMLElement>(".support-viewer")?.dataset.supportKind ?? (/\/tp\/?$/.test(location.pathname) ? "tp" : "markdown")
+  const kind = article.querySelector<HTMLElement>(".support-viewer")?.dataset.supportKind ?? (/\/tp(?:\/|$)/.test(location.pathname) ? "tp" : "markdown")
   const key = bar?.dataset.courseKey
   let registry: Record<string, CourseLink[]> = {}
   try { registry = JSON.parse(document.getElementById("course-resource-data")?.textContent ?? "{}") } catch {}

@@ -69,6 +69,9 @@ def populate(destination, chapters):
     candidates = list((SOURCE / 'cours').glob('*/tp/tp-*.md')) + list((SOURCE / 'tp').glob('*/tp-*.md'))
     tps = sorted(p for p in candidates if not re.search(r'correction|corrig', p.name, re.I))
     routes = {p: (f'bash/{p.parent.parent.name}/tp' if p.is_relative_to(SOURCE / 'cours') else f'bash/ateliers/{p.stem}') for p in tps}
+    for tp in tps:
+        if tp.is_relative_to(SOURCE / 'cours') and sum(p.parent == tp.parent for p in tps) > 1:
+            routes[tp] += '/' + tp.stem
     export = {}
     export.update(runpy.run_path(str(ROOT / 'scripts/prepare-bash-quizzes.py'))['populate'](SOURCE,destination,courses))
     game = SOURCE / 'jeu'
@@ -90,8 +93,8 @@ def populate(destination, chapters):
         body = public_course_links(body, course, courses)
         html_name = f'{slug}-interactif.html'
         matching = [p for p in tps if p.parent == course.parent / 'tp']
-        if matching:
-            body = body.replace(f'](tp/{matching[0].name})', f']({BASE}/{routes[matching[0]]})')
+        for exercise in matching:
+            body = body.replace(f'](tp/{exercise.name})', f']({BASE}/{routes[exercise]})')
         links = RESOURCE_UI(destination, BASE, 'bash/' + slug, slug, bool(matching), f'{slug[:2]}. {title}')
         site_body = re.sub(r'^(# .+)$', lambda m: m[0] + links, body, count=1, flags=re.M)
         site_body += f'\n[← Parcours Bash]({BASE}/#bash) · [Tous les TP Bash]({BASE}/bash/tp/)\n'
@@ -106,8 +109,8 @@ def populate(destination, chapters):
         interactive = interactive.replace(f'href="{course.name}"', f'href="{BASE}/bash/{slug}/"')
         interactive = interactive.replace(f'href="{slug}-quiz.html"', f'href="{BASE}/bash/cours/quiz/{slug}.html"').replace(f'src="{slug}-quiz.html"', f'src="{BASE}/bash/cours/quiz/{slug}.html"')
         interactive = interactive.replace(f'data-quiz-src="{slug}-quiz.html"', f'data-quiz-src="{BASE}/bash/cours/quiz/{slug}.html"')
-        if matching:
-            interactive = interactive.replace(f'href="tp/{matching[0].name}"', f'href="{BASE}/{routes[matching[0]]}"')
+        for exercise in matching:
+            interactive = interactive.replace(f'href="tp/{exercise.name}"', f'href="{BASE}/{routes[exercise]}"')
         theme = '<link rel="stylesheet" href="../../assets/themes/theme.css">\n<script src="../../assets/themes/theme.js"></script>\n'
         if 'assets/themes/theme.css' not in interactive:
             interactive = interactive.replace('</head>', theme + '</head>', 1)
@@ -126,6 +129,9 @@ def populate(destination, chapters):
         offline_body = normalize(tp.read_text(encoding='utf-8-sig'))
         body = offline_body
         body = public_course_links(body, tp, courses)
+        for sibling in tps:
+            if sibling.parent == tp.parent:
+                body = body.replace(f']({sibling.name})', f']({BASE}/{routes[sibling]})')
         if tp.is_relative_to(SOURCE / 'cours'):
             slug = tp.parent.parent.name
             body = body.replace(f'](../{slug}.md)', f']({BASE}/bash/{slug}/)')
@@ -139,6 +145,12 @@ def populate(destination, chapters):
         target = f'{BASE}/{routes[tp]}'
         write(destination / 'bash/tp' / (tp.stem + '.html'), f'<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url={target}"><link rel="canonical" href="{target}"><title>TP Bash</title></head><body><a href="{target}">Ouvrir le TP</a></body></html>')
     write(destination / 'bash/tp/index.md', metadata('Travaux pratiques', '# Travaux pratiques Bash\n\n' + '\n'.join(tp_links) + f'\n\n[← Parcours Bash]({BASE}/#bash)\n'))
+    for course in courses:
+        matching = [p for p in tps if p.parent == course.parent / 'tp']
+        if len(matching) > 1:
+            title = 'Travaux pratiques — ' + title_of(course)
+            body = '# ' + title + '\n\n' + '\n\n'.join(f'- [{title_of(p)}]({BASE}/{routes[p]})' for p in matching)
+            write(destination / 'bash' / course.stem / 'tp.md', metadata(title, body))
     workshops = [p for p in tps if not p.is_relative_to(SOURCE / 'cours')]
     write(destination / 'bash/ateliers/index.md', metadata('Ateliers et jeu final', '# Ateliers et jeu final\n\n' + '\n'.join(f'- [{title_of(p)}]({BASE}/{routes[p]})' for p in workshops) + '\n'))
     write(destination / 'bash/index.md', metadata('Bash — Le parcours', '# Scripting Bash\n\n' + '\n'.join(f'- [{title_of(c)}]({BASE}/bash/{c.stem}/)' for c in courses) + f'\n\n[Travaux pratiques]({BASE}/bash/tp/) · [Orion Académie — Le jeu]({BASE}/bash/jeu/)\n'))

@@ -68,12 +68,13 @@ def attach_tp_resources(destination):
     for key, resources in registry.items():
         if not any(resource['kind'] == 'tp' for resource in resources):
             continue
-        path = destination / key / 'tp.md'
-        if not path.is_file():
-            continue
         course = (destination / key / 'index.md').read_text(encoding='utf-8')
         bar = re.search(r'<nav class="chapter-resources".*?</nav>', course, re.S)[0]
-        page = path.read_text(encoding='utf-8')
-        if 'class="chapter-resources"' not in page:
-            page = re.sub(r'^(# .+)$', lambda match: match[0] + '\n\n' + bar, page, count=1, flags=re.M)
-            path.write_text(page, encoding='utf-8')
+        paths = [destination / key / 'tp.md', *(destination / key / 'tp').glob('*.md')]
+        for path in paths:
+            if not path.is_file():
+                continue
+            page = path.read_text(encoding='utf-8')
+            if 'class="chapter-resources"' not in page:
+                page = re.sub(r'^(# .+)$', lambda match: match[0] + '\n\n' + bar, page, count=1, flags=re.M)
+                path.write_text(page, encoding='utf-8')

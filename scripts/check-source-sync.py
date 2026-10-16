@@ -132,8 +132,10 @@ def local_audit():
             body = body.replace('../../Ressources/images/', BASE + '/bash/images/')
             body = bash['public_course_links'](body, course, bash_courses)
             tps = [p for p in (course.parent / 'tp').glob('tp-*.md') if not re.search(r'correction|corrig', p.name, re.I)]
-            assert len(tps) == 1
-            body = body.replace(f'](tp/{tps[0].name})', f']({BASE}/bash/{slug}/tp)')
+            assert tps
+            for exercise in tps:
+                route = f'{BASE}/bash/{slug}/tp' + ('/' + exercise.stem if len(tps) > 1 else '')
+                body = body.replace(f'](tp/{exercise.name})', f']({route})')
             equal(body, (CONTENT / 'telechargements/bash/cours' / course.name).read_bytes(), course.name + ' (téléchargement Bash)')
             assert (CONTENT / 'bash' / slug / 'tp.md').is_file()
         tps = list(bash_source.glob('cours/*/tp/tp-*.md')) + list(bash_source.glob('tp/*/tp-*.md'))
@@ -143,6 +145,12 @@ def local_audit():
             equal(offline, archive.read('Linux-scripting-bash/' + tp.relative_to(bash_source).as_posix()), tp.name + ' (ZIP Bash)')
             body = offline
             body = bash['public_course_links'](body, tp, bash_courses)
+            siblings = [p for p in tps if p.parent == tp.parent and not re.search(r'correction|corrig', p.name, re.I)]
+            for sibling in siblings:
+                route = f'bash/{sibling.parent.parent.name}/tp' if sibling.is_relative_to(bash_source / 'cours') else f'bash/ateliers/{sibling.stem}'
+                if sibling.is_relative_to(bash_source / 'cours') and len(siblings) > 1:
+                    route += '/' + sibling.stem
+                body = body.replace(f']({sibling.name})', f']({BASE}/{route})')
             if tp.is_relative_to(bash_source / 'cours'):
                 slug = tp.parent.parent.name
                 body = body.replace(f'](../{slug}.md)', f']({BASE}/bash/{slug}/)')
@@ -150,7 +158,9 @@ def local_audit():
             equal(body, (CONTENT / 'telechargements/bash/tp' / tp.name).read_bytes(), tp.name + ' (téléchargement Bash)')
             tp_count += 1
         assert not any(re.search(r'correction|corrig', name, re.I) for name in archive.namelist())
-    assert tp_count == 17
+    expected_tps = sum(chapter['tp'] is not None for chapter in json.loads((ROOT / 'chapters.json').read_text(encoding='utf-8')))
+    expected_tps += sum(not re.search(r'correction|corrig', p.name, re.I) for p in tps)
+    assert tp_count == expected_tps
     banks = json.loads((CONTENT / 'assets/quiz/quiz-banks.js').read_text(encoding='utf-8-sig').split('=', 1)[1])
     source_banks = json.loads((linux_source / 'assets/quiz/quiz-banks.js').read_text(encoding='utf-8-sig').split('=', 1)[1])
     assert source_banks == {slug: {**bank, 'chapterLink': slug + '.html'} for slug, bank in banks.items()}
@@ -163,7 +173,7 @@ def local_audit():
             if asset.name == 'quiz-banks.js' or not asset.is_file(): continue
             if folder == 'assets/quiz' and asset.name not in {'quiz.css', 'quiz-engine.js'}: continue
             equal(asset.read_text(encoding='utf-8-sig'), (linux_source / folder / asset.name).read_bytes(), str(asset.relative_to(CONTENT)) + ' (coffre)')
-    print('Coffre → contenus : 10 cours Linux + 6 cours Bash, 17 TP, ZIP et téléchargements conformes.')
+    print(f'Coffre → contenus : 10 cours Linux + 6 cours Bash, {tp_count} TP, ZIP et téléchargements conformes.')
     print('Quiz et thèmes du coffre : dix quiz Linux et six quiz Bash de vingt questions conformes, avec les ressources hors ligne.')
 
 
