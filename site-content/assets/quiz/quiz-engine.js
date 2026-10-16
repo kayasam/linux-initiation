@@ -162,7 +162,7 @@
     result.scrollIntoView({ behavior: "smooth", block: "start" })
   }
 
-  function start() {
+  function start(scroll = false) {
     order = shuffle(data.questions.map((_, questionIndex) => questionIndex))
     index = 0
     score = 0
@@ -173,7 +173,7 @@
     panel.classList.remove("hidden")
     result.classList.remove("visible")
     renderQuestion()
-    panel.scrollIntoView({ behavior: "smooth", block: "start" })
+    if (scroll) panel.scrollIntoView({ behavior: "smooth", block: "start" })
   }
 
   next.addEventListener("click", function () {
@@ -184,6 +184,6 @@
       renderQuestion()
     }
   })
-  document.getElementById("restart-quiz").addEventListener("click", start)
+  document.getElementById("restart-quiz").addEventListener("click", () => start(true))
   start()
 })()

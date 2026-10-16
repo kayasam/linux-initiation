@@ -15,4 +15,4 @@ title: "Linux initiation"
 - [09. Redirections et tubes](https://kayasam.github.io/linux-initiation/09-redirections-et-tubes/)
 - [10. Réseau et services](https://kayasam.github.io/linux-initiation/10-reseau-et-services/)
 
-[Télécharger le coffre Obsidian](https://kayasam.github.io/linux-initiation/linux-initiation-obsidian.zip?v=6c3cfde1bff9)
+[Télécharger le coffre Obsidian](https://kayasam.github.io/linux-initiation/linux-initiation-obsidian.zip?v=55c9ac6fac19)
