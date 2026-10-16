@@ -9,7 +9,8 @@ function setupChapterResources() {
   try { registry = JSON.parse(payload.textContent ?? "{}") } catch { return }
   const bar = document.querySelector<HTMLElement>(".chapter-resources")
   const currentKey = bar?.dataset.courseKey
-  const kind = document.querySelector<HTMLElement>(".support-viewer")?.dataset.supportKind ?? (/\/tp(?:\/|$)|-(?:correction|corrigev2)(?:\.html)?\/?$/i.test(location.pathname) ? "tp" : "markdown")
+  const coursePath = decodeURIComponent(location.pathname).normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+  const kind = document.querySelector<HTMLElement>(".support-viewer")?.dataset.supportKind ?? (/\/tp(?:\/|$)|-(?:correction|corrigev2)(?:\.html)?\/?$/i.test(coursePath) ? "tp" : "markdown")
   bar?.querySelectorAll<HTMLAnchorElement>("[data-resource-kind]").forEach((link) => {
     if (link.dataset.resourceKind === kind) link.setAttribute("aria-current", "page")
     else link.removeAttribute("aria-current")

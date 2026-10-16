@@ -11,6 +11,7 @@ import sys
 import tarfile
 import zipfile
 from urllib.request import Request, urlopen
+from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTENT = ROOT / 'content'
@@ -76,13 +77,12 @@ def local_audit():
             for tp in (course.parent / 'tp').glob('tp-*.md'):
                 if re.search(r'correction|corrig', tp.name, re.I): continue
                 expected = linux['normalize'](tp.read_text(encoding='utf-8-sig'))
-                for correction in sorted(tp.parent.glob(f'tp-{slug[:2]}-*correction.md')):
-                    if linux['is_published'](correction):
-                        expected += f'\n[Correction du TP]({BASE}/{slug}/{correction.stem})\n'
+                correction = linux['published_correction'](tp)
+                if correction:
+                    expected += f'\n[Correction du TP]({BASE}/{slug}/{correction.stem})\n'
                 offline_tp = expected.replace(f'](../{slug}.md)', f'](../cours/{slug}.md)')
-                for correction in sorted(tp.parent.glob(f'tp-{slug[:2]}-*correction.md')):
-                    if linux['is_published'](correction):
-                        offline_tp = offline_tp.replace(f']({BASE}/{slug}/{correction.stem})', f']({correction.name})')
+                if correction:
+                    offline_tp = offline_tp.replace(f']({BASE}/{slug}/{correction.stem})', f']({correction.name})')
                 equal(offline_tp, archive.read('Linux-initiation/tp/' + tp.name), tp.name + ' (ZIP Linux)')
                 equal(expected.replace(f'](../{slug}.md)', f']({BASE}/{slug}/)'), (CONTENT / 'telechargements/tp' / tp.name).read_bytes(), tp.name + ' (téléchargement Linux)')
                 assert (CONTENT / slug / 'tp.md').is_file()
@@ -197,10 +197,12 @@ def live_audit():
     paths = sorted(set(CONTENT.glob('telechargements/**/*.md')) | set(CONTENT.glob('telechargements/**/*.tar.gz')) | set(CONTENT.glob('telechargements/**/*.sha256')) | set(CONTENT.glob('cours/*-interactif.html')) | set(CONTENT.glob('bash/cours/*-interactif.html')) | set(CONTENT.glob('bash/images/*.svg')) | set(CONTENT.glob('cours/quiz/*.html')) | set(CONTENT.glob('assets/brands/*')) | {CONTENT / 'assets/quiz/quiz-banks.js', CONTENT / 'linux-initiation-obsidian.zip', CONTENT / 'linux-scripting-bash-obsidian.zip'})
     paths=sorted(set(paths)|set(CONTENT.glob('bash/cours/quiz/*.html'))|{CONTENT/'bash/assets/quiz/quiz-banks.js'})
     paths=sorted(set(paths)|set(CONTENT.glob('assets/resource-icons/*.svg'))|{CONTENT/'assets/course-resources.json'})
+    paths=sorted(set(paths)|set(CONTENT.glob('telechargements/**/*.pdf'))|{CONTENT/'assets/course-pdfs.json'})
     def compare(path):
         relative = path.relative_to(CONTENT).as_posix()
         try:
-            with urlopen(Request(BASE + '/' + relative, headers={'User-Agent': 'Course-sync-audit'}), timeout=30) as response:
+            version = hashlib.sha256(path.read_bytes()).hexdigest()[:12]
+            with urlopen(Request(BASE + '/' + quote(relative) + '?v=' + version, headers={'User-Agent': 'Course-sync-audit'}), timeout=30) as response:
                 remote = response.read()
             local = path.read_bytes()
             same = text(local) == text(remote) if path.suffix in {'.md', '.html', '.js', '.json', '.svg', '.txt', '.sha256'} else local == remote

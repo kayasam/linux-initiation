@@ -59,6 +59,13 @@ def is_published(file):
 def without_frontmatter(body):
     return re.sub(r'^---\s*\n.*?\n---\s*\n', '', body, count=1, flags=re.S)
 
+
+def published_correction(tp):
+    candidates = [tp.with_name(tp.stem + suffix) for suffix in ('-correction.md', '-corrigev2.md', '-Corrigév2.md')]
+    selected = [path for path in candidates if path.is_file() and is_published(path)]
+    assert len(selected) <= 1, f'Plusieurs corrigés cochés pour {tp.name}'
+    return selected[0] if selected else None
+
 def prepare(source):
     courses = sorted(p for p in (source / 'cours').rglob('[0-9][0-9]-*.md') if p.parent == source / 'cours' or p.parent.name == p.stem)
     assert len(courses) == 10, '10 chapitres attendus'
@@ -110,19 +117,20 @@ def prepare(source):
         links = RESOURCE_UI(stage, BASE, slug, slug, tp is not None, f'{number}. {title}')
         if tp:
             tpbody = normalize(tp.read_text(encoding='utf-8'))
-            for correction in sorted(tp_folder.glob(f'tp-{number}-*correction.md')):
-                if not is_published(correction): continue
+            selected_correction = published_correction(tp)
+            for correction in ([selected_correction] if selected_correction else []):
                 published_corrections.add(correction.name)
                 correction_body = normalize(without_frontmatter(correction.read_text(encoding='utf-8')))
+                correction_body = correction_body.replace(f'](../{slug}.md)', f']({BASE}/{slug}/)').replace(f']({tp.name})', f']({BASE}/{slug}/tp)')
                 correction_body += f'\n[← Énoncé du TP]({BASE}/{slug}/tp)\n'
                 write(stage / slug / correction.name, metadata(f'Correction TP {number} — {title}', correction_body))
                 write(stage / 'telechargements/tp' / correction.name, correction_body)
-                write(vault / 'tp' / correction.name, normalize(correction.read_text(encoding='utf-8')))
+                write(vault / 'tp' / correction.name, normalize(correction.read_text(encoding='utf-8')).replace(f'](../{slug}.md)', f'](../cours/{slug}.md)'))
                 tpbody += f'\n[Correction du TP]({BASE}/{slug}/{correction.stem})\n'
             offline_tp = tpbody.replace(f'](../{slug}.md)', f'](../cours/{slug}.md)')
-            for correction in sorted(tp_folder.glob(f'tp-{number}-*correction.md')):
-                if is_published(correction):
-                    offline_tp = offline_tp.replace(f']({BASE}/{slug}/{correction.stem})', f']({correction.name})')
+            if selected_correction:
+                correction = selected_correction
+                offline_tp = offline_tp.replace(f']({BASE}/{slug}/{correction.stem})', f']({correction.name})')
             write(vault / 'tp' / tp.name, offline_tp)
             tpbody = tpbody.replace(f'](../{slug}.md)', f']({BASE}/{slug}/)')
             write(stage / 'telechargements' / 'tp' / tp.name, tpbody)
@@ -162,7 +170,6 @@ def prepare(source):
     # Keep the shared home and Bash course in every normal publication.
     published_corrections.update(runpy.run_path(str(ROOT / 'scripts/prepare-bash.py'))['populate'](stage, chapters))
     runpy.run_path(str(ROOT / 'scripts/course-resources.py'))['attach_tp_resources'](stage)
-    runpy.run_path(str(ROOT / 'scripts/course-resources.py'))['attach_course_pdf_buttons'](stage, BASE)
     forbidden = [p for p in stage.rglob('*') if p.is_file() and re.search(r'correction|corrig[eé]', p.name, re.I) and p.name not in published_corrections]
     assert not forbidden, forbidden
     assert not any(':::' in p.read_text(encoding='utf-8') for p in stage.rglob('*.md'))

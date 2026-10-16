@@ -12,4 +12,5 @@ tsconfig.tsbuildinfo
 private/
 .pdf-tools/
 output/pdf/review/
+output/pdf/intermediate/
 quartz/cli/tui/dist/

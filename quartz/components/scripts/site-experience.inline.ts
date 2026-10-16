@@ -12,9 +12,10 @@ function setupSiteExperience() {
     cleanups.push(() => target.removeEventListener(name, callback))
   }
   const bar = article.querySelector<HTMLElement>(".chapter-resources")
-  const kind = article.querySelector<HTMLElement>(".support-viewer")?.dataset.supportKind ?? (/\/tp(?:\/|$)|-(?:correction|corrigev2)(?:\.html)?\/?$/i.test(location.pathname) ? "tp" : "markdown")
+  const coursePath = decodeURIComponent(location.pathname).normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+  const kind = article.querySelector<HTMLElement>(".support-viewer")?.dataset.supportKind ?? (/\/tp(?:\/|$)|-(?:correction|corrigev2)(?:\.html)?\/?$/i.test(coursePath) ? "tp" : "markdown")
   const key = bar?.dataset.courseKey
-  if (/corrigev2/i.test(location.pathname)) {
+  if (/corrigev2/i.test(coursePath)) {
     article.querySelectorAll<HTMLElement>(".callout.is-collapsible").forEach((callout, index) => {
       const title = callout.querySelector<HTMLElement>(".callout-title")
       const content = callout.querySelector<HTMLElement>(".callout-content")

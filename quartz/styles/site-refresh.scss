@@ -99,6 +99,13 @@ html[saved-theme] body nav.chapter-resources a.resource-button {
   svg.resource-symbol { display: block; visibility: visible; opacity: 1; width: 1.25rem; height: 1.25rem; }
 }
 html[saved-theme] body .resource-actions { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; margin-left: auto; }
+html[saved-theme] body .home-downloads__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+html[saved-theme] body .home-downloads__grid a:nth-child(2) { border-top: 2px solid #8b5fc4; }
+html[saved-theme] body .home-downloads__grid a.home-pdf-download { border-top: 2px solid var(--secondary); }
+html[saved-theme] body .home-downloads__grid .external-icon { display: none; }
+@media (max-width: 800px) {
+  html[saved-theme] body .home-downloads__grid { grid-template-columns: 1fr; }
+}
 html[saved-theme] body nav.chapter-resources a.resource-download,
 html[saved-theme] body nav.chapter-resources button.support-focus-toggle {
   display: inline-flex; align-items: center; justify-content: center; gap: .35rem;

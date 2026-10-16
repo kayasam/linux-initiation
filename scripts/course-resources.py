@@ -86,14 +86,3 @@ def attach_tp_resources(destination):
                 path.write_text(page, encoding='utf-8')
 
 
-def attach_course_pdf_buttons(destination, base):
-    """Only chapter Markdown pages offer a course PDF, never activities or TPs."""
-    registry = json.loads((destination / 'assets/course-resources.json').read_text(encoding='utf-8'))
-    for key in registry:
-        path = destination / key / 'index.md'
-        track = 'bash/' if key.startswith('bash/') else ''
-        slug = key.split('/')[-1]
-        button = f'<a class="resource-download resource-pdf" href="{base}/telechargements/{track}cours/{slug}.pdf" download aria-label="Télécharger le cours en PDF"><span aria-hidden="true">↓</span> PDF</a>'
-        page = path.read_text(encoding='utf-8')
-        page = page.replace('<button type="button" class="support-focus-toggle"', button + '<button type="button" class="support-focus-toggle"', 1)
-        path.write_text(page, encoding='utf-8')

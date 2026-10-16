@@ -1,4 +1,4 @@
-"""Check every PDF page and render an overview for visual review."""
+"""Check the complete PDF, its sixteen chapters and its visual samples."""
 from pathlib import Path
 import hashlib
 import json
@@ -14,44 +14,44 @@ from bs4 import BeautifulSoup
 
 CONTENT = ROOT / 'content'
 manifest = json.loads((CONTENT / 'assets/course-pdfs.json').read_text(encoding='utf-8'))
+assert len(manifest['chapters']) == 16
+path = CONTENT / manifest['pdf']
+assert hashlib.sha256(path.read_bytes()).hexdigest() == manifest['pdfSha256']
+assert list(CONTENT.rglob('*.pdf')) == [path]
+doc = fitz.open(path)
+assert len(doc) == manifest['pages']
+assert len(doc.get_toc()) == 18, 'Deux parcours et seize signets de chapitres'
 output = ROOT / 'output/pdf/review'
 output.mkdir(parents=True, exist_ok=True)
-thumbnails = []
-total = 0
-for entry in manifest:
-    path = CONTENT / entry['pdf']
-    source = CONTENT / entry['source']
-    assert hashlib.sha256(source.read_text(encoding='utf-8-sig').encode('utf-8')).hexdigest() == entry['sourceSha256']
-    assert hashlib.sha256(path.read_bytes()).hexdigest() == entry['pdfSha256']
-    doc = fitz.open(path)
-    assert len(doc) == entry['pages']
-    text = ' '.join(' '.join(page.get_text().split()) for page in doc)
+for chapter in manifest['chapters']:
+    source = CONTENT / chapter['source']
+    assert hashlib.sha256(source.read_text(encoding='utf-8-sig').encode('utf-8')).hexdigest() == chapter['sourceSha256']
+    start = chapter['startPage'] - 1
+    text = ' '.join(' '.join(doc[index].get_text().split()) for index in range(start, start + chapter['pages']))
     parsed = BeautifulSoup(markdown.markdown(source.read_text(encoding='utf-8-sig'), extensions=['tables', 'fenced_code']), 'html.parser')
     for heading in parsed.find_all(re.compile('^h[1-6]$')):
-        expected = ' '.join(heading.get_text().split())
-        assert expected in text, (entry['key'], 'Titre absent ou tronqué', expected)
-    for index, page in enumerate(doc):
-        total += 1
-        assert page.get_text().strip()
-        for block in page.get_text('dict')['blocks']:
-            for line in block.get('lines', []):
-                for span in line['spans']:
-                    x0, y0, x1, y1 = span['bbox']
-                    assert x0 >= 20 and x1 <= page.rect.width - 18 and y0 >= 10 and y1 <= page.rect.height - 10, (entry['key'], index + 1, span['text'], span['bbox'])
-        pix = page.get_pixmap(matrix=fitz.Matrix(.7, .7), alpha=False)
-        image = Image.frombytes('RGB', [pix.width, pix.height], pix.samples)
-        tile = Image.new('RGB', (440, 640), '#e4eaf0')
-        image.thumbnail((420, 600))
-        tile.paste(image, ((440-image.width)//2, 24))
-        ImageDraw.Draw(tile).text((10, 620), entry['key'] + ' / ' + str(index + 1), fill='#213547')
-        thumbnails.append(tile)
-    # Inspect high-resolution samples in addition to all-page contact sheets.
-    if entry['key'] in ('01-comprendre-linux', 'bash/04-tests-et-conditions', 'bash/05-boucles', '08-gestion-des-paquets'):
-        for index in (0, min(2, len(doc)-1), len(doc)-1):
-            doc[index].get_pixmap(matrix=fitz.Matrix(1.4, 1.4), alpha=False).save(output / (entry['key'].replace('/', '-') + '-' + str(index+1) + '.png'))
+        assert ' '.join(heading.get_text().split()) in text, (chapter['key'], heading.get_text())
+thumbnails = []
+samples = {0, 1, 2, manifest['chapters'][10]['startPage'] - 1, len(doc) - 1}
+for index, page in enumerate(doc):
+    assert page.get_text().strip()
+    for block in page.get_text('dict')['blocks']:
+        for line in block.get('lines', []):
+            for span in line['spans']:
+                x0, y0, x1, y1 = span['bbox']
+                assert x0 >= 20 and x1 <= page.rect.width - 18 and y0 >= 10 and y1 <= page.rect.height - 10, (index + 1, span['text'])
+    pix = page.get_pixmap(matrix=fitz.Matrix(.7, .7), alpha=False)
+    image = Image.frombytes('RGB', [pix.width, pix.height], pix.samples)
+    image.thumbnail((420, 600))
+    tile = Image.new('RGB', (440, 640), '#e4eaf0')
+    tile.paste(image, ((440-image.width)//2, 24))
+    ImageDraw.Draw(tile).text((10, 620), 'PDF complet / ' + str(index + 1), fill='#213547')
+    thumbnails.append(tile)
+    if index in samples:
+        page.get_pixmap(matrix=fitz.Matrix(1.4, 1.4), alpha=False).save(output / f'complet-{index+1}.png')
 for start in range(0, len(thumbnails), 12):
-    sheet = Image.new('RGB', (440*3, 640*4), '#e4eaf0')
+    sheet = Image.new('RGB', (1320, 2560), '#e4eaf0')
     for index, tile in enumerate(thumbnails[start:start+12]):
         sheet.paste(tile, ((index % 3)*440, (index // 3)*640))
-    sheet.save(output / f'pages-{start//12+1:02}.jpg', quality=88)
-print(f'PDF vérifiés : {len(manifest)} chapitres, {total} pages, titres présents, texte dans la page. Aperçus : {output}')
+    sheet.save(output / f'complet-pages-{start//12+1:02}.jpg', quality=88)
+print(f'PDF complet vérifié : 16 chapitres, {len(doc)} pages, titres et signets conformes.')

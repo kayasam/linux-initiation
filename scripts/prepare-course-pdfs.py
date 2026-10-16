@@ -23,9 +23,9 @@ try:
     from reportlab.pdfbase import pdfmetrics
     from reportlab.pdfbase.ttfonts import TTFont
     from reportlab.pdfgen import canvas
-    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Preformatted, Table, TableStyle, HRFlowable, Image
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Preformatted, Table, TableStyle, HRFlowable, Image, PageBreak
     from svglib.svglib import svg2rlg, register_font
-    from pypdf import PdfReader
+    from pypdf import PdfReader, PdfWriter
 except ImportError as error:
     raise SystemExit('PDF : installer les dépendances avec python -m pip install --target .pdf-tools -r scripts/requirements-pdf.txt') from error
 
@@ -217,7 +217,7 @@ def flowables(nodes, style, course_url, width=WIDTH):
     return output
 
 
-def build_pdf(source):
+def build_pdf(source, target=None, page_offset=0):
     track = 'bash/' if 'bash' in source.relative_to(CONTENT).parts else ''
     course_url = f'{BASE}/{track}{source.stem}/'
     body = source.read_text(encoding='utf-8-sig')
@@ -225,7 +225,7 @@ def build_pdf(source):
     parsed = BeautifulSoup(markdown_html(body), 'html.parser')
     assert len(parsed.find_all('pre')) == len(re.findall(r'^(?:> ?)*```', body, re.M)) // 2, 'Bloc de code perdu : ' + source.name
     title = parsed.find('h1').get_text()
-    target = source.with_suffix('.pdf')
+    target = target or source.with_suffix('.pdf')
     style = styles()
     story = [Paragraph('LINUX INITIATION &amp; BASH / ' + ('BASH' if track else 'LINUX INITIATION'), style['caption'])]
     story.extend(flowables(parsed.children, style, course_url))
@@ -237,13 +237,13 @@ def build_pdf(source):
         canv.setFillColor(colors.HexColor('#536675'))
         canv.drawString(48, 27, ('Bash' if track else 'Linux initiation') + ' / ' + source.stem[:2] + ' - Cours en ligne')
         canv.linkURL(course_url, (48, 23, 240, 38), relative=0)
-        canv.drawRightString(A4[0] - 48, 27, str(doc.page))
+        canv.drawRightString(A4[0] - 48, 27, str(doc.page + page_offset))
         canv.restoreState()
     document = SimpleDocTemplate(str(target), pagesize=A4, leftMargin=48, rightMargin=48, topMargin=42, bottomMargin=55, title=title, author='Linux initiation & Bash', pageCompression=1, invariant=1)
     document.build(story, onFirstPage=page_footer, onLaterPages=page_footer, canvasmaker=partial(canvas.Canvas, invariant=1))
     reader = PdfReader(target)
     assert reader.pages and all(page.extract_text().strip() for page in reader.pages), target
-    return dict(key=track + source.stem, href=f'{BASE}/telechargements/{track}cours/{target.name}', source=source.relative_to(CONTENT).as_posix(), pdf=target.relative_to(CONTENT).as_posix(), sourceSha256=hashlib.sha256(source.read_text(encoding='utf-8-sig').encode('utf-8')).hexdigest(), pdfSha256=hashlib.sha256(target.read_bytes()).hexdigest(), pages=len(reader.pages))
+    return dict(key=track + source.stem, title=title, source=source.relative_to(CONTENT).as_posix(), sourceSha256=hashlib.sha256(source.read_text(encoding='utf-8-sig').encode('utf-8')).hexdigest(), pages=len(reader.pages), startPage=page_offset + 1)
 
 
 def version_downloads():
@@ -275,10 +275,41 @@ if __name__ == '__main__':
     setup_fonts()
     sources = sorted((CONTENT / 'telechargements/cours').glob('[0-9][0-9]-*.md')) + sorted((CONTENT / 'telechargements/bash/cours').glob('[0-9][0-9]-*.md'))
     assert len(sources) == 16
-    manifest = []
+    chapters = []
+    intermediate = ROOT / 'output/pdf/intermediate'
+    intermediate.mkdir(parents=True, exist_ok=True)
+    cursor = 2
+    files = []
     for source in sources:
-        entry = build_pdf(source)
-        manifest.append(entry)
-        print(f"PDF : {source.stem}, {entry['pages']} page(s).")
+        target = intermediate / (('bash-' if 'bash' in source.parts else 'linux-') + source.stem + '.pdf')
+        entry = build_pdf(source, target, cursor)
+        chapters.append(entry)
+        files.append(target)
+        cursor += entry['pages']
+    style = styles()
+    introduction = intermediate / 'introduction.pdf'
+    story = [Spacer(1, 110), Paragraph('Linux initiation &amp; Bash', style['h1']), Spacer(1, 20), Paragraph('Tous les cours en un seul PDF', style['h2']), Paragraph('10 chapitres Linux initiation et 6 chapitres Bash, dans l’ordre des deux parcours.', style['p']), Spacer(1, 25), Paragraph('Cours complets issus du Markdown du coffre. Les activités HTML, les quiz et les TP restent accessibles sur le site.', style['p']), Paragraph('<a href="' + BASE + '/" color="#126b73">Ouvrir le site et ses activités</a>', style['p']), PageBreak(), Paragraph('Sommaire', style['h1'])]
+    for track in ('Linux initiation', 'Bash'):
+        story.append(Paragraph(track, style['h2']))
+        for chapter in chapters:
+            if ('bash/' in chapter['key']) == (track == 'Bash'):
+                story.append(Paragraph(html.escape(chapter['title']) + ' <b>— p. ' + str(chapter['startPage']) + '</b>', style['p']))
+    SimpleDocTemplate(str(introduction), pagesize=A4, leftMargin=48, rightMargin=48, topMargin=42, bottomMargin=55, invariant=1).build(story)
+    assert len(PdfReader(introduction).pages) == 2
+    target = CONTENT / 'telechargements/linux-initiation-et-bash.pdf'
+    writer = PdfWriter()
+    writer.append(str(introduction), import_outline=False)
+    parents = {}
+    for chapter, file in zip(chapters, files):
+        writer.append(str(file), import_outline=False)
+        track = 'Bash' if chapter['key'].startswith('bash/') else 'Linux initiation'
+        if track not in parents:
+            parents[track] = writer.add_outline_item(track, chapter['startPage'] - 1)
+        writer.add_outline_item(chapter['title'], chapter['startPage'] - 1, parent=parents[track])
+    writer.add_metadata({'/Title': 'Linux initiation & Bash - Tous les chapitres', '/Author': 'Linux initiation & Bash'})
+    with target.open('wb') as stream:
+        writer.write(stream)
+    manifest = dict(pdf=target.relative_to(CONTENT).as_posix(), href=BASE + '/' + target.relative_to(CONTENT).as_posix(), pdfSha256=hashlib.sha256(target.read_bytes()).hexdigest(), pages=len(writer.pages), chapters=chapters)
     (CONTENT / 'assets/course-pdfs.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    print(f"PDF complet : {len(chapters)} chapitres, {manifest['pages']} pages, sommaire et signets.")
     version_downloads()
