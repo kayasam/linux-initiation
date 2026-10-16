@@ -226,4 +226,4 @@ Le défi supplémentaire du TP demande cette option : ce n'est pas une notion fa
 
 **À toi :** que désigne `$4` dans notre inventaire ? Pourquoi utilisons-nous `NR > 1` ? Pourquoi des guillemets simples autour du programme `awk` ? Que ferait `sed 's/;/,/'` sans le `g` sur une ligne de ce fichier ?
 
-[Passer au TP](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp)
+[Passer au TP](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp/tp-06-sed-et-awk)
