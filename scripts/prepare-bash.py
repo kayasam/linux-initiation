@@ -162,7 +162,9 @@ def populate(destination, chapters):
             offline_body += f'\n[Correction du TP]({correction.name})\n'
             export[correction.relative_to(SOURCE).as_posix()] = original
             correction_body = public_course_links(original, correction, courses)
-            correction_body = correction_body.replace(f']({tp.name})', f']({BASE}/{routes[tp]})')
+            for sibling in tps:
+                if sibling.parent == tp.parent:
+                    correction_body = correction_body.replace(f']({sibling.name})', f']({BASE}/{routes[sibling]})')
             correction_body += f'\n[← Énoncé du TP]({BASE}/{routes[tp]})\n'
             write(destination / (correction_route + '.md'), metadata('Correction — ' + title_of(tp), correction_body))
             write(destination / 'telechargements/bash/tp' / correction.name, correction_body)
