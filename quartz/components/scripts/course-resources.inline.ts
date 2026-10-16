@@ -11,11 +11,51 @@ function setupChapterResources() {
   const currentKey = bar?.dataset.courseKey
   const coursePath = decodeURIComponent(location.pathname).normalize("NFD").replace(/[\u0300-\u036f]/g, "")
   const kind = document.querySelector<HTMLElement>(".support-viewer")?.dataset.supportKind ?? (/\/tp(?:\/|$)|-(?:correction|corrigev2)(?:\.html)?\/?$/i.test(coursePath) ? "tp" : "markdown")
+  let workshops: { key: string; kind: string; order: number; label: string; title: string; symbol: string }[] = []
+  try { workshops = JSON.parse(document.getElementById("workshop-data")?.textContent ?? "[]") } catch {}
   bar?.querySelectorAll<HTMLAnchorElement>("[data-resource-kind]").forEach((link) => {
     if (link.dataset.resourceKind === kind) link.setAttribute("aria-current", "page")
     else link.removeAttribute("aria-current")
   })
   function populate() {
+    explorer!.querySelectorAll<HTMLAnchorElement>("a.nav-file-title").forEach((link) => {
+      const path = decodeURIComponent(new URL(link.href, location.href).pathname).replace(/\/$/, "")
+      const entry = workshops.find((item) => path.endsWith("/" + item.key))
+      const item = link.closest("li")
+      if (!item) return
+      if (!entry) {
+        if (workshops.some((workshop) => path.includes("/" + workshop.key + "-corrig"))) item.hidden = true
+        return
+      }
+      item.classList.add("workshop-explorer-item")
+      item.style.order = String(entry.order)
+      item.parentElement?.classList.add("workshop-explorer-list")
+      link.classList.add("workshop-explorer-link")
+      link.dataset.workshopKind = entry.kind
+      if (!link.dataset.workshopPrepared) {
+        const icon = document.createElement("span")
+        icon.className = "workshop-explorer-icon"
+        icon.setAttribute("aria-hidden", "true")
+        icon.innerHTML = entry.symbol
+        const text = document.createElement("span")
+        const label = document.createElement("span")
+        label.className = "workshop-explorer-label"
+        label.textContent = entry.label
+        const title = document.createElement("span")
+        title.className = "workshop-explorer-title"
+        title.textContent = entry.title
+        text.append(label, title)
+        link.replaceChildren(icon, text)
+        link.dataset.workshopPrepared = "true"
+      }
+      if (coursePath.includes("/" + entry.key)) link.setAttribute("aria-current", coursePath.endsWith(entry.key) ? "page" : "location")
+      else link.removeAttribute("aria-current")
+    })
+    explorer!.querySelectorAll<HTMLElement>(".workshop-explorer-list").forEach((list) => {
+      const children = Array.from(list.children) as HTMLElement[]
+      const sorted = [...children].sort((a, b) => Number(a.style.order || 99) - Number(b.style.order || 99))
+      if (children.some((item, index) => item !== sorted[index])) list.append(...sorted)
+    })
     explorer!.querySelectorAll<HTMLElement>(".folder-container[data-folderpath]").forEach((folder) => {
       const key = (folder.dataset.folderpath ?? "").replace(/\/index$/, "")
       const chapter = Boolean(registry[key])

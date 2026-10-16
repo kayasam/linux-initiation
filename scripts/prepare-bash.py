@@ -185,7 +185,11 @@ def populate(destination, chapters):
             body = '# ' + title + '\n\n' + '\n\n'.join(f'- [{title_of(p)}]({BASE}/{routes[p]})' for p in matching)
             write(destination / 'bash' / course.stem / 'tp.md', metadata(title, body))
     workshops = [p for p in tps if not p.is_relative_to(SOURCE / 'cours')]
-    write(destination / 'bash/ateliers/index.md', metadata('Ateliers et jeu final', '# Ateliers et jeu final\n\n' + '\n'.join(f'- [{title_of(p)}]({BASE}/{routes[p]})' for p in workshops) + '\n'))
+    workshop_ui = runpy.run_path(str(ROOT / 'scripts/workshop-resources.py'))
+    workshop_entries = workshop_ui['entries'](workshops, routes, BASE, published_correction)
+    write(destination / 'assets/workshops.json', json.dumps(workshop_entries, ensure_ascii=False, indent=2) + '\n')
+    workshop_ui['attach_resources'](destination, workshop_entries)
+    write(destination / 'bash/ateliers/index.md', metadata('Ateliers et jeu final', workshop_ui['overview'](workshop_entries)))
     write(destination / 'bash/index.md', metadata('Bash — Le parcours', '# Scripting Bash\n\n' + '\n'.join(f'- [{title_of(c)}]({BASE}/bash/{c.stem}/)' for c in courses) + f'\n\n[Travaux pratiques]({BASE}/bash/tp/) · [Orion Académie — Le jeu]({BASE}/bash/jeu/)\n'))
     export['README.md'] = '# Scripting Bash\n\nOuvrez ce dossier dans Obsidian. Chaque chapitre est dans `cours/<chapitre>/` avec son cours Markdown, sa version HTML et son dossier `tp/`. Les exercices transversaux sont dans `tp/synthese/`, `tp/final/` et `tp/bonus/`. Seules les corrections explicitement publiées sont incluses.\n'
     export['cours/README.md'] = (SOURCE / 'cours/README.md').read_text(encoding='utf-8-sig')

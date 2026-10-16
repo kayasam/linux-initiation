@@ -9,6 +9,7 @@ import courseResources from "./scripts/course-resources.inline"
 import supportViewer from "./scripts/support-viewer.inline"
 import siteExperience from "./scripts/site-experience.inline"
 import courseResourceIndex from "../../content/assets/course-resources.json"
+import workshopIndex from "../../content/assets/workshops.json"
 
 export default (() => {
   const Head: QuartzComponent = ({
@@ -98,6 +99,7 @@ export default (() => {
         <meta name="description" content={description} />
         <meta name="generator" content="Quartz" />
         <script id="course-resource-data" type="application/json" dangerouslySetInnerHTML={{ __html: JSON.stringify(courseResourceIndex).replaceAll("<", "\\u003c") }} />
+        <script id="workshop-data" type="application/json" dangerouslySetInnerHTML={{ __html: JSON.stringify(workshopIndex).replaceAll("<", "\\u003c") }} />
 
         {css.map((resource) => CSSResourceToStyleElement(resource, true))}
         {js

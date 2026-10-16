@@ -72,3 +72,21 @@ assert pdf_manifest['href'] + '?v=' + pdf_manifest['pdfSha256'][:12] in home
 for archive in (ROOT / 'content').glob('*.zip'):
     assert archive.name + '?v=' + hashlib.sha256(archive.read_bytes()).hexdigest()[:12] in home
 print('Téléchargements : liens ZIP et PDF versionnés avec le contenu des fichiers.')
+workshops = json.loads((ROOT / 'content/assets/workshops.json').read_text(encoding='utf-8'))
+assert [entry['kind'] for entry in workshops] == ['synthese', 'final', 'bonus']
+for entry in workshops:
+    routes = [entry['key']]
+    if entry['correctionHref']:
+        routes.append(entry['key'].rsplit('/', 1)[0] + '/' + entry['correctionHref'].rsplit('/', 1)[1])
+    for route in routes:
+        source = (ROOT / 'content' / (route + '.md')).read_text(encoding='utf-8')
+        rendered = (public / (route + '.html')).read_text(encoding='utf-8')
+        assert 'workshop-resources' in source and 'workshop-resources' in rendered, route
+        assert entry['href'] in source
+        if route != entry['key']:
+            assert entry['correctionHref'] in source
+            questions = re.findall(r'^\*\*([A-Z]\d+)\.\*\*', source, re.M)
+            for question in questions:
+                assert '> [!success]- Afficher la correction — ' + question + '\n' in source, (route, question)
+            assert source.count('> [!success]-') == rendered.count('data-callout="success" data-callout-fold'), route
+print('Ateliers : ordre, boutons énoncé/corrigé et réponses repliées vérifiés.')
