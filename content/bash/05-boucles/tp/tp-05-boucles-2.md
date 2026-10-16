@@ -239,6 +239,8 @@ Trois lignes d'accueil. Retiens ce bloc **tel quel** : `IFS= read -r` est la fa�
 
 [← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/05-boucles/)
 
+[Correction du TP](https://kayasam.github.io/linux-initiation/bash/05-boucles/tp/tp-05-boucles-2-corrigev2)
+
 [← Parcours Bash](https://kayasam.github.io/linux-initiation/#bash)
 
 <a href="https://kayasam.github.io/linux-initiation/telechargements/bash/tp/tp-05-boucles-2.md" download>Télécharger le TP en Markdown</a>

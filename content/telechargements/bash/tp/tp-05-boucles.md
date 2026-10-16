@@ -64,3 +64,5 @@ Crée un fichier `equipe.txt` contenant `Mila Vega` et `Noe`, une personne par l
 Tu obtiens les nombres **3, 3 et 0**, les noms composés restent intacts et l'erreur de dossier renvoie 2.
 
 [← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/05-boucles/)
+
+[Correction du TP](https://kayasam.github.io/linux-initiation/bash/05-boucles/tp/tp-05-boucles-corrigev2)

@@ -232,3 +232,5 @@ Trois lignes d'accueil. Retiens ce bloc **tel quel** : `IFS= read -r` est la fa�
 > Tu es à l'aise ? Enchaîne avec le [TP 05 — Le robot copieur](https://kayasam.github.io/linux-initiation/bash/05-boucles/tp/tp-05-boucles), qui ajoute la copie de fichiers et la gestion des erreurs.
 
 [← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/05-boucles/)
+
+[Correction du TP](https://kayasam.github.io/linux-initiation/bash/05-boucles/tp/tp-05-boucles-2-corrigev2)

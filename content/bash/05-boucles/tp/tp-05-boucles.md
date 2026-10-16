@@ -71,6 +71,8 @@ Tu obtiens les nombres **3, 3 et 0**, les noms composés restent intacts et l'er
 
 [← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/05-boucles/)
 
+[Correction du TP](https://kayasam.github.io/linux-initiation/bash/05-boucles/tp/tp-05-boucles-corrigev2)
+
 [← Parcours Bash](https://kayasam.github.io/linux-initiation/#bash)
 
 <a href="https://kayasam.github.io/linux-initiation/telechargements/bash/tp/tp-05-boucles.md" download>Télécharger le TP en Markdown</a>
