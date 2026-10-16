@@ -327,3 +327,5 @@ Attendu : 74, comme en F1.
 > Tu es à l'aise ? Enchaîne avec le [TP 06 — Préparer le ravitaillement](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp/tp-06-sed-et-awk), qui ajoute les rapports, les délimiteurs et la modification sur place.
 
 [← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/)
+
+[Correction du TP](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp/tp-06-sed-et-awk-2-corrigev2)

@@ -102,3 +102,5 @@ Remplace `/etc/apt/` par `/srv/miroir/`. Écris-le **deux fois** : une version a
 Les totaux sont exacts, les deux stocks faibles sont identifiés, le rapport est aligné, l'inventaire original est conservé — et tu sais expliquer avec tes mots le rôle de `NR`, de `NF`, de `END` et le choix du délimiteur de `sed`.
 
 [← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/)
+
+[Correction du TP](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp/tp-06-sed-et-awk-corrigev2)

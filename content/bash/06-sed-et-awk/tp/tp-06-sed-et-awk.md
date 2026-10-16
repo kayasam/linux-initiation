@@ -109,6 +109,8 @@ Les totaux sont exacts, les deux stocks faibles sont identifiés, le rapport est
 
 [← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/)
 
+[Correction du TP](https://kayasam.github.io/linux-initiation/bash/06-sed-et-awk/tp/tp-06-sed-et-awk-corrigev2)
+
 [← Parcours Bash](https://kayasam.github.io/linux-initiation/#bash)
 
 <a href="https://kayasam.github.io/linux-initiation/telechargements/bash/tp/tp-06-sed-et-awk.md" download>Télécharger le TP en Markdown</a>
