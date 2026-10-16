@@ -1,9 +1,9 @@
 {
   "corrections": [
-    "tp-01-environnement-correction.md",
-    "tp-02-variables-correction.md",
-    "tp-03-bases-du-scripting-correction.md",
+    "tp-01-environnement-corrigev2.md",
+    "tp-02-variables-corrigev2.md",
+    "tp-03-bases-du-scripting-corrigev2.md",
     "tp-04-terminal-correction.md",
-    "tp-04-tests-et-conditions-correction.md"
+    "tp-04-tests-et-conditions-corrigev2.md"
   ]
 }

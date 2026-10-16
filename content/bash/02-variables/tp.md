@@ -63,7 +63,7 @@ Exporte `NOM_STATION="Orion Nord"`. Lance un second Bash avec `bash -c` et affic
 
 [← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/02-variables/)
 
-[Correction du TP](https://kayasam.github.io/linux-initiation/bash/02-variables/tp-02-variables-correction)
+[Correction du TP](https://kayasam.github.io/linux-initiation/bash/02-variables/tp-02-variables-corrigev2)
 
 [← Parcours Bash](https://kayasam.github.io/linux-initiation/#bash)
 

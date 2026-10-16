@@ -69,4 +69,4 @@ Le journal est créé dans le dossier **depuis lequel tu lances le script**. Pou
 
 [← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/)
 
-[Correction du TP](https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/tp-03-bases-du-scripting-correction)
+[Correction du TP](https://kayasam.github.io/linux-initiation/bash/03-bases-du-scripting/tp-03-bases-du-scripting-corrigev2)

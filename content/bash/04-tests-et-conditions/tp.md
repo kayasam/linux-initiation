@@ -74,7 +74,7 @@ Les cinq cas du tableau donnent les résultats et codes attendus, et le billet a
 
 [← Revenir au cours](https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/)
 
-[Correction du TP](https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/tp-04-tests-et-conditions-correction)
+[Correction du TP](https://kayasam.github.io/linux-initiation/bash/04-tests-et-conditions/tp-04-tests-et-conditions-corrigev2)
 
 [← Parcours Bash](https://kayasam.github.io/linux-initiation/#bash)
 
