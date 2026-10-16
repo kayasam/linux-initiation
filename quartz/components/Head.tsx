@@ -7,6 +7,7 @@ import { unescapeHTML } from "../util/escape"
 import courseNavigation from "./scripts/course-navigation.inline"
 import courseResources from "./scripts/course-resources.inline"
 import supportViewer from "./scripts/support-viewer.inline"
+import siteExperience from "./scripts/site-experience.inline"
 import courseResourceIndex from "../../content/assets/course-resources.json"
 
 export default (() => {
@@ -113,6 +114,8 @@ export default (() => {
     )
   }
 
-  Head.afterDOMLoaded = courseNavigation + "\n" + courseResources + "\n" + supportViewer
+  Head.afterDOMLoaded = [courseNavigation, courseResources, supportViewer, siteExperience]
+    .map((script) => "(() => {\n" + script + "\n})();")
+    .join("\n")
   return Head
 }) satisfies QuartzComponentConstructor

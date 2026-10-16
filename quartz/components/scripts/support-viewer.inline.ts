@@ -26,7 +26,7 @@ function setupSupportViewer() {
   releaseSupportViewer?.()
   const viewer = document.querySelector<HTMLElement>(".support-viewer")
   if (!viewer) {
-    const toggle = document.querySelector<HTMLButtonElement>(".markdown-course-toolbar .support-focus-toggle")
+    const toggle = document.querySelector<HTMLButtonElement>(".chapter-resources .support-focus-toggle")
     if (toggle) {
       releaseSupportViewer = setupFocusToggle(toggle)
       window.addCleanup?.(releaseSupportViewer)
@@ -35,7 +35,7 @@ function setupSupportViewer() {
   }
   const courseKey = viewer.dataset.courseKey!
   const frame = viewer.querySelector<HTMLIFrameElement>(".support-frame")!
-  const toggle = viewer.querySelector<HTMLButtonElement>(".support-focus-toggle")!
+  const toggle = document.querySelector<HTMLButtonElement>(".chapter-resources .support-focus-toggle")!
   const registry = JSON.parse(document.getElementById("course-resource-data")?.textContent ?? "{}")
   const resources: { kind: string; label: string; detail: string; href: string }[] = registry[courseKey] ?? []
   const cleanups: (() => void)[] = []
@@ -44,21 +44,12 @@ function setupSupportViewer() {
   panel.setAttribute("aria-label", "Navigation du support")
   const title = document.createElement("strong")
   title.textContent = viewer.dataset.supportKind === "quiz" ? "Dans ce quiz" : "Dans ce support"
-  const chapters = document.createElement("div")
-  chapters.className = "support-chapter-links"
-  for (const resource of resources) {
-    const link = document.createElement("a")
-    link.href = resource.href
-    link.textContent = resource.kind === "markdown" ? "Lire le cours Markdown" : resource.label + " — " + resource.detail
-    if (resource.kind === viewer.dataset.supportKind) link.setAttribute("aria-current", "page")
-    chapters.append(link)
-  }
   const sections = document.createElement("div")
   sections.className = "support-sections"
   const status = document.createElement("p")
   status.className = "support-status"
   status.setAttribute("aria-live", "polite")
-  panel.append(title, chapters, sections, status)
+  panel.append(title, sections, status)
   const desktop = matchMedia("(min-width: 1201px)")
   function placeNavigation() {
     if (desktop.matches) document.querySelector(".sidebar.right")?.prepend(panel)
@@ -122,7 +113,7 @@ function setupSupportViewer() {
     resize?.disconnect()
     mutations?.disconnect()
     const doc = frame.contentDocument
-    if (!doc?.body) return
+    if (!doc?.body || !doc.body.children.length) return
     wireLinks(doc)
     // Keep one theme control in the outer site and one return/navigation bar.
     const style = doc.createElement("style")
@@ -130,7 +121,8 @@ function setupSupportViewer() {
     doc.head.append(style)
     function height() {
       if (!doc?.body) return
-      const next = Math.max(640, Math.ceil(doc.body.getBoundingClientRect().height + parseFloat(doc.defaultView!.getComputedStyle(doc.body).marginTop || "0") + parseFloat(doc.defaultView!.getComputedStyle(doc.body).marginBottom || "0") + 2))
+      const bodyHeight = doc.body.getBoundingClientRect().height + parseFloat(doc.defaultView!.getComputedStyle(doc.body).marginTop || "0") + parseFloat(doc.defaultView!.getComputedStyle(doc.body).marginBottom || "0")
+      const next = Math.max(640, Math.ceil(Math.max(bodyHeight, doc.body.scrollHeight, doc.documentElement.getBoundingClientRect().height) + 2))
       if (Math.abs(parseFloat(frame.style.height || "0") - next) > 2) frame.style.height = next + "px"
     }
     function progress() {
@@ -146,7 +138,7 @@ function setupSupportViewer() {
     tabs.forEach((tab) => {
       const button = document.createElement("button")
       button.type = "button"
-      button.textContent = tab.textContent?.trim() ?? ""
+      button.textContent = tab.textContent?.trim().replace(/^(\d{2})(?=\S)/, "$1 · ") ?? ""
       button.addEventListener("click", () => { tab.click(); height(); viewer!.scrollIntoView({ block: "start" }) })
       sections.append(button)
       buttons.push(button)

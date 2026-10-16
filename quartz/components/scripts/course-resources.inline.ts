@@ -1,73 +1,56 @@
-type ChapterResource = { kind: string; label: string; detail: string; href: string; icon: string; symbol: string }
+// Chapters live in the explorer; support switching lives in the shared chapter bar.
 let releaseChapterResources: (() => void) | undefined
-
 function setupChapterResources() {
   releaseChapterResources?.()
   const payload = document.getElementById("course-resource-data")
-  if (!payload) return
-  let registry: Record<string, ChapterResource[]>
+  const explorer = document.querySelector<HTMLElement>(".explorer-content")
+  if (!payload || !explorer) return
+  let registry: Record<string, { kind: string; href: string }[]>
   try { registry = JSON.parse(payload.textContent ?? "{}") } catch { return }
-  const explorer = document.querySelector(".explorer-content")
-  if (!explorer) return
-
+  const bar = document.querySelector<HTMLElement>(".chapter-resources")
+  const currentKey = bar?.dataset.courseKey
+  const kind = document.querySelector<HTMLElement>(".support-viewer")?.dataset.supportKind ?? (/\/tp\/?$/.test(location.pathname) ? "tp" : "markdown")
+  bar?.querySelectorAll<HTMLAnchorElement>("[data-resource-kind]").forEach((link) => {
+    if (link.dataset.resourceKind === kind) link.setAttribute("aria-current", "page")
+    else link.removeAttribute("aria-current")
+  })
   function populate() {
     explorer!.querySelectorAll<HTMLElement>(".folder-container[data-folderpath]").forEach((folder) => {
       const key = (folder.dataset.folderpath ?? "").replace(/\/index$/, "")
-      const currentViewer = document.querySelector<HTMLElement>(".support-viewer")
-      folder.classList.toggle("support-current-chapter", currentViewer?.dataset.courseKey === key)
-      const resources = registry[key]
-      const children = folder.nextElementSibling?.querySelector<HTMLUListElement>(":scope > ul")
-      if (!resources || !children) return
-      children.querySelectorAll<HTMLElement>(":scope > li").forEach((child) => {
-        const path = child.querySelector<HTMLElement>(":scope > .folder-container")?.dataset.folderpath?.replace(/\/index$/, "")
-        if (path === key + "/html" || path === key + "/quiz") child.hidden = true
-      })
-      const existingGroup = children.querySelector(":scope > .explorer-chapter-resources")
-      if (existingGroup) {
-        existingGroup.querySelectorAll<HTMLAnchorElement>("a[data-resource-kind]").forEach((anchor) => {
-          if (currentViewer?.dataset.courseKey === key && anchor.dataset.resourceKind === currentViewer.dataset.supportKind) anchor.setAttribute("aria-current", "page")
-          else anchor.removeAttribute("aria-current")
-        })
-        return
-      }
-      const item = document.createElement("li")
-      item.className = "explorer-chapter-resources"
-      const nav = document.createElement("nav")
-      nav.className = "resource-buttons resource-buttons--explorer"
-      nav.setAttribute("aria-label", "Ressources de " + folder.textContent?.trim())
-      resources.forEach((resource) => {
-        const anchor = document.createElement("a")
-        anchor.href = resource.href
-        anchor.className = "resource-button resource-" + resource.kind
-        anchor.dataset.resourceKind = resource.kind
-        if (currentViewer?.dataset.courseKey === key && resource.kind === currentViewer.dataset.supportKind) anchor.setAttribute("aria-current", "page")
-        anchor.setAttribute("aria-label", resource.label + " — " + resource.detail)
-        const icon = document.createElement("span")
-        icon.className = "resource-icon"
-        icon.setAttribute("aria-hidden", "true")
-        const symbol = new DOMParser().parseFromString(resource.symbol, "image/svg+xml").documentElement
-        if (symbol.localName === "svg") icon.append(document.importNode(symbol, true))
-        const label = document.createElement("span")
-        label.className = "resource-label"
-        label.textContent = resource.label
-        anchor.append(icon, label)
-        nav.append(anchor)
-        if (["tp", "html", "quiz"].includes(resource.kind)) {
-          children.querySelectorAll<HTMLAnchorElement>(":scope > li > a[href]").forEach((existing) => {
-            const path = new URL(existing.href, location.href).pathname.replace(/\/$/, "")
-            const target = new URL(resource.href, location.href).pathname.replace(/\/$/, "")
-            if (path === target || path.endsWith("/" + key + "/" + resource.kind)) existing.parentElement!.hidden = true
-          })
+      const chapter = Boolean(registry[key])
+      folder.classList.toggle("is-course-chapter", chapter)
+      folder.classList.toggle("support-current-chapter", key === currentKey)
+      if (chapter) {
+        folder.dataset.chapterNumber = key.split("/").pop()!.slice(0, 2)
+        const children = folder.nextElementSibling as HTMLElement | null
+        if (children?.classList.contains("folder-outer")) children.hidden = true
+        const link = folder.querySelector<HTMLAnchorElement>("a.folder-button")
+        if (link) {
+          if (key === currentKey) link.setAttribute("aria-current", kind === "markdown" ? "page" : "location")
+          else { link.removeAttribute("aria-current"); link.classList.remove("course-current-page", "active", "is-active") }
         }
-      })
-      item.append(nav)
-      children.prepend(item)
+      } else {
+        const disclosure = folder.querySelector<HTMLElement>(".folder-icon")
+        if (disclosure) {
+          disclosure.setAttribute("role", "button")
+          disclosure.setAttribute("tabindex", "0")
+          disclosure.setAttribute("aria-label", "Déplier ou replier « " + folder.textContent?.trim() + " »")
+          disclosure.setAttribute("aria-expanded", String(folder.nextElementSibling?.classList.contains("open") ?? false))
+        }
+      }
     })
   }
+  const keyboard = (event: KeyboardEvent) => {
+    const target = (event.target as Element)?.closest<HTMLElement>(".folder-icon[role=button]")
+    if (target && ["Enter", " "].includes(event.key)) { event.preventDefault(); target.dispatchEvent(new MouseEvent("click", { bubbles: true })) }
+  }
+  const click = () => queueMicrotask(populate)
   populate()
   const observer = new MutationObserver(populate)
   observer.observe(explorer, { childList: true, subtree: true })
-  releaseChapterResources = () => observer.disconnect()
+  explorer.addEventListener("keydown", keyboard)
+  explorer.addEventListener("click", click, true)
+  releaseChapterResources = () => { observer.disconnect(); explorer.removeEventListener("keydown", keyboard); explorer.removeEventListener("click", click, true) }
   window.addCleanup?.(releaseChapterResources)
 }
 document.addEventListener("nav", setupChapterResources)

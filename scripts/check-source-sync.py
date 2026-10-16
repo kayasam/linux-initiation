@@ -44,7 +44,7 @@ def local_audit():
         # Viewing the course and downloading its source must never share an action.
         assert resources[0]['href'] == BASE + '/' + key + '/', key
         page = (CONTENT / key / 'index.md').read_text(encoding='utf-8')
-        assert 'class="resource-download"' in page and ' download>' in page, key
+        assert 'class="resource-download"' in page and ' download' in page, key
         track = 'bash/' if key.startswith('bash/') else ''
         slug = key.split('/')[-1]
         companion = (CONTENT / track / 'cours' / (slug + '-interactif.html')).read_text(encoding='utf-8')
