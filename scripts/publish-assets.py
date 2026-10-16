@@ -52,8 +52,8 @@ print(f'Liens locaux vérifiés : {checked}. Archive : 10 cours et {tp_count} TP
 with zipfile.ZipFile(public/'linux-scripting-bash-obsidian.zip') as z:
     bash_names = z.namelist()
     assert sum(bool(re.search(r'/cours/\d\d-[^/]+/\d\d-[^/]+\.md$', n)) for n in bash_names) == 6
-    bash_tp_count = len(list((ROOT / 'content/telechargements/bash/tp').glob('*.md')))
-    assert sum('/tp/' in n and n.endswith('.md') for n in bash_names) == bash_tp_count
-    assert not any(re.search(r'correction|corrig', n, re.I) for n in bash_names)
-assert not any(re.search(r'correction|corrig', p.name, re.I) for p in (public/'bash').rglob('*') if p.is_file())
-print(f'Bash : six cours et {bash_tp_count} TP dans le ZIP ; aucune correction sur le site ou dans le ZIP.')
+    bash_tp_count = sum(not re.search(r'correction|corrig', p.name, re.I) for p in (ROOT / 'content/telechargements/bash/tp').glob('*.md'))
+    assert sum('/tp/' in n and n.endswith('.md') and not re.search(r'correction|corrig', Path(n).name, re.I) for n in bash_names) == bash_tp_count
+    assert not any(re.search(r'correction|corrig', Path(n).name, re.I) and Path(n).name not in allowed_corrections for n in bash_names)
+assert not any(re.search(r'correction|corrig', p.name, re.I) and p.with_suffix('.md').name not in allowed_corrections for p in (public/'bash').rglob('*') if p.is_file())
+print(f'Bash : six cours et {bash_tp_count} TP dans le ZIP ; seules les corrections autorisées sont publiées.')

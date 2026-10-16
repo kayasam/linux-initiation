@@ -61,6 +61,12 @@ html[saved-theme] body [role=button]:focus-visible {
   outline: 3px solid var(--secondary); outline-offset: 3px; border-radius: .35rem;
 }
 html[saved-theme] body article#course-content:focus { outline: none; }
+/* Links inside prose remain readable links, including companion HTML URLs. */
+html[saved-theme] body article :is(p, li, td) a[href$="-interactif.html"]:not(.resource-button) {
+  display: inline; padding: 0; border: 0; border-radius: 0;
+  background: transparent; color: var(--secondary); filter: none;
+  text-decoration: underline; text-underline-offset: .18em;
+}
 html[saved-theme] body .site-skip-link {
   position: fixed; z-index: 3000; top: .75rem; left: 1rem; transform: translateY(-200%);
   background: var(--site-surface); border: 2px solid var(--secondary); color: var(--dark);

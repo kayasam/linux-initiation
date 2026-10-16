@@ -119,7 +119,11 @@ def prepare(source):
                 write(stage / 'telechargements/tp' / correction.name, correction_body)
                 write(vault / 'tp' / correction.name, normalize(correction.read_text(encoding='utf-8')))
                 tpbody += f'\n[Correction du TP]({BASE}/{slug}/{correction.stem})\n'
-            write(vault / 'tp' / tp.name, tpbody.replace(f'](../{slug}.md)', f'](../cours/{slug}.md)'))
+            offline_tp = tpbody.replace(f'](../{slug}.md)', f'](../cours/{slug}.md)')
+            for correction in sorted(tp_folder.glob(f'tp-{number}-*correction.md')):
+                if is_published(correction):
+                    offline_tp = offline_tp.replace(f']({BASE}/{slug}/{correction.stem})', f']({correction.name})')
+            write(vault / 'tp' / tp.name, offline_tp)
             tpbody = tpbody.replace(f'](../{slug}.md)', f']({BASE}/{slug}/)')
             write(stage / 'telechargements' / 'tp' / tp.name, tpbody)
             write(stage / slug / 'tp.md', metadata(f'TP {number} — {title}', tpbody + f'\n[← Revenir au cours]({BASE}/{slug}/)\n\n<a href="{BASE}/telechargements/tp/{tp.name}" download>Télécharger ce TP en Markdown</a>\n'))
@@ -156,7 +160,7 @@ def prepare(source):
                 z.writestr(entry, file.read_bytes())
     shutil.rmtree(vault)
     # Keep the shared home and Bash course in every normal publication.
-    runpy.run_path(str(ROOT / 'scripts/prepare-bash.py'))['populate'](stage, chapters)
+    published_corrections.update(runpy.run_path(str(ROOT / 'scripts/prepare-bash.py'))['populate'](stage, chapters))
     runpy.run_path(str(ROOT / 'scripts/course-resources.py'))['attach_tp_resources'](stage)
     forbidden = [p for p in stage.rglob('*') if p.is_file() and re.search(r'correction|corrig[eé]', p.name, re.I) and p.name not in published_corrections]
     assert not forbidden, forbidden

@@ -48,6 +48,16 @@ def metadata(title, body):
     return '---\ntitle: ' + json.dumps(title, ensure_ascii=False) + '\n---\n\n' + body
 
 
+def is_published(path):
+    text = path.read_text(encoding='utf-8-sig')
+    frontmatter = re.match(r'^---\s*\n(.*?)\n---(?:\n|$)', text, re.S)
+    return bool(frontmatter and re.search(r'^publier:\s*true\s*$', frontmatter[1], re.M | re.I))
+
+
+def without_frontmatter(text):
+    return re.sub(r'^---\s*\n.*?\n---\s*\n', '', text, count=1, flags=re.S)
+
+
 def title_of(path):
     return re.sub(r'^(?:Chapitre|TP)\s*\d+\s*[—–-]\s*', '', re.search(r'^#\s+(.*)', path.read_text(encoding='utf-8-sig'), re.M)[1])
 
@@ -73,6 +83,7 @@ def populate(destination, chapters):
         if tp.is_relative_to(SOURCE / 'cours') and sum(p.parent == tp.parent for p in tps) > 1:
             routes[tp] += '/' + tp.stem
     export = {}
+    published_corrections = set()
     export.update(runpy.run_path(str(ROOT / 'scripts/prepare-bash-quizzes.py'))['populate'](SOURCE,destination,courses))
     game = SOURCE / 'jeu'
     export.update(runpy.run_path(str(ROOT / 'scripts/package-orion.py'))['package'](game, destination))
@@ -136,6 +147,19 @@ def populate(destination, chapters):
             slug = tp.parent.parent.name
             body = body.replace(f'](../{slug}.md)', f']({BASE}/bash/{slug}/)')
             body += f'\n[← Revenir au cours]({BASE}/bash/{slug}/)\n'
+        correction = tp.with_name(tp.stem + '-correction.md')
+        if correction.is_file() and is_published(correction):
+            published_corrections.add(correction.name)
+            correction_route = routes[tp].rsplit('/', 1)[0] + '/' + correction.stem
+            original = normalize(without_frontmatter(correction.read_text(encoding='utf-8-sig')))
+            offline_body += f'\n[Correction du TP]({correction.name})\n'
+            export[correction.relative_to(SOURCE).as_posix()] = original
+            correction_body = public_course_links(original, correction, courses)
+            correction_body = correction_body.replace(f']({tp.name})', f']({BASE}/{routes[tp]})')
+            correction_body += f'\n[← Énoncé du TP]({BASE}/{routes[tp]})\n'
+            write(destination / (correction_route + '.md'), metadata('Correction — ' + title_of(tp), correction_body))
+            write(destination / 'telechargements/bash/tp' / correction.name, correction_body)
+            body += f'\n[Correction du TP]({BASE}/{correction_route})\n'
         links = f'\n[← Parcours Bash]({BASE}/#bash)\n\n<a href="{BASE}/telechargements/bash/tp/{tp.name}" download>Télécharger le TP en Markdown</a>\n'
         write(destination / (routes[tp] + '.md'), metadata(f'TP {tp.parent.parent.name[:2]}' if tp.is_relative_to(SOURCE / 'cours') else title_of(tp), body + links))
         write(destination / 'telechargements/bash/tp' / tp.name, body)
@@ -154,7 +178,7 @@ def populate(destination, chapters):
     workshops = [p for p in tps if not p.is_relative_to(SOURCE / 'cours')]
     write(destination / 'bash/ateliers/index.md', metadata('Ateliers et jeu final', '# Ateliers et jeu final\n\n' + '\n'.join(f'- [{title_of(p)}]({BASE}/{routes[p]})' for p in workshops) + '\n'))
     write(destination / 'bash/index.md', metadata('Bash — Le parcours', '# Scripting Bash\n\n' + '\n'.join(f'- [{title_of(c)}]({BASE}/bash/{c.stem}/)' for c in courses) + f'\n\n[Travaux pratiques]({BASE}/bash/tp/) · [Orion Académie — Le jeu]({BASE}/bash/jeu/)\n'))
-    export['README.md'] = '# Scripting Bash\n\nOuvrez ce dossier dans Obsidian. Chaque chapitre est dans `cours/<chapitre>/` avec son cours Markdown, sa version HTML et son dossier `tp/`. Les exercices transversaux sont dans `tp/synthese/`, `tp/final/` et `tp/bonus/`. Les corrections sont exclues.\n'
+    export['README.md'] = '# Scripting Bash\n\nOuvrez ce dossier dans Obsidian. Chaque chapitre est dans `cours/<chapitre>/` avec son cours Markdown, sa version HTML et son dossier `tp/`. Les exercices transversaux sont dans `tp/synthese/`, `tp/final/` et `tp/bonus/`. Seules les corrections explicitement publiées sont incluses.\n'
     export['cours/README.md'] = (SOURCE / 'cours/README.md').read_text(encoding='utf-8-sig')
     with zipfile.ZipFile(destination / 'linux-scripting-bash-obsidian.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
         for name, body in export.items():
@@ -171,8 +195,9 @@ def populate(destination, chapters):
     home += f'''<section class="home-downloads"><h2>Supports hors ligne</h2><div class="home-downloads__grid"><a href="./linux-initiation-obsidian.zip" download><strong>Linux initiation</strong><span>10 cours, versions interactives, quiz et {sum(c['tp'] is not None for c in chapters)} TP.</span><em>Télécharger le ZIP →</em></a><a href="./linux-scripting-bash-obsidian.zip" download><strong>Bash</strong><span>6 cours, versions HTML et {len(tps)} TP pour Obsidian.</span><em>Télécharger le ZIP →</em></a></div></section>'''
     home += '<p class="brand-credits">Tux : Larry Ewing et The GIMP, Simon Budig, Garrett LeSage. <a href="./assets/brands/TUX-COPYRIGHT.txt">Crédits Tux</a> · <a href="https://commons.wikimedia.org/wiki/File:Bash_Logo_Colored.svg">Logo Bash</a></p>'
     write(destination / 'index.md', metadata('Linux initiation & Bash', home))
-    assert not any(re.search(r'correction|corrig', name, re.I) for name in export)
-    print(f'Bash : {len(courses)} cours, {len(tps)} TP, deux parcours et aucune correction.')
+    assert not any(re.search(r'correction|corrig', Path(name).name, re.I) and Path(name).name not in published_corrections for name in export)
+    print(f'Bash : {len(courses)} cours, {len(tps)} TP, {len(published_corrections)} correction(s) explicitement publiée(s).')
+    return published_corrections
 
 
 if __name__ == '__main__':

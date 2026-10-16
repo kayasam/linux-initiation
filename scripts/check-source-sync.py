@@ -79,7 +79,11 @@ def local_audit():
                 for correction in sorted(tp.parent.glob(f'tp-{slug[:2]}-*correction.md')):
                     if linux['is_published'](correction):
                         expected += f'\n[Correction du TP]({BASE}/{slug}/{correction.stem})\n'
-                equal(expected.replace(f'](../{slug}.md)', f'](../cours/{slug}.md)'), archive.read('Linux-initiation/tp/' + tp.name), tp.name + ' (ZIP Linux)')
+                offline_tp = expected.replace(f'](../{slug}.md)', f'](../cours/{slug}.md)')
+                for correction in sorted(tp.parent.glob(f'tp-{slug[:2]}-*correction.md')):
+                    if linux['is_published'](correction):
+                        offline_tp = offline_tp.replace(f']({BASE}/{slug}/{correction.stem})', f']({correction.name})')
+                equal(offline_tp, archive.read('Linux-initiation/tp/' + tp.name), tp.name + ' (ZIP Linux)')
                 equal(expected.replace(f'](../{slug}.md)', f']({BASE}/{slug}/)'), (CONTENT / 'telechargements/tp' / tp.name).read_bytes(), tp.name + ' (téléchargement Linux)')
                 assert (CONTENT / slug / 'tp.md').is_file()
                 tp_count += 1
@@ -142,8 +146,13 @@ def local_audit():
         for tp in tps:
             if re.search(r'correction|corrig', tp.name, re.I): continue
             offline = bash['normalize'](tp.read_text(encoding='utf-8-sig'))
+            correction = tp.with_name(tp.stem + '-correction.md')
+            published = correction.is_file() and bash['is_published'](correction)
+            if published:
+                offline += f'\n[Correction du TP]({correction.name})\n'
+                equal(bash['normalize'](bash['without_frontmatter'](correction.read_text(encoding='utf-8-sig'))), archive.read('Linux-scripting-bash/' + correction.relative_to(bash_source).as_posix()), correction.name + ' (ZIP Bash)')
             equal(offline, archive.read('Linux-scripting-bash/' + tp.relative_to(bash_source).as_posix()), tp.name + ' (ZIP Bash)')
-            body = offline
+            body = bash['normalize'](tp.read_text(encoding='utf-8-sig'))
             body = bash['public_course_links'](body, tp, bash_courses)
             siblings = [p for p in tps if p.parent == tp.parent and not re.search(r'correction|corrig', p.name, re.I)]
             for sibling in siblings:
@@ -155,9 +164,16 @@ def local_audit():
                 slug = tp.parent.parent.name
                 body = body.replace(f'](../{slug}.md)', f']({BASE}/bash/{slug}/)')
                 body += f'\n[← Revenir au cours]({BASE}/bash/{slug}/)\n'
+            if published:
+                route = f'bash/{tp.parent.parent.name}/tp' if tp.is_relative_to(bash_source / 'cours') else f'bash/ateliers/{tp.stem}'
+                if tp.is_relative_to(bash_source / 'cours') and len(siblings) > 1:
+                    route += '/' + tp.stem
+                correction_route = route.rsplit('/', 1)[0] + '/' + correction.stem
+                body += f'\n[Correction du TP]({BASE}/{correction_route})\n'
             equal(body, (CONTENT / 'telechargements/bash/tp' / tp.name).read_bytes(), tp.name + ' (téléchargement Bash)')
             tp_count += 1
-        assert not any(re.search(r'correction|corrig', name, re.I) for name in archive.namelist())
+        expected_corrections = {p.name for p in tps if re.search(r'correction|corrig', p.name, re.I) and bash['is_published'](p)}
+        assert {Path(name).name for name in archive.namelist() if re.search(r'correction|corrig', Path(name).name, re.I)} == expected_corrections
     expected_tps = sum(chapter['tp'] is not None for chapter in json.loads((ROOT / 'chapters.json').read_text(encoding='utf-8')))
     expected_tps += sum(not re.search(r'correction|corrig', p.name, re.I) for p in tps)
     assert tp_count == expected_tps
