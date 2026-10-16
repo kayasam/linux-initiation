@@ -62,7 +62,7 @@ html[saved-theme] body [role=button]:focus-visible {
 }
 html[saved-theme] body article#course-content:focus { outline: none; }
 /* Links inside prose remain readable links, including companion HTML URLs. */
-html[saved-theme] body article :is(p, li, td) a[href$="-interactif.html"]:not(.resource-button) {
+html[saved-theme] body article#course-content :is(p, li, td) a[href$="-interactif.html"]:not(.resource-button) {
   display: inline; padding: 0; border: 0; border-radius: 0;
   background: transparent; color: var(--secondary); filter: none;
   text-decoration: underline; text-underline-offset: .18em;
