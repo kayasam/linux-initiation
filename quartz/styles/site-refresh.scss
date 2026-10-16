@@ -171,7 +171,7 @@ html[saved-theme="light"] body [data-workshop-kind=bonus] { --workshop-accent: #
 html[saved-theme="dark"] body [data-workshop-kind=bonus] { --workshop-accent: #e8bf82; }
 html[saved-theme] body[data-slug="bash/ateliers/index"] .page-listing { display: none; }
 html[saved-theme] body .workshop-grid { display: grid; gap: 1rem; margin: 1.5rem 0; }
-html[saved-theme] body .workshop-resources .resource-icon { background: transparent; color: currentColor; }
+html[saved-theme] body nav.chapter-resources.workshop-resources a.resource-button .resource-icon { background: transparent; color: currentColor; }
 html[saved-theme] body .workshop-card {
   display: grid; grid-template-columns: 2.7rem minmax(0,1fr); gap: .9rem;
   padding: 1.2rem; border: 1px solid var(--lightgray); border-left: 3px solid var(--workshop-accent); border-radius: .9rem; background: var(--site-surface);
